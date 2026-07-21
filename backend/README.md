@@ -50,7 +50,7 @@ All application endpoints use `/api/v1`.
 - `POST /attempts` — submits answers once, scores every question, then reveals solutions.
 - `GET /attempts/{id}` — retrieves a submitted result.
 - `GET /progress/dashboard?user_key=...` — aggregate and per-subject performance.
-- `GET /health` — service and database readiness.
+- `GET /health` — service and database readiness (this endpoint is at the service root, outside `/api/v1`).
 
 Public question responses intentionally omit `correct_answer` and `explanation`. They are returned only after submission. Answers use an option ID for MCQ (`"B"`), an option-ID array for MSQ (`["A", "C"]`), and a number or numeric string for NAT (`3.14`).
 

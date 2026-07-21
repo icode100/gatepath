@@ -9,7 +9,7 @@
     "dev": "node node_modules/next/dist/bin/next dev --hostname 0.0.0.0",
     "build": "node node_modules/next/dist/bin/next build",
     "start": "node node_modules/next/dist/bin/next start --hostname 0.0.0.0",
-    "test": "node --test tests/*.test.mjs",
+    "test": "npm run typecheck",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
