@@ -1,0 +1,15 @@
+.git
+.github
+.next
+.venv
+node_modules
+backend
+tmp
+coverage
+.pytest_cache
+__pycache__
+*.db
+*.sqlite3
+*.log
+.env
+README.md
