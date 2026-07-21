@@ -1,0 +1,255 @@
+from __future__ import annotations
+
+import enum
+import uuid
+from datetime import UTC, datetime
+from typing import Any
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.database import Base
+
+
+def utc_now() -> datetime:
+    return datetime.now(UTC)
+
+
+class QuestionType(str, enum.Enum):
+    MCQ = "mcq"
+    MSQ = "msq"
+    NAT = "nat"
+
+
+class QuestionSource(str, enum.Enum):
+    ORIGINAL = "original"
+    PREVIOUS_YEAR = "previous_year"
+
+
+class Difficulty(str, enum.Enum):
+    EASY = "easy"
+    MEDIUM = "medium"
+    HARD = "hard"
+
+
+class SessionMode(str, enum.Enum):
+    PRACTICE = "practice"
+    SECTIONAL = "sectional"
+    FULL = "full"
+
+
+class ResponseStatus(str, enum.Enum):
+    CORRECT = "correct"
+    INCORRECT = "incorrect"
+    UNANSWERED = "unanswered"
+
+
+class Subject(Base):
+    __tablename__ = "subjects"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    code: Mapped[str] = mapped_column(String(16), unique=True)
+    name: Mapped[str] = mapped_column(String(120))
+    description: Mapped[str] = mapped_column(Text)
+    order_index: Mapped[int] = mapped_column(Integer, default=0, index=True)
+
+    topics: Mapped[list[Topic]] = relationship(
+        back_populates="subject",
+        cascade="all, delete-orphan",
+        order_by="Topic.order_index",
+    )
+    questions: Mapped[list[Question]] = relationship(back_populates="subject")
+
+
+class Topic(Base):
+    __tablename__ = "topics"
+    __table_args__ = (
+        UniqueConstraint("subject_id", "slug", name="uq_topic_subject_slug"),
+        Index("ix_topics_subject_order", "subject_id", "order_index"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    subject_id: Mapped[int] = mapped_column(
+        ForeignKey("subjects.id", ondelete="CASCADE"), index=True
+    )
+    slug: Mapped[str] = mapped_column(String(100), index=True)
+    name: Mapped[str] = mapped_column(String(160))
+    description: Mapped[str] = mapped_column(Text)
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
+
+    subject: Mapped[Subject] = relationship(back_populates="topics")
+    note: Mapped[RevisionNote | None] = relationship(
+        back_populates="topic", cascade="all, delete-orphan", uselist=False
+    )
+    questions: Mapped[list[Question]] = relationship(
+        back_populates="topic", cascade="all, delete-orphan"
+    )
+
+
+class RevisionNote(Base):
+    __tablename__ = "revision_notes"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    topic_id: Mapped[int] = mapped_column(
+        ForeignKey("topics.id", ondelete="CASCADE"), unique=True, index=True
+    )
+    title: Mapped[str] = mapped_column(String(180))
+    summary: Mapped[str] = mapped_column(Text)
+    content_md: Mapped[str] = mapped_column(Text)
+    key_points: Mapped[list[str]] = mapped_column(JSON, default=list)
+    worked_examples: Mapped[list[dict[str, str]]] = mapped_column(JSON, default=list)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+    topic: Mapped[Topic] = relationship(back_populates="note")
+
+
+class Question(Base):
+    __tablename__ = "questions"
+    __table_args__ = (
+        Index("ix_questions_subject_topic", "subject_id", "topic_id"),
+        Index("ix_questions_legacy_source_year", "source", "year"),
+        UniqueConstraint(
+            "source_kind",
+            "source_year",
+            "source_paper",
+            "source_question_number",
+            name="uq_question_provenance",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    subject_id: Mapped[int] = mapped_column(
+        ForeignKey("subjects.id", ondelete="CASCADE"), index=True
+    )
+    topic_id: Mapped[int] = mapped_column(
+        ForeignKey("topics.id", ondelete="CASCADE"), index=True
+    )
+    source: Mapped[QuestionSource] = mapped_column(
+        Enum(QuestionSource, native_enum=False), default=QuestionSource.ORIGINAL
+    )
+    year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    exam_session: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    # Explicit provenance fields are preferred by new clients. The legacy
+    # source/year/exam_session columns above remain for API compatibility.
+    source_kind: Mapped[QuestionSource] = mapped_column(
+        Enum(QuestionSource, native_enum=False),
+        default=QuestionSource.ORIGINAL,
+        index=True,
+    )
+    source_year: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
+    source_paper: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    source_question_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    answer_key_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    question_type: Mapped[QuestionType] = mapped_column(
+        Enum(QuestionType, native_enum=False), index=True
+    )
+    difficulty: Mapped[Difficulty] = mapped_column(
+        Enum(Difficulty, native_enum=False), default=Difficulty.MEDIUM, index=True
+    )
+    text: Mapped[str] = mapped_column(Text)
+    options: Mapped[list[dict[str, str]]] = mapped_column(JSON, default=list)
+    correct_answer: Mapped[Any] = mapped_column(JSON)
+    numerical_tolerance: Mapped[float] = mapped_column(Float, default=0.01)
+    marks: Mapped[int] = mapped_column(Integer, default=1)
+    explanation: Mapped[str] = mapped_column(Text)
+    tags: Mapped[list[str]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    subject: Mapped[Subject] = relationship(back_populates="questions")
+    topic: Mapped[Topic] = relationship(back_populates="questions")
+    responses: Mapped[list[AttemptResponse]] = relationship(back_populates="question")
+
+
+class PracticeSession(Base):
+    __tablename__ = "practice_sessions"
+
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
+    )
+    user_key: Mapped[str] = mapped_column(String(100), default="local-user", index=True)
+    mode: Mapped[SessionMode] = mapped_column(Enum(SessionMode, native_enum=False))
+    subject_id: Mapped[int | None] = mapped_column(
+        ForeignKey("subjects.id", ondelete="SET NULL"), nullable=True
+    )
+    topic_id: Mapped[int | None] = mapped_column(
+        ForeignKey("topics.id", ondelete="SET NULL"), nullable=True
+    )
+    question_ids: Mapped[list[int]] = mapped_column(JSON)
+    question_count: Mapped[int] = mapped_column(Integer)
+    duration_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_marks: Mapped[int] = mapped_column(Integer)
+    seed: Mapped[int] = mapped_column(Integer)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_submitted: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    attempt: Mapped[Attempt | None] = relationship(
+        back_populates="session", uselist=False, cascade="all, delete-orphan"
+    )
+
+
+class Attempt(Base):
+    __tablename__ = "attempts"
+
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
+    )
+    session_id: Mapped[str] = mapped_column(
+        ForeignKey("practice_sessions.id", ondelete="CASCADE"),
+        unique=True,
+        index=True,
+    )
+    user_key: Mapped[str] = mapped_column(String(100), default="local-user", index=True)
+    submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    timed_out: Mapped[bool] = mapped_column(Boolean, default=False)
+    score: Mapped[float] = mapped_column(Float)
+    max_score: Mapped[float] = mapped_column(Float)
+    correct_count: Mapped[int] = mapped_column(Integer)
+    incorrect_count: Mapped[int] = mapped_column(Integer)
+    unanswered_count: Mapped[int] = mapped_column(Integer)
+
+    session: Mapped[PracticeSession] = relationship(back_populates="attempt")
+    responses: Mapped[list[AttemptResponse]] = relationship(
+        back_populates="attempt", cascade="all, delete-orphan"
+    )
+
+
+class AttemptResponse(Base):
+    __tablename__ = "attempt_responses"
+    __table_args__ = (
+        UniqueConstraint("attempt_id", "question_id", name="uq_attempt_question"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    attempt_id: Mapped[str] = mapped_column(
+        ForeignKey("attempts.id", ondelete="CASCADE"), index=True
+    )
+    question_id: Mapped[int] = mapped_column(
+        ForeignKey("questions.id", ondelete="CASCADE"), index=True
+    )
+    answer: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    status: Mapped[ResponseStatus] = mapped_column(
+        Enum(ResponseStatus, native_enum=False), index=True
+    )
+    awarded_marks: Mapped[float] = mapped_column(Float)
+    max_marks: Mapped[float] = mapped_column(Float)
+    negative_marks: Mapped[float] = mapped_column(Float, default=0.0)
+
+    attempt: Mapped[Attempt] = relationship(back_populates="responses")
+    question: Mapped[Question] = relationship(back_populates="responses")

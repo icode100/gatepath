@@ -1,0 +1,21 @@
+[
+  {
+    "subject_slug": "engineering-mathematics",
+    "topic_slug": "discrete-mathematics",
+    "source_kind": "previous_year",
+    "source_year": 2024,
+    "source_paper": "GATE 2024 CS1 (Session 5)",
+    "source_question_number": 32,
+    "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+    "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf",
+    "question_type": "nat",
+    "difficulty": "medium",
+    "marks": 1,
+    "text": "Let A and B be non-empty finite sets with bijections from A to B and from A x A to A union B. The number of possible values of |A| is ____.",
+    "options": [],
+    "correct_answer": 2,
+    "numerical_tolerance": 0.0,
+    "explanation": "The bijections give |A|=|B| and |A|^2=|A union B|. Accounting for possible overlap yields two feasible cardinalities.",
+    "tags": ["gate-2024", "cs1", "official-pyq"]
+  }
+]
