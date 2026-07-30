@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  buildMockQuestions,
   practiceQuestions,
   subjects as localSubjects,
   weeklyActivity,
@@ -48,6 +47,10 @@ type PracticeMode = "practice" | "sectional" | "syllabus";
 type Answers = Record<string, string[]>;
 type LibraryTab = "full" | "course" | "bank";
 type TopicStatus = "strong" | "developing" | "needs_practice" | "unattempted";
+
+const LIBRARY_TABS: LibraryTab[] = ["full", "course", "bank"];
+const CONNECT_BANK_REASON =
+  "Connect the FastAPI question bank to launch this validated test form.";
 
 type CatalogTest = {
   id: string;
@@ -154,7 +157,8 @@ const LOCAL_FULL_TESTS: CatalogTest[] = Array.from(
       0,
     ),
     questionTypeCounts: { mcq: 30, msq: 18, nat: 17 },
-    isAvailable: true,
+    isAvailable: false,
+    unavailableReason: CONNECT_BANK_REASON,
   }),
 );
 
@@ -169,11 +173,12 @@ const LOCAL_COURSE_TESTS: CatalogTest[] = localSubjects.flatMap((subject) =>
     subjectCode: subject.code,
     subjectName: subject.shortTitle,
     questionCount: 30,
-    durationSeconds: 60 * 60,
+    durationSeconds: 90 * 60,
     totalMarks: 45,
     topicCount: subject.topics.length,
     questionTypeCounts: { mcq: 12, msq: 9, nat: 9 },
-    isAvailable: true,
+    isAvailable: false,
+    unavailableReason: CONNECT_BANK_REASON,
   })),
 );
 
@@ -591,27 +596,36 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
   };
   const questions = source.questions ?? source.items;
   if (!Array.isArray(questions)) return [];
-  return questions.map((question) => ({
-    id: String(question.id),
-    subjectId: question.subject_slug ?? "mixed",
-    topicId: question.topic_slug ?? "mixed",
-    type: (["MCQ", "MSQ", "NAT"].includes(question.question_type ?? "")
-      ? question.question_type
-      : "MCQ") as QuestionType,
-    marks: question.marks === 2 ? 2 : 1,
-    prompt: question.text ?? "Question text unavailable.",
-    options: question.options?.map((option) => ({
-      id: String(option.id),
-      label: option.text ?? String(option.id),
-    })),
-    correct: [],
-    explanation: "The detailed solution will be revealed when this session is submitted.",
-    source: question.source ?? "Question bank",
-    year: question.year,
-    difficulty: (["Easy", "Medium", "Hard"].includes(question.difficulty ?? "")
-      ? question.difficulty
-      : "Medium") as "Easy" | "Medium" | "Hard",
-  }));
+  return questions.map((question) => {
+    const rawType = String(question.question_type ?? "").toUpperCase();
+    const rawDifficulty = String(question.difficulty ?? "").toLowerCase();
+    const difficulty =
+      rawDifficulty === "easy"
+        ? "Easy"
+        : rawDifficulty === "hard"
+          ? "Hard"
+          : "Medium";
+    return {
+      id: String(question.id),
+      subjectId: question.subject_slug ?? "mixed",
+      topicId: question.topic_slug ?? "mixed",
+      type: (["MCQ", "MSQ", "NAT"].includes(rawType)
+        ? rawType
+        : "MCQ") as QuestionType,
+      marks: question.marks === 2 ? 2 : 1,
+      prompt: question.text ?? "Question text unavailable.",
+      options: question.options?.map((option) => ({
+        id: String(option.id),
+        label: option.text ?? String(option.id),
+      })),
+      correct: [],
+      explanation:
+        "The detailed solution will be revealed when this session is submitted.",
+      source: question.source ?? "Question bank",
+      year: question.year,
+      difficulty: difficulty as "Easy" | "Medium" | "Hard",
+    };
+  });
 }
 
 async function requestCatalogSession(test: CatalogTest) {
@@ -713,6 +727,7 @@ export default function Home() {
   );
   const [analyticsSource, setAnalyticsSource] =
     useState<"live" | "local">("local");
+  const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
   const [libraryTab, setLibraryTab] = useState<LibraryTab>("full");
   const [catalogSubjectId, setCatalogSubjectId] = useState(
     "computer-organization",
@@ -738,7 +753,8 @@ export default function Home() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [runnerSummary, setRunnerSummary] = useState<ServerResult | null>(null);
   const [runnerSubmitted, setRunnerSubmitted] = useState(false);
-  const [examQuestions, setExamQuestions] = useState<PracticeQuestion[]>(() => buildMockQuestions());
+  const [launchError, setLaunchError] = useState<string | null>(null);
+  const [examQuestions, setExamQuestions] = useState<PracticeQuestion[]>([]);
   const [examAnswers, setExamAnswers] = useState<Answers>({});
   const [examIndex, setExamIndex] = useState(0);
   const [reviewed, setReviewed] = useState<Set<string>>(new Set());
@@ -753,6 +769,8 @@ export default function Home() {
   const [runnerCatalogTest, setRunnerCatalogTest] =
     useState<CatalogTest | null>(null);
   const practiceRequestId = useRef(0);
+  const submitExamRef =
+    useRef<((skipConfirmation?: boolean) => Promise<void>) | null>(null);
 
   const selectedSubject = useMemo(
     () =>
@@ -830,7 +848,16 @@ export default function Home() {
         return response.json();
       })
       .then((payload) => {
-        setTestCatalog(mapCatalog(payload));
+        const catalog = mapCatalog(payload);
+        setTestCatalog(catalog);
+        const firstAvailableFullTest = catalog.find(
+          (test) => test.kind === "full" && test.isAvailable,
+        );
+        if (firstAvailableFullTest) {
+          setActiveTest((current) =>
+            current.isAvailable ? current : firstAvailableFullTest,
+          );
+        }
         setCatalogSource("live");
         setApiState("online");
       })
@@ -869,7 +896,7 @@ export default function Home() {
       controller.abort();
       window.clearTimeout(timeout);
     };
-  }, [roadmapSubjects]);
+  }, [analyticsRefreshKey, roadmapSubjects]);
 
   useEffect(() => {
     if (screen !== "library" || libraryTab !== "bank") return;
@@ -884,7 +911,9 @@ export default function Home() {
     if (selectedBankTopic?.apiId != null) {
       params.set("topic_id", String(selectedBankTopic.apiId));
     }
-    if (bankType !== "all") params.set("question_type", bankType);
+    if (bankType !== "all") {
+      params.set("question_type", bankType.toLowerCase());
+    }
     setBankLoading(true);
     fetch(`${API_BASE}/questions?${params.toString()}`, {
       signal: controller.signal,
@@ -926,17 +955,16 @@ export default function Home() {
   useEffect(() => {
     if (!examRunning) return;
     const timer = window.setInterval(() => {
-      setExamSeconds((current) => {
-        if (current <= 1) {
-          setExamRunning(false);
-          setScreen("results");
-          return 0;
-        }
-        return current - 1;
-      });
+      setExamSeconds((current) => Math.max(0, current - 1));
     }, 1000);
     return () => window.clearInterval(timer);
   }, [examRunning]);
+
+  useEffect(() => {
+    if (examRunning && examSeconds === 0) {
+      void submitExamRef.current?.(true);
+    }
+  }, [examRunning, examSeconds]);
 
   const navigate = useCallback((target: Screen) => {
     setScreen(target);
@@ -992,6 +1020,13 @@ export default function Home() {
     const apiTopicId = topicForRun
       ? subjectForRun.topics.find((topic) => topic.id === topicForRun)?.apiId
       : undefined;
+    const fallbackQuestions = localSetForSubject(
+      subjectForRun.id,
+      topicForRun,
+      questionCount,
+    );
+    const requiresLiveQuestions =
+      mode !== "syllabus" && !(topicForRun !== null && apiTopicId == null);
     setPracticeMode(mode);
     setRunnerCatalogTest(null);
     setPracticeTopicId(topicForRun);
@@ -1000,14 +1035,13 @@ export default function Home() {
     setCheckedQuestions(new Set());
     setRunnerSummary(null);
     setRunnerSubmitted(false);
-    setRunnerQuestions(
-      localSetForSubject(subjectForRun.id, topicForRun, questionCount),
-    );
+    setLaunchError(null);
+    setRunnerQuestions(requiresLiveQuestions ? [] : fallbackQuestions);
     setSessionId(null);
-    setIsLoadingQuestions(mode !== "syllabus");
+    setIsLoadingQuestions(requiresLiveQuestions);
     navigate("practice");
 
-    if (mode === "syllabus" || (topicForRun !== null && apiTopicId == null)) {
+    if (!requiresLiveQuestions) {
       setIsLoadingQuestions(false);
       return;
     }
@@ -1045,7 +1079,13 @@ export default function Home() {
         setApiState("online");
       }
     } catch {
-      if (requestId === practiceRequestId.current) setApiState("offline");
+      if (requestId === practiceRequestId.current) {
+        setApiState("offline");
+        setRunnerQuestions(fallbackQuestions);
+        setLaunchError(
+          "The live question bank is unavailable, so this guided set is using the small built-in sample.",
+        );
+      }
     } finally {
       if (requestId === practiceRequestId.current) {
         setIsLoadingQuestions(false);
@@ -1067,6 +1107,7 @@ export default function Home() {
     if (submitBusy) return;
     setSubmitBusy(true);
     let summary: ServerResult | null = null;
+    let recordedAttempt = false;
 
     if (sessionId) {
       try {
@@ -1126,6 +1167,7 @@ export default function Home() {
           incorrect: Number(payload.incorrect_count ?? 0),
           unanswered: Number(payload.unanswered_count ?? 0),
         };
+        recordedAttempt = true;
       } catch {
         setApiState("offline");
       }
@@ -1169,6 +1211,9 @@ export default function Home() {
     setCheckedQuestions(new Set(runnerQuestions.map((question) => question.id)));
     setRunnerSubmitted(true);
     setRunnerSummary(summary);
+    if (recordedAttempt) {
+      setAnalyticsRefreshKey((current) => current + 1);
+    }
     setSubmitBusy(false);
   };
 
@@ -1199,17 +1244,18 @@ export default function Home() {
       LOCAL_FULL_TESTS[0],
   ) => {
     if (!test.isAvailable) return;
-    const fallback = buildMockQuestions();
     setActiveTest(test);
     setRunnerCatalogTest(null);
-    setExamQuestions(fallback);
+    setExamQuestions([]);
     setExamAnswers({});
     setReviewed(new Set());
     setExamIndex(0);
     setExamSeconds(test.durationSeconds);
     setServerResult(null);
     setSessionId(null);
-    setExamRunning(true);
+    setExamRunning(false);
+    setIsLoadingQuestions(true);
+    setLaunchError(null);
     navigate("mock");
 
     try {
@@ -1217,13 +1263,20 @@ export default function Home() {
         id?: string | number;
       };
       const mapped = mapServerQuestions(payload);
-      if (mapped.length === test.questionCount) {
-        setExamQuestions(mapped);
-        setSessionId(payload.id == null ? null : String(payload.id));
-        setApiState("online");
+      if (mapped.length !== test.questionCount) {
+        throw new Error("Incomplete full-test form");
       }
+      setExamQuestions(mapped);
+      setSessionId(payload.id == null ? null : String(payload.id));
+      setApiState("online");
+      setExamRunning(true);
     } catch {
       setApiState("offline");
+      setLaunchError(
+        "This validated full-test form could not be loaded. Reconnect the FastAPI question bank and try again.",
+      );
+    } finally {
+      setIsLoadingQuestions(false);
     }
   };
 
@@ -1244,7 +1297,8 @@ export default function Home() {
     setCheckedQuestions(new Set());
     setRunnerSummary(null);
     setRunnerSubmitted(false);
-    setRunnerQuestions(localSetForSubject(subject.id, null, test.questionCount));
+    setLaunchError(null);
+    setRunnerQuestions([]);
     setSessionId(null);
     setIsLoadingQuestions(true);
     navigate("practice");
@@ -1254,13 +1308,23 @@ export default function Home() {
         id?: string | number;
       };
       const mapped = mapServerQuestions(payload);
-      if (requestId === practiceRequestId.current && mapped.length) {
+      if (
+        requestId === practiceRequestId.current &&
+        mapped.length === test.questionCount
+      ) {
         setRunnerQuestions(mapped);
         setSessionId(payload.id == null ? null : String(payload.id));
         setApiState("online");
+      } else if (requestId === practiceRequestId.current) {
+        throw new Error("Incomplete course-test form");
       }
     } catch {
-      if (requestId === practiceRequestId.current) setApiState("offline");
+      if (requestId === practiceRequestId.current) {
+        setApiState("offline");
+        setLaunchError(
+          "This validated course-test form could not be loaded. Reconnect the FastAPI question bank and try again.",
+        );
+      }
     } finally {
       if (requestId === practiceRequestId.current) {
         setIsLoadingQuestions(false);
@@ -1276,12 +1340,13 @@ export default function Home() {
     void beginCourseTest(test);
   };
 
-  const submitExam = async () => {
+  const submitExam = async (skipConfirmation = false) => {
     if (submitBusy) return;
     const unanswered = examQuestions.filter(
       (question) => !(examAnswers[question.id]?.length > 0),
     ).length;
     if (
+      !skipConfirmation &&
       unanswered > 0 &&
       !window.confirm(
         `${unanswered} questions are unanswered. Submit the test anyway?`,
@@ -1291,6 +1356,7 @@ export default function Home() {
     }
 
     setSubmitBusy(true);
+    setLaunchError(null);
     setExamRunning(false);
     if (sessionId) {
       try {
@@ -1311,24 +1377,32 @@ export default function Home() {
               })),
           }),
         });
-        if (response.ok) {
-          const payload = (await response.json()) as Record<string, number>;
-          setServerResult({
-            score: Number(payload.score ?? 0),
-            maxScore: Number(payload.max_score ?? 100),
-            percentage: Number(payload.percentage ?? 0),
-            correct: Number(payload.correct_count ?? payload.correct ?? 0),
-            incorrect: Number(payload.incorrect_count ?? payload.incorrect ?? 0),
-            unanswered: Number(payload.unanswered_count ?? payload.unanswered ?? 0),
-          });
+        if (!response.ok) {
+          throw new Error("Unable to score test");
         }
+        const payload = (await response.json()) as Record<string, number>;
+        setServerResult({
+          score: Number(payload.score ?? 0),
+          maxScore: Number(payload.max_score ?? 100),
+          percentage: Number(payload.percentage ?? 0),
+          correct: Number(payload.correct_count ?? payload.correct ?? 0),
+          incorrect: Number(payload.incorrect_count ?? payload.incorrect ?? 0),
+          unanswered: Number(payload.unanswered_count ?? payload.unanswered ?? 0),
+        });
+        setAnalyticsRefreshKey((current) => current + 1);
       } catch {
         setApiState("offline");
+        setLaunchError(
+          "Your answers are still here, but the scoring service did not accept the submission. Reconnect and submit again.",
+        );
+        setSubmitBusy(false);
+        return;
       }
     }
     setSubmitBusy(false);
     navigate("results");
   };
+  submitExamRef.current = submitExam;
 
   const localResult = useMemo(() => {
     let score = 0;
@@ -1476,6 +1550,31 @@ export default function Home() {
     navigate("notes");
   };
 
+  const handleLibraryTabKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    const currentIndex = LIBRARY_TABS.indexOf(libraryTab);
+    let nextIndex = currentIndex;
+    if (event.key === "ArrowRight") {
+      nextIndex = (currentIndex + 1) % LIBRARY_TABS.length;
+    } else if (event.key === "ArrowLeft") {
+      nextIndex =
+        (currentIndex - 1 + LIBRARY_TABS.length) % LIBRARY_TABS.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = LIBRARY_TABS.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    const nextTab = LIBRARY_TABS[nextIndex];
+    setLibraryTab(nextTab);
+    window.requestAnimationFrame(() =>
+      document.getElementById(`library-tab-${nextTab}`)?.focus(),
+    );
+  };
+
   const renderCatalogCard = (test: CatalogTest) => {
     const durationMinutes = Math.round(test.durationSeconds / 60);
     return (
@@ -1488,7 +1587,7 @@ export default function Home() {
             {String(test.sequence).padStart(2, "0")}
           </span>
           <span className={`availability ${test.isAvailable ? "ready" : ""}`}>
-            {test.isAvailable ? "Ready" : "Building"}
+            {test.isAvailable ? "Ready" : "Connect bank"}
           </span>
         </header>
         <div>
@@ -1668,40 +1767,57 @@ export default function Home() {
             <small>
               {catalogSource === "live"
                 ? "Synced with the local question bank"
-                : "Offline catalog ready"}
+                : "Connect the question bank to launch tests"}
             </small>
           </div>
         </section>
 
         <div className="library-tabs" role="tablist" aria-label="Test library">
           <button
+            id="library-tab-full"
             role="tab"
             aria-selected={libraryTab === "full"}
+            aria-controls="library-panel-full"
+            tabIndex={libraryTab === "full" ? 0 : -1}
             className={libraryTab === "full" ? "active" : ""}
             onClick={() => setLibraryTab("full")}
+            onKeyDown={handleLibraryTabKeyDown}
           >
             Full tests <span>{fullTests.length}</span>
           </button>
           <button
+            id="library-tab-course"
             role="tab"
             aria-selected={libraryTab === "course"}
+            aria-controls="library-panel-course"
+            tabIndex={libraryTab === "course" ? 0 : -1}
             className={libraryTab === "course" ? "active" : ""}
             onClick={() => setLibraryTab("course")}
+            onKeyDown={handleLibraryTabKeyDown}
           >
             Course tests <span>{courseTotal}</span>
           </button>
           <button
+            id="library-tab-bank"
             role="tab"
             aria-selected={libraryTab === "bank"}
+            aria-controls="library-panel-bank"
+            tabIndex={libraryTab === "bank" ? 0 : -1}
             className={libraryTab === "bank" ? "active" : ""}
             onClick={() => setLibraryTab("bank")}
+            onKeyDown={handleLibraryTabKeyDown}
           >
             Question bank
           </button>
         </div>
 
         {libraryTab === "full" && (
-          <section className="library-panel" role="tabpanel">
+          <section
+            id="library-panel-full"
+            className="library-panel"
+            role="tabpanel"
+            aria-labelledby="library-tab-full"
+          >
             <div className="library-panel-heading">
               <div>
                 <span className="eyebrow">Full-length series</span>
@@ -1717,7 +1833,12 @@ export default function Home() {
         )}
 
         {libraryTab === "course" && (
-          <section className="library-panel" role="tabpanel">
+          <section
+            id="library-panel-course"
+            className="library-panel"
+            role="tabpanel"
+            aria-labelledby="library-tab-course"
+          >
             <div className="library-panel-heading course-heading">
               <div>
                 <span className="eyebrow">Course test series</span>
@@ -1764,7 +1885,12 @@ export default function Home() {
         )}
 
         {libraryTab === "bank" && (
-          <section className="library-panel bank-panel" role="tabpanel">
+          <section
+            id="library-panel-bank"
+            className="library-panel bank-panel"
+            role="tabpanel"
+            aria-labelledby="library-tab-bank"
+          >
             <div className="library-panel-heading">
               <div>
                 <span className="eyebrow">Question bank</span>
@@ -2103,7 +2229,25 @@ export default function Home() {
     }
     const question = runnerQuestions[questionIndex];
     if (!question) {
-      return <div className="page empty-state"><span className="spinner" /><h1>Preparing your set…</h1><p>Curating questions for {scopeLabel}.</p></div>;
+      return (
+        <div className="page empty-state">
+          {isLoadingQuestions ? (
+            <>
+              <span className="spinner" />
+              <h1>Preparing your set…</h1>
+              <p>Curating questions for {scopeLabel}.</p>
+            </>
+          ) : (
+            <>
+              <h1>We could not open this set.</h1>
+              <p>{launchError ?? "The question bank did not return a usable form."}</p>
+              <button className="button primary" onClick={() => navigate(returnScreen)}>
+                {returnLabel}
+              </button>
+            </>
+          )}
+        </div>
+      );
     }
     const checked = checkedQuestions.has(question.id);
     const answer = practiceAnswers[question.id] ?? [];
@@ -2130,7 +2274,10 @@ export default function Home() {
           </div>
           <span>{questionIndex + 1} / {runnerQuestions.length} · {answeredCount} answered</span>
         </div>
-        {isLoadingQuestions && <div className="loading-banner"><span className="spinner" /> Checking the live question bank…</div>}
+        {isLoadingQuestions && <div className="loading-banner" role="status"><span className="spinner" /> Checking the live question bank…</div>}
+        {!isLoadingQuestions && launchError && (
+          <div className="loading-banner warning" role="status">{launchError}</div>
+        )}
         <div className="runner-layout">
           <section className="question-card">
             <header>
@@ -2173,9 +2320,11 @@ export default function Home() {
 
   const renderMockSetup = () => {
     const setupTest =
-      activeTest.kind === "full"
+      activeTest.kind === "full" && activeTest.isAvailable
         ? activeTest
-        : fullTests[0] ?? LOCAL_FULL_TESTS[0];
+        : fullTests.find((test) => test.isAvailable) ??
+          fullTests[0] ??
+          LOCAL_FULL_TESTS[0];
     return (
       <div className="page mock-setup-page">
         <section className="mock-hero">
@@ -2197,8 +2346,13 @@ export default function Home() {
               <button
                 className="button light"
                 onClick={() => void beginMock(setupTest)}
+                disabled={!setupTest.isAvailable}
+                title={setupTest.unavailableReason}
               >
-                Begin full mock <span>→</span>
+                {setupTest.isAvailable
+                  ? "Begin full mock"
+                  : "Connect question bank"}{" "}
+                <span>→</span>
               </button>
               <button
                 className="button ghost-light"
@@ -2304,11 +2458,17 @@ export default function Home() {
               </span>
             </label>
             <div className="offline-ready">
-              <span>✓</span>
+              <span>{setupTest.isAvailable ? "✓" : "!"}</span>
               <p>
-                <strong>Offline fallback ready</strong>
+                <strong>
+                  {setupTest.isAvailable
+                    ? "Validated form ready"
+                    : "Question bank required"}
+                </strong>
                 <small>
-                  Your local mock can start even if the API is unavailable.
+                  {setupTest.isAvailable
+                    ? "The complete 65-question form is ready to launch."
+                    : "Full tests launch only after all 65 questions are validated."}
                 </small>
               </p>
             </div>
@@ -2320,11 +2480,39 @@ export default function Home() {
 
   const renderMock = () => {
     const question = examQuestions[examIndex];
+    if (!question) {
+      return (
+        <div className="page empty-state">
+          {isLoadingQuestions ? (
+            <>
+              <span className="spinner" />
+              <h1>Preparing the full test…</h1>
+              <p>Validating all {activeTest.questionCount} questions before the timer starts.</p>
+            </>
+          ) : (
+            <>
+              <h1>We could not open this test.</h1>
+              <p>{launchError ?? "The question bank did not return a complete form."}</p>
+              <button
+                className="button primary"
+                onClick={() => {
+                  setLibraryTab("full");
+                  navigate("library");
+                }}
+              >
+                Return to full tests
+              </button>
+            </>
+          )}
+        </div>
+      );
+    }
     const answered = Object.values(examAnswers).filter((answer) => answer.length).length;
     const marked = reviewed.size;
     return (
       <div className="exam-shell">
         <header className="exam-header"><div className="exam-brand"><span>G</span><div><strong>GATE CS · Full mock {String(activeTest.sequence).padStart(2, "0")}</strong><small>Official-format simulation</small></div></div><div className={`exam-clock ${examSeconds < 900 ? "warning" : ""}`}><span>Time remaining</span><strong>{formatTime(examSeconds)}</strong></div><button className="button danger" onClick={() => void submitExam()} disabled={submitBusy}>{submitBusy ? "Submitting…" : "Submit test"}</button></header>
+        {launchError && <div className="loading-banner warning" role="alert">{launchError}</div>}
         <div className="exam-body">
           <main className="exam-question">
             <div className="exam-section-bar"><div><span>{examIndex < 10 ? "General Aptitude" : "Computer Science"}</span><strong>Question {examIndex + 1} of {examQuestions.length}</strong></div><div><TypeBadge type={question.type} /><span>{question.marks} mark{question.marks > 1 ? "s" : ""}</span></div></div>
@@ -2351,12 +2539,7 @@ export default function Home() {
 
   const renderProgress = () => {
     const maxMinutes = Math.max(...weeklyActivity.map((item) => item.minutes));
-    const strongest =
-      strongTopics.length > 0
-        ? strongTopics
-        : [...analytics.topics]
-            .sort((a, b) => b.mastery - a.mastery)
-            .slice(0, 5);
+    const strongest = strongTopics;
     const priorities =
       needsPracticeTopics.length > 0
         ? needsPracticeTopics
@@ -2415,6 +2598,15 @@ export default function Home() {
               <span>{strongest.length} signals</span>
             </div>
             <div className="insight-topic-list">
+              {strongest.length === 0 && (
+                <div className="insight-empty">
+                  <strong>No strong topic yet</strong>
+                  <span>
+                    Complete at least three distinct questions in a topic to
+                    build a reliable strength signal.
+                  </span>
+                </div>
+              )}
               {strongest.map((topic) => (
                 <article key={`${topic.subjectId}-${topic.topicId}`}>
                   <span className="insight-code">{topic.subjectCode}</span>
@@ -2524,6 +2716,7 @@ export default function Home() {
               {filteredAnalyticsTopics.slice(0, 12).map((topic) => (
                 <button
                   key={`${topic.subjectId}-${topic.topicId}`}
+                  aria-label={`${topic.subjectCode} ${topic.topicName}: ${topic.accuracy}% accuracy, ${topic.uniqueAttempted} unique questions attempted, ${topic.coverage}% coverage, status ${topic.status.replace("_", " ")}. Start practice.`}
                   onClick={() => openAnalyticsTopic(topic, "practice")}
                 >
                   <span>

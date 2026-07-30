@@ -1847,6 +1847,12 @@ select:focus-visible {
   font-size: 10px;
 }
 
+.loading-banner.warning {
+  border-color: color-mix(in srgb, var(--orange) 34%, var(--line));
+  color: var(--ink-soft);
+  background: var(--orange-pale);
+}
+
 .spinner {
   width: 14px;
   height: 14px;
@@ -3376,7 +3382,7 @@ select:focus-visible {
 .library-summary span {
   margin-top: 6px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3388,7 +3394,7 @@ select:focus-visible {
   padding-top: 12px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   text-align: center;
 }
 
@@ -3412,7 +3418,7 @@ select:focus-visible {
   border-radius: 9px;
   color: var(--muted);
   background: transparent;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -3433,7 +3439,7 @@ select:focus-visible {
   place-items: center;
   border: 1px solid currentColor;
   border-radius: 7px;
-  font-size: 8px;
+  font-size: 10px;
   opacity: 0.72;
 }
 
@@ -3463,7 +3469,7 @@ select:focus-visible {
 .library-panel-heading p {
   margin: 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .series-note {
@@ -3472,7 +3478,7 @@ select:focus-visible {
   border-radius: 999px;
   color: var(--muted);
   background: var(--surface-soft);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -3525,7 +3531,7 @@ select:focus-visible {
   border-radius: 999px;
   color: var(--muted);
   background: var(--surface-strong);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -3538,7 +3544,7 @@ select:focus-visible {
 
 .catalog-kicker {
   color: var(--orange);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3556,7 +3562,7 @@ select:focus-visible {
   min-height: 34px;
   margin: 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.65;
 }
 
@@ -3584,7 +3590,7 @@ select:focus-visible {
 
 .catalog-facts dt {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3609,7 +3615,7 @@ select:focus-visible {
   color: var(--muted);
   background: var(--surface);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 700;
   text-align: center;
 }
@@ -3624,7 +3630,7 @@ select:focus-visible {
 .catalog-select > span,
 .bank-filters label > span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3639,7 +3645,7 @@ select:focus-visible {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--surface-soft);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .topic-coverage-line {
@@ -3656,7 +3662,7 @@ select:focus-visible {
 .topic-coverage-line strong {
   padding-top: 5px;
   color: var(--green);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .topic-coverage-line > div {
@@ -3671,7 +3677,7 @@ select:focus-visible {
   border-radius: 7px;
   color: var(--ink-soft);
   background: color-mix(in srgb, var(--surface) 68%, transparent);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .bank-filters {
@@ -3720,7 +3726,7 @@ select:focus-visible {
   color: var(--green);
   background: var(--green-pale);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
 }
 
@@ -3737,7 +3743,7 @@ select:focus-visible {
 
 .bank-question-copy > div > span:not(.type-badge) {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .bank-question-copy > div > span:not(.type-badge) + span:not(.type-badge) {
@@ -3777,7 +3783,7 @@ select:focus-visible {
 
 .bank-empty span {
   margin-top: 5px;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .mock-hero-actions {
@@ -3807,7 +3813,7 @@ select:focus-visible {
   border-radius: 999px;
   color: var(--muted);
   background: var(--surface);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -3867,13 +3873,36 @@ select:focus-visible {
 
 .strength-heading > span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   text-transform: uppercase;
 }
 
 .insight-topic-list {
   display: grid;
+}
+
+.insight-empty {
+  display: flex;
+  min-height: 118px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 4px;
+  border-top: 1px solid var(--line);
+}
+
+.insight-empty strong {
+  font-family: Georgia, serif;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.insight-empty span {
+  max-width: 390px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
 }
 
 .insight-topic-list article {
@@ -3893,7 +3922,7 @@ select:focus-visible {
   border-radius: 9px;
   color: var(--green);
   background: var(--green-pale);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 850;
 }
 
@@ -3908,7 +3937,7 @@ select:focus-visible {
 
 .insight-copy > span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -3917,7 +3946,7 @@ select:focus-visible {
 .insight-copy h3 {
   margin: 2px 0 7px;
   overflow: hidden;
-  font-size: 11px;
+  font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -3930,7 +3959,7 @@ select:focus-visible {
 
 .evidence-row span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 10px;
 }
 
 .evidence-row strong {
@@ -3943,7 +3972,7 @@ select:focus-visible {
   border-radius: 8px;
   color: var(--green);
   background: transparent;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
 }
 
@@ -3989,7 +4018,7 @@ select:focus-visible {
   border: 1px solid var(--line);
   border-radius: 9px;
   background: var(--surface-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .evidence-table {
@@ -4009,7 +4038,7 @@ select:focus-visible {
   min-height: 32px;
   padding: 0 9px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -4038,21 +4067,21 @@ select:focus-visible {
 
 .evidence-table > button i {
   color: var(--green);
-  font-size: 7px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 850;
 }
 
 .evidence-table > button strong {
   overflow: hidden;
-  font-size: 9px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .evidence-table > button b {
   color: var(--ink-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .evidence-table > button em {
@@ -4061,7 +4090,7 @@ select:focus-visible {
   border-radius: 6px;
   color: var(--muted);
   background: var(--surface-strong);
-  font-size: 7px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 750;
   text-transform: capitalize;
