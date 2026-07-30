@@ -53,8 +53,11 @@ class BankQuestion(BaseModel):
     source_year: int | None = Field(default=None, ge=1987, le=2100)
     source_paper: str | None = None
     source_question_number: int | None = Field(default=None, ge=1)
+    source_page: int | None = Field(default=None, ge=1)
     source_url: str | None = None
     answer_key_url: str | None = None
+    extraction_method: str | None = Field(default=None, max_length=80)
+    extraction_confidence: float | None = Field(default=None, ge=0, le=1)
     exam_session: str | None = None
     tags: list[str] = Field(default_factory=list)
 
@@ -86,7 +89,15 @@ class ImportResult:
     inserted_count: int
     updated_count: int
     unchanged_count: int
+    retired_count: int
     already_applied: bool
+
+
+@dataclass(frozen=True, slots=True)
+class _PreparedQuestion:
+    index: int
+    values: dict[str, Any]
+    provenance: tuple[QuestionSource, int, str, int] | None
 
 
 class QuestionBankValidationError(ValueError):
@@ -322,8 +333,13 @@ def _question_values(
         "source_year": item.source_year,
         "source_paper": item.source_paper,
         "source_question_number": item.source_question_number,
+        "source_page": item.source_page,
         "source_url": item.source_url,
         "answer_key_url": item.answer_key_url,
+        "extraction_method": (
+            item.extraction_method.strip() if item.extraction_method else None
+        ),
+        "extraction_confidence": item.extraction_confidence,
         "question_type": question_type,
         "difficulty": _difficulty(item.difficulty),
         "text": text,
@@ -372,6 +388,91 @@ def _topic_lookup(subjects: list[Subject]) -> dict[tuple[int, str], Topic]:
     return lookup
 
 
+def _resolve_scope(
+    item: BankQuestion,
+    *,
+    index: int,
+    subjects_by_key: dict[str, Subject],
+    topics_by_key: dict[tuple[int, str], Topic],
+) -> tuple[Subject, Topic]:
+    subject_refs = [
+        (field, value)
+        for field, value in (
+            ("course", item.course),
+            ("subject_slug", item.subject_slug),
+        )
+        if value
+    ]
+    resolved_subjects: list[tuple[str, str, Subject]] = []
+    for field, value in subject_refs:
+        subject = subjects_by_key.get(_slugify(value))
+        if subject is None:
+            raise QuestionBankValidationError(
+                f"Question {index}: {field} {value!r} is outside the syllabus"
+            )
+        resolved_subjects.append((field, value, subject))
+    subject_ids = {subject.id for _, _, subject in resolved_subjects}
+    if len(subject_ids) != 1:
+        descriptions = ", ".join(
+            f"{field}={value!r}" for field, value, _ in resolved_subjects
+        )
+        raise QuestionBankValidationError(
+            f"Question {index}: conflicting course references ({descriptions})"
+        )
+    subject = resolved_subjects[0][2]
+
+    topic_refs = [
+        (field, value)
+        for field, value in (
+            ("topic", item.topic),
+            ("topic_slug", item.topic_slug),
+        )
+        if value
+    ]
+    resolved_topics: list[tuple[str, str, Topic]] = []
+    for field, value in topic_refs:
+        topic = topics_by_key.get((subject.id, _slugify(value)))
+        if topic is None:
+            raise QuestionBankValidationError(
+                f"Question {index}: {field} {value!r} is not in {subject.code}"
+            )
+        resolved_topics.append((field, value, topic))
+    topic_ids = {topic.id for _, _, topic in resolved_topics}
+    if len(topic_ids) != 1:
+        descriptions = ", ".join(
+            f"{field}={value!r}" for field, value, _ in resolved_topics
+        )
+        raise QuestionBankValidationError(
+            f"Question {index}: conflicting topic references ({descriptions})"
+        )
+    return subject, resolved_topics[0][2]
+
+
+def _provenance(
+    values: dict[str, Any],
+    *,
+    index: int,
+) -> tuple[QuestionSource, int, str, int] | None:
+    if values["source_kind"] != QuestionSource.PREVIOUS_YEAR:
+        return None
+    parts = (
+        values["source_year"],
+        values["source_paper"],
+        values["source_question_number"],
+    )
+    if not all(part is not None and part != "" for part in parts):
+        raise QuestionBankValidationError(
+            f"Question {index}: previous-year questions require source_year, "
+            "source_paper and source_question_number"
+        )
+    return (
+        QuestionSource.PREVIOUS_YEAR,
+        int(values["source_year"]),
+        str(values["source_paper"]).strip(),
+        int(values["source_question_number"]),
+    )
+
+
 async def import_question_bank(
     session: AsyncSession,
     path: Path,
@@ -391,13 +492,16 @@ async def import_question_bank(
             inserted_count=0,
             updated_count=0,
             unchanged_count=existing_import.question_count,
+            retired_count=0,
             already_applied=True,
         )
 
     subjects = list(
         (
             await session.scalars(
-                select(Subject).options(selectinload(Subject.topics))
+                select(Subject).options(
+                    selectinload(Subject.topics).selectinload(Topic.note)
+                )
             )
         ).all()
     )
@@ -412,29 +516,32 @@ async def import_question_bank(
     by_provenance = {
         (
             question.source_kind,
-            question.source_year,
-            question.source_paper,
+            int(question.source_year),
+            str(question.source_paper).strip(),
             question.source_question_number,
         ): question
         for question in existing_questions
-        if question.source_paper and question.source_question_number
+        if (
+            question.source_kind == QuestionSource.PREVIOUS_YEAR
+            and question.source_year
+            and question.source_paper
+            and question.source_question_number
+        )
     }
 
-    inserted = updated = unchanged = 0
+    # Resolve and normalize the complete document before attaching or changing
+    # any ORM object. A bad row must never leave a partially-applied bank in the
+    # caller's transaction.
+    prepared: list[_PreparedQuestion] = []
     seen_external_ids: set[str] = set()
+    seen_provenance: set[tuple[QuestionSource, int, str, int]] = set()
     for index, item in enumerate(document.questions, start=1):
-        subject_ref = item.course or item.subject_slug or ""
-        subject = subjects_by_key.get(_slugify(subject_ref))
-        if subject is None:
-            raise QuestionBankValidationError(
-                f"Question {index}: course {subject_ref!r} is outside the syllabus"
-            )
-        topic_ref = item.topic or item.topic_slug or ""
-        topic = topics_by_key.get((subject.id, _slugify(topic_ref)))
-        if topic is None:
-            raise QuestionBankValidationError(
-                f"Question {index}: topic {topic_ref!r} is not in {subject.code}"
-            )
+        subject, topic = _resolve_scope(
+            item,
+            index=index,
+            subjects_by_key=subjects_by_key,
+            topics_by_key=topics_by_key,
+        )
         try:
             values = _question_values(
                 item,
@@ -450,21 +557,51 @@ async def import_question_bank(
                 f"Question {index}: duplicate external_id {external_id!r}"
             )
         seen_external_ids.add(external_id)
-
-        question = by_external_id.get(external_id)
-        if question is None and values["source_kind"] == QuestionSource.PREVIOUS_YEAR:
-            question = by_provenance.get(
-                (
-                    values["source_kind"],
-                    values["source_year"],
-                    values["source_paper"],
-                    values["source_question_number"],
+        provenance = _provenance(values, index=index)
+        if provenance is not None:
+            if provenance in seen_provenance:
+                _, source_year, source_paper, question_number = provenance
+                raise QuestionBankValidationError(
+                    f"Question {index}: duplicate provenance "
+                    f"{source_year}/{source_paper}/Q{question_number}"
                 )
+            seen_provenance.add(provenance)
+        prepared.append(
+            _PreparedQuestion(
+                index=index,
+                values=values,
+                provenance=provenance,
             )
+        )
+
+    targets: list[tuple[_PreparedQuestion, Question | None]] = []
+    for item in prepared:
+        values = item.values
+        question = by_external_id.get(values["external_id"])
+        provenance_match = (
+            by_provenance.get(item.provenance) if item.provenance is not None else None
+        )
+        if (
+            question is not None
+            and provenance_match is not None
+            and question.id != provenance_match.id
+        ):
+            raise QuestionBankValidationError(
+                f"Question {item.index}: external_id {values['external_id']!r} "
+                "and provenance identify different existing questions"
+            )
+        if question is None:
+            question = provenance_match
+        targets.append((item, question))
+
+    inserted = updated = unchanged = retired = 0
+    for item, question in targets:
+        values = item.values
+        values["is_active"] = True
         if question is None:
             question = Question(**values)
             session.add(question)
-            by_external_id[external_id] = question
+            by_external_id[values["external_id"]] = question
             inserted += 1
             continue
 
@@ -476,6 +613,46 @@ async def import_question_bank(
         else:
             unchanged += 1
 
+    # The document is authoritative for importer-managed rows. Omitted rows are
+    # retired, not deleted, preserving foreign keys and historical attempts.
+    for question in existing_questions:
+        if (
+            question.bank_version is not None
+            and question.is_active
+            and question.external_id not in seen_external_ids
+        ):
+            question.is_active = False
+            retired += 1
+
+    # Revision examples are derived deterministically from the authoritative
+    # original bank while retaining every note's topic-specific prose and key
+    # points. Topics without three suitable originals keep their existing set.
+    examples_by_topic: dict[int, list[dict[str, str]]] = {}
+    for item in sorted(
+        prepared,
+        key=lambda prepared_item: str(prepared_item.values["external_id"]),
+    ):
+        values = item.values
+        if values["source_kind"] != QuestionSource.ORIGINAL:
+            continue
+        examples = examples_by_topic.setdefault(values["topic_id"], [])
+        if len(examples) < 3 and values["explanation"]:
+            examples.append(
+                {
+                    "question": values["text"],
+                    "solution": values["explanation"],
+                }
+            )
+    topics_by_id = {
+        topic.id: topic
+        for subject in subjects
+        for topic in subject.topics
+    }
+    for topic_id, examples in examples_by_topic.items():
+        topic = topics_by_id.get(topic_id)
+        if topic is not None and topic.note is not None and len(examples) >= 3:
+            topic.note.worked_examples = examples[:3]
+
     session.add(
         QuestionBankImport(
             schema_version=document.schema_version,
@@ -486,6 +663,7 @@ async def import_question_bank(
             inserted_count=inserted,
             updated_count=updated,
             unchanged_count=unchanged,
+            retired_count=retired,
         )
     )
     await session.commit()
@@ -496,6 +674,6 @@ async def import_question_bank(
         inserted_count=inserted,
         updated_count=updated,
         unchanged_count=unchanged,
+        retired_count=retired,
         already_applied=False,
     )
-

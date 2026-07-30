@@ -3,13 +3,14 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
 from app.api import router as api_router
-from app.config import settings
+from app.config import DEFAULT_ANONYMOUS_IDENTITY_SECRET, settings
 from app.database import AsyncSessionFactory, close_database, create_database_schema
+from app.identity import issue_identity, verify_identity
 from app.question_bank import import_question_bank, resolve_question_bank_path
 from app.schemas import HealthResponse
 from app.seed import seed_database
@@ -18,6 +19,13 @@ from app.test_catalog import rebuild_test_catalog
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    if (
+        settings.environment.lower() == "production"
+        and settings.anonymous_identity_secret == DEFAULT_ANONYMOUS_IDENTITY_SECRET
+    ):
+        raise RuntimeError(
+            "ANONYMOUS_IDENTITY_SECRET must be changed in production"
+        )
     if settings.auto_create_db:
         await create_database_schema()
     async with AsyncSessionFactory() as session:
@@ -52,6 +60,31 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def bind_anonymous_identity(request: Request, call_next):
+    if not request.url.path.startswith(settings.api_v1_prefix):
+        return await call_next(request)
+    identity = verify_identity(request.cookies.get(settings.identity_cookie_name))
+    new_token: str | None = None
+    if identity is None:
+        identity, new_token = issue_identity()
+    request.state.user_key = identity
+    response = await call_next(request)
+    if new_token is not None:
+        response.set_cookie(
+            key=settings.identity_cookie_name,
+            value=new_token,
+            httponly=True,
+            secure=settings.secure_identity_cookie,
+            samesite="lax",
+            max_age=60 * 60 * 24 * 365,
+            path="/",
+        )
+    return response
+
+
 app.include_router(api_router, prefix=settings.api_v1_prefix)
 
 

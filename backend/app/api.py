@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -11,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.database import get_db
+from app.identity import current_user_key
 from app.models import (
     Attempt,
     AttemptResponse,
@@ -83,8 +85,11 @@ def _question_public(question: Question) -> QuestionPublic:
         source_year=question.source_year,
         source_paper=question.source_paper,
         source_question_number=question.source_question_number,
+        source_page=question.source_page,
         source_url=question.source_url,
         answer_key_url=question.answer_key_url,
+        extraction_method=question.extraction_method,
+        extraction_confidence=question.extraction_confidence,
         question_type=question.question_type,
         difficulty=question.difficulty,
         text=question.text,
@@ -97,6 +102,30 @@ def _question_public(question: Question) -> QuestionPublic:
         marks=question.marks,
         tags=question.tags,
     )
+
+
+def _question_snapshot(question: Question) -> dict[str, Any]:
+    snapshot = _question_public(question).model_dump(mode="json")
+    snapshot["correct_answer"] = question.correct_answer
+    snapshot["explanation"] = question.explanation
+    return snapshot
+
+
+def _snapshot_question(snapshot: dict[str, Any]) -> SimpleNamespace:
+    return SimpleNamespace(
+        id=int(snapshot["id"]),
+        question_type=QuestionType(snapshot["question_type"]),
+        correct_answer=snapshot["correct_answer"],
+        numerical_tolerance=float(snapshot.get("numerical_tolerance") or 0.01),
+        marks=int(snapshot["marks"]),
+    )
+
+
+def _snapshots_by_id(session: PracticeSession) -> dict[int, dict[str, Any]]:
+    return {
+        int(snapshot["id"]): snapshot
+        for snapshot in (session.question_snapshots or [])
+    }
 
 
 async def _resolve_subject(
@@ -132,7 +161,14 @@ async def _load_questions(db: AsyncSession, question_ids: list[int]) -> list[Que
 
 
 async def _session_read(db: AsyncSession, session: PracticeSession) -> SessionRead:
-    questions = await _load_questions(db, session.question_ids)
+    if session.question_snapshots:
+        public_questions = [
+            QuestionPublic.model_validate(snapshot)
+            for snapshot in session.question_snapshots
+        ]
+    else:
+        questions = await _load_questions(db, session.question_ids)
+        public_questions = [_question_public(question) for question in questions]
     return SessionRead(
         id=session.id,
         user_key=session.user_key,
@@ -147,7 +183,7 @@ async def _session_read(db: AsyncSession, session: PracticeSession) -> SessionRe
         started_at=session.started_at,
         expires_at=session.expires_at,
         is_submitted=session.is_submitted,
-        questions=[_question_public(question) for question in questions],
+        questions=public_questions,
     )
 
 
@@ -161,7 +197,7 @@ async def list_subjects(db: AsyncSession = Depends(get_db)) -> list[SubjectSumma
     )
     question_count = (
         select(func.count(Question.id))
-        .where(Question.subject_id == Subject.id)
+        .where(Question.subject_id == Subject.id, Question.is_active.is_(True))
         .correlate(Subject)
         .scalar_subquery()
     )
@@ -208,7 +244,7 @@ async def get_subject(
             name=topic.name,
             description=topic.description,
             order_index=topic.order_index,
-            question_count=len(topic.questions),
+            question_count=sum(question.is_active for question in topic.questions),
             note_available=topic.note is not None,
         )
         for topic in subject.topics
@@ -242,7 +278,7 @@ async def get_topic(topic_id: int, db: AsyncSession = Depends(get_db)) -> TopicS
         name=topic.name,
         description=topic.description,
         order_index=topic.order_index,
-        question_count=len(topic.questions),
+        question_count=sum(question.is_active for question in topic.questions),
         note_available=topic.note is not None,
     )
 
@@ -287,7 +323,7 @@ async def list_questions(
     offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
 ) -> QuestionListResponse:
-    conditions: list[Any] = []
+    conditions: list[Any] = [Question.is_active.is_(True)]
     if subject_id is not None:
         conditions.append(Question.subject_id == subject_id)
     if subject_slug is not None:
@@ -338,7 +374,12 @@ async def question_bank_status(
         .order_by(QuestionBankImport.imported_at.desc(), QuestionBankImport.id.desc())
         .limit(1)
     )
-    total_questions = await db.scalar(select(func.count(Question.id))) or 0
+    total_questions = (
+        await db.scalar(
+            select(func.count(Question.id)).where(Question.is_active.is_(True))
+        )
+        or 0
+    )
     return QuestionBankStatus(
         configured_path=str(resolve_question_bank_path(settings.question_bank_path)),
         total_questions=total_questions,
@@ -354,7 +395,7 @@ async def get_question(
 ) -> QuestionPublic:
     question = await db.scalar(
         select(Question)
-        .where(Question.id == question_id)
+        .where(Question.id == question_id, Question.is_active.is_(True))
         .options(selectinload(Question.subject), selectinload(Question.topic))
     )
     if question is None:
@@ -369,9 +410,11 @@ async def get_question(
     tags=["Practice and Tests"],
 )
 async def create_practice_session(
-    payload: PracticeSessionCreate, db: AsyncSession = Depends(get_db)
+    payload: PracticeSessionCreate,
+    db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> SessionRead:
-    conditions: list[Any] = []
+    conditions: list[Any] = [Question.is_active.is_(True)]
     subject: Subject | None = None
     if payload.subject_id is not None or payload.subject_slug is not None:
         subject = await _resolve_subject(
@@ -397,7 +440,12 @@ async def create_practice_session(
         conditions.append(Question.source == payload.source)
 
     questions = (
-        await db.scalars(select(Question).where(*conditions).order_by(Question.id))
+        await db.scalars(
+            select(Question)
+            .where(*conditions)
+            .options(selectinload(Question.subject), selectinload(Question.topic))
+            .order_by(Question.id)
+        )
     ).all()
     if not questions:
         raise HTTPException(status_code=404, detail="No questions match these filters")
@@ -406,11 +454,12 @@ async def create_practice_session(
     selected = list(questions[: payload.count])
 
     session = PracticeSession(
-        user_key=payload.user_key,
+        user_key=user_key,
         mode=SessionMode.PRACTICE,
         subject_id=subject.id if subject else None,
         topic_id=payload.topic_id,
         question_ids=[question.id for question in selected],
+        question_snapshots=[_question_snapshot(question) for question in selected],
         question_count=len(selected),
         duration_seconds=None,
         total_marks=sum(question.marks for question in selected),
@@ -496,6 +545,7 @@ async def create_catalog_test_session(
     catalog_id: str,
     payload: CatalogSessionCreate,
     db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> SessionRead:
     form = await db.get(TestForm, catalog_id)
     if form is None:
@@ -506,19 +556,32 @@ async def create_catalog_test_session(
             detail=form.unavailable_reason or "Catalog test is not available",
         )
     questions = await _load_questions(db, form.question_ids)
-    if len(questions) != form.question_count:
+    latest_bank_version = await db.scalar(
+        select(QuestionBankImport.bank_version)
+        .order_by(QuestionBankImport.imported_at.desc(), QuestionBankImport.id.desc())
+        .limit(1)
+    )
+    if (
+        len(questions) != form.question_count
+        or any(not question.is_active for question in questions)
+        or (
+            latest_bank_version is not None
+            and form.bank_version != latest_bank_version
+        )
+    ):
         raise HTTPException(
             status_code=409,
             detail="Catalog test is stale; rebuild the catalog from the current bank",
         )
     started_at = utc_now()
     session = PracticeSession(
-        user_key=payload.user_key,
+        user_key=user_key,
         catalog_id=form.id,
         mode=form.mode,
         subject_id=form.subject_id,
         topic_id=None,
         question_ids=list(form.question_ids),
+        question_snapshots=[_question_snapshot(question) for question in questions],
         question_count=form.question_count,
         duration_seconds=form.duration_seconds,
         total_marks=form.total_marks,
@@ -539,7 +602,9 @@ async def create_catalog_test_session(
     tags=["Practice and Tests"],
 )
 async def create_test(
-    payload: TestCreate, db: AsyncSession = Depends(get_db)
+    payload: TestCreate,
+    db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> SessionRead:
     rng = random.Random(payload.seed)
     subject: Subject | None = None
@@ -548,7 +613,9 @@ async def create_test(
         all_questions = (
             await db.scalars(
                 select(Question)
+                .where(Question.is_active.is_(True))
                 .options(selectinload(Question.subject))
+                .options(selectinload(Question.topic))
                 .order_by(Question.id)
             )
         ).all()
@@ -594,7 +661,14 @@ async def create_test(
         available = (
             await db.scalars(
                 select(Question)
-                .where(Question.subject_id == subject.id)
+                .where(
+                    Question.subject_id == subject.id,
+                    Question.is_active.is_(True),
+                )
+                .options(
+                    selectinload(Question.subject),
+                    selectinload(Question.topic),
+                )
                 .order_by(Question.id)
             )
         ).all()
@@ -610,11 +684,12 @@ async def create_test(
 
     started_at = utc_now()
     session = PracticeSession(
-        user_key=payload.user_key,
+        user_key=user_key,
         mode=mode,
         subject_id=subject.id if subject else None,
         topic_id=None,
         question_ids=[question.id for question in selected],
+        question_snapshots=[_question_snapshot(question) for question in selected],
         question_count=len(selected),
         duration_seconds=duration_minutes * 60,
         total_marks=sum(question.marks for question in selected),
@@ -630,25 +705,41 @@ async def create_test(
 
 @router.get("/sessions/{session_id}", response_model=SessionRead, tags=["Practice and Tests"])
 async def get_session(
-    session_id: str, db: AsyncSession = Depends(get_db)
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> SessionRead:
     session = await db.get(PracticeSession, session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
+    if session.user_key != user_key:
+        raise HTTPException(status_code=404, detail="Session not found")
     return await _session_read(db, session)
 
 
-def _attempt_result(attempt: Attempt, questions: dict[int, Question]) -> AttemptResult:
+def _attempt_result(
+    attempt: Attempt,
+    questions: dict[int, Question] | None = None,
+) -> AttemptResult:
+    questions = questions or {}
     results = [
         QuestionResult(
             question_id=response.question_id,
             answer=response.answer,
-            correct_answer=questions[response.question_id].correct_answer,
+            correct_answer=(
+                response.correct_answer_snapshot
+                if response.correct_answer_snapshot is not None
+                else questions[response.question_id].correct_answer
+            ),
             status=response.status,
             awarded_marks=response.awarded_marks,
             max_marks=response.max_marks,
             negative_marks=response.negative_marks,
-            explanation=questions[response.question_id].explanation,
+            explanation=(
+                response.explanation_snapshot
+                if response.explanation_snapshot is not None
+                else questions[response.question_id].explanation
+            ),
         )
         for response in attempt.responses
     ]
@@ -676,13 +767,15 @@ def _attempt_result(attempt: Attempt, questions: dict[int, Question]) -> Attempt
     tags=["Attempts and Progress"],
 )
 async def submit_attempt(
-    payload: AttemptSubmit, db: AsyncSession = Depends(get_db)
+    payload: AttemptSubmit,
+    db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> AttemptResult:
     session = await db.get(PracticeSession, payload.session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
-    if session.user_key != payload.user_key:
-        raise HTTPException(status_code=403, detail="Session belongs to a different user")
+    if session.user_key != user_key:
+        raise HTTPException(status_code=404, detail="Session not found")
     if session.is_submitted:
         raise HTTPException(status_code=409, detail="Session has already been submitted")
 
@@ -699,15 +792,20 @@ async def submit_attempt(
     if len(questions) != len(session.question_ids):
         raise HTTPException(status_code=409, detail="One or more session questions no longer exist")
 
-    now = utc_now()
-    timed_out = bool(session.expires_at and now > _aware(session.expires_at))
+    now = _aware(utc_now())
+    timed_out = bool(session.expires_at and now >= _aware(session.expires_at))
+    snapshots = _snapshots_by_id(session)
     response_models: list[AttemptResponse] = []
     correct = incorrect = unanswered = 0
 
     for question_id in session.question_ids:
         question = questions[question_id]
-        answer = answer_by_id.get(question_id)
-        result = score_question(question, answer)
+        snapshot = snapshots.get(question_id) or _question_snapshot(question)
+        grading_question = _snapshot_question(snapshot)
+        # Answers arriving at or after the deadline are deliberately discarded:
+        # a late network request cannot turn an expired session into a score.
+        answer = None if timed_out else answer_by_id.get(question_id)
+        result = score_question(grading_question, answer)
         if result.status == ResponseStatus.CORRECT:
             correct += 1
         elif result.status == ResponseStatus.INCORRECT:
@@ -718,16 +816,18 @@ async def submit_attempt(
             AttemptResponse(
                 question_id=question.id,
                 answer=answer,
+                correct_answer_snapshot=snapshot["correct_answer"],
+                explanation_snapshot=str(snapshot.get("explanation") or ""),
                 status=result.status,
                 awarded_marks=result.awarded_marks,
-                max_marks=float(question.marks),
+                max_marks=float(grading_question.marks),
                 negative_marks=result.negative_marks,
             )
         )
 
     attempt = Attempt(
         session=session,
-        user_key=payload.user_key,
+        user_key=user_key,
         submitted_at=now,
         timed_out=timed_out,
         score=round(sum(item.awarded_marks for item in response_models), 6),
@@ -752,7 +852,9 @@ async def submit_attempt(
 
 @router.get("/attempts/{attempt_id}", response_model=AttemptResult, tags=["Attempts and Progress"])
 async def get_attempt(
-    attempt_id: str, db: AsyncSession = Depends(get_db)
+    attempt_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> AttemptResult:
     attempt = await db.scalar(
         select(Attempt)
@@ -767,6 +869,8 @@ async def get_attempt(
         )
     )
     if attempt is None:
+        raise HTTPException(status_code=404, detail="Attempt not found")
+    if attempt.user_key != user_key:
         raise HTTPException(status_code=404, detail="Attempt not found")
     questions = {response.question_id: response.question for response in attempt.responses}
     return _attempt_result(attempt, questions)
@@ -795,8 +899,8 @@ async def _attempts_for_user(db: AsyncSession, user_key: str) -> list[Attempt]:
 
 @router.get("/progress/dashboard", response_model=ProgressDashboard, tags=["Attempts and Progress"])
 async def progress_dashboard(
-    user_key: str = Query(default="local-user", min_length=1, max_length=100),
     db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> ProgressDashboard:
     subjects = list((await db.scalars(select(Subject).order_by(Subject.order_index))).all())
     attempts = await _attempts_for_user(db, user_key)
@@ -929,8 +1033,8 @@ def _mastery_score(
     tags=["Attempts and Progress"],
 )
 async def progress_analytics(
-    user_key: str = Query(default="local-user", min_length=1, max_length=100),
     db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> AnalyticsDashboard:
     subjects = list(
         (
@@ -944,9 +1048,9 @@ async def progress_analytics(
     topic_question_counts = dict(
         (
             await db.execute(
-                select(Question.topic_id, func.count(Question.id)).group_by(
-                    Question.topic_id
-                )
+                select(Question.topic_id, func.count(Question.id))
+                .where(Question.is_active.is_(True))
+                .group_by(Question.topic_id)
             )
         ).all()
     )
@@ -965,23 +1069,37 @@ async def progress_analytics(
     for subject in subjects:
         for topic in subject.topics:
             response_rows = topic_responses[topic.id]
+            latest_answered_by_question: dict[
+                int, tuple[AttemptResponse, datetime]
+            ] = {}
+            for response, submitted_at in response_rows:
+                if (
+                    response.status != ResponseStatus.UNANSWERED
+                    and response.question.is_active
+                    and response.question_id not in latest_answered_by_question
+                ):
+                    # Attempts arrive newest-first. Only the latest answered
+                    # response for each active question is mastery evidence.
+                    latest_answered_by_question[response.question_id] = (
+                        response,
+                        submitted_at,
+                    )
+            answered_rows = list(latest_answered_by_question.values())
             correct_count = sum(
                 response.status == ResponseStatus.CORRECT
-                for response, _ in response_rows
+                for response, _ in answered_rows
             )
             incorrect_count = sum(
                 response.status == ResponseStatus.INCORRECT
-                for response, _ in response_rows
+                for response, _ in answered_rows
             )
             unanswered_count = sum(
                 response.status == ResponseStatus.UNANSWERED
                 for response, _ in response_rows
             )
-            answered_count = correct_count + incorrect_count
+            answered_count = len(answered_rows)
             available_questions = topic_question_counts.get(topic.id, 0)
-            unique_questions = len(
-                {response.question_id for response, _ in response_rows}
-            )
+            unique_questions = answered_count
             accuracy = (
                 correct_count / answered_count if answered_count else 0.0
             )
@@ -993,7 +1111,7 @@ async def progress_analytics(
             recency_accuracy = _weighted_accuracy(
                 [
                     (response.status, submitted_at)
-                    for response, submitted_at in response_rows
+                    for response, submitted_at in answered_rows
                 ],
                 now=now,
             )
@@ -1004,7 +1122,7 @@ async def progress_analytics(
                 coverage=coverage,
                 volume_target=10,
             )
-            if not response_rows:
+            if not answered_rows:
                 classification = "unattempted"
             elif (
                 answered_count >= 5
@@ -1046,8 +1164,8 @@ async def progress_analytics(
                     mastery_score=round(mastery, 2),
                     status=classification,
                     last_attempted_at=(
-                        max(_aware(submitted_at) for _, submitted_at in response_rows)
-                        if response_rows
+                        max(_aware(submitted_at) for _, submitted_at in answered_rows)
+                        if answered_rows
                         else None
                     ),
                 )
@@ -1058,17 +1176,26 @@ async def progress_analytics(
         for attempt in attempts
         for response in attempt.responses
     ]
-    answered_responses = [
-        (response, submitted_at)
-        for response, submitted_at in all_responses
-        if response.status != ResponseStatus.UNANSWERED
-    ]
+    latest_answered_by_question: dict[
+        int, tuple[AttemptResponse, datetime]
+    ] = {}
+    for response, submitted_at in all_responses:
+        if (
+            response.status != ResponseStatus.UNANSWERED
+            and response.question.is_active
+            and response.question_id not in latest_answered_by_question
+        ):
+            latest_answered_by_question[response.question_id] = (
+                response,
+                submitted_at,
+            )
+    answered_responses = list(latest_answered_by_question.values())
     correct_responses = sum(
         response.status == ResponseStatus.CORRECT
         for response, _ in answered_responses
     )
     available_questions = sum(topic_question_counts.values())
-    unique_questions = len({response.question_id for response, _ in all_responses})
+    unique_questions = len(answered_responses)
     overall_accuracy = (
         correct_responses / len(answered_responses) if answered_responses else 0.0
     )
@@ -1125,8 +1252,8 @@ async def progress_analytics(
 
 @router.get("/roadmap", response_model=RoadmapResponse, tags=["Curriculum"])
 async def roadmap(
-    user_key: str = Query(default="local-user", min_length=1, max_length=100),
     db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
 ) -> RoadmapResponse:
     subjects = list(
         (
@@ -1161,7 +1288,7 @@ async def roadmap(
                 id=topic.id,
                 slug=topic.slug,
                 name=topic.name,
-                question_count=len(topic.questions),
+                question_count=sum(question.is_active for question in topic.questions),
                 note_available=topic.note is not None,
                 attempted_questions=len(topic_stats[topic.id]),
                 accuracy=accuracy(topic_stats[topic.id]),

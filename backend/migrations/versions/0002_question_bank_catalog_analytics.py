@@ -30,6 +30,10 @@ def _indexes(table_name: str) -> set[str]:
     }
 
 
+def _foreign_keys(table_name: str) -> list[dict[str, object]]:
+    return list(sa.inspect(op.get_bind()).get_foreign_keys(table_name))
+
+
 def upgrade() -> None:
     inspector = sa.inspect(op.get_bind())
     tables = set(inspector.get_table_names())
@@ -176,12 +180,24 @@ def upgrade() -> None:
 def downgrade() -> None:
     tables = set(sa.inspect(op.get_bind()).get_table_names())
     if "practice_sessions" in tables and "catalog_id" in _columns("practice_sessions"):
+        catalog_foreign_keys = [
+            foreign_key
+            for foreign_key in _foreign_keys("practice_sessions")
+            if foreign_key.get("constrained_columns") == ["catalog_id"]
+            and foreign_key.get("referred_table") == "test_forms"
+        ]
         with op.batch_alter_table("practice_sessions") as batch_op:
             if "ix_practice_sessions_catalog_id" in _indexes("practice_sessions"):
                 batch_op.drop_index("ix_practice_sessions_catalog_id")
-            batch_op.drop_constraint(
-                "fk_practice_sessions_catalog_id_test_forms", type_="foreignkey"
-            )
+            # Databases created by the zero-config create_all path can have an
+            # unnamed SQLite FK here. Dropping the column in batch mode removes
+            # that FK as part of the table rebuild; named constraints must be
+            # removed explicitly on engines that expose a name.
+            for foreign_key in catalog_foreign_keys:
+                if foreign_key.get("name"):
+                    batch_op.drop_constraint(
+                        str(foreign_key["name"]), type_="foreignkey"
+                    )
             batch_op.drop_column("catalog_id")
     if "test_forms" in tables:
         op.drop_table("test_forms")
@@ -196,4 +212,3 @@ def downgrade() -> None:
             op.drop_column("questions", "bank_version")
         if "external_id" in _columns("questions"):
             op.drop_column("questions", "external_id")
-

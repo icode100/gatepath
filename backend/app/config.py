@@ -5,6 +5,11 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+DEFAULT_ANONYMOUS_IDENTITY_SECRET = (
+    "gatepath-local-dev-secret-change-before-public-deployment"
+)
+
+
 class Settings(BaseSettings):
     app_name: str = "GATE 2027 Prep API"
     app_version: str = "0.1.0"
@@ -18,6 +23,9 @@ class Settings(BaseSettings):
     auto_import_question_bank: bool = True
     question_bank_path: str = "data/question_bank.json"
     sql_echo: bool = False
+    anonymous_identity_secret: str = DEFAULT_ANONYMOUS_IDENTITY_SECRET
+    identity_cookie_name: str = "gatepath_identity"
+    identity_cookie_secure: bool = False
 
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
@@ -42,6 +50,10 @@ class Settings(BaseSettings):
     def allowed_origins(self) -> list[str]:
         origins = [origin.strip() for origin in self.cors_origins.split(",")]
         return [origin for origin in origins if origin]
+
+    @property
+    def secure_identity_cookie(self) -> bool:
+        return self.identity_cookie_secure or self.environment.lower() == "production"
 
 
 @lru_cache

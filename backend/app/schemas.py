@@ -80,8 +80,11 @@ class QuestionPublic(ApiModel):
     source_year: int | None
     source_paper: str | None
     source_question_number: int | None
+    source_page: int | None
     source_url: str | None
     answer_key_url: str | None
+    extraction_method: str | None
+    extraction_confidence: float | None
     question_type: QuestionType
     difficulty: Difficulty
     text: str
@@ -351,6 +354,7 @@ class QuestionBankImportSummary(ApiModel):
     inserted_count: int
     updated_count: int
     unchanged_count: int
+    retired_count: int
     imported_at: datetime
 
 

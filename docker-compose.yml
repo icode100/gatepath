@@ -22,7 +22,16 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gatepath}:${POSTGRES_PASSWORD:-gatepath_dev_password}@database:5432/${POSTGRES_DB:-gatepath}
       CORS_ORIGINS: http://localhost:3000
-      SEED_ON_STARTUP: "true"
+      AUTO_CREATE_DB: "false"
+      SEED_DATA: "true"
+      AUTO_IMPORT_QUESTION_BANK: "true"
+      QUESTION_BANK_PATH: data/question_bank.json
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      ANONYMOUS_IDENTITY_SECRET: ${ANONYMOUS_IDENTITY_SECRET:-gatepath-local-dev-secret-change-before-public-deployment}
+    command:
+      - sh
+      - -c
+      - alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000
     depends_on:
       database:
         condition: service_healthy

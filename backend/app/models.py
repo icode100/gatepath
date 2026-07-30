@@ -139,6 +139,9 @@ class Question(Base):
     bank_version: Mapped[str | None] = mapped_column(
         String(80), nullable=True, index=True
     )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default="true", index=True
+    )
     subject_id: Mapped[int] = mapped_column(
         ForeignKey("subjects.id", ondelete="CASCADE"), index=True
     )
@@ -160,8 +163,11 @@ class Question(Base):
     source_year: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
     source_paper: Mapped[str | None] = mapped_column(String(120), nullable=True)
     source_question_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     answer_key_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    extraction_method: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    extraction_confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
     question_type: Mapped[QuestionType] = mapped_column(
         Enum(QuestionType, native_enum=False), index=True
     )
@@ -200,6 +206,12 @@ class PracticeSession(Base):
         ForeignKey("topics.id", ondelete="SET NULL"), nullable=True
     )
     question_ids: Mapped[list[int]] = mapped_column(JSON)
+    # Immutable copies of the questions as presented when the session starts.
+    # This keeps both display and grading stable when a later bank import edits
+    # or retires a question.
+    question_snapshots: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSON, default=list
+    )
     question_count: Mapped[int] = mapped_column(Integer)
     duration_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
     total_marks: Mapped[int] = mapped_column(Integer)
@@ -230,6 +242,7 @@ class QuestionBankImport(Base):
     inserted_count: Mapped[int] = mapped_column(Integer)
     updated_count: Mapped[int] = mapped_column(Integer)
     unchanged_count: Mapped[int] = mapped_column(Integer)
+    retired_count: Mapped[int] = mapped_column(Integer, default=0)
     imported_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now
     )
@@ -311,6 +324,8 @@ class AttemptResponse(Base):
         ForeignKey("questions.id", ondelete="CASCADE"), index=True
     )
     answer: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    correct_answer_snapshot: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    explanation_snapshot: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[ResponseStatus] = mapped_column(
         Enum(ResponseStatus, native_enum=False), index=True
     )

@@ -280,7 +280,15 @@ async def rebuild_test_catalog(session: AsyncSession) -> None:
             )
         ).all()
     )
-    questions = list((await session.scalars(select(Question).order_by(Question.id))).all())
+    questions = list(
+        (
+            await session.scalars(
+                select(Question)
+                .where(Question.is_active.is_(True))
+                .order_by(Question.id)
+            )
+        ).all()
+    )
     bank_version = await _latest_bank_version(session)
     subject_by_id = {subject.id: subject for subject in subjects}
     by_subject: dict[int, list[Question]] = defaultdict(list)
@@ -334,4 +342,3 @@ async def rebuild_test_catalog(session: AsyncSession) -> None:
         for field, value in definition.items():
             setattr(form, field, value)
     await session.commit()
-

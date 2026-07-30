@@ -85,6 +85,23 @@ def _add_local_upgrade_columns(connection: Connection) -> None:
             connection.exec_driver_sql(
                 "ALTER TABLE questions ADD COLUMN bank_version VARCHAR(80)"
             )
+        if "is_active" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN "
+                "is_active BOOLEAN NOT NULL DEFAULT 1"
+            )
+        if "source_page" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN source_page INTEGER"
+            )
+        if "extraction_method" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN extraction_method VARCHAR(80)"
+            )
+        if "extraction_confidence" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN extraction_confidence FLOAT"
+            )
         question_indexes = {
             index["name"]
             for index in inspect(connection).get_indexes("questions")
@@ -100,6 +117,11 @@ def _add_local_upgrade_columns(connection: Connection) -> None:
                 "CREATE INDEX ix_questions_bank_version "
                 "ON questions (bank_version)"
             )
+        if "ix_questions_is_active" not in question_indexes:
+            connection.exec_driver_sql(
+                "CREATE INDEX ix_questions_is_active "
+                "ON questions (is_active)"
+            )
 
     if "practice_sessions" in table_names:
         session_columns = {
@@ -108,6 +130,11 @@ def _add_local_upgrade_columns(connection: Connection) -> None:
         if "catalog_id" not in session_columns:
             connection.exec_driver_sql(
                 "ALTER TABLE practice_sessions ADD COLUMN catalog_id VARCHAR(80)"
+            )
+        if "question_snapshots" not in session_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE practice_sessions ADD COLUMN "
+                "question_snapshots JSON NOT NULL DEFAULT '[]'"
             )
         session_indexes = {
             index["name"]
@@ -118,6 +145,32 @@ def _add_local_upgrade_columns(connection: Connection) -> None:
             connection.exec_driver_sql(
                 "CREATE INDEX ix_practice_sessions_catalog_id "
                 "ON practice_sessions (catalog_id)"
+            )
+
+    if "attempt_responses" in table_names:
+        response_columns = {
+            column["name"] for column in inspector.get_columns("attempt_responses")
+        }
+        if "correct_answer_snapshot" not in response_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE attempt_responses ADD COLUMN "
+                "correct_answer_snapshot JSON"
+            )
+        if "explanation_snapshot" not in response_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE attempt_responses ADD COLUMN "
+                "explanation_snapshot TEXT"
+            )
+
+    if "question_bank_imports" in table_names:
+        import_columns = {
+            column["name"]
+            for column in inspector.get_columns("question_bank_imports")
+        }
+        if "retired_count" not in import_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE question_bank_imports ADD COLUMN "
+                "retired_count INTEGER NOT NULL DEFAULT 0"
             )
 
 
