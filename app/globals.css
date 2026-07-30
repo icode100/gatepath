@@ -1628,6 +1628,16 @@ select:focus-visible {
   font-size: 10px;
 }
 
+.note-key-points {
+  display: grid;
+  gap: 8px;
+  margin: 11px 0 0;
+  padding-left: 18px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .formula-card > button {
   display: grid;
   width: 38px;
@@ -1648,6 +1658,37 @@ select:focus-visible {
   margin-bottom: 18px !important;
   color: var(--ink) !important;
   font-weight: 650;
+}
+
+.worked-example-list {
+  display: grid;
+  gap: 12px;
+}
+
+.worked-example-list article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.worked-example-list article > span {
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.worked-example-list article p {
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.worked-example-list article .example-title {
+  margin: 7px 0 0 !important;
 }
 
 .example-section ol {

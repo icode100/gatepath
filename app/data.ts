@@ -306,7 +306,7 @@ export const subjects: Subject[] = [
   },
   {
     id: "databases",
-    code: "DB",
+    code: "DBMS",
     title: "Databases",
     shortTitle: "Databases",
     description: "ER models, relational algebra, SQL, normalization, indexing and transactions.",

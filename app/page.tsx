@@ -22,6 +22,12 @@ const API_SUBJECT_SLUGS: Record<string, string> = {
 const apiSubjectSlug = (subjectId: string) =>
   API_SUBJECT_SLUGS[subjectId] ?? subjectId;
 
+const clientSlugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
 const COA_SYLLABUS_TOPICS = [
   "instruction-set-addressing",
   "alu-design",
@@ -123,6 +129,19 @@ type ServerResult = {
   correct: number;
   incorrect: number;
   unanswered: number;
+};
+
+type RemoteRevisionNote = {
+  id: number;
+  topic_id: number;
+  title: string;
+  summary: string;
+  content_md: string;
+  key_points: string[];
+  worked_examples: Array<{
+    question: string;
+    solution: string;
+  }>;
 };
 
 const clampPercent = (value: number) =>
@@ -536,6 +555,36 @@ function mergeRoadmap(payload: unknown): Subject[] {
     if (!remote) return fallback;
     const attempted = remote.attempted_questions ?? 0;
     const total = remote.question_count ?? fallback.questionCount;
+    const topics =
+      remote.topics && remote.topics.length > 0
+        ? remote.topics.map((remoteTopic) => {
+            const remoteSlug =
+              remoteTopic.slug ??
+              clientSlugify(remoteTopic.name ?? "syllabus-topic");
+            const fallbackTopic = fallback.topics.find(
+              (topic) => topic.id === remoteSlug,
+            );
+            const remoteTotal =
+              remoteTopic.question_count ?? fallbackTopic?.questions ?? 0;
+            const remoteAttempted = remoteTopic.attempted_questions ?? 0;
+            return {
+              id: remoteSlug,
+              apiId: remoteTopic.id,
+              title:
+                remoteTopic.name ?? fallbackTopic?.title ?? "Syllabus topic",
+              questions: remoteTotal,
+              progress: remoteTotal
+                ? Math.min(
+                    100,
+                    Math.round((remoteAttempted / remoteTotal) * 100),
+                  )
+                : 0,
+              duration:
+                fallbackTopic?.duration ??
+                `${Math.max(1, Math.round(remoteTotal / 18))}h`,
+            };
+          })
+        : fallback.topics;
     return {
       ...fallback,
       title: remote.name ?? fallback.title,
@@ -545,23 +594,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
         remote.accuracy == null
           ? fallback.mastery
           : Math.round(Number(remote.accuracy)),
-      topics: fallback.topics.map((fallbackTopic) => {
-        const remoteTopic = remote.topics?.find(
-          (item) => item.slug === fallbackTopic.id,
-        );
-        if (!remoteTopic) return fallbackTopic;
-        const remoteTotal = remoteTopic.question_count ?? fallbackTopic.questions;
-        const remoteAttempted = remoteTopic.attempted_questions ?? 0;
-        return {
-          ...fallbackTopic,
-          apiId: remoteTopic.id,
-          title: remoteTopic.name ?? fallbackTopic.title,
-          questions: remoteTotal,
-          progress: remoteTotal
-            ? Math.min(100, Math.round((remoteAttempted / remoteTotal) * 100))
-            : 0,
-        };
-      }),
+      topics,
     };
   });
 }
@@ -633,6 +666,7 @@ async function requestCatalogSession(test: CatalogTest) {
     `${API_BASE}/tests/${encodeURIComponent(test.id)}/sessions`,
     {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_key: "local-user" }),
     },
@@ -641,6 +675,7 @@ async function requestCatalogSession(test: CatalogTest) {
 
   const legacyResponse = await fetch(`${API_BASE}/tests`, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       mode: test.kind === "full" ? "full" : "sectional",
@@ -741,6 +776,9 @@ export default function Home() {
     useState<PracticeQuestion[] | null>(null);
   const [bankTotal, setBankTotal] = useState(practiceQuestions.length);
   const [bankLoading, setBankLoading] = useState(false);
+  const [revisionNote, setRevisionNote] =
+    useState<RemoteRevisionNote | null>(null);
+  const [noteLoading, setNoteLoading] = useState(false);
   const [selectedSubjectId, setSelectedSubjectId] = useState("computer-organization");
   const [selectedTopicId, setSelectedTopicId] = useState("memory-hierarchy");
   const [practiceMode, setPracticeMode] = useState<PracticeMode>("practice");
@@ -822,7 +860,10 @@ export default function Home() {
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 3500);
-    fetch(`${API_BASE}/roadmap?user_key=local-user`, { signal: controller.signal })
+    fetch(`${API_BASE}/roadmap?user_key=local-user`, {
+      credentials: "include",
+      signal: controller.signal,
+    })
       .then((response) => {
         if (!response.ok) throw new Error("API unavailable");
         return response.json();
@@ -842,7 +883,10 @@ export default function Home() {
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 5000);
-    fetch(`${API_BASE}/tests/catalog`, { signal: controller.signal })
+    fetch(`${API_BASE}/tests/catalog`, {
+      credentials: "include",
+      signal: controller.signal,
+    })
       .then((response) => {
         if (!response.ok) throw new Error("Catalog unavailable");
         return response.json();
@@ -876,6 +920,7 @@ export default function Home() {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 5000);
     fetch(`${API_BASE}/progress/analytics?user_key=local-user`, {
+      credentials: "include",
       signal: controller.signal,
     })
       .then((response) => {
@@ -916,6 +961,7 @@ export default function Home() {
     }
     setBankLoading(true);
     fetch(`${API_BASE}/questions?${params.toString()}`, {
+      credentials: "include",
       signal: controller.signal,
     })
       .then((response) => {
@@ -951,6 +997,31 @@ export default function Home() {
     libraryTab,
     screen,
   ]);
+
+  useEffect(() => {
+    if (screen !== "notes" || selectedTopic.apiId == null) {
+      setRevisionNote(null);
+      setNoteLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    setNoteLoading(true);
+    fetch(`${API_BASE}/topics/${selectedTopic.apiId}/notes`, {
+      credentials: "include",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Revision note unavailable");
+        return response.json();
+      })
+      .then((payload) => {
+        setRevisionNote(payload as RemoteRevisionNote);
+        setApiState("online");
+      })
+      .catch(() => setRevisionNote(null))
+      .finally(() => setNoteLoading(false));
+    return () => controller.abort();
+  }, [screen, selectedTopic.apiId]);
 
   useEffect(() => {
     if (!examRunning) return;
@@ -1051,6 +1122,7 @@ export default function Home() {
         `${API_BASE}/${mode === "sectional" ? "tests" : "practice-sessions"}`,
         {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(
             mode === "sectional"
@@ -1113,6 +1185,7 @@ export default function Home() {
       try {
         const response = await fetch(`${API_BASE}/attempts`, {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             session_id: sessionId,
@@ -1362,6 +1435,7 @@ export default function Home() {
       try {
         const response = await fetch(`${API_BASE}/attempts`, {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             session_id: sessionId,
@@ -2093,42 +2167,89 @@ export default function Home() {
   );
 
   const renderNotes = () => {
-    const note = selectedSubject.note;
+    const fallbackNote = selectedSubject.note;
+    const keyPoints =
+      revisionNote?.key_points?.filter(Boolean) ?? [
+        fallbackNote.intuition,
+        fallbackNote.formulaHint,
+      ];
+    const workedExamples =
+      revisionNote?.worked_examples?.length
+        ? revisionNote.worked_examples
+        : [
+            {
+              question: fallbackNote.exampleTitle,
+              solution: fallbackNote.exampleSteps.join(" "),
+            },
+          ];
+    const checkpoints = revisionNote
+      ? keyPoints.slice(0, 4).map((point) => `Can you explain why this is true: ${point}`)
+      : fallbackNote.checkpoint;
+    const traps = revisionNote
+      ? [
+          "Applying a remembered rule without checking its assumptions.",
+          "Skipping units, boundary cases, or the meaning of the requested quantity.",
+          "Choosing a related method that answers a different question.",
+        ]
+      : fallbackNote.traps;
     return (
       <div className="page notes-page">
         <div className="notes-toolbar">
           <button className="back-link" onClick={() => navigate("subject")}>← {selectedSubject.shortTitle}</button>
-          <div className="notes-actions"><span>Last saved just now</span><button className="button small" onClick={() => void startPractice("practice", selectedSubject, selectedTopic.id)}>Practise this topic →</button></div>
+          <div className="notes-actions"><span>{noteLoading ? "Loading topic notes…" : revisionNote ? "Synced to the question bank" : "Built-in syllabus note"}</span><button className="button small" onClick={() => void startPractice("practice", selectedSubject, selectedTopic.id)}>Practise this topic →</button></div>
         </div>
         <div className="notes-layout">
           <aside className="notes-index">
             <span className="eyebrow">In this review</span>
             <a href="#big-idea">01 · Big idea</a>
-            <a href="#formula">02 · Formula card</a>
-            <a href="#example">03 · Worked example</a>
+            <a href="#formula">02 · Key rules</a>
+            <a href="#example">03 · Worked examples</a>
             <a href="#checkpoint">04 · Recall checkpoint</a>
             <div className="syllabus-lock"><span>✓</span><p><strong>Syllabus locked</strong><small>Content stays within the official GATE CS scope.</small></p></div>
           </aside>
           <article className="notes-article">
             <header>
               <div className="eyebrow">{selectedSubject.code} · {selectedTopic.title}</div>
-              <h1>{note.title}</h1>
-              <p>{note.summary}</p>
-              <div className="note-meta"><span>8 min read</span><span>2 examples</span><span>3 checkpoints</span></div>
+              <h1>{revisionNote?.title ?? fallbackNote.title}</h1>
+              <p>{revisionNote?.summary ?? fallbackNote.summary}</p>
+              <div className="note-meta"><span>{Math.max(6, 4 + workedExamples.length * 2)} min read</span><span>{workedExamples.length} worked example{workedExamples.length === 1 ? "" : "s"}</span><span>{checkpoints.length} checkpoints</span></div>
             </header>
             <section id="big-idea" className="note-section">
-              <span className="section-number">01</span><div><h2>The big idea</h2><p>{note.intuition}</p><div className="margin-note"><strong>Think in invariants</strong><span>Before calculating, write down what must stay true.</span></div></div>
+              <span className="section-number">01</span><div><h2>The big idea</h2><p>{revisionNote ? keyPoints.join(" ") : fallbackNote.intuition}</p><div className="margin-note"><strong>Think in invariants</strong><span>Before calculating, write down what must stay true.</span></div></div>
             </section>
             <section id="formula" className="formula-card">
-              <div><span className="card-kicker">Formula to remember</span><code>{note.formula}</code><p>{note.formulaHint}</p></div><button aria-label="Mark formula as remembered">✓</button>
+              <div>
+                <span className="card-kicker">{revisionNote ? "Key rules to remember" : "Formula to remember"}</span>
+                {revisionNote ? (
+                  <ul className="note-key-points">
+                    {keyPoints.map((point) => <li key={point}>{point}</li>)}
+                  </ul>
+                ) : (
+                  <><code>{fallbackNote.formula}</code><p>{fallbackNote.formulaHint}</p></>
+                )}
+              </div>
+              <button aria-label="Mark key rules as remembered">✓</button>
             </section>
             <section id="example" className="note-section example-section">
-              <span className="section-number">02</span><div><h2>Worked example</h2><p className="example-title">{note.exampleTitle}</p><ol>{note.exampleSteps.map((step) => <li key={step}>{step}</li>)}</ol><div className="answer-strip"><span>Exam habit</span>Sanity-check the units and boundary cases before choosing an answer.</div></div>
+              <span className="section-number">02</span>
+              <div>
+                <h2>Worked examples</h2>
+                <div className="worked-example-list">
+                  {workedExamples.map((example, index) => (
+                    <article key={`${example.question}-${index}`}>
+                      <span>Example {String(index + 1).padStart(2, "0")}</span>
+                      <p className="example-title">{example.question}</p>
+                      <p>{example.solution}</p>
+                    </article>
+                  ))}
+                </div>
+                <div className="answer-strip"><span>Exam habit</span>Sanity-check the units and boundary cases before choosing an answer.</div>
+              </div>
             </section>
-            <section className="trap-card"><div><span>!</span><h3>Common traps</h3></div><ul>{note.traps.map((trap) => <li key={trap}>{trap}</li>)}</ul></section>
+            <section className="trap-card"><div><span>!</span><h3>Common traps</h3></div><ul>{traps.map((trap) => <li key={trap}>{trap}</li>)}</ul></section>
             <section id="checkpoint" className="checkpoint-card">
               <div><span className="card-kicker">Active recall</span><h2>Close the note. Can you answer these?</h2></div>
-              <div className="checkpoint-list">{note.checkpoint.map((check, index) => <details key={check}><summary><span>{index + 1}</span>{check}</summary><p>Say the rule in your own words, then verify it against the formula and worked example above.</p></details>)}</div>
+              <div className="checkpoint-list">{checkpoints.map((check, index) => <details key={check}><summary><span>{index + 1}</span>{check}</summary><p>Say the rule in your own words, then verify it against the key rules and worked examples above.</p></details>)}</div>
               <button className="button primary" onClick={() => void startPractice("practice", selectedSubject, selectedTopic.id)}>I’m ready to practise <span>→</span></button>
             </section>
           </article>
