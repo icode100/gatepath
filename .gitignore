@@ -49,6 +49,7 @@ next-env.d.ts
 __pycache__/
 *.py[cod]
 .pytest_cache/
+pytest-of-*/
 .mypy_cache/
 .ruff_cache/
 .venv/

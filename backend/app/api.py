@@ -629,27 +629,52 @@ async def create_test(
             for question in all_questions
             if question.subject.slug == "general-aptitude" and question.marks == 2
         ]
-        cs_one = [
+        em_one = [
             question
             for question in all_questions
-            if question.subject.slug != "general-aptitude" and question.marks == 1
+            if question.subject.code == "EM" and question.marks == 1
         ]
-        cs_two = [
+        em_two = [
             question
             for question in all_questions
-            if question.subject.slug != "general-aptitude" and question.marks == 2
+            if question.subject.code == "EM" and question.marks == 2
         ]
-        if len(ga_one) < 5 or len(ga_two) < 5 or len(cs_one) < 25 or len(cs_two) < 30:
+        core_one = [
+            question
+            for question in all_questions
+            if question.subject.code not in {"GA", "EM"} and question.marks == 1
+        ]
+        core_two = [
+            question
+            for question in all_questions
+            if question.subject.code not in {"GA", "EM"} and question.marks == 2
+        ]
+        if (
+            len(ga_one) < 5
+            or len(ga_two) < 5
+            or len(em_one) < 5
+            or len(em_two) < 4
+            or len(core_one) < 20
+            or len(core_two) < 26
+        ):
             raise HTTPException(
                 status_code=409,
                 detail=(
                     "A full mock requires 5 one-mark and 5 two-mark GA questions, "
-                    "plus 25 one-mark and 30 two-mark subject questions"
+                    "5 one-mark and 4 two-mark Engineering Mathematics questions, "
+                    "plus 20 one-mark and 26 two-mark core CS questions"
                 ),
             )
-        for group in (ga_one, ga_two, cs_one, cs_two):
+        for group in (ga_one, ga_two, em_one, em_two, core_one, core_two):
             rng.shuffle(group)
-        selected = ga_one[:5] + ga_two[:5] + cs_one[:25] + cs_two[:30]
+        selected = (
+            ga_one[:5]
+            + ga_two[:5]
+            + em_one[:5]
+            + em_two[:4]
+            + core_one[:20]
+            + core_two[:26]
+        )
         duration_minutes = 180
         mode = SessionMode.FULL
     else:
@@ -1205,7 +1230,7 @@ async def progress_analytics(
     overall_recency = _weighted_accuracy(
         [
             (response.status, submitted_at)
-            for response, submitted_at in all_responses
+            for response, submitted_at in answered_responses
         ],
         now=now,
     )

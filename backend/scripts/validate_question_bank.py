@@ -24,7 +24,7 @@ from extract_pyqs import (  # noqa: E402
     record_quality_flags,
     record_quality_gate_regression_errors,
 )
-from generate_question_bank import original_semantic_digest  # noqa: E402
+from generate_question_bank import TOPICS, original_semantic_digest  # noqa: E402
 
 
 TECHNICAL_CODES = {"EM", "DL", "COA", "PDS", "ALG", "TOC", "CD", "OS", "DBMS", "CN"}
@@ -88,6 +88,61 @@ def validate_bank(path: Path) -> tuple[list[str], dict[str, Any]]:
     questions = payload.get("questions")
     if not isinstance(questions, list):
         return errors + ["Top-level questions must be a list"], {}
+    revision_notes = payload.get("revision_notes")
+    if not isinstance(revision_notes, list):
+        errors.append("Top-level revision_notes must be a list")
+        revision_notes = []
+
+    expected_note_topics = {(topic.course, topic.name) for topic in TOPICS}
+    note_topics: Counter[tuple[str, str]] = Counter()
+    for index, note in enumerate(revision_notes):
+        label = f"revision_notes[{index}]"
+        if not isinstance(note, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        course = str(note.get("course", "")).strip()
+        topic = str(note.get("topic", "")).strip()
+        note_topics[(course, topic)] += 1
+        if (course, topic) in expected_note_topics:
+            for field in ("title", "summary", "reasoning_pattern"):
+                if not str(note.get(field, "")).strip():
+                    errors.append(f"{label} {field} is required")
+            for field in ("key_points", "common_traps"):
+                values = note.get(field)
+                if (
+                    not isinstance(values, list)
+                    or len(values) < 3
+                    or len({str(value).strip() for value in values if str(value).strip()}) < 3
+                ):
+                    errors.append(
+                        f"{label} requires at least three distinct {field}"
+                    )
+    actual_note_topics = {key for key, count in note_topics.items() if count > 0}
+    missing_note_topics = sorted(expected_note_topics - actual_note_topics)
+    unexpected_note_topics = sorted(actual_note_topics - expected_note_topics)
+    duplicate_note_topics = sorted(
+        key for key, count in note_topics.items()
+        if count > 1
+    )
+    if missing_note_topics:
+        errors.append(
+            "Canonical topics missing revision notes: "
+            + "; ".join(f"{course}/{topic}" for course, topic in missing_note_topics)
+        )
+    if unexpected_note_topics:
+        errors.append(
+            "Revision notes outside canonical topics: "
+            + "; ".join(
+                f"{course}/{topic}" for course, topic in unexpected_note_topics
+            )
+        )
+    if duplicate_note_topics:
+        errors.append(
+            "Duplicate canonical revision notes: "
+            + "; ".join(
+                f"{course}/{topic}" for course, topic in duplicate_note_topics
+            )
+        )
 
     ids: Counter[str] = Counter()
     content: Counter[str] = Counter()
@@ -289,6 +344,7 @@ def validate_bank(path: Path) -> tuple[list[str], dict[str, Any]]:
         "previous_year_by_year": {
             str(year): count for year, count in sorted(pyq_years.items())
         },
+        "revision_note_count": len(actual_note_topics & expected_note_topics),
         "generated_semantic_variants": {
             course: len(digests)
             for course, digests in sorted(

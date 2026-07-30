@@ -275,6 +275,11 @@
     "minimum_each_type_per_technical_course": 20,
     "minimum_generated_semantic_variants_per_technical_course": 210,
     "all_syllabus_topics_present": true,
+    "revision_note_count": 64,
+    "revision_notes_cover_every_syllabus_topic": true,
+    "revision_note_minimum_key_points": 3,
+    "revision_note_minimum_common_traps": 3,
+    "revision_note_minimum_worked_examples_after_import": 3,
     "stable_external_ids": true,
     "derived_answers": true
   },

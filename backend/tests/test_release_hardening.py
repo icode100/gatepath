@@ -183,16 +183,12 @@ async def test_import_retires_omissions_preserves_metadata_and_enriches_notes(
         original_summary = topic.note.summary
         original_key_points = list(topic.note.key_points)
 
-        path.write_text(
-            json.dumps(
-                {
-                    "schema_version": "1.0",
-                    "bank_version": "authoritative-v1",
-                    "questions": original_questions + [omitted_question, pyq],
-                }
-            ),
-            encoding="utf-8",
-        )
+        v1_payload = {
+            "schema_version": "1.0",
+            "bank_version": "authoritative-v1",
+            "questions": original_questions + [omitted_question, pyq],
+        }
+        path.write_text(json.dumps(v1_payload), encoding="utf-8")
         first = await import_question_bank(session, path)
         assert first.inserted_count == 5
         assert first.retired_count == 0
@@ -227,6 +223,16 @@ async def test_import_retires_omissions_preserves_metadata_and_enriches_notes(
         assert topic.note.key_points == original_key_points
         assert len(topic.note.worked_examples) == 3
         assert all(item["solution"] for item in topic.note.worked_examples)
+
+        # Reapplying an exact historical artifact must reconcile the database;
+        # it is not a no-op merely because that checksum appeared in the audit.
+        path.write_text(json.dumps(v1_payload), encoding="utf-8")
+        reapplied = await import_question_bank(session, path)
+        assert reapplied.already_applied is False
+        await session.refresh(retired)
+        assert retired.is_active is True
+        immediate_repeat = await import_question_bank(session, path)
+        assert immediate_repeat.already_applied is True
     await engine.dispose()
 
 
@@ -337,6 +343,7 @@ async def test_analytics_uses_latest_unique_answered_questions() -> None:
 
         base_time = datetime.now(UTC)
         for index in range(6):
+            is_latest = index == 5
             practice = PracticeSession(
                 user_key=user_key,
                 mode=SessionMode.PRACTICE,
@@ -356,19 +363,35 @@ async def test_analytics_uses_latest_unique_answered_questions() -> None:
                 user_key=user_key,
                 submitted_at=base_time + timedelta(minutes=index),
                 timed_out=False,
-                score=float(question.marks),
+                score=float(question.marks) if is_latest else -float(question.marks) / 3,
                 max_score=float(question.marks),
-                correct_count=1,
-                incorrect_count=0,
+                correct_count=1 if is_latest else 0,
+                incorrect_count=0 if is_latest else 1,
                 unanswered_count=0,
                 responses=[
                     AttemptResponse(
                         question_id=question.id,
-                        answer=question.correct_answer,
+                        answer=(
+                            question.correct_answer
+                            if is_latest
+                            else next(
+                                option["id"]
+                                for option in question.options
+                                if option["id"] != question.correct_answer
+                            )
+                        ),
                         correct_answer_snapshot=question.correct_answer,
                         explanation_snapshot=question.explanation,
-                        status=ResponseStatus.CORRECT,
-                        awarded_marks=float(question.marks),
+                        status=(
+                            ResponseStatus.CORRECT
+                            if is_latest
+                            else ResponseStatus.INCORRECT
+                        ),
+                        awarded_marks=(
+                            float(question.marks)
+                            if is_latest
+                            else -float(question.marks) / 3
+                        ),
                         max_marks=float(question.marks),
                         negative_marks=0,
                     )
@@ -430,4 +453,6 @@ async def test_analytics_uses_latest_unique_answered_questions() -> None:
         assert topic_result.status != "strong"
         assert dashboard.overall.answered_responses == 1
         assert dashboard.overall.unique_questions_attempted == 1
+        assert dashboard.overall.accuracy_percent == 100
+        assert dashboard.overall.recency_weighted_accuracy_percent == 100
     await engine.dispose()

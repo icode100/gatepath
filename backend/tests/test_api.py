@@ -48,9 +48,23 @@ def test_full_mock_is_65_questions_100_marks_and_three_hours(client: TestClient)
     assert session["total_marks"] == 100
     assert session["duration_seconds"] == 3 * 60 * 60
     ga = [q for q in session["questions"] if q["subject_slug"] == "general-aptitude"]
-    cs = [q for q in session["questions"] if q["subject_slug"] != "general-aptitude"]
+    em = [
+        q
+        for q in session["questions"]
+        if q["subject_slug"] == "engineering-mathematics"
+    ]
+    core = [
+        q
+        for q in session["questions"]
+        if q["subject_slug"]
+        not in {"general-aptitude", "engineering-mathematics"}
+    ]
     assert len(ga) == 10
-    assert len(cs) == 55
+    assert len(em) == 9
+    assert len(core) == 46
+    assert sum(q["marks"] for q in ga) == 15
+    assert sum(q["marks"] for q in em) == 13
+    assert sum(q["marks"] for q in core) == 72
 
 
 def test_catalog_exposes_25_full_and_10_forms_for_each_course(

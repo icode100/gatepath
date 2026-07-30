@@ -218,6 +218,21 @@ async def test_catalog_has_25_full_and_10_per_course_with_stable_mixed_forms() -
                 subject_code_by_id[question.subject_id] != "GA"
                 for question in selected
             ) == 55
+            marks_by_course = {
+                code: sum(
+                    question.marks
+                    for question in selected
+                    if subject_code_by_id[question.subject_id] == code
+                )
+                for code in ("GA", "EM")
+            }
+            core_marks = sum(
+                question.marks
+                for question in selected
+                if subject_code_by_id[question.subject_id] not in {"GA", "EM"}
+            )
+            assert marks_by_course == {"GA": 15, "EM": 13}
+            assert core_marks == 72
         assert all(form.is_available for form in course_forms)
         assert all(len(form.question_ids) == 30 for form in course_forms)
         assert all(

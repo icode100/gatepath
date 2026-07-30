@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,7 +24,10 @@ class Settings(BaseSettings):
     auto_import_question_bank: bool = True
     question_bank_path: str = "data/question_bank.json"
     sql_echo: bool = False
-    anonymous_identity_secret: str = DEFAULT_ANONYMOUS_IDENTITY_SECRET
+    anonymous_identity_secret: str = Field(
+        default=DEFAULT_ANONYMOUS_IDENTITY_SECRET,
+        min_length=32,
+    )
     identity_cookie_name: str = "gatepath_identity"
     identity_cookie_secure: bool = False
 

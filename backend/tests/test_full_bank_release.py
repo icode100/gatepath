@@ -223,6 +223,20 @@ async def test_full_question_bank_release_contract() -> None:
                 assert set(selected_course_codes).issubset(
                     TECHNICAL_COURSE_CODES | {"GA"}
                 )
+                marks_by_course = Counter()
+                for question in selected:
+                    code = subjects_by_id[question.subject_id].code.upper()
+                    marks_by_course[code] += question.marks
+                assert marks_by_course["GA"] == 15
+                assert marks_by_course["EM"] == 13
+                assert (
+                    sum(
+                        marks_by_course[course_code]
+                        for course_code in TECHNICAL_COURSE_CODES
+                        if course_code != "EM"
+                    )
+                    == 72
+                )
 
                 question_id_fingerprint = hashlib.sha256(
                     ",".join(

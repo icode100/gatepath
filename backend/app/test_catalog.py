@@ -38,6 +38,7 @@ TECHNICAL_COURSE_CODES = {
     "DBMS",
     "CN",
 }
+CORE_COURSE_CODES = TECHNICAL_COURSE_CODES - {"EM"}
 
 T = TypeVar("T")
 
@@ -180,15 +181,36 @@ def _full_form(
     *,
     form_number: int,
     ga_questions: list[Question],
-    technical_questions: list[Question],
+    engineering_mathematics_questions: list[Question],
+    core_questions: list[Question],
     bank_version: str,
 ) -> dict[str, object]:
     catalog_id = f"full-{form_number:02d}"
     groups = (
         ("ga-1", [item for item in ga_questions if item.marks == 1], 5, False),
         ("ga-2", [item for item in ga_questions if item.marks == 2], 5, False),
-        ("technical-1", [item for item in technical_questions if item.marks == 1], 25, True),
-        ("technical-2", [item for item in technical_questions if item.marks == 2], 30, True),
+        (
+            "engineering-mathematics-1",
+            [
+                item
+                for item in engineering_mathematics_questions
+                if item.marks == 1
+            ],
+            5,
+            False,
+        ),
+        (
+            "engineering-mathematics-2",
+            [
+                item
+                for item in engineering_mathematics_questions
+                if item.marks == 2
+            ],
+            4,
+            False,
+        ),
+        ("core-cs-1", [item for item in core_questions if item.marks == 1], 20, True),
+        ("core-cs-2", [item for item in core_questions if item.marks == 2], 26, True),
     )
     selected: list[Question] = []
     unavailable_reason: str | None = None
@@ -214,7 +236,11 @@ def _full_form(
     return {
         "id": catalog_id,
         "title": f"Full-Length Mock {form_number:02d}",
-        "description": "Official-format GATE CSE mock: 65 questions, 100 marks and 180 minutes.",
+        "description": (
+            "Official-format GATE CSE mock: 65 questions, 100 marks, "
+            "15 GA marks, 13 Engineering Mathematics marks, 72 core-CS "
+            "marks and 180 minutes."
+        ),
         "mode": SessionMode.FULL,
         "subject_id": None,
         "form_number": form_number,
@@ -298,18 +324,28 @@ async def rebuild_test_catalog(session: AsyncSession) -> None:
     ga_subject = next(
         (subject for subject in subjects if subject.code.upper() == "GA"), None
     )
+    engineering_mathematics_subject = next(
+        (subject for subject in subjects if subject.code.upper() == "EM"),
+        None,
+    )
     ga_questions = by_subject.get(ga_subject.id, []) if ga_subject else []
-    technical_questions = [
+    engineering_mathematics_questions = (
+        by_subject.get(engineering_mathematics_subject.id, [])
+        if engineering_mathematics_subject
+        else []
+    )
+    core_questions = [
         question
         for question in questions
-        if subject_by_id[question.subject_id].code.upper() in TECHNICAL_COURSE_CODES
+        if subject_by_id[question.subject_id].code.upper() in CORE_COURSE_CODES
     ]
 
     definitions: list[dict[str, object]] = [
         _full_form(
             form_number=form_number,
             ga_questions=ga_questions,
-            technical_questions=technical_questions,
+            engineering_mathematics_questions=engineering_mathematics_questions,
+            core_questions=core_questions,
             bank_version=bank_version,
         )
         for form_number in range(1, FULL_TEST_COUNT + 1)

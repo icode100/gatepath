@@ -1859,6 +1859,26 @@ select:focus-visible {
   white-space: nowrap;
 }
 
+.runner-topline > .runner-status {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.runner-status strong {
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.runner-status small {
+  font-size: 9px;
+}
+
+.runner-status.warning strong {
+  color: var(--orange);
+}
+
 .runner-progress {
   overflow: hidden;
   height: 5px;

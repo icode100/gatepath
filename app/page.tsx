@@ -129,6 +129,43 @@ type ServerResult = {
   correct: number;
   incorrect: number;
   unanswered: number;
+  negativeMarks?: number;
+  timedOut?: boolean;
+  subjectBreakdown?: SubjectAttemptBreakdown[];
+};
+
+type SubjectAttemptBreakdown = {
+  subjectId: string;
+  subjectCode: string;
+  subjectName: string;
+  attempted: number;
+  correct: number;
+  incorrect: number;
+  unanswered: number;
+  accuracy: number;
+};
+
+type AttemptResultPayload = {
+  score?: number;
+  max_score?: number;
+  percentage?: number;
+  correct_count?: number;
+  incorrect_count?: number;
+  unanswered_count?: number;
+  timed_out?: boolean;
+  results?: Array<{
+    question_id: string | number;
+    correct_answer?: string | number | string[];
+    explanation?: string;
+    status?: string;
+    negative_marks?: number;
+  }>;
+};
+
+type SessionLaunchPayload = {
+  id?: string | number;
+  expires_at?: string;
+  duration_seconds?: number;
 };
 
 type RemoteRevisionNote = {
@@ -144,13 +181,44 @@ type RemoteRevisionNote = {
   }>;
 };
 
+const markdownSection = (markdown: string, heading: string) => {
+  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = markdown.match(
+    new RegExp(
+      `(?:^|\\n)##\\s+${escapedHeading}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`,
+      "i",
+    ),
+  );
+  return match?.[1]?.trim() ?? "";
+};
+
+const markdownListSection = (markdown: string, heading: string) =>
+  markdownSection(markdown, heading)
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^\s*(?:[-*]|\d+[.)])\s+/, "").trim())
+    .filter(Boolean);
+
 const clampPercent = (value: number) =>
   Math.max(0, Math.min(100, Math.round(value)));
+
+const AUTO_SUBMIT_LEAD_MS = 5_000;
 
 const toFiniteNumber = (value: unknown, fallback = 0) => {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : fallback;
 };
+
+const parseDeadlineMs = (value: unknown) => {
+  if (typeof value !== "string") return null;
+  const timestamp = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+    ? value
+    : `${value}Z`;
+  const parsed = Date.parse(timestamp);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const secondsUntilDeadline = (deadlineMs: number, nowMs = Date.now()) =>
+  Math.max(0, Math.ceil((deadlineMs - nowMs) / 1000));
 
 const localSubjectFromSlug = (slug?: string, code?: string) =>
   localSubjects.find(
@@ -661,6 +729,88 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
   });
 }
 
+function mapAttemptResult(
+  payload: AttemptResultPayload,
+  questions: PracticeQuestion[] = [],
+): ServerResult {
+  const resultRows = Array.isArray(payload.results) ? payload.results : [];
+  const supportedStatuses = new Set(["correct", "incorrect", "unanswered"]);
+  const resultById = new Map(
+    resultRows.map((item) => [String(item.question_id), item]),
+  );
+  const hasCompleteBreakdown =
+    questions.length > 0 &&
+    resultRows.length === questions.length &&
+    questions.every((question) => {
+      const row = resultById.get(question.id);
+      return row && supportedStatuses.has(String(row.status));
+    });
+
+  let subjectBreakdown: SubjectAttemptBreakdown[] | undefined;
+  if (hasCompleteBreakdown) {
+    const groups = new Map<string, SubjectAttemptBreakdown>();
+    questions.forEach((question) => {
+      const row = resultById.get(question.id);
+      if (!row) return;
+      const status = String(row.status);
+      const localSubject = localSubjectFromSlug(question.subjectId);
+      const isGeneralAptitude = question.subjectId === "general-aptitude";
+      const current =
+        groups.get(question.subjectId) ??
+        {
+          subjectId: question.subjectId,
+          subjectCode: localSubject?.code ?? (isGeneralAptitude ? "GA" : "CS"),
+          subjectName:
+            localSubject?.shortTitle ??
+            (isGeneralAptitude ? "General Aptitude" : question.subjectId),
+          attempted: 0,
+          correct: 0,
+          incorrect: 0,
+          unanswered: 0,
+          accuracy: 0,
+        };
+      if (status === "correct") {
+        current.correct += 1;
+        current.attempted += 1;
+      } else if (status === "incorrect") {
+        current.incorrect += 1;
+        current.attempted += 1;
+      } else {
+        current.unanswered += 1;
+      }
+      groups.set(question.subjectId, current);
+    });
+    subjectBreakdown = [...groups.values()].map((subject) => ({
+      ...subject,
+      accuracy: subject.attempted
+        ? Math.round((subject.correct / subject.attempted) * 100)
+        : 0,
+    }));
+  }
+
+  return {
+    score: Number(payload.score ?? 0),
+    maxScore: Number(payload.max_score ?? 0),
+    percentage: Number(payload.percentage ?? 0),
+    correct: Number(payload.correct_count ?? 0),
+    incorrect: Number(payload.incorrect_count ?? 0),
+    unanswered: Number(payload.unanswered_count ?? 0),
+    negativeMarks: resultRows.length
+      ? Number(
+          resultRows
+            .reduce(
+              (total, item) =>
+                total + Math.max(0, Number(item.negative_marks ?? 0)),
+              0,
+            )
+            .toFixed(2),
+        )
+      : undefined,
+    timedOut: Boolean(payload.timed_out),
+    subjectBreakdown,
+  };
+}
+
 async function requestCatalogSession(test: CatalogTest) {
   const selectedResponse = await fetch(
     `${API_BASE}/tests/${encodeURIComponent(test.id)}/sessions`,
@@ -668,10 +818,23 @@ async function requestCatalogSession(test: CatalogTest) {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_key: "local-user" }),
+      body: JSON.stringify({}),
     },
   );
   if (selectedResponse.ok) return selectedResponse.json();
+  let detail = "The selected catalog form could not be started.";
+  try {
+    const payload = (await selectedResponse.json()) as { detail?: unknown };
+    if (typeof payload.detail === "string") detail = payload.detail;
+  } catch {
+    // The status code is authoritative even when the response has no JSON body.
+  }
+  const isLegacyRoute =
+    selectedResponse.status === 405 ||
+    (selectedResponse.status === 404 && detail === "Not Found");
+  if (!isLegacyRoute) {
+    throw new Error(detail);
+  }
 
   const legacyResponse = await fetch(`${API_BASE}/tests`, {
     method: "POST",
@@ -679,7 +842,6 @@ async function requestCatalogSession(test: CatalogTest) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       mode: test.kind === "full" ? "full" : "sectional",
-      user_key: "local-user",
       subject_slug:
         test.kind === "course" && test.subjectId
           ? apiSubjectSlug(test.subjectId)
@@ -791,12 +953,16 @@ export default function Home() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [runnerSummary, setRunnerSummary] = useState<ServerResult | null>(null);
   const [runnerSubmitted, setRunnerSubmitted] = useState(false);
+  const [runnerDeadlineMs, setRunnerDeadlineMs] = useState<number | null>(null);
+  const [runnerSeconds, setRunnerSeconds] = useState(0);
+  const [runnerTimerRunning, setRunnerTimerRunning] = useState(false);
   const [launchError, setLaunchError] = useState<string | null>(null);
   const [examQuestions, setExamQuestions] = useState<PracticeQuestion[]>([]);
   const [examAnswers, setExamAnswers] = useState<Answers>({});
   const [examIndex, setExamIndex] = useState(0);
   const [reviewed, setReviewed] = useState<Set<string>>(new Set());
   const [examSeconds, setExamSeconds] = useState(180 * 60);
+  const [examDeadlineMs, setExamDeadlineMs] = useState<number | null>(null);
   const [examRunning, setExamRunning] = useState(false);
   const [serverResult, setServerResult] = useState<ServerResult | null>(null);
   const [submitBusy, setSubmitBusy] = useState(false);
@@ -807,6 +973,9 @@ export default function Home() {
   const [runnerCatalogTest, setRunnerCatalogTest] =
     useState<CatalogTest | null>(null);
   const practiceRequestId = useRef(0);
+  const runnerAutoSubmitAttempted = useRef(false);
+  const examAutoSubmitAttempted = useRef(false);
+  const submitRunnerRef = useRef<(() => Promise<void>) | null>(null);
   const submitExamRef =
     useRef<((skipConfirmation?: boolean) => Promise<void>) | null>(null);
 
@@ -860,7 +1029,7 @@ export default function Home() {
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 3500);
-    fetch(`${API_BASE}/roadmap?user_key=local-user`, {
+    fetch(`${API_BASE}/roadmap`, {
       credentials: "include",
       signal: controller.signal,
     })
@@ -919,7 +1088,7 @@ export default function Home() {
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 5000);
-    fetch(`${API_BASE}/progress/analytics?user_key=local-user`, {
+    fetch(`${API_BASE}/progress/analytics`, {
       credentials: "include",
       signal: controller.signal,
     })
@@ -1024,18 +1193,42 @@ export default function Home() {
   }, [screen, selectedTopic.apiId]);
 
   useEffect(() => {
-    if (!examRunning) return;
-    const timer = window.setInterval(() => {
-      setExamSeconds((current) => Math.max(0, current - 1));
-    }, 1000);
+    if (!examRunning || examDeadlineMs == null) return;
+    const tick = () => {
+      const now = Date.now();
+      setExamSeconds(secondsUntilDeadline(examDeadlineMs, now));
+      if (
+        !examAutoSubmitAttempted.current &&
+        now >= examDeadlineMs - AUTO_SUBMIT_LEAD_MS
+      ) {
+        examAutoSubmitAttempted.current = true;
+        setExamRunning(false);
+        void submitExamRef.current?.(true);
+      }
+    };
+    tick();
+    const timer = window.setInterval(tick, 250);
     return () => window.clearInterval(timer);
-  }, [examRunning]);
+  }, [examDeadlineMs, examRunning]);
 
   useEffect(() => {
-    if (examRunning && examSeconds === 0) {
-      void submitExamRef.current?.(true);
-    }
-  }, [examRunning, examSeconds]);
+    if (!runnerTimerRunning || runnerDeadlineMs == null) return;
+    const tick = () => {
+      const now = Date.now();
+      setRunnerSeconds(secondsUntilDeadline(runnerDeadlineMs, now));
+      if (
+        !runnerAutoSubmitAttempted.current &&
+        now >= runnerDeadlineMs - AUTO_SUBMIT_LEAD_MS
+      ) {
+        runnerAutoSubmitAttempted.current = true;
+        setRunnerTimerRunning(false);
+        void submitRunnerRef.current?.();
+      }
+    };
+    tick();
+    const timer = window.setInterval(tick, 250);
+    return () => window.clearInterval(timer);
+  }, [runnerDeadlineMs, runnerTimerRunning]);
 
   const navigate = useCallback((target: Screen) => {
     setScreen(target);
@@ -1106,6 +1299,10 @@ export default function Home() {
     setCheckedQuestions(new Set());
     setRunnerSummary(null);
     setRunnerSubmitted(false);
+    setRunnerDeadlineMs(null);
+    setRunnerSeconds(0);
+    setRunnerTimerRunning(false);
+    runnerAutoSubmitAttempted.current = false;
     setLaunchError(null);
     setRunnerQuestions(requiresLiveQuestions ? [] : fallbackQuestions);
     setSessionId(null);
@@ -1128,13 +1325,11 @@ export default function Home() {
             mode === "sectional"
               ? {
                   mode: "sectional",
-                  user_key: "local-user",
                   subject_slug: apiSubjectSlug(subjectForRun.id),
                   count: questionCount,
                   duration_minutes: 25,
                 }
               : {
-                  user_key: "local-user",
                   subject_slug: apiSubjectSlug(subjectForRun.id),
                   topic_id: apiTopicId,
                   count: questionCount,
@@ -1143,11 +1338,20 @@ export default function Home() {
         },
       );
       if (!response.ok) throw new Error("Question service unavailable");
-      const payload = (await response.json()) as { id?: string | number };
+      const payload = (await response.json()) as SessionLaunchPayload;
       const mapped = mapServerQuestions(payload);
+      const deadlineMs = parseDeadlineMs(payload.expires_at);
+      if (mode === "sectional" && deadlineMs == null) {
+        throw new Error("Timed section did not include a valid deadline");
+      }
       if (requestId === practiceRequestId.current && mapped.length) {
         setRunnerQuestions(mapped);
         setSessionId(payload.id == null ? null : String(payload.id));
+        if (deadlineMs != null) {
+          setRunnerDeadlineMs(deadlineMs);
+          setRunnerSeconds(secondsUntilDeadline(deadlineMs));
+          setRunnerTimerRunning(true);
+        }
         setApiState("online");
       }
     } catch {
@@ -1178,8 +1382,13 @@ export default function Home() {
   const submitRunner = async () => {
     if (submitBusy) return;
     setSubmitBusy(true);
+    setLaunchError(null);
+    setRunnerTimerRunning(false);
     let summary: ServerResult | null = null;
     let recordedAttempt = false;
+    const hasServerLockedQuestions = runnerQuestions.some(
+      (question) => question.correct.length === 0,
+    );
 
     if (sessionId) {
       try {
@@ -1189,7 +1398,6 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             session_id: sessionId,
-            user_key: "local-user",
             answers: runnerQuestions
               .filter((question) => practiceAnswers[question.id]?.length)
               .map((question) => ({
@@ -1202,26 +1410,14 @@ export default function Home() {
           }),
         });
         if (!response.ok) throw new Error("Unable to score session");
-        const payload = (await response.json()) as {
-          score?: number;
-          max_score?: number;
-          percentage?: number;
-          correct_count?: number;
-          incorrect_count?: number;
-          unanswered_count?: number;
-          results?: Array<{
-            question_id: string | number;
-            correct_answer: string | number | string[];
-            explanation?: string;
-          }>;
-        };
+        const payload = (await response.json()) as AttemptResultPayload;
         const resultMap = new Map(
           (payload.results ?? []).map((item) => [String(item.question_id), item]),
         );
         setRunnerQuestions((current) =>
           current.map((question) => {
             const item = resultMap.get(question.id);
-            if (!item) return question;
+            if (!item || item.correct_answer == null) return question;
             const correct = Array.isArray(item.correct_answer)
               ? item.correct_answer.map(String)
               : [String(item.correct_answer)];
@@ -1232,21 +1428,36 @@ export default function Home() {
             };
           }),
         );
-        summary = {
-          score: Number(payload.score ?? 0),
-          maxScore: Number(payload.max_score ?? 0),
-          percentage: Number(payload.percentage ?? 0),
-          correct: Number(payload.correct_count ?? 0),
-          incorrect: Number(payload.incorrect_count ?? 0),
-          unanswered: Number(payload.unanswered_count ?? 0),
-        };
+        summary = mapAttemptResult(payload);
         recordedAttempt = true;
       } catch {
         setApiState("offline");
+        setLaunchError(
+          "Your answers are still here, but the scoring service did not accept the submission. Reconnect and try again.",
+        );
+        if (runnerDeadlineMs != null) {
+          const now = Date.now();
+          setRunnerSeconds(secondsUntilDeadline(runnerDeadlineMs, now));
+          setRunnerTimerRunning(now < runnerDeadlineMs);
+        }
+        setSubmitBusy(false);
+        return;
       }
     }
 
     if (!summary) {
+      if (hasServerLockedQuestions) {
+        setLaunchError(
+          "This live set is missing its session reference. Your answers are preserved; return to the test library and relaunch it.",
+        );
+        if (runnerDeadlineMs != null) {
+          const now = Date.now();
+          setRunnerSeconds(secondsUntilDeadline(runnerDeadlineMs, now));
+          setRunnerTimerRunning(now < runnerDeadlineMs);
+        }
+        setSubmitBusy(false);
+        return;
+      }
       let score = 0;
       let correct = 0;
       let incorrect = 0;
@@ -1289,6 +1500,7 @@ export default function Home() {
     }
     setSubmitBusy(false);
   };
+  submitRunnerRef.current = submitRunner;
 
   const updateAnswer = (
     question: PracticeQuestion,
@@ -1324,6 +1536,8 @@ export default function Home() {
     setReviewed(new Set());
     setExamIndex(0);
     setExamSeconds(test.durationSeconds);
+    setExamDeadlineMs(null);
+    examAutoSubmitAttempted.current = false;
     setServerResult(null);
     setSessionId(null);
     setExamRunning(false);
@@ -1332,21 +1546,29 @@ export default function Home() {
     navigate("mock");
 
     try {
-      const payload = (await requestCatalogSession(test)) as {
-        id?: string | number;
-      };
+      const payload = (await requestCatalogSession(
+        test,
+      )) as SessionLaunchPayload;
       const mapped = mapServerQuestions(payload);
+      const deadlineMs = parseDeadlineMs(payload.expires_at);
       if (mapped.length !== test.questionCount) {
         throw new Error("Incomplete full-test form");
       }
+      if (payload.id == null || deadlineMs == null) {
+        throw new Error("The timed test did not include a valid session deadline");
+      }
       setExamQuestions(mapped);
-      setSessionId(payload.id == null ? null : String(payload.id));
+      setSessionId(String(payload.id));
+      setExamDeadlineMs(deadlineMs);
+      setExamSeconds(secondsUntilDeadline(deadlineMs));
       setApiState("online");
       setExamRunning(true);
-    } catch {
+    } catch (error) {
       setApiState("offline");
       setLaunchError(
-        "This validated full-test form could not be loaded. Reconnect the FastAPI question bank and try again.",
+        error instanceof Error
+          ? error.message
+          : "This validated full-test form could not be loaded. Reconnect the FastAPI question bank and try again.",
       );
     } finally {
       setIsLoadingQuestions(false);
@@ -1370,6 +1592,10 @@ export default function Home() {
     setCheckedQuestions(new Set());
     setRunnerSummary(null);
     setRunnerSubmitted(false);
+    setRunnerDeadlineMs(null);
+    setRunnerSeconds(test.durationSeconds);
+    setRunnerTimerRunning(false);
+    runnerAutoSubmitAttempted.current = false;
     setLaunchError(null);
     setRunnerQuestions([]);
     setSessionId(null);
@@ -1377,25 +1603,35 @@ export default function Home() {
     navigate("practice");
 
     try {
-      const payload = (await requestCatalogSession(test)) as {
-        id?: string | number;
-      };
+      const payload = (await requestCatalogSession(
+        test,
+      )) as SessionLaunchPayload;
       const mapped = mapServerQuestions(payload);
+      const deadlineMs = parseDeadlineMs(payload.expires_at);
       if (
         requestId === practiceRequestId.current &&
-        mapped.length === test.questionCount
+        mapped.length === test.questionCount &&
+        payload.id != null &&
+        deadlineMs != null
       ) {
         setRunnerQuestions(mapped);
-        setSessionId(payload.id == null ? null : String(payload.id));
+        setSessionId(String(payload.id));
+        setRunnerDeadlineMs(deadlineMs);
+        setRunnerSeconds(secondsUntilDeadline(deadlineMs));
+        setRunnerTimerRunning(true);
         setApiState("online");
       } else if (requestId === practiceRequestId.current) {
-        throw new Error("Incomplete course-test form");
+        throw new Error(
+          "The course test did not include all questions and a valid deadline",
+        );
       }
-    } catch {
+    } catch (error) {
       if (requestId === practiceRequestId.current) {
         setApiState("offline");
         setLaunchError(
-          "This validated course-test form could not be loaded. Reconnect the FastAPI question bank and try again.",
+          error instanceof Error
+            ? error.message
+            : "This validated course-test form could not be loaded. Reconnect the FastAPI question bank and try again.",
         );
       }
     } finally {
@@ -1439,7 +1675,6 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             session_id: sessionId,
-            user_key: "local-user",
             answers: examQuestions
               .filter((question) => examAnswers[question.id]?.length)
               .map((question) => ({
@@ -1454,20 +1689,20 @@ export default function Home() {
         if (!response.ok) {
           throw new Error("Unable to score test");
         }
-        const payload = (await response.json()) as Record<string, number>;
-        setServerResult({
-          score: Number(payload.score ?? 0),
-          maxScore: Number(payload.max_score ?? 100),
-          percentage: Number(payload.percentage ?? 0),
-          correct: Number(payload.correct_count ?? payload.correct ?? 0),
-          incorrect: Number(payload.incorrect_count ?? payload.incorrect ?? 0),
-          unanswered: Number(payload.unanswered_count ?? payload.unanswered ?? 0),
-        });
+        const payload = (await response.json()) as AttemptResultPayload;
+        setServerResult(mapAttemptResult(payload, examQuestions));
         setAnalyticsRefreshKey((current) => current + 1);
       } catch {
         setApiState("offline");
+        const now = Date.now();
+        if (examDeadlineMs != null) {
+          setExamSeconds(secondsUntilDeadline(examDeadlineMs, now));
+          setExamRunning(now < examDeadlineMs);
+        }
         setLaunchError(
-          "Your answers are still here, but the scoring service did not accept the submission. Reconnect and submit again.",
+          examDeadlineMs != null && now >= examDeadlineMs
+            ? "Your answers are still here, but the scoring request failed after the server deadline. Reconnect and submit once more to confirm the timed-out attempt."
+            : "Your answers are still here. The timer has been synchronized with the server deadline; reconnect and submit again.",
         );
         setSubmitBusy(false);
         return;
@@ -1478,11 +1713,16 @@ export default function Home() {
   };
   submitExamRef.current = submitExam;
 
-  const localResult = useMemo(() => {
+  const localResult = useMemo<ServerResult>(() => {
     let score = 0;
+    let negativeMarks = 0;
     let correct = 0;
     let incorrect = 0;
     let unanswered = 0;
+    const maxScore = examQuestions.reduce(
+      (total, question) => total + question.marks,
+      0,
+    );
     examQuestions.forEach((question) => {
       const answer = examAnswers[question.id] ?? [];
       if (!answer.length) {
@@ -1495,17 +1735,22 @@ export default function Home() {
       } else {
         incorrect += 1;
         if (question.type === "MCQ") {
-          score -= question.marks === 1 ? 1 / 3 : 2 / 3;
+          const penalty = question.marks / 3;
+          score -= penalty;
+          negativeMarks += penalty;
         }
       }
     });
     return {
-      score: Math.max(0, Number(score.toFixed(2))),
-      maxScore: 100,
-      percentage: Math.max(0, Number(score.toFixed(2))),
+      score: Number(score.toFixed(2)),
+      maxScore,
+      percentage: maxScore
+        ? Number(((score / maxScore) * 100).toFixed(2))
+        : 0,
       correct,
       incorrect,
       unanswered,
+      negativeMarks: Number(negativeMarks.toFixed(2)),
     };
   }, [examAnswers, examQuestions]);
   const result = serverResult ?? localResult;
@@ -2173,6 +2418,12 @@ export default function Home() {
         fallbackNote.intuition,
         fallbackNote.formulaHint,
       ];
+    const syllabusScope = revisionNote
+      ? markdownSection(revisionNote.content_md, "Syllabus scope")
+      : fallbackNote.intuition;
+    const reasoningPattern = revisionNote
+      ? markdownSection(revisionNote.content_md, "Standard reasoning pattern")
+      : fallbackNote.formulaHint;
     const workedExamples =
       revisionNote?.worked_examples?.length
         ? revisionNote.worked_examples
@@ -2186,11 +2437,7 @@ export default function Home() {
       ? keyPoints.slice(0, 4).map((point) => `Can you explain why this is true: ${point}`)
       : fallbackNote.checkpoint;
     const traps = revisionNote
-      ? [
-          "Applying a remembered rule without checking its assumptions.",
-          "Skipping units, boundary cases, or the meaning of the requested quantity.",
-          "Choosing a related method that answers a different question.",
-        ]
+      ? markdownListSection(revisionNote.content_md, "Common traps")
       : fallbackNote.traps;
     return (
       <div className="page notes-page">
@@ -2202,7 +2449,7 @@ export default function Home() {
           <aside className="notes-index">
             <span className="eyebrow">In this review</span>
             <a href="#big-idea">01 · Big idea</a>
-            <a href="#formula">02 · Key rules</a>
+            <a href="#formula">02 · Standard method</a>
             <a href="#example">03 · Worked examples</a>
             <a href="#checkpoint">04 · Recall checkpoint</a>
             <div className="syllabus-lock"><span>✓</span><p><strong>Syllabus locked</strong><small>Content stays within the official GATE CS scope.</small></p></div>
@@ -2215,15 +2462,19 @@ export default function Home() {
               <div className="note-meta"><span>{Math.max(6, 4 + workedExamples.length * 2)} min read</span><span>{workedExamples.length} worked example{workedExamples.length === 1 ? "" : "s"}</span><span>{checkpoints.length} checkpoints</span></div>
             </header>
             <section id="big-idea" className="note-section">
-              <span className="section-number">01</span><div><h2>The big idea</h2><p>{revisionNote ? keyPoints.join(" ") : fallbackNote.intuition}</p><div className="margin-note"><strong>Think in invariants</strong><span>Before calculating, write down what must stay true.</span></div></div>
+              <span className="section-number">01</span><div><h2>The big idea</h2><p>{syllabusScope || revisionNote?.summary || fallbackNote.intuition}</p><div className="margin-note"><strong>Reasoning anchor</strong><span>{reasoningPattern || keyPoints[0]}</span></div></div>
             </section>
             <section id="formula" className="formula-card">
               <div>
-                <span className="card-kicker">{revisionNote ? "Key rules to remember" : "Formula to remember"}</span>
+                <span className="card-kicker">{revisionNote ? "Standard reasoning pattern" : "Formula to remember"}</span>
                 {revisionNote ? (
-                  <ul className="note-key-points">
-                    {keyPoints.map((point) => <li key={point}>{point}</li>)}
-                  </ul>
+                  <>
+                    <p>{reasoningPattern}</p>
+                    <span className="card-kicker">Key rules to remember</span>
+                    <ul className="note-key-points">
+                      {keyPoints.map((point) => <li key={point}>{point}</li>)}
+                    </ul>
+                  </>
                 ) : (
                   <><code>{fallbackNote.formula}</code><p>{fallbackNote.formulaHint}</p></>
                 )}
@@ -2338,8 +2589,8 @@ export default function Home() {
         <div className="page runner-complete-page">
           <section className="runner-complete-card">
             <span className="completion-mark">✓</span>
-            <div className="eyebrow">{practiceMode === "syllabus" ? "COA syllabus quiz complete" : practiceMode === "sectional" ? "Section submitted" : "Practice complete"}</div>
-            <h1>{runnerSummary.percentage >= 70 ? "Strong work. Keep the pattern." : "Good baseline. Review the misses."}</h1>
+            <div className="eyebrow">{runnerSummary.timedOut ? "Server deadline reached" : practiceMode === "syllabus" ? "COA syllabus quiz complete" : practiceMode === "sectional" ? "Section submitted" : "Practice complete"}</div>
+            <h1>{runnerSummary.timedOut ? "The timed test closed before the answers arrived." : runnerSummary.percentage >= 70 ? "Strong work. Keep the pattern." : "Good baseline. Review the misses."}</h1>
             <p>{selectedSubject.shortTitle} · {scopeLabel}</p>
             <div className="completion-score"><strong>{runnerSummary.score}</strong><span>/ {runnerSummary.maxScore}<small>{runnerSummary.percentage}% score</small></span></div>
             <div className="completion-stats"><span><strong>{runnerSummary.correct}</strong>Correct</span><span><strong>{runnerSummary.incorrect}</strong>Incorrect</span><span><strong>{runnerSummary.unanswered}</strong>Unanswered</span></div>
@@ -2393,7 +2644,20 @@ export default function Home() {
           >
             <span style={{ width: `${((questionIndex + 1) / runnerQuestions.length) * 100}%` }} />
           </div>
-          <span>{questionIndex + 1} / {runnerQuestions.length} · {answeredCount} answered</span>
+          <span
+            className={`runner-status ${
+              runnerDeadlineMs != null && runnerSeconds <= 15 * 60
+                ? "warning"
+                : ""
+            }`}
+          >
+            {runnerDeadlineMs != null && (
+              <strong>{formatTime(runnerSeconds)} remaining</strong>
+            )}
+            <small>
+              {questionIndex + 1} / {runnerQuestions.length} · {answeredCount} answered
+            </small>
+          </span>
         </div>
         {isLoadingQuestions && <div className="loading-banner" role="status"><span className="spinner" /> Checking the live question bank…</div>}
         {!isLoadingQuestions && launchError && (
@@ -2650,13 +2914,146 @@ export default function Home() {
     );
   };
 
-  const renderResults = () => (
-    <div className="page results-page">
-      <section className="result-hero"><div><div className="eyebrow">Full mock {String(activeTest.sequence).padStart(2, "0")} · complete</div><h1>A useful baseline.<br /><em>Now make it actionable.</em></h1><p>Your score is less important than the pattern behind it. Start with accuracy, then revisit the chapters that cost the most marks.</p></div><div className="score-disc" style={{ "--score": `${Math.max(0, result.percentage) * 3.6}deg` } as React.CSSProperties}><span><strong>{result.score}</strong><small>/ {result.maxScore}</small></span></div></section>
-      <section className="result-metrics"><div><span className="metric-label">Accuracy</span><strong>{result.correct + result.incorrect ? Math.round((result.correct / (result.correct + result.incorrect)) * 100) : 0}%</strong><small>{result.correct} correct answers</small></div><div><span className="metric-label">Attempted</span><strong>{result.correct + result.incorrect}<small>/{examQuestions.length}</small></strong><small>{result.unanswered} left unanswered</small></div><div><span className="metric-label">Time used</span><strong>{formatTime(activeTest.durationSeconds - examSeconds)}</strong><small>{formatTime(examSeconds)} remaining</small></div><div><span className="metric-label">Negative marks</span><strong>−{Math.max(0, result.correct * 0 + (result.incorrect > 0 ? Math.min(result.incorrect / 3, 9.99) : 0)).toFixed(2)}</strong><small>MCQ only</small></div></section>
-      <section className="analysis-grid"><div className="performance-card"><div className="panel-heading"><div><span className="eyebrow">Subject breakdown</span><h2>Where marks moved</h2></div><span>Accuracy</span></div><div className="performance-list">{roadmapSubjects.slice(0, 7).map((subject, index) => { const accuracy = Math.max(28, Math.min(92, subject.mastery - (index % 3) * 6)); return <div key={subject.id}><span className="performance-code" style={{ background: subject.accent }}>{subject.code}</span><span><strong>{subject.shortTitle}</strong><small>{Math.max(1, 7 - index)} attempted</small></span><div><MiniProgress value={accuracy} /><b>{accuracy}%</b></div></div>; })}</div></div><aside className="next-actions"><span className="eyebrow">Recommended next</span><h2>Turn misses into a plan.</h2><button onClick={() => { setSelectedSubjectId("computer-organization"); setSelectedTopicId("memory-hierarchy"); navigate("notes"); }}><span>01</span><p><strong>Revise cache mapping</strong><small>3 questions lost · 12 min</small></p><b>→</b></button><button onClick={() => { const subject = roadmapSubjects.find((item) => item.id === "algorithms") ?? selectedSubject; setSelectedSubjectId(subject.id); setSelectedTopicId("graph-algorithms"); void startPractice("practice", subject, "graph-algorithms"); }}><span>02</span><p><strong>Practise graph algorithms</strong><small>Focused set · 8 questions</small></p><b>→</b></button><button onClick={() => navigate("progress")}><span>03</span><p><strong>Review full progress</strong><small>Compare recent mock trends</small></p><b>→</b></button><button className="button primary full" onClick={() => navigate("dashboard")}>Return to roadmap</button></aside></section>
-    </div>
-  );
+  const renderResults = () => {
+    const breakdown = result.subjectBreakdown;
+    const attempted = result.correct + result.incorrect;
+    return (
+      <div className="page results-page">
+        <section className="result-hero">
+          <div>
+            <div className="eyebrow">
+              Full mock {String(activeTest.sequence).padStart(2, "0")} ·{" "}
+              {result.timedOut ? "deadline reached" : "complete"}
+            </div>
+            <h1>
+              {result.timedOut ? "The server closed the test." : "A useful baseline."}
+              <br />
+              <em>Now make it actionable.</em>
+            </h1>
+            <p>
+              {result.timedOut
+                ? "Only answers received before the server deadline can be scored."
+                : "Use the recorded subject evidence below, then revisit the topics that need more practice."}
+            </p>
+          </div>
+          <div
+            className="score-disc"
+            style={
+              {
+                "--score": `${Math.max(0, result.percentage) * 3.6}deg`,
+              } as React.CSSProperties
+            }
+          >
+            <span>
+              <strong>{result.score}</strong>
+              <small>/ {result.maxScore}</small>
+            </span>
+          </div>
+        </section>
+        <section className="result-metrics">
+          <div>
+            <span className="metric-label">Accuracy</span>
+            <strong>
+              {attempted ? Math.round((result.correct / attempted) * 100) : 0}%
+            </strong>
+            <small>{result.correct} correct answers</small>
+          </div>
+          <div>
+            <span className="metric-label">Attempted</span>
+            <strong>
+              {attempted}
+              <small>/{examQuestions.length}</small>
+            </strong>
+            <small>{result.unanswered} left unanswered</small>
+          </div>
+          <div>
+            <span className="metric-label">Time used</span>
+            <strong>
+              {formatTime(
+                Math.max(0, activeTest.durationSeconds - examSeconds),
+              )}
+            </strong>
+            <small>{formatTime(examSeconds)} remaining</small>
+          </div>
+          {result.negativeMarks != null && (
+            <div>
+              <span className="metric-label">Negative marks</span>
+              <strong>−{result.negativeMarks.toFixed(2)}</strong>
+              <small>Exact MCQ penalties from this attempt</small>
+            </div>
+          )}
+        </section>
+        <section className="analysis-grid">
+          {breakdown && breakdown.length > 0 && (
+            <div className="performance-card">
+              <div className="panel-heading">
+                <div>
+                  <span className="eyebrow">Subject breakdown</span>
+                  <h2>Recorded in this attempt</h2>
+                </div>
+                <span>Accuracy</span>
+              </div>
+              <div className="performance-list">
+                {breakdown.map((subject) => {
+                  const localSubject = localSubjectFromSlug(subject.subjectId);
+                  return (
+                    <div key={subject.subjectId}>
+                      <span
+                        className="performance-code"
+                        style={{
+                          background: localSubject?.accent ?? "#64748b",
+                        }}
+                      >
+                        {subject.subjectCode}
+                      </span>
+                      <span>
+                        <strong>{subject.subjectName}</strong>
+                        <small>
+                          {subject.attempted} attempted · {subject.unanswered} unanswered
+                        </small>
+                      </span>
+                      <div>
+                        <MiniProgress value={subject.accuracy} />
+                        <b>{subject.accuracy}%</b>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          <aside className="next-actions">
+            <span className="eyebrow">Continue with evidence</span>
+            <h2>Choose the next focused step.</h2>
+            <button onClick={() => navigate("progress")}>
+              <span>01</span>
+              <p>
+                <strong>Open topic analytics</strong>
+                <small>This attempt is included in your recorded progress</small>
+              </p>
+              <b>→</b>
+            </button>
+            <button
+              onClick={() => {
+                setLibraryTab("full");
+                navigate("library");
+              }}
+            >
+              <span>02</span>
+              <p>
+                <strong>Choose another full mock</strong>
+                <small>Compare across the validated test series</small>
+              </p>
+              <b>→</b>
+            </button>
+            <button className="button primary full" onClick={() => navigate("dashboard")}>
+              Return to roadmap
+            </button>
+          </aside>
+        </section>
+      </div>
+    );
+  };
 
   const renderProgress = () => {
     const maxMinutes = Math.max(...weeklyActivity.map((item) => item.minutes));

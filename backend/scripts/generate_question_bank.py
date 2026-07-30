@@ -1383,7 +1383,9 @@ def original_semantic_digest(question: dict[str, Any]) -> str:
 
 
 def build_manifest(
-    questions: list[dict[str, Any]], duplicate_count: int
+    questions: list[dict[str, Any]],
+    revision_notes: list[dict[str, Any]],
+    duplicate_count: int,
 ) -> dict[str, Any]:
     by_course: dict[str, Any] = {}
     for subject in SUBJECTS:
@@ -1437,6 +1439,13 @@ def build_manifest(
                 TECHNICAL_TARGET
             ),
             "all_syllabus_topics_present": True,
+            "revision_note_count": len(revision_notes),
+            "revision_notes_cover_every_syllabus_topic": (
+                len(revision_notes) == len(TOPICS)
+            ),
+            "revision_note_minimum_key_points": 3,
+            "revision_note_minimum_common_traps": 3,
+            "revision_note_minimum_worked_examples_after_import": 3,
             "stable_external_ids": True,
             "derived_answers": True,
         },
@@ -1446,6 +1455,51 @@ def build_manifest(
             "See pyq_extraction_manifest.json for supplied-paper coverage and unresolved extraction items.",
         ],
     }
+
+
+def build_revision_notes() -> list[dict[str, Any]]:
+    """Build syllabus-bounded note metadata from the audited topic facts.
+
+    The database importer combines this metadata with the canonical syllabus
+    description already stored on each topic, then attaches worked examples
+    from the authoritative original question bank. Keeping the facts and
+    falsehoods here makes concept checks and revision notes share one source of
+    truth instead of maintaining another hand-written topic map.
+    """
+
+    subject_by_code = {subject.code: subject for subject in SUBJECTS}
+    notes: list[dict[str, Any]] = []
+    for topic in TOPICS:
+        subject = subject_by_code[topic.course]
+        pattern_question, _, pattern_solution = numeric_problem(
+            topic.numeric_kind,
+            0,
+        )
+        common_traps = [
+            f"Do not assume that {falsehood[0].lower()}{falsehood[1:]}"
+            for falsehood in topic.falsehoods
+        ]
+        notes.append(
+            {
+                "course": subject.code,
+                "subject_slug": subject.slug,
+                "topic": topic.name,
+                "topic_slug": topic.slug,
+                "title": f"{topic.name}: GATE revision notes",
+                "summary": (
+                    f"{topic.name} questions depend on its defining properties "
+                    "and a careful application of the standard calculation "
+                    "pattern."
+                ),
+                "key_points": list(topic.truths),
+                "common_traps": common_traps,
+                "reasoning_pattern": (
+                    f"Model question: {pattern_question} "
+                    f"Reasoning: {pattern_solution}"
+                ),
+            }
+        )
+    return notes
 
 
 def build_bank() -> tuple[dict[str, Any], dict[str, Any]]:
@@ -1464,13 +1518,15 @@ def build_bank() -> tuple[dict[str, Any], dict[str, Any]]:
         seen_content.add(digest)
         questions.append(question)
     questions.sort(key=lambda item: item["external_id"])
+    revision_notes = build_revision_notes()
     bank = {
         "schema_version": SCHEMA_VERSION,
         "bank_version": BANK_VERSION,
         "generated_at": GENERATED_AT,
+        "revision_notes": revision_notes,
         "questions": questions,
     }
-    return bank, build_manifest(questions, duplicates)
+    return bank, build_manifest(questions, revision_notes, duplicates)
 
 
 def main() -> int:

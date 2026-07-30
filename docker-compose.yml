@@ -20,7 +20,7 @@ services:
     build:
       context: ./backend
     environment:
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gatepath}:${POSTGRES_PASSWORD:-gatepath_dev_password}@database:5432/${POSTGRES_DB:-gatepath}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER:-gatepath}:${POSTGRES_PASSWORD:-gatepath_dev_password}@database:5432/${POSTGRES_DB:-gatepath}}
       CORS_ORIGINS: http://localhost:3000
       AUTO_CREATE_DB: "false"
       SEED_DATA: "true"
@@ -38,7 +38,13 @@ services:
     ports:
       - "8000:8000"
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import json,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)); raise SystemExit(0 if data['status'] == 'ok' else 1)",
+        ]
       interval: 10s
       timeout: 5s
       retries: 12

@@ -19,8 +19,10 @@ from app.models import (
     QuestionBankImport,
     QuestionSource,
     QuestionType,
+    RevisionNote,
     Subject,
     Topic,
+    utc_now,
 )
 
 
@@ -72,12 +74,46 @@ class BankQuestion(BaseModel):
         return self
 
 
+class BankRevisionNote(BaseModel):
+    """Syllabus-scoped revision metadata shipped with a question-bank release."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    course: str | None = None
+    subject_slug: str | None = None
+    topic: str | None = None
+    topic_slug: str | None = None
+    title: str = Field(min_length=1, max_length=180)
+    summary: str = Field(min_length=1)
+    key_points: list[str] = Field(min_length=3)
+    common_traps: list[str] = Field(min_length=3)
+    reasoning_pattern: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def required_scope_and_distinct_content(self) -> BankRevisionNote:
+        if not (self.course or self.subject_slug):
+            raise ValueError("course (or subject_slug) is required")
+        if not (self.topic or self.topic_slug):
+            raise ValueError("topic (or topic_slug) is required")
+        self.title = self.title.strip()
+        self.summary = self.summary.strip()
+        self.reasoning_pattern = self.reasoning_pattern.strip()
+        self.key_points = [point.strip() for point in self.key_points if point.strip()]
+        self.common_traps = [trap.strip() for trap in self.common_traps if trap.strip()]
+        if len(set(self.key_points)) < 3:
+            raise ValueError("at least three distinct key_points are required")
+        if len(set(self.common_traps)) < 3:
+            raise ValueError("at least three distinct common_traps are required")
+        return self
+
+
 class QuestionBankDocument(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     schema_version: str = "1.0"
     bank_version: str
     generated_at: datetime | None = None
+    revision_notes: list[BankRevisionNote] = Field(default_factory=list)
     questions: list[BankQuestion]
 
 
@@ -389,12 +425,14 @@ def _topic_lookup(subjects: list[Subject]) -> dict[tuple[int, str], Topic]:
 
 
 def _resolve_scope(
-    item: BankQuestion,
+    item: BankQuestion | BankRevisionNote,
     *,
     index: int,
     subjects_by_key: dict[str, Subject],
     topics_by_key: dict[tuple[int, str], Topic],
+    entity_label: str = "Question",
 ) -> tuple[Subject, Topic]:
+    label = f"{entity_label} {index}"
     subject_refs = [
         (field, value)
         for field, value in (
@@ -408,7 +446,7 @@ def _resolve_scope(
         subject = subjects_by_key.get(_slugify(value))
         if subject is None:
             raise QuestionBankValidationError(
-                f"Question {index}: {field} {value!r} is outside the syllabus"
+                f"{label}: {field} {value!r} is outside the syllabus"
             )
         resolved_subjects.append((field, value, subject))
     subject_ids = {subject.id for _, _, subject in resolved_subjects}
@@ -417,7 +455,7 @@ def _resolve_scope(
             f"{field}={value!r}" for field, value, _ in resolved_subjects
         )
         raise QuestionBankValidationError(
-            f"Question {index}: conflicting course references ({descriptions})"
+            f"{label}: conflicting course references ({descriptions})"
         )
     subject = resolved_subjects[0][2]
 
@@ -434,7 +472,7 @@ def _resolve_scope(
         topic = topics_by_key.get((subject.id, _slugify(value)))
         if topic is None:
             raise QuestionBankValidationError(
-                f"Question {index}: {field} {value!r} is not in {subject.code}"
+                f"{label}: {field} {value!r} is not in {subject.code}"
             )
         resolved_topics.append((field, value, topic))
     topic_ids = {topic.id for _, _, topic in resolved_topics}
@@ -443,7 +481,7 @@ def _resolve_scope(
             f"{field}={value!r}" for field, value, _ in resolved_topics
         )
         raise QuestionBankValidationError(
-            f"Question {index}: conflicting topic references ({descriptions})"
+            f"{label}: conflicting topic references ({descriptions})"
         )
     return subject, resolved_topics[0][2]
 
@@ -473,6 +511,19 @@ def _provenance(
     )
 
 
+def _revision_note_content(topic: Topic, note: BankRevisionNote) -> str:
+    key_points = "\n".join(f"- {point}" for point in note.key_points)
+    common_traps = "\n".join(f"- {trap}" for trap in note.common_traps)
+    return (
+        f"# {note.title}\n\n"
+        f"## Syllabus scope\n\n{topic.description}\n\n"
+        f"## Key points\n\n{key_points}\n\n"
+        "## Standard reasoning pattern\n\n"
+        f"{note.reasoning_pattern}\n\n"
+        f"## Common traps\n\n{common_traps}\n"
+    )
+
+
 async def import_question_bank(
     session: AsyncSession,
     path: Path,
@@ -484,7 +535,19 @@ async def import_question_bank(
             QuestionBankImport.checksum == checksum,
         )
     )
-    if existing_import:
+    latest_import = await session.scalar(
+        select(QuestionBankImport)
+        .order_by(
+            QuestionBankImport.imported_at.desc(),
+            QuestionBankImport.id.desc(),
+        )
+        .limit(1)
+    )
+    if (
+        existing_import is not None
+        and latest_import is not None
+        and existing_import.id == latest_import.id
+    ):
         return ImportResult(
             bank_version=document.bank_version,
             checksum=checksum,
@@ -574,6 +637,26 @@ async def import_question_bank(
             )
         )
 
+    # Revision metadata is validated and resolved before any ORM mutation, just
+    # like questions. A malformed or out-of-syllabus note therefore cannot
+    # leave a partially-applied release behind.
+    prepared_notes: list[tuple[BankRevisionNote, Topic]] = []
+    seen_note_topics: set[int] = set()
+    for index, note in enumerate(document.revision_notes, start=1):
+        _, topic = _resolve_scope(
+            note,
+            index=index,
+            subjects_by_key=subjects_by_key,
+            topics_by_key=topics_by_key,
+            entity_label="Revision note",
+        )
+        if topic.id in seen_note_topics:
+            raise QuestionBankValidationError(
+                f"Revision note {index}: duplicate topic {topic.name!r}"
+            )
+        seen_note_topics.add(topic.id)
+        prepared_notes.append((note, topic))
+
     targets: list[tuple[_PreparedQuestion, Question | None]] = []
     for item in prepared:
         values = item.values
@@ -624,10 +707,29 @@ async def import_question_bank(
             question.is_active = False
             retired += 1
 
+    for note_metadata, topic in prepared_notes:
+        note_values = {
+            "title": note_metadata.title,
+            "summary": note_metadata.summary,
+            "content_md": _revision_note_content(topic, note_metadata),
+            "key_points": list(note_metadata.key_points),
+        }
+        if topic.note is None:
+            topic.note = RevisionNote(
+                **note_values,
+                worked_examples=[],
+            )
+        else:
+            for field, value in note_values.items():
+                setattr(topic.note, field, value)
+
     # Revision examples are derived deterministically from the authoritative
     # original bank while retaining every note's topic-specific prose and key
     # points. Topics without three suitable originals keep their existing set.
-    examples_by_topic: dict[int, list[dict[str, str]]] = {}
+    example_candidates_by_topic: dict[
+        int,
+        list[tuple[QuestionType, dict[str, str]]],
+    ] = {}
     for item in sorted(
         prepared,
         key=lambda prepared_item: str(prepared_item.values["external_id"]),
@@ -635,14 +737,49 @@ async def import_question_bank(
         values = item.values
         if values["source_kind"] != QuestionSource.ORIGINAL:
             continue
-        examples = examples_by_topic.setdefault(values["topic_id"], [])
-        if len(examples) < 3 and values["explanation"]:
-            examples.append(
-                {
-                    "question": values["text"],
-                    "solution": values["explanation"],
-                }
+        candidates = example_candidates_by_topic.setdefault(
+            values["topic_id"],
+            [],
+        )
+        if values["explanation"]:
+            candidates.append(
+                (
+                    values["question_type"],
+                    {
+                        "question": values["text"],
+                        "solution": values["explanation"],
+                    },
+                )
             )
+    examples_by_topic: dict[int, list[dict[str, str]]] = {}
+    preferred_types = (
+        QuestionType.MCQ,
+        QuestionType.MSQ,
+        QuestionType.NAT,
+    )
+    for topic_id, candidates in example_candidates_by_topic.items():
+        examples: list[dict[str, str]] = []
+        selected_ids: set[int] = set()
+        for question_type in preferred_types:
+            match = next(
+                (
+                    (index, example)
+                    for index, (candidate_type, example) in enumerate(candidates)
+                    if candidate_type == question_type
+                ),
+                None,
+            )
+            if match is not None:
+                index, example = match
+                selected_ids.add(index)
+                examples.append(example)
+        for index, (_, example) in enumerate(candidates):
+            if len(examples) >= 3:
+                break
+            if index not in selected_ids:
+                examples.append(example)
+        if examples:
+            examples_by_topic[topic_id] = examples[:3]
     topics_by_id = {
         topic.id: topic
         for subject in subjects
@@ -653,19 +790,30 @@ async def import_question_bank(
         if topic is not None and topic.note is not None and len(examples) >= 3:
             topic.note.worked_examples = examples[:3]
 
-    session.add(
-        QuestionBankImport(
-            schema_version=document.schema_version,
-            bank_version=document.bank_version,
-            source_path=str(path),
-            checksum=checksum,
-            question_count=len(document.questions),
-            inserted_count=inserted,
-            updated_count=updated,
-            unchanged_count=unchanged,
-            retired_count=retired,
+    import_values = {
+        "schema_version": document.schema_version,
+        "bank_version": document.bank_version,
+        "source_path": str(path),
+        "checksum": checksum,
+        "question_count": len(document.questions),
+        "inserted_count": inserted,
+        "updated_count": updated,
+        "unchanged_count": unchanged,
+        "retired_count": retired,
+    }
+    if existing_import is None:
+        session.add(
+            QuestionBankImport(
+                **import_values,
+            )
         )
-    )
+    else:
+        # A previously seen artifact can become authoritative again after a
+        # different bank was applied. Reconcile it fully, then refresh its
+        # unique audit row so startup is idempotent from this state onward.
+        for field, value in import_values.items():
+            setattr(existing_import, field, value)
+        existing_import.imported_at = utc_now()
     await session.commit()
     return ImportResult(
         bank_version=document.bank_version,

@@ -2,6 +2,1224 @@
   "schema_version": "1.0",
   "bank_version": "gate-cs-2027-v1",
   "generated_at": "2026-07-30T00:00:00Z",
+  "revision_notes": [
+    {
+      "course": "EM",
+      "subject_slug": "engineering-mathematics",
+      "topic": "Discrete Mathematics",
+      "topic_slug": "discrete-mathematics",
+      "title": "Discrete Mathematics: GATE revision notes",
+      "summary": "Discrete Mathematics questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "In every finite undirected graph, the sum of vertex degrees is twice the number of edges.",
+        "An equivalence relation is reflexive, symmetric, and transitive.",
+        "A tree with n vertices has n - 1 edges."
+      ],
+      "common_traps": [
+        "Do not assume that every partial order is a total order.",
+        "Do not assume that every group is commutative.",
+        "Do not assume that a simple cycle on n vertices has n - 1 edges."
+      ],
+      "reasoning_pattern": "Model question: A simple complete graph has 6 vertices. How many edges does it contain? Reasoning: Every unordered vertex pair is an edge, so C(6, 2) = 6*5/2 = 15."
+    },
+    {
+      "course": "EM",
+      "subject_slug": "engineering-mathematics",
+      "topic": "Linear Algebra",
+      "topic_slug": "linear-algebra",
+      "title": "Linear Algebra: GATE revision notes",
+      "summary": "Linear Algebra questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "The determinant equals the product of eigenvalues, counted with multiplicity.",
+        "A square system with a nonsingular coefficient matrix has a unique solution.",
+        "Every real symmetric matrix has real eigenvalues."
+      ],
+      "common_traps": [
+        "Do not assume that every square matrix is diagonalizable.",
+        "Do not assume that a zero determinant implies a unique solution for every right-hand side.",
+        "Do not assume that row operations never change a determinant."
+      ],
+      "reasoning_pattern": "Model question: An upper triangular 3 x 3 matrix has diagonal entries 3, 4, and 5. Find its determinant. Reasoning: The determinant of a triangular matrix is the diagonal product: 3*4*5 = 60."
+    },
+    {
+      "course": "EM",
+      "subject_slug": "engineering-mathematics",
+      "topic": "Calculus",
+      "topic_slug": "calculus",
+      "title": "Calculus: GATE revision notes",
+      "summary": "Calculus questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Differentiability at a point implies continuity there.",
+        "An interior differentiable local extremum must have zero derivative.",
+        "The fundamental theorem links definite integration and antiderivatives."
+      ],
+      "common_traps": [
+        "Do not assume that continuity at a point always implies differentiability there.",
+        "Do not assume that every stationary point is a local maximum.",
+        "Do not assume that a differentiable function can have a jump discontinuity."
+      ],
+      "reasoning_pattern": "Model question: For f(x) = 2x^2 + 3x + 3, find f'(2). Reasoning: f'(x) = 4x + 3; substituting x=2 gives 11."
+    },
+    {
+      "course": "EM",
+      "subject_slug": "engineering-mathematics",
+      "topic": "Probability and Statistics",
+      "topic_slug": "probability-and-statistics",
+      "title": "Probability and Statistics: GATE revision notes",
+      "summary": "Probability and Statistics questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "For a binomial random variable, the mean is np.",
+        "Independent events A and B satisfy P(A intersection B) = P(A)P(B).",
+        "Variance is unchanged when a constant is added to a random variable."
+      ],
+      "common_traps": [
+        "Do not assume that mutually exclusive nonempty events are independent.",
+        "Do not assume that for every random variable, variance equals its mean.",
+        "Do not assume that conditional probabilities P(A given B) and P(B given A) are always equal."
+      ],
+      "reasoning_pattern": "Model question: X is binomial with n=9 and p=3/10. Find E[X]. Reasoning: For a binomial variable E[X]=np=9*3/10=2.7."
+    },
+    {
+      "course": "DL",
+      "subject_slug": "digital-logic",
+      "topic": "Boolean Algebra",
+      "topic_slug": "boolean-algebra",
+      "title": "Boolean Algebra: GATE revision notes",
+      "summary": "Boolean Algebra questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "De Morgan's law gives complement(AB) = complement(A) + complement(B).",
+        "A canonical minterm contains every variable exactly once.",
+        "X XOR X is always zero."
+      ],
+      "common_traps": [
+        "Do not assume that x + XY equals X + Y.",
+        "Do not assume that a maxterm evaluates to zero for every input assignment.",
+        "Do not assume that x AND complement(X) equals one."
+      ],
+      "reasoning_pattern": "Model question: A Boolean function of 5 variables is 1 exactly when 2 inputs are 1. How many minterms make it 1? Reasoning: Choose the 2 asserted variables: C(5, 2) = 10."
+    },
+    {
+      "course": "DL",
+      "subject_slug": "digital-logic",
+      "topic": "Combinational Circuits",
+      "topic_slug": "combinational-circuits",
+      "title": "Combinational Circuits: GATE revision notes",
+      "summary": "Combinational Circuits questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A combinational circuit has no state memory.",
+        "A decoder with n inputs can have up to 2^n output lines.",
+        "A full adder accepts three one-bit inputs."
+      ],
+      "common_traps": [
+        "Do not assume that a multiplexer with s select lines has only s data inputs.",
+        "Do not assume that a half adder has a carry-in input.",
+        "Do not assume that a combinational output depends on the previous clock cycle."
+      ],
+      "reasoning_pattern": "Model question: How many data inputs does a multiplexer with 3 select lines require? Reasoning: Each select word chooses one input, so the count is 2^3 = 8."
+    },
+    {
+      "course": "DL",
+      "subject_slug": "digital-logic",
+      "topic": "Sequential Circuits",
+      "topic_slug": "sequential-circuits",
+      "title": "Sequential Circuits: GATE revision notes",
+      "summary": "Sequential Circuits questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A sequential circuit can depend on stored state.",
+        "A D flip-flop samples its input at its active clock event.",
+        "A modulo-m counter needs at least ceil(log2(m)) state bits."
+      ],
+      "common_traps": [
+        "Do not assume that every latch is edge triggered.",
+        "Do not assume that a sequential circuit has no feedback path.",
+        "Do not assume that a k-bit binary counter has only k distinct states."
+      ],
+      "reasoning_pattern": "Model question: What is the minimum number of flip-flops for a counter with 8 distinct states? Reasoning: Choose the least k with 2^k >= 8; k = ceil(log2(8)) = 3."
+    },
+    {
+      "course": "DL",
+      "subject_slug": "digital-logic",
+      "topic": "Number Representation and Arithmetic",
+      "topic_slug": "number-representation-and-arithmetic",
+      "title": "Number Representation and Arithmetic: GATE revision notes",
+      "summary": "Number Representation and Arithmetic questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "An n-bit unsigned word has 2^n distinct patterns.",
+        "The n-bit two's-complement range is -2^(n-1) through 2^(n-1)-1.",
+        "Two's-complement negation complements the bits and adds one."
+      ],
+      "common_traps": [
+        "Do not assume that an n-bit unsigned word has maximum value 2^n.",
+        "Do not assume that sign extension changes the represented two's-complement value.",
+        "Do not assume that adding two positive two's-complement values can never overflow."
+      ],
+      "reasoning_pattern": "Model question: How many distinct values can a 5-bit unsigned word represent? Reasoning: There are two choices per bit, giving 2^5 = 32 patterns."
+    },
+    {
+      "course": "COA",
+      "subject_slug": "computer-organization-and-architecture",
+      "topic": "Machine Instructions and Addressing Modes",
+      "topic_slug": "machine-instructions-and-addressing-modes",
+      "title": "Machine Instructions and Addressing Modes: GATE revision notes",
+      "summary": "Machine Instructions and Addressing Modes questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Immediate addressing places the operand value in the instruction.",
+        "Base-plus-offset addressing adds a displacement to a base register.",
+        "Indirect addressing requires an additional memory reference for the effective address."
+      ],
+      "common_traps": [
+        "Do not assume that immediate addressing always fetches the operand from data memory.",
+        "Do not assume that register addressing names a memory location only.",
+        "Do not assume that pC-relative addressing cannot support branches."
+      ],
+      "reasoning_pattern": "Model question: A base register contains address 1064; an instruction uses displacement 16. Find the base-plus-offset effective address. Reasoning: Effective address = base + displacement = 1064 + 16 = 1080."
+    },
+    {
+      "course": "COA",
+      "subject_slug": "computer-organization-and-architecture",
+      "topic": "ALU, Datapath and Control",
+      "topic_slug": "alu-datapath-and-control",
+      "title": "ALU, Datapath and Control: GATE revision notes",
+      "summary": "ALU, Datapath and Control questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "The ALU performs arithmetic and logical operations.",
+        "A datapath contains storage and functional units connected by buses.",
+        "A control unit selects datapath operations for each instruction."
+      ],
+      "common_traps": [
+        "Do not assume that the program counter is part of secondary storage.",
+        "Do not assume that a hardwired control unit stores every control word in a writable cache.",
+        "Do not assume that an ALU alone determines the instruction sequence."
+      ],
+      "reasoning_pattern": "Model question: An ALU first adds 18 and 4, then logically shifts the result left by 2 bit(s). Find the unsigned result. Reasoning: The sum is 22; left shifting by 2 multiplies by 2^2, giving 88."
+    },
+    {
+      "course": "COA",
+      "subject_slug": "computer-organization-and-architecture",
+      "topic": "Instruction Pipelining",
+      "topic_slug": "instruction-pipelining",
+      "title": "Instruction Pipelining: GATE revision notes",
+      "summary": "Instruction Pipelining questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Ideal pipelining improves throughput, not the latency of one instruction.",
+        "A load-use dependency can require a stall even with forwarding.",
+        "A branch can create a control hazard."
+      ],
+      "common_traps": [
+        "Do not assume that forwarding removes every possible pipeline stall.",
+        "Do not assume that a structural hazard is caused only by branch instructions.",
+        "Do not assume that an ideal k-stage pipeline completes n instructions in kn cycles."
+      ],
+      "reasoning_pattern": "Model question: A 5-stage pipeline executes 9 instructions and incurs 1 total stall cycle(s). How many cycles are required? Reasoning: Ideal cycles are 5+9-1; adding 1 stalls gives 14."
+    },
+    {
+      "course": "COA",
+      "subject_slug": "computer-organization-and-architecture",
+      "topic": "Memory Hierarchy",
+      "topic_slug": "memory-hierarchy",
+      "title": "Memory Hierarchy: GATE revision notes",
+      "summary": "Memory Hierarchy questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Temporal locality means recently used data is likely to be reused.",
+        "Average memory access time includes hit time plus miss rate times miss penalty.",
+        "A larger block can exploit spatial locality."
+      ],
+      "common_traps": [
+        "Do not assume that a cache miss never accesses a lower memory level.",
+        "Do not assume that direct-mapped caches have no conflict misses.",
+        "Do not assume that write-through updates only the cache copy."
+      ],
+      "reasoning_pattern": "Model question: A cache hit takes 2 ns, miss rate is 10%, and additional miss penalty is 25 ns. Find AMAT in ns. Reasoning: AMAT = 2 + (10/100)*25 = 4.5 ns."
+    },
+    {
+      "course": "COA",
+      "subject_slug": "computer-organization-and-architecture",
+      "topic": "I/O Interface",
+      "topic_slug": "i-o-interface",
+      "title": "I/O Interface: GATE revision notes",
+      "summary": "I/O Interface questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Programmed I/O can make the CPU poll device status.",
+        "Interrupt-driven I/O lets a device notify the processor.",
+        "Memory-mapped I/O uses ordinary address-space operations."
+      ],
+      "common_traps": [
+        "Do not assume that interrupt-driven I/O requires continuous polling.",
+        "Do not assume that programmed I/O always transfers blocks without CPU involvement.",
+        "Do not assume that every I/O device executes CPU instructions directly."
+      ],
+      "reasoning_pattern": "Model question: A programmed-I/O loop performs 25 status polls, each costing 4 CPU cycles. Find total polling cycles. Reasoning: Total polling cost is 25*4 = 100 cycles."
+    },
+    {
+      "course": "COA",
+      "subject_slug": "computer-organization-and-architecture",
+      "topic": "Interrupts and DMA",
+      "topic_slug": "interrupts-and-dma",
+      "title": "Interrupts and DMA: GATE revision notes",
+      "summary": "Interrupts and DMA questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "DMA can transfer a block with limited CPU intervention.",
+        "A vectored interrupt identifies an interrupt-service entry.",
+        "Cycle stealing lets DMA use individual memory-bus cycles."
+      ],
+      "common_traps": [
+        "Do not assume that dMA requires one CPU instruction for every transferred byte.",
+        "Do not assume that interrupt masking physically disconnects all devices.",
+        "Do not assume that a non-vectored interrupt always supplies the ISR address directly."
+      ],
+      "reasoning_pattern": "Model question: A DMA controller transfers 40 words and occupies the bus for 3 cycles per word. Find occupied bus cycles. Reasoning: The transfer occupies 40*3 = 120 bus cycles."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Programming in C",
+      "topic_slug": "programming-in-c",
+      "title": "Programming in C: GATE revision notes",
+      "summary": "Programming in C questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Pointer arithmetic is scaled by the pointed-to type size.",
+        "Array indexing a[i] is defined using pointer arithmetic.",
+        "C passes ordinary function arguments by value."
+      ],
+      "common_traps": [
+        "Do not assume that incrementing an int pointer always adds one byte.",
+        "Do not assume that a local automatic variable persists after its function returns.",
+        "Do not assume that c arrays perform bounds checks automatically."
+      ],
+      "reasoning_pattern": "Model question: In C, an array starts at byte address 1128; each element is 2 byte(s). Find the address of element a[3]. Reasoning: Row address arithmetic gives 1128+3*2 = 1134."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Recursion",
+      "topic_slug": "recursion",
+      "title": "Recursion: GATE revision notes",
+      "summary": "Recursion questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A terminating recursion needs progress toward a base case.",
+        "Each active recursive call has its own activation record.",
+        "A recursive algorithm can be described by a recurrence."
+      ],
+      "common_traps": [
+        "Do not assume that every recursive function uses constant stack space.",
+        "Do not assume that a base case makes the first call unnecessary.",
+        "Do not assume that tail recursion always has exponential running time."
+      ],
+      "reasoning_pattern": "Model question: A function F(k) makes exactly one call to F(k-1) for k>0 and stops at F(0). Including the base call, how many calls arise from F(5)? Reasoning: The calls are F(5), F(4), ..., F(0): 5+1 = 6."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Arrays",
+      "topic_slug": "arrays",
+      "title": "Arrays: GATE revision notes",
+      "summary": "Arrays questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Array elements occupy contiguous storage.",
+        "C stores multidimensional arrays in row-major order.",
+        "Random access by index is constant time for an array."
+      ],
+      "common_traps": [
+        "Do not assume that inserting at the front of a dense array is always constant time.",
+        "Do not assume that an array index can never be computed arithmetically.",
+        "Do not assume that column-major order is mandated by C."
+      ],
+      "reasoning_pattern": "Model question: A row-major int A[5][6] starts at address 2000 with 4-byte elements. Find address A[1][2]. Reasoning: Linear index = 1*6+2=8; address = 2000+4*8=2032."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Stacks and Queues",
+      "topic_slug": "stacks-and-queues",
+      "title": "Stacks and Queues: GATE revision notes",
+      "summary": "Stacks and Queues questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A stack uses last-in, first-out order.",
+        "A queue uses first-in, first-out order.",
+        "A circular queue reuses positions released at the front."
+      ],
+      "common_traps": [
+        "Do not assume that a queue removes the newest element first.",
+        "Do not assume that a stack requires sorted keys.",
+        "Do not assume that a circular queue cannot be implemented with an array."
+      ],
+      "reasoning_pattern": "Model question: An array circular queue has 9 slots and uses one empty slot to distinguish full from empty. What is its usable capacity? Reasoning: One slot is reserved, so usable capacity is 9-1=8."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Linked Lists",
+      "topic_slug": "linked-lists",
+      "title": "Linked Lists: GATE revision notes",
+      "summary": "Linked Lists questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A singly linked node stores a link to its successor.",
+        "Insertion after a known node can be constant time.",
+        "A doubly linked list supports traversal in both directions."
+      ],
+      "common_traps": [
+        "Do not assume that a linked list provides constant-time access to its kth node without extra indexing.",
+        "Do not assume that every linked-list node is contiguous with the next node.",
+        "Do not assume that deleting a node never changes any link."
+      ],
+      "reasoning_pattern": "Model question: Traversing a singly linked list of 12 nodes follows 11 next links, each costing 3 time units. Find total link-following cost. Reasoning: There are 12-1 links, so cost = 11*3=33."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Trees and Binary Search Trees",
+      "topic_slug": "trees-and-binary-search-trees",
+      "title": "Trees and Binary Search Trees: GATE revision notes",
+      "summary": "Trees and Binary Search Trees questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Inorder traversal of a BST visits distinct keys in sorted order.",
+        "A tree with n vertices has n - 1 edges.",
+        "A binary tree node has at most two children."
+      ],
+      "common_traps": [
+        "Do not assume that preorder traversal of every BST is sorted.",
+        "Do not assume that every binary tree is height balanced.",
+        "Do not assume that a complete binary tree must have an odd number of nodes."
+      ],
+      "reasoning_pattern": "Model question: A perfect binary tree has root at height 0 and overall height 3. How many nodes does it have? Reasoning: Nodes = 1+2+...+2^3 = 2^4-1 = 15."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Heaps",
+      "topic_slug": "heaps",
+      "title": "Heaps: GATE revision notes",
+      "summary": "Heaps questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A binary heap is a complete binary tree.",
+        "The maximum key is at the root of a max-heap.",
+        "Insertion can require a path of swaps toward the root."
+      ],
+      "common_traps": [
+        "Do not assume that a max-heap stores all keys in sorted array order.",
+        "Do not assume that searching an arbitrary key in a binary heap is always logarithmic.",
+        "Do not assume that the root of a min-heap contains the maximum key."
+      ],
+      "reasoning_pattern": "Model question: In a 1-indexed binary heap, what is the parent index of the node at index 11? Reasoning: For a 1-indexed heap, parent(i)=floor(i/2), so floor(11/2)=5."
+    },
+    {
+      "course": "PDS",
+      "subject_slug": "programming-and-data-structures",
+      "topic": "Graphs",
+      "topic_slug": "graphs",
+      "title": "Graphs: GATE revision notes",
+      "summary": "Graphs questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "An adjacency list uses O(V + E) space for a sparse graph.",
+        "An undirected edge appears twice in ordinary adjacency lists.",
+        "An adjacency matrix supports constant-time edge lookup."
+      ],
+      "common_traps": [
+        "Do not assume that every graph is connected.",
+        "Do not assume that an adjacency matrix uses O(V + E) space in all cases.",
+        "Do not assume that a directed edge must appear twice in an adjacency list."
+      ],
+      "reasoning_pattern": "Model question: An undirected simple graph has 10 edges. How many neighbor entries occur across all ordinary adjacency lists? Reasoning: Each edge is listed at both endpoints, giving 2*10=20 entries."
+    },
+    {
+      "course": "ALG",
+      "subject_slug": "algorithms",
+      "topic": "Searching, Sorting and Hashing",
+      "topic_slug": "searching-sorting-and-hashing",
+      "title": "Searching, Sorting and Hashing: GATE revision notes",
+      "summary": "Searching, Sorting and Hashing questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Binary search requires an ordered search interval.",
+        "Comparison sorting has an Omega(n log n) worst-case lower bound in the general model.",
+        "A hash collision occurs when distinct keys map to one slot."
+      ],
+      "common_traps": [
+        "Do not assume that binary search is correct on an arbitrary unsorted array.",
+        "Do not assume that every hash table operation is worst-case O(1).",
+        "Do not assume that merge sort is an in-place constant-space algorithm in its standard array implementation."
+      ],
+      "reasoning_pattern": "Model question: A binary-search candidate interval has 32 items. How many exact halvings reduce it to one item? Reasoning: 32=2^5; therefore 5 halvings leave one candidate."
+    },
+    {
+      "course": "ALG",
+      "subject_slug": "algorithms",
+      "topic": "Complexity Analysis",
+      "topic_slug": "complexity-analysis",
+      "title": "Complexity Analysis: GATE revision notes",
+      "summary": "Complexity Analysis questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Theta notation gives an asymptotically tight bound.",
+        "Constants are ignored in asymptotic growth classes.",
+        "A polynomial-time bound is closed under addition and multiplication."
+      ],
+      "common_traps": [
+        "Do not assume that o(n) and Omega(n) are mutually exclusive.",
+        "Do not assume that every exponential algorithm is faster than every polynomial algorithm for all inputs.",
+        "Do not assume that worst-case time can be smaller than best-case time."
+      ],
+      "reasoning_pattern": "Model question: A nested loop executes its inner statement i times for i=1 through 6. How many total executions occur? Reasoning: The count is 1+...+6=6*7/2=21."
+    },
+    {
+      "course": "ALG",
+      "subject_slug": "algorithms",
+      "topic": "Divide and Conquer",
+      "topic_slug": "divide-and-conquer",
+      "title": "Divide and Conquer: GATE revision notes",
+      "summary": "Divide and Conquer questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Divide and conquer solves subproblems and combines their results.",
+        "Merge sort has logarithmically many merge levels.",
+        "Binary search discards about half the remaining interval."
+      ],
+      "common_traps": [
+        "Do not assume that every divide-and-conquer recurrence has quadratic complexity.",
+        "Do not assume that merge sort performs no combine work.",
+        "Do not assume that divide and conquer cannot be implemented recursively."
+      ],
+      "reasoning_pattern": "Model question: Merge sort is run on 16 items. How many halving levels occur before singleton subarrays? Reasoning: Because 16=2^4, log2(16)=4 halving levels occur."
+    },
+    {
+      "course": "ALG",
+      "subject_slug": "algorithms",
+      "topic": "Greedy Algorithms",
+      "topic_slug": "greedy-algorithms",
+      "title": "Greedy Algorithms: GATE revision notes",
+      "summary": "Greedy Algorithms questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Kruskal's algorithm adds safe edges in nondecreasing weight order.",
+        "Prim's algorithm grows one tree.",
+        "A greedy proof commonly uses an exchange argument."
+      ],
+      "common_traps": [
+        "Do not assume that a locally best choice is optimal for every optimization problem.",
+        "Do not assume that kruskal's algorithm may retain a cycle in an MST.",
+        "Do not assume that every shortest-path problem permits negative cycles."
+      ],
+      "reasoning_pattern": "Model question: A connected graph has 6 vertices. How many edges are in any spanning tree? Reasoning: Every tree on 6 vertices contains 6-1=5 edges."
+    },
+    {
+      "course": "ALG",
+      "subject_slug": "algorithms",
+      "topic": "Dynamic Programming",
+      "topic_slug": "dynamic-programming",
+      "title": "Dynamic Programming: GATE revision notes",
+      "summary": "Dynamic Programming questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Dynamic programming exploits overlapping subproblems.",
+        "Memoization is top-down caching.",
+        "Tabulation stores subproblem answers in an evaluation order."
+      ],
+      "common_traps": [
+        "Do not assume that dynamic programming never uses extra memory.",
+        "Do not assume that optimal substructure is irrelevant to dynamic programming.",
+        "Do not assume that memoization recomputes every subproblem each time."
+      ],
+      "reasoning_pattern": "Model question: An LCS table includes row/column zero for strings of lengths 4 and 6. How many DP cells are stored? Reasoning: The table dimensions are (4+1) by (6+1), giving 35 cells."
+    },
+    {
+      "course": "ALG",
+      "subject_slug": "algorithms",
+      "topic": "Graph Algorithms",
+      "topic_slug": "graph-algorithms",
+      "title": "Graph Algorithms: GATE revision notes",
+      "summary": "Graph Algorithms questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "BFS finds shortest unweighted path lengths from a source.",
+        "DFS can identify connected components.",
+        "Dijkstra's standard correctness requires nonnegative edge weights."
+      ],
+      "common_traps": [
+        "Do not assume that bFS always finds minimum-weight paths with arbitrary edge weights.",
+        "Do not assume that dFS uses a FIFO queue as its defining discipline.",
+        "Do not assume that dijkstra's algorithm remains correct with a reachable negative cycle."
+      ],
+      "reasoning_pattern": "Model question: BFS scans adjacency lists of an undirected graph with 12 edges. How many edge entries are examined in total? Reasoning: Each undirected edge occurs in two adjacency lists, so 24 entries are scanned."
+    },
+    {
+      "course": "TOC",
+      "subject_slug": "theory-of-computation",
+      "topic": "Regular Expressions and Finite Automata",
+      "topic_slug": "regular-expressions-and-finite-automata",
+      "title": "Regular Expressions and Finite Automata: GATE revision notes",
+      "summary": "Regular Expressions and Finite Automata questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Regular expressions and finite automata define the same language class.",
+        "Every DFA is also an NFA.",
+        "Subset construction can produce up to 2^n DFA states from n NFA states."
+      ],
+      "common_traps": [
+        "Do not assume that a finite automaton recognizes every context-free language.",
+        "Do not assume that an NFA is more expressive than a DFA.",
+        "Do not assume that a DFA may have two transitions on one symbol from the same state."
+      ],
+      "reasoning_pattern": "Model question: Subset construction is applied to an NFA with 4 states. What is the maximum number of DFA subset states? Reasoning: There are 2^4 subsets, hence at most 16 DFA states."
+    },
+    {
+      "course": "TOC",
+      "subject_slug": "theory-of-computation",
+      "topic": "Context-Free Grammars",
+      "topic_slug": "context-free-grammars",
+      "title": "Context-Free Grammars: GATE revision notes",
+      "summary": "Context-Free Grammars questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A context-free production has one nonterminal on its left side.",
+        "A parse tree records a grammatical derivation.",
+        "An ambiguous grammar has a string with two distinct parse trees."
+      ],
+      "common_traps": [
+        "Do not assume that every context-free grammar is unambiguous.",
+        "Do not assume that a regular language cannot have a context-free grammar.",
+        "Do not assume that a leftmost derivation expands the rightmost nonterminal first."
+      ],
+      "reasoning_pattern": "Model question: A full binary parse tree has 4 terminal leaves. How many total nodes does it contain? Reasoning: A full binary tree with L leaves has L-1 internal nodes, so total = 2L-1 = 7."
+    },
+    {
+      "course": "TOC",
+      "subject_slug": "theory-of-computation",
+      "topic": "Pushdown Automata",
+      "topic_slug": "pushdown-automata",
+      "title": "Pushdown Automata: GATE revision notes",
+      "summary": "Pushdown Automata questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A pushdown automaton has an unbounded stack.",
+        "Nondeterministic PDAs recognize the context-free languages.",
+        "A stack can match nested delimiters."
+      ],
+      "common_traps": [
+        "Do not assume that a PDA has only finite memory in total.",
+        "Do not assume that every Turing-recognizable language is accepted by a PDA.",
+        "Do not assume that a PDA stack supports random access to every stored symbol."
+      ],
+      "reasoning_pattern": "Model question: A PDA for a^k b^k pushes one marker per a. What is its maximum marker count on input a^5b^5? Reasoning: It pushes once for each of the 5 leading a symbols, reaching 5 markers."
+    },
+    {
+      "course": "TOC",
+      "subject_slug": "theory-of-computation",
+      "topic": "Pumping Lemmas and Language Properties",
+      "topic_slug": "pumping-lemmas-and-language-properties",
+      "title": "Pumping Lemmas and Language Properties: GATE revision notes",
+      "summary": "Pumping Lemmas and Language Properties questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "The regular languages are closed under complement.",
+        "A pumping lemma can be used to prove that a language is not regular.",
+        "Context-free languages are closed under union."
+      ],
+      "common_traps": [
+        "Do not assume that the regular pumping lemma proves that a language is regular.",
+        "Do not assume that context-free languages are closed under intersection.",
+        "Do not assume that every subset of a regular language is regular."
+      ],
+      "reasoning_pattern": "Model question: A regular-language pumping lemma supplies pumping length p=6. What is the minimum string length to which its decomposition guarantee applies? Reasoning: The guarantee applies to every string whose length is at least p, so the minimum is 6."
+    },
+    {
+      "course": "TOC",
+      "subject_slug": "theory-of-computation",
+      "topic": "Turing Machines and Undecidability",
+      "topic_slug": "turing-machines-and-undecidability",
+      "title": "Turing Machines and Undecidability: GATE revision notes",
+      "summary": "Turing Machines and Undecidability questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A Turing machine has a finite control and an unbounded tape model.",
+        "The halting problem is undecidable.",
+        "A mapping reduction can transfer undecidability to a target problem."
+      ],
+      "common_traps": [
+        "Do not assume that every recognizable language is decidable.",
+        "Do not assume that a Turing machine tape has a fixed finite bound independent of input.",
+        "Do not assume that an undecidable language has no recognizer."
+      ],
+      "reasoning_pattern": "Model question: A Turing-machine head initially scans the leftmost symbol of a 6-symbol unary input. It moves right once per step. How many head moves are required before it first scans the blank immediately to the right of the input? Reasoning: Starting on the first input symbol, move 5 times to reach the last symbol and once more to reach the blank: 5+1=6."
+    },
+    {
+      "course": "CD",
+      "subject_slug": "compiler-design",
+      "topic": "Lexical Analysis",
+      "topic_slug": "lexical-analysis",
+      "title": "Lexical Analysis: GATE revision notes",
+      "summary": "Lexical Analysis questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A lexer groups characters into tokens.",
+        "Regular expressions commonly specify token patterns.",
+        "Whitespace can often be discarded by lexical analysis."
+      ],
+      "common_traps": [
+        "Do not assume that a lexer builds the complete parse tree.",
+        "Do not assume that context-free parsing is required to recognize every identifier.",
+        "Do not assume that a lexeme is always a token category rather than source text."
+      ],
+      "reasoning_pattern": "Model question: A source fragment contains 3 identifier lexemes, 2 operator lexemes, and 3 numeric literals, with whitespace ignored. How many tokens are emitted? Reasoning: Each listed lexeme yields one token: 3+2+3=8."
+    },
+    {
+      "course": "CD",
+      "subject_slug": "compiler-design",
+      "topic": "Parsing",
+      "topic_slug": "parsing",
+      "title": "Parsing: GATE revision notes",
+      "summary": "Parsing questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "LL parsing is top down.",
+        "LR parsing is bottom up.",
+        "FIRST and FOLLOW sets help construct predictive parsing tables."
+      ],
+      "common_traps": [
+        "Do not assume that shift-reduce parsing is top down.",
+        "Do not assume that an LL(1) parser uses unlimited lookahead.",
+        "Do not assume that every context-free grammar is LR(0)."
+      ],
+      "reasoning_pattern": "Model question: A simple shift-reduce trace shifts 6 tokens and performs 5 reductions. How many shift/reduce actions occur? Reasoning: Actions = 6 shifts + 5 reductions = 11."
+    },
+    {
+      "course": "CD",
+      "subject_slug": "compiler-design",
+      "topic": "Syntax-Directed Translation",
+      "topic_slug": "syntax-directed-translation",
+      "title": "Syntax-Directed Translation: GATE revision notes",
+      "summary": "Syntax-Directed Translation questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Synthesized attributes are computed from child information.",
+        "Inherited attributes can pass context from parent or siblings.",
+        "A syntax-directed definition associates attributes and rules with grammar symbols or productions."
+      ],
+      "common_traps": [
+        "Do not assume that every attribute must be inherited.",
+        "Do not assume that attribute evaluation never depends on a parse tree.",
+        "Do not assume that a synthesized attribute can only be supplied by the lexer."
+      ],
+      "reasoning_pattern": "Model question: An attributed full binary expression tree has 4 leaves and one synthesized-value evaluation at every node. How many evaluations occur? Reasoning: The tree has 4+(4-1)=7 nodes, hence 7 evaluations."
+    },
+    {
+      "course": "CD",
+      "subject_slug": "compiler-design",
+      "topic": "Runtime Environments",
+      "topic_slug": "runtime-environments",
+      "title": "Runtime Environments: GATE revision notes",
+      "summary": "Runtime Environments questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "An activation record can store a return address.",
+        "Recursive calls require distinct active records.",
+        "Static links can support access to lexically enclosing scopes."
+      ],
+      "common_traps": [
+        "Do not assume that all recursive calls share one set of local variables.",
+        "Do not assume that a return address is stored only in source code.",
+        "Do not assume that stack allocation can never support procedure calls."
+      ],
+      "reasoning_pattern": "Model question: At maximum recursion depth 4, every activation record occupies 24 bytes. Find active-record storage in bytes. Reasoning: Storage = depth*record size = 4*24=96 bytes."
+    },
+    {
+      "course": "CD",
+      "subject_slug": "compiler-design",
+      "topic": "Intermediate Code Generation",
+      "topic_slug": "intermediate-code-generation",
+      "title": "Intermediate Code Generation: GATE revision notes",
+      "summary": "Intermediate Code Generation questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Three-address code limits the number of explicit operands per instruction.",
+        "Temporaries can name intermediate expression results.",
+        "An abstract syntax tree omits some concrete grammar detail."
+      ],
+      "common_traps": [
+        "Do not assume that three-address code requires exactly three machine registers.",
+        "Do not assume that intermediate code is always target-machine binary.",
+        "Do not assume that a temporary can never be reused."
+      ],
+      "reasoning_pattern": "Model question: An expression tree has 4 binary operator nodes. With one three-address instruction per operator, how many instructions are emitted? Reasoning: Each operator produces one instruction, giving 4 instructions."
+    },
+    {
+      "course": "CD",
+      "subject_slug": "compiler-design",
+      "topic": "Code Optimization and Data-Flow Analysis",
+      "topic_slug": "code-optimization-and-data-flow-analysis",
+      "title": "Code Optimization and Data-Flow Analysis: GATE revision notes",
+      "summary": "Code Optimization and Data-Flow Analysis questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A live variable may be used along a future path before redefinition.",
+        "Common-subexpression elimination can avoid repeated computation.",
+        "Constant propagation substitutes known constant values."
+      ],
+      "common_traps": [
+        "Do not assume that dead-code elimination must preserve every unreachable assignment.",
+        "Do not assume that liveness is a forward-only property by definition.",
+        "Do not assume that optimization may change the observable program result."
+      ],
+      "reasoning_pattern": "Model question: The same available expression is computed 3 times without operand redefinition. How many computations can common-subexpression elimination remove? Reasoning: Keep the first computation and replace the remaining 3-1=2."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "System Calls",
+      "topic_slug": "system-calls",
+      "title": "System Calls: GATE revision notes",
+      "summary": "System Calls questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A system call transfers control to a privileged kernel routine.",
+        "A read system call can block while waiting for I/O.",
+        "User programs request protected services through the system-call interface."
+      ],
+      "common_traps": [
+        "Do not assume that a system call executes entirely without entering kernel mode.",
+        "Do not assume that every library call is necessarily a system call.",
+        "Do not assume that user code may directly execute every privileged instruction."
+      ],
+      "reasoning_pattern": "Model question: A process makes 4 non-nested system calls. Counting one user-to-kernel and one kernel-to-user transition per call, how many mode transitions occur? Reasoning: Each call causes two transitions, so 2*4=8."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "Processes and Threads",
+      "topic_slug": "processes-and-threads",
+      "title": "Processes and Threads: GATE revision notes",
+      "summary": "Processes and Threads questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Threads in one process share an address space.",
+        "Each thread needs its own execution stack.",
+        "A context switch can save and restore processor state."
+      ],
+      "common_traps": [
+        "Do not assume that all processes share one virtual address space by default.",
+        "Do not assume that threads of a process share one stack.",
+        "Do not assume that a blocked process must be running simultaneously."
+      ],
+      "reasoning_pattern": "Model question: A process has 3 threads, each with a private 12 KiB stack. Find total private-stack storage in KiB. Reasoning: Total stack storage = 3*12=36 KiB."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "Concurrency and Synchronization",
+      "topic_slug": "concurrency-and-synchronization",
+      "title": "Concurrency and Synchronization: GATE revision notes",
+      "summary": "Concurrency and Synchronization questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Mutual exclusion prevents simultaneous execution of a protected critical section.",
+        "A semaphore wait can block a caller.",
+        "A race outcome can depend on instruction interleaving."
+      ],
+      "common_traps": [
+        "Do not assume that a mutex allows every thread to enter the critical section together.",
+        "Do not assume that synchronization is unnecessary for shared writable state.",
+        "Do not assume that a semaphore signal must always block."
+      ],
+      "reasoning_pattern": "Model question: A counting semaphore starts at 4. After 2 successful wait operations and 5 signal operations, with no blocking, find its value. Reasoning: A successful wait decrements and a signal increments, so the value is 4-2+5=7."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "Deadlocks",
+      "topic_slug": "deadlocks",
+      "title": "Deadlocks: GATE revision notes",
+      "summary": "Deadlocks questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Mutual exclusion is one Coffman condition.",
+        "Banker's algorithm is a deadlock-avoidance method.",
+        "A cycle is sufficient for deadlock when every resource type has one instance."
+      ],
+      "common_traps": [
+        "Do not assume that preempting every resource preserves the no-preemption condition.",
+        "Do not assume that deadlock requires no waiting process.",
+        "Do not assume that a resource-allocation cycle is never relevant."
+      ],
+      "reasoning_pattern": "Model question: A resource type has 13 instances, of which 6 are allocated. How many instances are available? Reasoning: Available = total - allocated = 13-6=7."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "CPU and I/O Scheduling",
+      "topic_slug": "cpu-and-i-o-scheduling",
+      "title": "CPU and I/O Scheduling: GATE revision notes",
+      "summary": "CPU and I/O Scheduling questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Round robin uses a time quantum.",
+        "Shortest-job-first minimizes average waiting time when burst lengths are known.",
+        "Preemptive scheduling can interrupt a running process."
+      ],
+      "common_traps": [
+        "Do not assume that fCFS is always preemptive.",
+        "Do not assume that round robin with a finite quantum runs one process to completion before another.",
+        "Do not assume that disk scheduling never considers head movement."
+      ],
+      "reasoning_pattern": "Model question: A process has CPU burst 23 ms under round robin with quantum 4 ms. How many CPU slices does it need if it never blocks? Reasoning: Slices = ceil(23/4) = 6."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "Memory and Virtual Memory",
+      "topic_slug": "memory-and-virtual-memory",
+      "title": "Memory and Virtual Memory: GATE revision notes",
+      "summary": "Memory and Virtual Memory questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Paging divides virtual memory into fixed-size pages.",
+        "A page fault occurs when a referenced page is absent from memory.",
+        "A TLB caches address translations."
+      ],
+      "common_traps": [
+        "Do not assume that paging requires every process to occupy contiguous physical memory.",
+        "Do not assume that a larger page size always removes internal fragmentation.",
+        "Do not assume that a TLB stores file contents."
+      ],
+      "reasoning_pattern": "Model question: A segment of 57 KiB is paged with 8 KiB pages. How many pages are required? Reasoning: Pages = ceil(57/8) = 8."
+    },
+    {
+      "course": "OS",
+      "subject_slug": "operating-systems",
+      "topic": "File Systems",
+      "topic_slug": "file-systems",
+      "title": "File Systems: GATE revision notes",
+      "summary": "File Systems questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Indexed allocation supports direct access through an index block.",
+        "A directory maps names to file metadata references.",
+        "Free-space management tracks unallocated blocks."
+      ],
+      "common_traps": [
+        "Do not assume that contiguous allocation can never fragment free space.",
+        "Do not assume that a file descriptor is the file's textual contents.",
+        "Do not assume that every directory must be stored outside the file system."
+      ],
+      "reasoning_pattern": "Model question: A file contains 10137 bytes and data blocks hold 1024 bytes. Ignoring metadata blocks, how many data blocks are required? Reasoning: Blocks = ceil(10137/1024) = 10."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "ER Model",
+      "topic_slug": "er-model",
+      "title": "ER Model: GATE revision notes",
+      "summary": "ER Model questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "An entity set contains similar entities.",
+        "A key distinguishes entities in an entity set.",
+        "A many-to-many relationship is normally mapped to its own relation."
+      ],
+      "common_traps": [
+        "Do not assume that every relationship is one-to-one.",
+        "Do not assume that a weak entity has a full key independent of its owner.",
+        "Do not assume that an attribute can never be composite."
+      ],
+      "reasoning_pattern": "Model question: An ER design has 3 strong entity sets and 2 many-to-many relationships, each mapped separately. How many base relations result under this simplified mapping? Reasoning: One relation per entity set and per many-to-many relationship gives 3+2=5."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "Relational Model",
+      "topic_slug": "relational-model",
+      "title": "Relational Model: GATE revision notes",
+      "summary": "Relational Model questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Selection filters tuples.",
+        "Projection chooses attributes.",
+        "A Cartesian product pairs every tuple of one relation with every tuple of the other."
+      ],
+      "common_traps": [
+        "Do not assume that projection always increases the number of attributes.",
+        "Do not assume that selection changes only the relation schema, never its tuples.",
+        "Do not assume that a relation permits duplicate tuples under the mathematical model."
+      ],
+      "reasoning_pattern": "Model question: Relations R and S contain 4 and 6 tuples. If all pairs are distinct, how many tuples are in R cross S? Reasoning: Cartesian product cardinality is 4*6=24."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "SQL",
+      "topic_slug": "sql",
+      "title": "SQL: GATE revision notes",
+      "summary": "SQL questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "WHERE filters rows before grouping.",
+        "HAVING can filter aggregate groups.",
+        "COUNT(*) counts rows in a group."
+      ],
+      "common_traps": [
+        "Do not assume that hAVING must execute before WHERE.",
+        "Do not assume that gROUP BY always produces one group per input row.",
+        "Do not assume that a subquery can never appear in a WHERE clause."
+      ],
+      "reasoning_pattern": "Model question: A GROUP BY query processes 30 rows equally divided into groups of 3 rows. How many groups are produced? Reasoning: Number of groups = 30/3 = 10."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "Integrity Constraints",
+      "topic_slug": "integrity-constraints",
+      "title": "Integrity Constraints: GATE revision notes",
+      "summary": "Integrity Constraints questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A primary key value is unique and non-null.",
+        "A foreign key references a candidate key value or may be null when permitted.",
+        "A domain constraint restricts allowable attribute values."
+      ],
+      "common_traps": [
+        "Do not assume that a relation can contain duplicate primary-key values.",
+        "Do not assume that every foreign-key value must be different from every referenced value.",
+        "Do not assume that entity integrity permits a null primary key."
+      ],
+      "reasoning_pattern": "Model question: A candidate key is a fixed string of 4 decimal digits with leading zeroes allowed. If 1 values are reserved, how many assignable key values remain? Reasoning: There are 10^4 raw strings; after removing 1 reserved values, 9999 remain."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "Normal Forms",
+      "topic_slug": "normal-forms",
+      "title": "Normal Forms: GATE revision notes",
+      "summary": "Normal Forms questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "BCNF requires every nontrivial determinant to be a superkey.",
+        "A lossless decomposition preserves all original tuples under join.",
+        "A functional dependency X -> Y holds when equal X values imply equal Y values."
+      ],
+      "common_traps": [
+        "Do not assume that every 3NF relation violates 2NF.",
+        "Do not assume that bCNF is weaker than 3NF.",
+        "Do not assume that a lossy decomposition is required for normalization."
+      ],
+      "reasoning_pattern": "Model question: An attribute-closure computation starts with 2 attributes and functional dependencies add 3 distinct new attributes. What is the final closure size? Reasoning: No attribute is added twice, so closure size = 2+3=5."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "File Organization and Indexing",
+      "topic_slug": "file-organization-and-indexing",
+      "title": "File Organization and Indexing: GATE revision notes",
+      "summary": "File Organization and Indexing questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "B+ tree leaves contain data entries and are linked for range scans.",
+        "Hash indexes are effective for equality lookup.",
+        "A dense index has an entry for every search-key value or record as defined by the organization."
+      ],
+      "common_traps": [
+        "Do not assume that a B+ tree stores all data records only in internal nodes.",
+        "Do not assume that hashing preserves key order for range scans.",
+        "Do not assume that the B+ tree root must always be at least half full."
+      ],
+      "reasoning_pattern": "Model question: A B+ tree has 4 leaf nodes, each currently holding 25 data entries. How many data entries are stored in the leaves? Reasoning: Leaf entries = 4*25=100."
+    },
+    {
+      "course": "DBMS",
+      "subject_slug": "databases",
+      "topic": "Transactions and Concurrency Control",
+      "topic_slug": "transactions-and-concurrency-control",
+      "title": "Transactions and Concurrency Control: GATE revision notes",
+      "summary": "Transactions and Concurrency Control questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "An acyclic precedence graph characterizes conflict serializability.",
+        "Two-phase locking has a growing phase and a shrinking phase.",
+        "Atomicity requires all-or-nothing transaction effects."
+      ],
+      "common_traps": [
+        "Do not assume that every interleaved schedule is conflict serializable.",
+        "Do not assume that shared locks conflict with all other shared locks.",
+        "Do not assume that a committed transaction may be silently half applied under atomicity."
+      ],
+      "reasoning_pattern": "Model question: Transaction T1 performs 3 reads of item X and T2 performs 2 writes of X, with every read ordered against every write. How many cross-transaction read-write operation pairs conflict? Reasoning: Every T1 read conflicts with every T2 write: 3*2=6."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "Layering and Switching",
+      "topic_slug": "layering-and-switching",
+      "title": "Layering and Switching: GATE revision notes",
+      "summary": "Layering and Switching questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Layering separates protocol responsibilities.",
+        "Packet switching statistically multiplexes links.",
+        "Encapsulation adds protocol control information around payload."
+      ],
+      "common_traps": [
+        "Do not assume that circuit switching never reserves resources.",
+        "Do not assume that every layer directly interprets every higher-layer header.",
+        "Do not assume that packet switching gives every flow a dedicated physical circuit."
+      ],
+      "reasoning_pattern": "Model question: A 520-byte payload crosses 3 layers, each adding a 13-byte header. No trailer is added. Find transmitted bytes. Reasoning: Total = payload + layers*header = 520+3*13=559."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "Data Link Layer",
+      "topic_slug": "data-link-layer",
+      "title": "Data Link Layer: GATE revision notes",
+      "summary": "Data Link Layer questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A degree-r CRC generator appends r check bits.",
+        "Ethernet uses frames.",
+        "A bridge forwards using link-layer addresses."
+      ],
+      "common_traps": [
+        "Do not assume that cRC can correct every possible error pattern.",
+        "Do not assume that a bridge routes using application URLs.",
+        "Do not assume that framing is unnecessary on a shared link."
+      ],
+      "reasoning_pattern": "Model question: A CRC generator polynomial has degree 4. How many CRC check bits are appended? Reasoning: A degree-r generator produces an r-bit remainder, so 4 bits are appended."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "Routing Algorithms",
+      "topic_slug": "routing-algorithms",
+      "title": "Routing Algorithms: GATE revision notes",
+      "summary": "Routing Algorithms questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Link-state routing distributes link information.",
+        "Distance-vector routing exchanges distance estimates with neighbors.",
+        "A shortest-path cost is the sum of its link costs for additive metrics."
+      ],
+      "common_traps": [
+        "Do not assume that flooding sends a packet on no outgoing links.",
+        "Do not assume that distance-vector routing has a complete global topology map at every update.",
+        "Do not assume that a shortest path must contain the greatest number of hops."
+      ],
+      "reasoning_pattern": "Model question: A route uses three links of costs 3, 4, and 5. With an additive metric, what is the route cost? Reasoning: Additive path cost = 3+4+5=12."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "IPv4 Addressing and Forwarding",
+      "topic_slug": "ipv4-addressing-and-forwarding",
+      "title": "IPv4 Addressing and Forwarding: GATE revision notes",
+      "summary": "IPv4 Addressing and Forwarding questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "CIDR prefixes express network-prefix length.",
+        "Longest-prefix matching chooses the most specific route.",
+        "ARP resolves an IPv4 address to a link-layer address on a local network."
+      ],
+      "common_traps": [
+        "Do not assume that a /24 prefix leaves 24 host bits.",
+        "Do not assume that routers normally forward using the source address only.",
+        "Do not assume that nAT never changes an IP header checksum."
+      ],
+      "reasoning_pattern": "Model question: An allocation contains 1 separate conventional IPv4 /21 subnet(s). Excluding each network and directed-broadcast address, how many usable host addresses exist in total? Reasoning: Each subnet has 2^11-2=2046 usable addresses; 1 subnet(s) provide 2046."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "Transport Layer",
+      "topic_slug": "transport-layer",
+      "title": "Transport Layer: GATE revision notes",
+      "summary": "Transport Layer questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "TCP provides an ordered byte stream.",
+        "UDP does not establish a connection before sending.",
+        "Flow control protects a receiver from an overly fast sender."
+      ],
+      "common_traps": [
+        "Do not assume that tCP preserves application message boundaries.",
+        "Do not assume that uDP guarantees retransmission of lost datagrams.",
+        "Do not assume that a TCP acknowledgement consumes one sequence number solely because it is an ACK."
+      ],
+      "reasoning_pattern": "Model question: A TCP sender may have 5 full segments outstanding, each carrying 600 payload bytes. Find the payload window in bytes. Reasoning: Window payload = 5*600=3000 bytes."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "Application Layer",
+      "topic_slug": "application-layer",
+      "title": "Application Layer: GATE revision notes",
+      "summary": "Application Layer questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "DNS maps names to resource records.",
+        "HTTP is an application-layer protocol.",
+        "SMTP is used to transfer email."
+      ],
+      "common_traps": [
+        "Do not assume that aRP resolves Internet domain names.",
+        "Do not assume that hTTP requires UDP in every version.",
+        "Do not assume that dNS has no caching."
+      ],
+      "reasoning_pattern": "Model question: An uncached page consists of one base HTML document and 4 embedded objects, with one HTTP GET per object. How many GET requests are sent? Reasoning: One request fetches the base document and 4 fetch embedded objects: 5."
+    },
+    {
+      "course": "CN",
+      "subject_slug": "computer-networks",
+      "topic": "Network Performance",
+      "topic_slug": "network-performance",
+      "title": "Network Performance: GATE revision notes",
+      "summary": "Network Performance questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Transmission delay equals packet bits divided by link bit rate.",
+        "Propagation delay depends on distance and signal speed.",
+        "Throughput cannot exceed the bottleneck-link rate."
+      ],
+      "common_traps": [
+        "Do not assume that transmission delay is independent of packet length.",
+        "Do not assume that propagation delay equals packet size divided by bandwidth.",
+        "Do not assume that end-to-end throughput always exceeds every link rate."
+      ],
+      "reasoning_pattern": "Model question: A 2 KiB packet is serialized on a 2 Mbps link. Find transmission delay in milliseconds. Reasoning: Delay = (2*1024*8)/(2*10^6) seconds = 8.192 ms."
+    },
+    {
+      "course": "GA",
+      "subject_slug": "general-aptitude",
+      "topic": "Verbal Aptitude",
+      "topic_slug": "verbal-aptitude",
+      "title": "Verbal Aptitude: GATE revision notes",
+      "summary": "Verbal Aptitude questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "Subject and finite verb should agree in number.",
+        "A contrast connector should preserve the logical relation between clauses.",
+        "Context can determine the intended meaning of a word."
+      ],
+      "common_traps": [
+        "Do not assume that every sentence fragment is grammatically complete.",
+        "Do not assume that a singular subject always takes a plural finite verb.",
+        "Do not assume that punctuation never affects meaning."
+      ],
+      "reasoning_pattern": "Model question: A passage has 3 sentences with exactly 6 words each. How many words does it contain? Reasoning: Total words = 3*6=18."
+    },
+    {
+      "course": "GA",
+      "subject_slug": "general-aptitude",
+      "topic": "Quantitative Aptitude",
+      "topic_slug": "quantitative-aptitude",
+      "title": "Quantitative Aptitude: GATE revision notes",
+      "summary": "Quantitative Aptitude questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A percentage change is measured relative to the original value.",
+        "The mean is the sum divided by the number of observations.",
+        "A ratio is unchanged when both terms are multiplied by the same nonzero factor."
+      ],
+      "common_traps": [
+        "Do not assume that a 20 percent increase followed by a 20 percent decrease restores the original value.",
+        "Do not assume that the median is always equal to the mean.",
+        "Do not assume that dividing one term of a ratio by two leaves the ratio unchanged."
+      ],
+      "reasoning_pattern": "Model question: A quantity is 60 and increases by 10%. Find the new value. Reasoning: New value = 60*(1+10/100)=66."
+    },
+    {
+      "course": "GA",
+      "subject_slug": "general-aptitude",
+      "topic": "Analytical Aptitude",
+      "topic_slug": "analytical-aptitude",
+      "title": "Analytical Aptitude: GATE revision notes",
+      "summary": "Analytical Aptitude questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A valid deduction must hold in every arrangement satisfying the premises.",
+        "Contradiction can eliminate a candidate arrangement.",
+        "A bijection pairs each object with exactly one counterpart."
+      ],
+      "common_traps": [
+        "Do not assume that one supporting example proves a universal conclusion.",
+        "Do not assume that ignoring a premise cannot change the solution set.",
+        "Do not assume that n distinct objects have n possible linear orders."
+      ],
+      "reasoning_pattern": "Model question: From 5 distinct objects, how many ordered selections of two different objects are possible? Reasoning: There are 5 choices first and 4 second, giving 20 ordered selections."
+    },
+    {
+      "course": "GA",
+      "subject_slug": "general-aptitude",
+      "topic": "Spatial Aptitude",
+      "topic_slug": "spatial-aptitude",
+      "title": "Spatial Aptitude: GATE revision notes",
+      "summary": "Spatial Aptitude questions depend on its defining properties and a careful application of the standard calculation pattern.",
+      "key_points": [
+        "A rigid rotation preserves distances.",
+        "Opposite faces of a cube never share an edge.",
+        "Cutting each cube edge into n equal parts creates n^3 small cubes."
+      ],
+      "common_traps": [
+        "Do not assume that a mirror reflection is always a rotation.",
+        "Do not assume that all six faces of a cube meet at one vertex.",
+        "Do not assume that cutting each edge into n parts creates 6n cubes."
+      ],
+      "reasoning_pattern": "Model question: Each edge of a cube is divided into 3 equal parts and all grid cuts are made. How many small cubes result? Reasoning: The three dimensions each contribute a factor 3, so the count is 3^3=27."
+    }
+  ],
   "questions": [
     {
       "external_id": "gate-cs-2018-q01",

@@ -102,7 +102,6 @@ class QuestionListResponse(BaseModel):
 
 
 class PracticeSessionCreate(BaseModel):
-    user_key: str = Field(default="local-user", min_length=1, max_length=100)
     subject_id: int | None = None
     subject_slug: str | None = None
     topic_id: int | None = None
@@ -121,7 +120,6 @@ class PracticeSessionCreate(BaseModel):
 
 class TestCreate(BaseModel):
     mode: Literal["sectional", "full"]
-    user_key: str = Field(default="local-user", min_length=1, max_length=100)
     subject_id: int | None = None
     subject_slug: str | None = None
     count: int = Field(default=5, ge=1, le=65)
@@ -159,7 +157,6 @@ class AnswerSubmission(BaseModel):
 
 class AttemptSubmit(BaseModel):
     session_id: str
-    user_key: str = Field(default="local-user", min_length=1, max_length=100)
     answers: list[AnswerSubmission] = Field(default_factory=list)
 
     @field_validator("answers")
@@ -299,7 +296,7 @@ class TestCatalogResponse(BaseModel):
 
 
 class CatalogSessionCreate(BaseModel):
-    user_key: str = Field(default="local-user", min_length=1, max_length=100)
+    pass
 
 
 class AnalyticsOverall(BaseModel):
