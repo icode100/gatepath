@@ -1,0 +1,286 @@
+{
+  "schema_version": "1.0",
+  "bank_version": "gate-cs-2027-v1",
+  "generated_at": "2026-07-30T00:00:00Z",
+  "question_count": 2607,
+  "original_count": 2220,
+  "previous_year_count": 387,
+  "previous_year_years": [
+    2018,
+    2019,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "duplicate_records_removed": 0,
+  "generated_semantic_variants": {
+    "EM": 210,
+    "DL": 210,
+    "COA": 210,
+    "PDS": 210,
+    "ALG": 210,
+    "TOC": 210,
+    "CD": 210,
+    "OS": 210,
+    "DBMS": 210,
+    "CN": 210,
+    "GA": 120
+  },
+  "courses": {
+    "EM": {
+      "name": "Engineering Mathematics",
+      "count": 266,
+      "by_type": {
+        "mcq": 91,
+        "msq": 83,
+        "nat": 92
+      },
+      "by_marks": {
+        "1": 135,
+        "2": 131
+      },
+      "by_topic": {
+        "Discrete Mathematics": 74,
+        "Linear Algebra": 65,
+        "Calculus": 59,
+        "Probability and Statistics": 68
+      },
+      "generated_semantic_variants": 210
+    },
+    "DL": {
+      "name": "Digital Logic",
+      "count": 228,
+      "by_type": {
+        "mcq": 77,
+        "msq": 76,
+        "nat": 75
+      },
+      "by_marks": {
+        "1": 114,
+        "2": 114
+      },
+      "by_topic": {
+        "Boolean Algebra": 61,
+        "Combinational Circuits": 54,
+        "Sequential Circuits": 54,
+        "Number Representation and Arithmetic": 59
+      },
+      "generated_semantic_variants": 210
+    },
+    "COA": {
+      "name": "Computer Organization and Architecture",
+      "count": 243,
+      "by_type": {
+        "mcq": 77,
+        "msq": 77,
+        "nat": 89
+      },
+      "by_marks": {
+        "1": 124,
+        "2": 119
+      },
+      "by_topic": {
+        "Machine Instructions and Addressing Modes": 40,
+        "ALU, Datapath and Control": 40,
+        "Instruction Pipelining": 42,
+        "Memory Hierarchy": 47,
+        "I/O Interface": 35,
+        "Interrupts and DMA": 39
+      },
+      "generated_semantic_variants": 210
+    },
+    "PDS": {
+      "name": "Programming and Data Structures",
+      "count": 262,
+      "by_type": {
+        "mcq": 97,
+        "msq": 75,
+        "nat": 90
+      },
+      "by_marks": {
+        "1": 126,
+        "2": 136
+      },
+      "by_topic": {
+        "Programming in C": 57,
+        "Recursion": 30,
+        "Arrays": 28,
+        "Stacks and Queues": 27,
+        "Linked Lists": 29,
+        "Trees and Binary Search Trees": 35,
+        "Heaps": 28,
+        "Graphs": 28
+      },
+      "generated_semantic_variants": 210
+    },
+    "ALG": {
+      "name": "Algorithms",
+      "count": 227,
+      "by_type": {
+        "mcq": 79,
+        "msq": 74,
+        "nat": 74
+      },
+      "by_marks": {
+        "1": 112,
+        "2": 115
+      },
+      "by_topic": {
+        "Searching, Sorting and Hashing": 38,
+        "Complexity Analysis": 38,
+        "Divide and Conquer": 35,
+        "Greedy Algorithms": 40,
+        "Dynamic Programming": 36,
+        "Graph Algorithms": 40
+      },
+      "generated_semantic_variants": 210
+    },
+    "TOC": {
+      "name": "Theory of Computation",
+      "count": 234,
+      "by_type": {
+        "mcq": 83,
+        "msq": 78,
+        "nat": 73
+      },
+      "by_marks": {
+        "1": 116,
+        "2": 118
+      },
+      "by_topic": {
+        "Regular Expressions and Finite Automata": 53,
+        "Context-Free Grammars": 48,
+        "Pushdown Automata": 43,
+        "Pumping Lemmas and Language Properties": 46,
+        "Turing Machines and Undecidability": 44
+      },
+      "generated_semantic_variants": 210
+    },
+    "CD": {
+      "name": "Compiler Design",
+      "count": 229,
+      "by_type": {
+        "mcq": 82,
+        "msq": 73,
+        "nat": 74
+      },
+      "by_marks": {
+        "1": 115,
+        "2": 114
+      },
+      "by_topic": {
+        "Lexical Analysis": 36,
+        "Parsing": 44,
+        "Syntax-Directed Translation": 38,
+        "Runtime Environments": 35,
+        "Intermediate Code Generation": 38,
+        "Code Optimization and Data-Flow Analysis": 38
+      },
+      "generated_semantic_variants": 210
+    },
+    "OS": {
+      "name": "Operating Systems",
+      "count": 240,
+      "by_type": {
+        "mcq": 80,
+        "msq": 82,
+        "nat": 78
+      },
+      "by_marks": {
+        "1": 119,
+        "2": 121
+      },
+      "by_topic": {
+        "System Calls": 31,
+        "Processes and Threads": 40,
+        "Concurrency and Synchronization": 33,
+        "Deadlocks": 34,
+        "CPU and I/O Scheduling": 35,
+        "Memory and Virtual Memory": 37,
+        "File Systems": 30
+      },
+      "generated_semantic_variants": 210
+    },
+    "DBMS": {
+      "name": "Databases",
+      "count": 244,
+      "by_type": {
+        "mcq": 88,
+        "msq": 79,
+        "nat": 77
+      },
+      "by_marks": {
+        "1": 120,
+        "2": 124
+      },
+      "by_topic": {
+        "ER Model": 32,
+        "Relational Model": 37,
+        "SQL": 37,
+        "Integrity Constraints": 32,
+        "Normal Forms": 35,
+        "File Organization and Indexing": 34,
+        "Transactions and Concurrency Control": 37
+      },
+      "generated_semantic_variants": 210
+    },
+    "CN": {
+      "name": "Computer Networks",
+      "count": 241,
+      "by_type": {
+        "mcq": 86,
+        "msq": 79,
+        "nat": 76
+      },
+      "by_marks": {
+        "1": 122,
+        "2": 119
+      },
+      "by_topic": {
+        "Layering and Switching": 32,
+        "Data Link Layer": 37,
+        "Routing Algorithms": 32,
+        "IPv4 Addressing and Forwarding": 40,
+        "Transport Layer": 38,
+        "Application Layer": 31,
+        "Network Performance": 31
+      },
+      "generated_semantic_variants": 210
+    },
+    "GA": {
+      "name": "General Aptitude",
+      "count": 193,
+      "by_type": {
+        "mcq": 113,
+        "msq": 40,
+        "nat": 40
+      },
+      "by_marks": {
+        "1": 102,
+        "2": 91
+      },
+      "by_topic": {
+        "Verbal Aptitude": 47,
+        "Quantitative Aptitude": 54,
+        "Analytical Aptitude": 58,
+        "Spatial Aptitude": 34
+      },
+      "generated_semantic_variants": 120
+    }
+  },
+  "quality_gates": {
+    "technical_minimum_per_course": 210,
+    "minimum_each_type_per_technical_course": 20,
+    "minimum_generated_semantic_variants_per_technical_course": 210,
+    "all_syllabus_topics_present": true,
+    "stable_external_ids": true,
+    "derived_answers": true
+  },
+  "source_notes": [
+    "Original questions are deterministic topic-specific calculations or curated concept checks.",
+    "Previous-year questions are included only when transcription, classification, and official-key resolution are explicit.",
+    "See pyq_extraction_manifest.json for supplied-paper coverage and unresolved extraction items."
+  ]
+}

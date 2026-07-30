@@ -1,0 +1,2556 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-07-30T00:00:00Z",
+  "scope": "GATE CS papers supplied for 2017 through 2025",
+  "source_archive": "CS.zip (user-supplied; extracted under ignored tmp/pyq/source)",
+  "syllabus_source": "CS_GATE2027_Syllabus.pdf (user-supplied)",
+  "consolidated_record_count": 845,
+  "records_by_year": {
+    "2017": 130,
+    "2018": 65,
+    "2019": 65,
+    "2020": 65,
+    "2021": 130,
+    "2022": 65,
+    "2023": 65,
+    "2024": 130,
+    "2025": 130
+  },
+  "safe_question_count": 387,
+  "safe_questions_by_year": {
+    "2018": 28,
+    "2019": 58,
+    "2021": 68,
+    "2022": 26,
+    "2023": 26,
+    "2024": 90,
+    "2025": 91
+  },
+  "review_required_count": 458,
+  "papers": [
+    {
+      "label": "CS1-2017",
+      "year": 2017,
+      "paper": {
+        "path": "tmp/pyq/replacement-CS1-2017.pdf",
+        "pages": 27,
+        "characters": 23567,
+        "extraction_methods": {
+          "pypdf": 0,
+          "ocr": 27,
+          "low_text": 0
+        }
+      },
+      "key_path": "replacement-CS1-2017.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 0,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 0,
+      "review_required_records": 65,
+      "unresolved_count": 65,
+      "unresolved": [
+        {
+          "question_number": 1,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 2,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 3,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 4,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 5,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 6,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 7,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 8,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 9,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 10,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 11,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 12,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 13,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 14,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 15,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 16,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 17,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 18,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 19,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 20,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 21,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 22,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 23,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 24,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 25,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 26,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 27,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 28,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 29,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 30,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 31,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 32,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 33,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 34,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 35,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 36,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 37,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 38,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 39,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 40,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 41,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 42,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 43,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 44,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 45,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 46,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 47,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 48,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 49,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 50,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 51,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 52,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 53,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 54,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 55,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 56,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 57,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 58,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 59,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 60,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 61,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 62,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 63,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 64,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 65,
+          "reason": "question_block_not_recovered"
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2017/cs_2017.pdf",
+      "answer_key_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2017/cs_2017.pdf",
+      "source_note": "Mirror replacement of the corrupt supplied CS1 entry; official IIT Kanpur index URL retained."
+    },
+    {
+      "label": "CS2-2017",
+      "year": 2017,
+      "paper": {
+        "path": "tmp/pyq/replacement-CS2-2017.pdf",
+        "pages": 25,
+        "characters": 21177,
+        "extraction_methods": {
+          "pypdf": 0,
+          "ocr": 25,
+          "low_text": 0
+        }
+      },
+      "key_path": "source/CS/CS2-2017.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 21,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 0,
+      "review_required_records": 65,
+      "unresolved_count": 65,
+      "unresolved": [
+        {
+          "question_number": 1,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 2
+        },
+        {
+          "question_number": 2,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr,joined_word_ocr",
+          "source_page": 2
+        },
+        {
+          "question_number": 3,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 2
+        },
+        {
+          "question_number": 4,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 3
+        },
+        {
+          "question_number": 5,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 3
+        },
+        {
+          "question_number": 6,
+          "reason": "transcription_debris:answer_metadata",
+          "source_page": 3
+        },
+        {
+          "question_number": 7,
+          "reason": "transcription_debris:answer_metadata",
+          "source_page": 4
+        },
+        {
+          "question_number": 8,
+          "reason": "transcription_debris:answer_metadata",
+          "source_page": 4
+        },
+        {
+          "question_number": 9,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 4
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:answer_metadata",
+          "source_page": 5
+        },
+        {
+          "question_number": 11,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 5
+        },
+        {
+          "question_number": 12,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 5
+        },
+        {
+          "question_number": 13,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 5
+        },
+        {
+          "question_number": 14,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 6
+        },
+        {
+          "question_number": 15,
+          "reason": "transcription_debris:answer_metadata,joined_word_ocr",
+          "source_page": 6
+        },
+        {
+          "question_number": 16,
+          "reason": "transcription_debris:answer_metadata,joined_word_ocr",
+          "source_page": 7
+        },
+        {
+          "question_number": 17,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 7
+        },
+        {
+          "question_number": 18,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr,joined_word_ocr",
+          "source_page": 7
+        },
+        {
+          "question_number": 19,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 8
+        },
+        {
+          "question_number": 20,
+          "reason": "transcription_debris:answer_metadata,dense_missing_space_ocr",
+          "source_page": 8
+        },
+        {
+          "question_number": 21,
+          "reason": "transcription_debris:answer_metadata,suspicious_prompt_ending,truncated_prompt",
+          "source_page": 9
+        },
+        {
+          "question_number": 22,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 23,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 24,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 25,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 26,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 27,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 28,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 29,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 30,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 31,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 32,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 33,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 34,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 35,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 36,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 37,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 38,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 39,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 40,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 41,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 42,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 43,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 44,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 45,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 46,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 47,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 48,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 49,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 50,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 51,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 52,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 53,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 54,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 55,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 56,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 57,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 58,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 59,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 60,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 61,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 62,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 63,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 64,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 65,
+          "reason": "question_block_not_recovered"
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2017/cs_2017.pdf",
+      "answer_key_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2017/cs_2017.pdf",
+      "source_note": "Mirror replacement used for paper text; official key is embedded in the supplied CS2 file."
+    },
+    {
+      "label": "CS-2018",
+      "year": 2018,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS2018.pdf",
+        "pages": 26,
+        "characters": 35354,
+        "extraction_methods": {
+          "pypdf": 26,
+          "ocr": 0,
+          "low_text": 0
+        }
+      },
+      "key_path": "source/CS/CS2018.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 28,
+      "review_required_records": 37,
+      "unresolved_count": 37,
+      "unresolved": [
+        {
+          "question_number": 5,
+          "reason": "transcription_debris:paper_header,section_page_footer",
+          "source_page": 1
+        },
+        {
+          "question_number": 9,
+          "reason": "transcription_debris:paper_header,section_page_footer,visual_dependency",
+          "source_page": 2
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 3
+        },
+        {
+          "question_number": 11,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 4
+        },
+        {
+          "question_number": 13,
+          "reason": "transcription_debris:section_page_footer,visual_dependency",
+          "source_page": 4
+        },
+        {
+          "question_number": 14,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 5
+        },
+        {
+          "question_number": 18,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 5
+        },
+        {
+          "question_number": 20,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 6
+        },
+        {
+          "question_number": 21,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 6
+        },
+        {
+          "question_number": 23,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 7
+        },
+        {
+          "question_number": 27,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 8
+        },
+        {
+          "question_number": 28,
+          "reason": "transcription_debris:section_page_footer,visual_dependency",
+          "source_page": 8
+        },
+        {
+          "question_number": 30,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 9
+        },
+        {
+          "question_number": 31,
+          "reason": "reviewed_truncated_c_nat",
+          "source_page": 9
+        },
+        {
+          "question_number": 32,
+          "reason": "transcription_debris:section_page_footer,visual_dependency",
+          "source_page": 9
+        },
+        {
+          "question_number": 33,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 10
+        },
+        {
+          "question_number": 34,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 10
+        },
+        {
+          "question_number": 36,
+          "reason": "transcription_debris:private_use_math_glyph,section_page_footer",
+          "source_page": 10
+        },
+        {
+          "question_number": 37,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 11
+        },
+        {
+          "question_number": 38,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 11
+        },
+        {
+          "question_number": 40,
+          "reason": "reviewed_split_prompt_or_nested_option",
+          "source_page": 12
+        },
+        {
+          "question_number": 43,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 13
+        },
+        {
+          "question_number": 44,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 14
+        },
+        {
+          "question_number": 45,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 14
+        },
+        {
+          "question_number": 46,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 14
+        },
+        {
+          "question_number": 48,
+          "reason": "reviewed_missing_parse_tree",
+          "source_page": 15
+        },
+        {
+          "question_number": 49,
+          "reason": "transcription_debris:section_page_footer,visual_dependency",
+          "source_page": 16
+        },
+        {
+          "question_number": 51,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 17
+        },
+        {
+          "question_number": 52,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 18
+        },
+        {
+          "question_number": 53,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 18
+        },
+        {
+          "question_number": 56,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 19
+        },
+        {
+          "question_number": 57,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 20
+        },
+        {
+          "question_number": 58,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 20
+        },
+        {
+          "question_number": 59,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 20
+        },
+        {
+          "question_number": 62,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 21
+        },
+        {
+          "question_number": 64,
+          "reason": "transcription_debris:section_page_footer",
+          "source_page": 22
+        },
+        {
+          "question_number": 65,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 23
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2018/cs_2018.pdf",
+      "answer_key_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2018/cs_2018.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS-2019",
+      "year": 2019,
+      "paper": {
+        "path": "tmp/pyq/official-CS-2019.pdf",
+        "pages": 19,
+        "characters": 21732,
+        "extraction_methods": {
+          "pypdf": 0,
+          "ocr": 19,
+          "low_text": 0
+        }
+      },
+      "key_path": "source/CS/CS2019.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 58,
+      "review_required_records": 7,
+      "unresolved_count": 7,
+      "unresolved": [
+        {
+          "question_number": 7,
+          "reason": "diagram_transcribed,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 2
+        },
+        {
+          "question_number": 10,
+          "reason": "diagram_options_not_safely_linearizable,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 3
+        },
+        {
+          "question_number": 12,
+          "reason": "logic_diagram_transcribed,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 4
+        },
+        {
+          "question_number": 22,
+          "reason": "alternative_answer_scoring,official_key_accepts_multiple_options",
+          "source_page": 6
+        },
+        {
+          "question_number": 52,
+          "reason": "alternative_answer_scoring,official_key_has_two_accepted_ranges",
+          "source_page": 13
+        },
+        {
+          "question_number": 64,
+          "reason": "course_topic_classification_low_confidence,mathematical_notation_normalized",
+          "source_page": 16
+        },
+        {
+          "question_number": 65,
+          "reason": "relation_tables_transcribed,relational_algebra_notation_linearized,visual_component_required,visual_dependency",
+          "source_page": 16
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2019/cs_2019.pdf",
+      "answer_key_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2019/cs_2019.pdf",
+      "source_note": "RapidOCR transcription independently validated page-by-page; see tmp/pyq/ocr_2019/validation_report.json."
+    },
+    {
+      "label": "CS-2020",
+      "year": 2020,
+      "paper": {
+        "path": "tmp/pyq/official-CS-2020.pdf",
+        "pages": 18,
+        "characters": 22358,
+        "extraction_methods": {
+          "pypdf": 3,
+          "ocr": 15,
+          "low_text": 0
+        }
+      },
+      "key_path": "source/CS/CS2020.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 11,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 0,
+      "review_required_records": 65,
+      "unresolved_count": 67,
+      "unresolved": [
+        {
+          "question_number": 1,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 1
+        },
+        {
+          "question_number": 2,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 1
+        },
+        {
+          "question_number": 3,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 1
+        },
+        {
+          "question_number": 4,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 1
+        },
+        {
+          "question_number": 5,
+          "reason": "transcription_debris:dense_missing_space_ocr,embedded_q_label,marks_or_key_boilerplate,paper_header,website_navigation",
+          "source_page": 1
+        },
+        {
+          "question_number": 6,
+          "reason": "transcription_debris:dense_missing_space_ocr,joined_word_ocr",
+          "source_page": 2
+        },
+        {
+          "question_number": 7,
+          "reason": "reviewed_joined_formula_ocr",
+          "source_page": 2
+        },
+        {
+          "question_number": 8,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 2
+        },
+        {
+          "question_number": 9,
+          "reason": "transcription_debris:dense_missing_space_ocr",
+          "source_page": 3
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:embedded_q_label,joined_word_ocr,marks_or_key_boilerplate,nested_option_label",
+          "source_page": 3
+        },
+        {
+          "question_number": 11,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 12,
+          "reason": "transcription_debris:nested_option_label",
+          "source_page": 4
+        },
+        {
+          "question_number": 13,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 14,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 15,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 16,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 17,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "marks_to_all": true
+          }
+        },
+        {
+          "question_number": 17,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 18,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 19,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 20,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 21,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 22,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 23,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 24,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 25,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 26,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 27,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 28,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 29,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 30,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 31,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "any_of": [
+              13.3,
+              13.5
+            ]
+          }
+        },
+        {
+          "question_number": 31,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 32,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 33,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 34,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 35,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 36,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 37,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 38,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 39,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 40,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 41,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 42,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 43,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 44,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 45,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 46,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 47,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 48,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 49,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 50,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 51,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 52,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 53,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 54,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 55,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 56,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 57,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 58,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 59,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 60,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 61,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 62,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 63,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 64,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 65,
+          "reason": "question_block_not_recovered"
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2020/cs_2020.pdf",
+      "answer_key_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2020/cs_2020.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS1-2021",
+      "year": 2021,
+      "paper": {
+        "path": "tmp/pyq/official-CS1-2021.pdf",
+        "pages": 40,
+        "characters": 33115,
+        "extraction_methods": {
+          "pypdf": 11,
+          "ocr": 29,
+          "low_text": 0
+        }
+      },
+      "key_path": "official-CS1-2021-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 19,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 13,
+      "review_required_records": 52,
+      "unresolved_count": 54,
+      "unresolved": [
+        {
+          "question_number": 2,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 2
+        },
+        {
+          "question_number": 4,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 4
+        },
+        {
+          "question_number": 9,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "any_of": [
+              "C",
+              "D"
+            ]
+          }
+        },
+        {
+          "question_number": 9,
+          "reason": "official_key_requires_alternative_answer_scoring",
+          "source_page": 9
+        },
+        {
+          "question_number": 10,
+          "reason": "reviewed_aom_misread_as_option",
+          "source_page": 10
+        },
+        {
+          "question_number": 11,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 12,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 13,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 15,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 16,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 13
+        },
+        {
+          "question_number": 17,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 19,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 21,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 22,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 23,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 24,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 25,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 26,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 27,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 28,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 29,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 30,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 31,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 32,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 33,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "any_of": [
+              {
+                "min": 819,
+                "max": 820
+              },
+              205
+            ]
+          }
+        },
+        {
+          "question_number": 33,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 34,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 35,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 36,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 37,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 38,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 39,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 40,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 41,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 42,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 44,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 46,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 47,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 48,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 49,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 50,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 52,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 54,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 55,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 35
+        },
+        {
+          "question_number": 56,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 57,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 58,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 59,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 60,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 61,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 62,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 63,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 64,
+          "reason": "question_block_not_recovered"
+        },
+        {
+          "question_number": 65,
+          "reason": "question_block_not_recovered"
+        }
+      ],
+      "source_url": "https://gate.iitb.ac.in/G21/2021_papers/CS1.pdf",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/Answer_keys2021/cs_merged_2021.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS2-2021",
+      "year": 2021,
+      "paper": {
+        "path": "tmp/pyq/official-CS2-2021.pdf",
+        "pages": 43,
+        "characters": 34346,
+        "extraction_methods": {
+          "pypdf": 9,
+          "ocr": 34,
+          "low_text": 0
+        }
+      },
+      "key_path": "official-CS2-2021-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 55,
+      "review_required_records": 10,
+      "unresolved_count": 10,
+      "unresolved": [
+        {
+          "question_number": 2,
+          "reason": "diagram_options_not_safely_linearizable,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 2
+        },
+        {
+          "question_number": 7,
+          "reason": "diagram_options_not_safely_linearizable,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 6
+        },
+        {
+          "question_number": 9,
+          "reason": "chart_values_transcribed,visual_component_required,visual_dependency",
+          "source_page": 8
+        },
+        {
+          "question_number": 15,
+          "reason": "mathematical_notation_normalized,mux_diagram_options_transcribed,visual_component_required,visual_dependency",
+          "source_page": 12
+        },
+        {
+          "question_number": 27,
+          "reason": "dfa_diagram_required,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 19
+        },
+        {
+          "question_number": 38,
+          "reason": "mathematical_notation_normalized,transcription_debris:nested_option_label",
+          "source_page": 24
+        },
+        {
+          "question_number": 49,
+          "reason": "mathematical_notation_normalized,transcription_debris:nested_option_label",
+          "source_page": 32
+        },
+        {
+          "question_number": 56,
+          "reason": "directed_graph_required,transcription_debris:visual_dependency,visual_component_required,visual_dependency",
+          "source_page": 38
+        },
+        {
+          "question_number": 58,
+          "reason": "page_table_diagram_transcribed,visual_component_required,visual_dependency",
+          "source_page": 40
+        },
+        {
+          "question_number": 65,
+          "reason": "transcription_debris:visual_dependency,visual_component_required,visual_dependency,weighted_dag_required",
+          "source_page": 43
+        }
+      ],
+      "source_url": "https://gate.iitb.ac.in/G21/2021_papers/CS2.pdf",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/Answer_keys2021/cs_merged_2021.pdf",
+      "source_note": "RapidOCR transcription independently validated page-by-page; see tmp/pyq/ocr_cs2_2021/validation_report.json."
+    },
+    {
+      "label": "CS-2022",
+      "year": 2022,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS2022.pdf",
+        "pages": 41,
+        "characters": 32912,
+        "extraction_methods": {
+          "pypdf": 39,
+          "ocr": 0,
+          "low_text": 2
+        }
+      },
+      "key_path": "official-keys/CS-2022-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 26,
+      "review_required_records": 39,
+      "unresolved_count": 39,
+      "unresolved": [
+        {
+          "question_number": 5,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 5
+        },
+        {
+          "question_number": 9,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 9
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 10
+        },
+        {
+          "question_number": 11,
+          "reason": "transcription_debris:private_use_math_glyph,spaced_character_ocr",
+          "source_page": 11
+        },
+        {
+          "question_number": 12,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 11
+        },
+        {
+          "question_number": 13,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 12
+        },
+        {
+          "question_number": 15,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 13
+        },
+        {
+          "question_number": 16,
+          "reason": "transcription_debris:spaced_character_ocr",
+          "source_page": 13
+        },
+        {
+          "question_number": 18,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 14
+        },
+        {
+          "question_number": 20,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 16
+        },
+        {
+          "question_number": 22,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 18
+        },
+        {
+          "question_number": 23,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 19
+        },
+        {
+          "question_number": 25,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 20
+        },
+        {
+          "question_number": 27,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 21
+        },
+        {
+          "question_number": 29,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 22
+        },
+        {
+          "question_number": 32,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 22
+        },
+        {
+          "question_number": 34,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 23
+        },
+        {
+          "question_number": 35,
+          "reason": "transcription_debris:watermark",
+          "source_page": 23
+        },
+        {
+          "question_number": 36,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 24
+        },
+        {
+          "question_number": 38,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 25
+        },
+        {
+          "question_number": 40,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 26
+        },
+        {
+          "question_number": 41,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 27
+        },
+        {
+          "question_number": 44,
+          "reason": "reviewed_code_split_into_option",
+          "source_page": 29
+        },
+        {
+          "question_number": 45,
+          "reason": "transcription_debris:private_use_math_glyph,spaced_character_ocr",
+          "source_page": 30
+        },
+        {
+          "question_number": 46,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 31
+        },
+        {
+          "question_number": 47,
+          "reason": "transcription_debris:private_use_math_glyph,spaced_character_ocr",
+          "source_page": 31
+        },
+        {
+          "question_number": 48,
+          "reason": "transcription_debris:private_use_math_glyph,spaced_character_ocr",
+          "source_page": 32
+        },
+        {
+          "question_number": 49,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 32
+        },
+        {
+          "question_number": 50,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 33
+        },
+        {
+          "question_number": 51,
+          "reason": "transcription_debris:private_use_math_glyph,spaced_character_ocr",
+          "source_page": 34
+        },
+        {
+          "question_number": 52,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 34
+        },
+        {
+          "question_number": 53,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 35
+        },
+        {
+          "question_number": 55,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 37
+        },
+        {
+          "question_number": 57,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 38
+        },
+        {
+          "question_number": 58,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 39
+        },
+        {
+          "question_number": 59,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 39
+        },
+        {
+          "question_number": 62,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 40
+        },
+        {
+          "question_number": 63,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 40
+        },
+        {
+          "question_number": 65,
+          "reason": "transcription_debris:private_use_math_glyph",
+          "source_page": 41
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2022/cs_2022.pdf",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/Answer_keys2022/cs_2022.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS-2023",
+      "year": 2023,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS2023.pdf",
+        "pages": 69,
+        "characters": 35125,
+        "extraction_methods": {
+          "pypdf": 59,
+          "ocr": 0,
+          "low_text": 10
+        }
+      },
+      "key_path": "official-keys/CS-2023-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 26,
+      "review_required_records": 39,
+      "unresolved_count": 43,
+      "unresolved": [
+        {
+          "question_number": 2,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "marks_to_all": true
+          }
+        },
+        {
+          "question_number": 2,
+          "reason": "official_key_requires_alternative_answer_scoring",
+          "source_page": 1
+        },
+        {
+          "question_number": 9,
+          "reason": "transcription_debris:private_use_math_glyph,spaced_character_ocr",
+          "source_page": 6
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:nested_option_label,visual_dependency",
+          "source_page": 7
+        },
+        {
+          "question_number": 11,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 8
+        },
+        {
+          "question_number": 14,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 11
+        },
+        {
+          "question_number": 18,
+          "reason": "transcription_debris:nested_option_label,truncated_prompt,visual_dependency",
+          "source_page": 15
+        },
+        {
+          "question_number": 19,
+          "reason": "reviewed_missing_nfa_diagrams",
+          "source_page": 16
+        },
+        {
+          "question_number": 20,
+          "reason": "transcription_debris:spaced_character_ocr",
+          "source_page": 17
+        },
+        {
+          "question_number": 21,
+          "reason": "transcription_debris:spaced_character_ocr,visual_dependency",
+          "source_page": 19
+        },
+        {
+          "question_number": 24,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 22
+        },
+        {
+          "question_number": 26,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 24
+        },
+        {
+          "question_number": 27,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "any_of": [
+              [
+                "A",
+                "C",
+                "D"
+              ],
+              [
+                "C",
+                "D"
+              ]
+            ]
+          }
+        },
+        {
+          "question_number": 27,
+          "reason": "official_key_requires_alternative_answer_scoring",
+          "source_page": 25
+        },
+        {
+          "question_number": 30,
+          "reason": "official_key_has_alternative_or_marks_to_all_answer",
+          "answer": {
+            "any_of": [
+              2,
+              4
+            ]
+          }
+        },
+        {
+          "question_number": 30,
+          "reason": "official_key_requires_alternative_answer_scoring",
+          "source_page": 28
+        },
+        {
+          "question_number": 31,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 29
+        },
+        {
+          "question_number": 32,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 30
+        },
+        {
+          "question_number": 34,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 32
+        },
+        {
+          "question_number": 35,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 33
+        },
+        {
+          "question_number": 37,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 36
+        },
+        {
+          "question_number": 38,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 38
+        },
+        {
+          "question_number": 39,
+          "reason": "transcription_debris:joined_word_ocr,nested_option_label",
+          "source_page": 40
+        },
+        {
+          "question_number": 40,
+          "reason": "transcription_debris:spaced_character_ocr",
+          "source_page": 41
+        },
+        {
+          "question_number": 42,
+          "reason": "transcription_debris:embedded_q_label,nested_option_label,visual_dependency",
+          "source_page": 43
+        },
+        {
+          "question_number": 43,
+          "reason": "transcription_debris:embedded_q_label,visual_dependency",
+          "source_page": 44
+        },
+        {
+          "question_number": 44,
+          "reason": "transcription_debris:nested_option_label,visual_dependency",
+          "source_page": 46
+        },
+        {
+          "question_number": 46,
+          "reason": "transcription_debris:joined_word_ocr,nested_option_label,truncated_prompt",
+          "source_page": 49
+        },
+        {
+          "question_number": 47,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 50
+        },
+        {
+          "question_number": 48,
+          "reason": "transcription_debris:spaced_character_ocr",
+          "source_page": 51
+        },
+        {
+          "question_number": 49,
+          "reason": "reviewed_split_prompt",
+          "source_page": 52
+        },
+        {
+          "question_number": 51,
+          "reason": "transcription_debris:nested_option_label,suspicious_prompt_ending",
+          "source_page": 54
+        },
+        {
+          "question_number": 52,
+          "reason": "transcription_debris:watermark",
+          "source_page": 55
+        },
+        {
+          "question_number": 53,
+          "reason": "transcription_debris:nested_option_label",
+          "source_page": 56
+        },
+        {
+          "question_number": 54,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 57
+        },
+        {
+          "question_number": 56,
+          "reason": "reviewed_truncated_nat",
+          "source_page": 59
+        },
+        {
+          "question_number": 59,
+          "reason": "transcription_debris:spaced_character_ocr",
+          "source_page": 62
+        },
+        {
+          "question_number": 60,
+          "reason": "transcription_debris:joined_word_ocr",
+          "source_page": 63
+        },
+        {
+          "question_number": 61,
+          "reason": "transcription_debris:joined_word_ocr",
+          "source_page": 64
+        },
+        {
+          "question_number": 63,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 66
+        },
+        {
+          "question_number": 64,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 68
+        },
+        {
+          "question_number": 65,
+          "reason": "question_text_missing_or_image_only",
+          "source_page": 69
+        },
+        {
+          "question_number": 65,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 69
+        }
+      ],
+      "source_url": "https://gate.iitk.ac.in/GATE2023/doc/papers/2023/cs_2023.pdf",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/Answer_keys2023/CS_ANS_GATE2023.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS1-2024",
+      "year": 2024,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS12024.pdf",
+        "pages": 36,
+        "characters": 30094,
+        "extraction_methods": {
+          "pypdf": 36,
+          "ocr": 0,
+          "low_text": 0
+        }
+      },
+      "key_path": "official-keys/CS1-2024-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 44,
+      "review_required_records": 21,
+      "unresolved_count": 21,
+      "unresolved": [
+        {
+          "question_number": 8,
+          "reason": "reviewed_parenthetical_split_as_option",
+          "source_page": 6
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 7
+        },
+        {
+          "question_number": 14,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 9
+        },
+        {
+          "question_number": 15,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 10
+        },
+        {
+          "question_number": 18,
+          "reason": "reviewed_truncated_printf",
+          "source_page": 12
+        },
+        {
+          "question_number": 19,
+          "reason": "transcription_debris:nested_option_label,truncated_prompt,unbalanced_code_delimiters",
+          "source_page": 13
+        },
+        {
+          "question_number": 28,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 18
+        },
+        {
+          "question_number": 35,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 21
+        },
+        {
+          "question_number": 36,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 22
+        },
+        {
+          "question_number": 37,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 23
+        },
+        {
+          "question_number": 39,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 25
+        },
+        {
+          "question_number": 41,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 26
+        },
+        {
+          "question_number": 43,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 27
+        },
+        {
+          "question_number": 50,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 31
+        },
+        {
+          "question_number": 51,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 32
+        },
+        {
+          "question_number": 54,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 33
+        },
+        {
+          "question_number": 55,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 33
+        },
+        {
+          "question_number": 58,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 34
+        },
+        {
+          "question_number": 62,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 35
+        },
+        {
+          "question_number": 64,
+          "reason": "transcription_debris:embedded_q_label,visual_dependency",
+          "source_page": 36
+        },
+        {
+          "question_number": 65,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 36
+        }
+      ],
+      "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS2-2024",
+      "year": 2024,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS22024.pdf",
+        "pages": 40,
+        "characters": 32475,
+        "extraction_methods": {
+          "pypdf": 39,
+          "ocr": 0,
+          "low_text": 1
+        }
+      },
+      "key_path": "official-keys/CS2-2024-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 46,
+      "review_required_records": 19,
+      "unresolved_count": 19,
+      "unresolved": [
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 8
+        },
+        {
+          "question_number": 12,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 9
+        },
+        {
+          "question_number": 16,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 12
+        },
+        {
+          "question_number": 22,
+          "reason": "reviewed_missing_dfa",
+          "source_page": 16
+        },
+        {
+          "question_number": 27,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 19
+        },
+        {
+          "question_number": 29,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 20
+        },
+        {
+          "question_number": 32,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 22
+        },
+        {
+          "question_number": 33,
+          "reason": "reviewed_c_split_at_char_pointer",
+          "source_page": 22
+        },
+        {
+          "question_number": 35,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 23
+        },
+        {
+          "question_number": 41,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 28
+        },
+        {
+          "question_number": 43,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 30
+        },
+        {
+          "question_number": 46,
+          "reason": "transcription_debris:nested_option_label,visual_dependency",
+          "source_page": 32
+        },
+        {
+          "question_number": 48,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 33
+        },
+        {
+          "question_number": 49,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 34
+        },
+        {
+          "question_number": 50,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 35
+        },
+        {
+          "question_number": 53,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 37
+        },
+        {
+          "question_number": 59,
+          "reason": "transcription_debris:spaced_character_ocr,visual_dependency",
+          "source_page": 38
+        },
+        {
+          "question_number": 60,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 38
+        },
+        {
+          "question_number": 61,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 39
+        }
+      ],
+      "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS224S6.pdf",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS2FinalAnswerKey.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS1-2025",
+      "year": 2025,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS12025.pdf",
+        "pages": 64,
+        "characters": 36422,
+        "extraction_methods": {
+          "pypdf": 63,
+          "ocr": 0,
+          "low_text": 1
+        }
+      },
+      "key_path": "official-keys/CS1-2025-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 43,
+      "review_required_records": 22,
+      "unresolved_count": 22,
+      "unresolved": [
+        {
+          "question_number": 5,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 5
+        },
+        {
+          "question_number": 7,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 7
+        },
+        {
+          "question_number": 9,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 9
+        },
+        {
+          "question_number": 11,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 10
+        },
+        {
+          "question_number": 12,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 12
+        },
+        {
+          "question_number": 16,
+          "reason": "reviewed_list_match_option_swallow",
+          "source_page": 16
+        },
+        {
+          "question_number": 25,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 25
+        },
+        {
+          "question_number": 27,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 27
+        },
+        {
+          "question_number": 30,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 30
+        },
+        {
+          "question_number": 33,
+          "reason": "reviewed_truncated_if",
+          "source_page": 33
+        },
+        {
+          "question_number": 34,
+          "reason": "reviewed_truncated_printf",
+          "source_page": 34
+        },
+        {
+          "question_number": 35,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 35
+        },
+        {
+          "question_number": 36,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 36
+        },
+        {
+          "question_number": 37,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 37
+        },
+        {
+          "question_number": 44,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 44
+        },
+        {
+          "question_number": 49,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 49
+        },
+        {
+          "question_number": 52,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 52
+        },
+        {
+          "question_number": 53,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 53
+        },
+        {
+          "question_number": 56,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 56
+        },
+        {
+          "question_number": 57,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 57
+        },
+        {
+          "question_number": 62,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 62
+        },
+        {
+          "question_number": 64,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 64
+        }
+      ],
+      "source_url": "https://gate2027.iitm.ac.in/download",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2025_Key/CS1_Keys.pdf",
+      "source_note": null
+    },
+    {
+      "label": "CS2-2025",
+      "year": 2025,
+      "paper": {
+        "path": "tmp/pyq/source/CS/CS22025.pdf",
+        "pages": 48,
+        "characters": 33113,
+        "extraction_methods": {
+          "pypdf": 46,
+          "ocr": 0,
+          "low_text": 2
+        }
+      },
+      "key_path": "official-keys/CS2-2025-key.pdf",
+      "expected_questions": 65,
+      "question_blocks_recovered": 65,
+      "official_key_rows_recovered": 65,
+      "consolidated_records": 65,
+      "safe_records_emitted": 48,
+      "review_required_records": 17,
+      "unresolved_count": 17,
+      "unresolved": [
+        {
+          "question_number": 4,
+          "reason": "options_or_question_text_incomplete",
+          "source_page": 4
+        },
+        {
+          "question_number": 9,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 9
+        },
+        {
+          "question_number": 10,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 10
+        },
+        {
+          "question_number": 11,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 11
+        },
+        {
+          "question_number": 16,
+          "reason": "transcription_debris:nested_option_label",
+          "source_page": 14
+        },
+        {
+          "question_number": 17,
+          "reason": "reviewed_list_match_option_swallow",
+          "source_page": 15
+        },
+        {
+          "question_number": 19,
+          "reason": "reviewed_truncated_printf",
+          "source_page": 17
+        },
+        {
+          "question_number": 30,
+          "reason": "transcription_debris:nested_option_label",
+          "source_page": 24
+        },
+        {
+          "question_number": 31,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 25
+        },
+        {
+          "question_number": 32,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 25
+        },
+        {
+          "question_number": 39,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 30
+        },
+        {
+          "question_number": 41,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 31
+        },
+        {
+          "question_number": 51,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 39
+        },
+        {
+          "question_number": 57,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 43
+        },
+        {
+          "question_number": 59,
+          "reason": "transcription_debris:visual_dependency",
+          "source_page": 44
+        },
+        {
+          "question_number": 60,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 45
+        },
+        {
+          "question_number": 61,
+          "reason": "course_topic_classification_low_confidence",
+          "source_page": 45
+        }
+      ],
+      "source_url": "https://gate2027.iitm.ac.in/download",
+      "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2025_Key/CS2_Keys.pdf",
+      "source_note": null
+    }
+  ],
+  "quality_policy": {
+    "ocr_is_fallback_only": true,
+    "visual_dependency_preserved_but_not_quiz_safe": true,
+    "alternative_keys_preserved_but_not_quiz_safe": true,
+    "low_confidence_classification_preserved_but_not_quiz_safe": true,
+    "nat_ranges_preserved_as_min_max_objects": true,
+    "worked_solutions_available": false
+  },
+  "notes": [
+    "The supplied PDFs generally contain final answer keys rather than worked solutions.",
+    "All 845 source question numbers are preserved; unsafe or incomplete transcriptions are marked review_required and never enter the live bank.",
+    "Question numbers are normalized to 1-65 per paper; older papers that number CS before GA retain their original global numbering."
+  ]
+}
