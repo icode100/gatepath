@@ -135,6 +135,7 @@ class TestCreate(BaseModel):
 class SessionRead(ApiModel):
     id: str
     user_key: str
+    catalog_id: str | None
     mode: SessionMode
     subject_id: int | None
     topic_id: int | None
@@ -260,6 +261,103 @@ class RoadmapSubject(BaseModel):
 class RoadmapResponse(BaseModel):
     user_key: str
     subjects: list[RoadmapSubject]
+
+
+class QuestionTypeCounts(BaseModel):
+    mcq: int = 0
+    msq: int = 0
+    nat: int = 0
+
+
+class TestCatalogItem(ApiModel):
+    id: str
+    title: str
+    description: str
+    mode: SessionMode
+    subject_id: int | None
+    subject_slug: str | None
+    subject_code: str | None
+    form_number: int
+    question_count: int
+    duration_seconds: int
+    total_marks: int
+    question_type_counts: QuestionTypeCounts
+    topic_count: int
+    is_available: bool
+    unavailable_reason: str | None
+
+
+class TestCatalogResponse(BaseModel):
+    items: list[TestCatalogItem]
+    total: int
+    full_test_count: int
+    course_test_count: int
+    bank_version: str | None
+
+
+class CatalogSessionCreate(BaseModel):
+    user_key: str = Field(default="local-user", min_length=1, max_length=100)
+
+
+class AnalyticsOverall(BaseModel):
+    attempted_responses: int
+    answered_responses: int
+    unique_questions_attempted: int
+    available_questions: int
+    accuracy_percent: float
+    coverage_percent: float
+    recency_weighted_accuracy_percent: float
+    mastery_score: float
+
+
+class TopicAnalytics(BaseModel):
+    topic_id: int
+    topic_slug: str
+    topic_name: str
+    subject_id: int
+    subject_slug: str
+    subject_code: str
+    subject_name: str
+    available_questions: int
+    attempt_count: int
+    answered_count: int
+    unique_questions_attempted: int
+    correct_count: int
+    incorrect_count: int
+    unanswered_count: int
+    accuracy_percent: float
+    coverage_percent: float
+    recency_weighted_accuracy_percent: float
+    mastery_score: float
+    status: Literal["strong", "developing", "needs_practice", "unattempted"]
+    last_attempted_at: datetime | None
+
+
+class AnalyticsDashboard(BaseModel):
+    user_key: str
+    generated_at: datetime
+    overall: AnalyticsOverall
+    topics: list[TopicAnalytics]
+    strong_topics: list[TopicAnalytics]
+    needs_practice_topics: list[TopicAnalytics]
+    unattempted_topics: list[TopicAnalytics]
+
+
+class QuestionBankImportSummary(ApiModel):
+    schema_version: str
+    bank_version: str
+    checksum: str
+    question_count: int
+    inserted_count: int
+    updated_count: int
+    unchanged_count: int
+    imported_at: datetime
+
+
+class QuestionBankStatus(BaseModel):
+    configured_path: str
+    total_questions: int
+    latest_import: QuestionBankImportSummary | None
 
 
 class HealthResponse(BaseModel):

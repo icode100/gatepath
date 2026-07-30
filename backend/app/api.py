@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
@@ -17,20 +17,27 @@ from app.models import (
     Difficulty,
     PracticeSession,
     Question,
+    QuestionBankImport,
     QuestionSource,
     QuestionType,
     ResponseStatus,
     SessionMode,
     Subject,
+    TestForm,
     Topic,
     utc_now,
 )
 from app.schemas import (
     AttemptResult,
     AttemptSubmit,
+    AnalyticsDashboard,
+    AnalyticsOverall,
+    CatalogSessionCreate,
     PracticeSessionCreate,
     ProgressDashboard,
     QuestionListResponse,
+    QuestionBankImportSummary,
+    QuestionBankStatus,
     QuestionPublic,
     QuestionResult,
     RecentAttempt,
@@ -42,9 +49,14 @@ from app.schemas import (
     SubjectDetail,
     SubjectProgress,
     SubjectSummary,
+    TestCatalogItem,
+    TestCatalogResponse,
     TestCreate,
+    TopicAnalytics,
     TopicSummary,
 )
+from app.config import settings
+from app.question_bank import resolve_question_bank_path
 from app.scoring import score_question
 
 
@@ -124,6 +136,7 @@ async def _session_read(db: AsyncSession, session: PracticeSession) -> SessionRe
     return SessionRead(
         id=session.id,
         user_key=session.user_key,
+        catalog_id=session.catalog_id,
         mode=session.mode,
         subject_id=session.subject_id,
         topic_id=session.topic_id,
@@ -312,6 +325,29 @@ async def list_questions(
     )
 
 
+@router.get(
+    "/question-bank/status",
+    response_model=QuestionBankStatus,
+    tags=["Question Bank"],
+)
+async def question_bank_status(
+    db: AsyncSession = Depends(get_db),
+) -> QuestionBankStatus:
+    latest = await db.scalar(
+        select(QuestionBankImport)
+        .order_by(QuestionBankImport.imported_at.desc(), QuestionBankImport.id.desc())
+        .limit(1)
+    )
+    total_questions = await db.scalar(select(func.count(Question.id))) or 0
+    return QuestionBankStatus(
+        configured_path=str(resolve_question_bank_path(settings.question_bank_path)),
+        total_questions=total_questions,
+        latest_import=(
+            QuestionBankImportSummary.model_validate(latest) if latest else None
+        ),
+    )
+
+
 @router.get("/questions/{question_id}", response_model=QuestionPublic, tags=["Question Bank"])
 async def get_question(
     question_id: int, db: AsyncSession = Depends(get_db)
@@ -381,6 +417,114 @@ async def create_practice_session(
         seed=payload.seed,
         started_at=utc_now(),
         expires_at=None,
+    )
+    db.add(session)
+    await db.commit()
+    await db.refresh(session)
+    return await _session_read(db, session)
+
+
+def _catalog_item(form: TestForm) -> TestCatalogItem:
+    return TestCatalogItem(
+        id=form.id,
+        title=form.title,
+        description=form.description,
+        mode=form.mode,
+        subject_id=form.subject_id,
+        subject_slug=form.subject.slug if form.subject else None,
+        subject_code=form.subject.code if form.subject else None,
+        form_number=form.form_number,
+        question_count=form.question_count,
+        duration_seconds=form.duration_seconds,
+        total_marks=form.total_marks,
+        question_type_counts=form.question_type_counts,
+        topic_count=form.topic_count,
+        is_available=form.is_available,
+        unavailable_reason=form.unavailable_reason,
+    )
+
+
+@router.get(
+    "/tests/catalog",
+    response_model=TestCatalogResponse,
+    tags=["Practice and Tests"],
+)
+async def list_test_catalog(
+    mode: Literal["full", "sectional"] | None = None,
+    subject_slug: str | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> TestCatalogResponse:
+    conditions: list[Any] = []
+    if mode:
+        conditions.append(TestForm.mode == SessionMode(mode))
+    if subject_slug:
+        subject = await _resolve_subject(db, subject_slug=subject_slug)
+        conditions.append(TestForm.subject_id == subject.id)
+    forms = list(
+        (
+            await db.scalars(
+                select(TestForm)
+                .where(*conditions)
+                .options(selectinload(TestForm.subject))
+            )
+        ).all()
+    )
+    forms.sort(
+        key=lambda form: (
+            0 if form.mode == SessionMode.FULL else 1,
+            form.subject.order_index if form.subject else 0,
+            form.form_number,
+        )
+    )
+    items = [_catalog_item(form) for form in forms]
+    return TestCatalogResponse(
+        items=items,
+        total=len(items),
+        full_test_count=sum(item.mode == SessionMode.FULL for item in items),
+        course_test_count=sum(item.mode == SessionMode.SECTIONAL for item in items),
+        bank_version=forms[0].bank_version if forms else None,
+    )
+
+
+@router.post(
+    "/tests/{catalog_id}/sessions",
+    response_model=SessionRead,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Practice and Tests"],
+)
+async def create_catalog_test_session(
+    catalog_id: str,
+    payload: CatalogSessionCreate,
+    db: AsyncSession = Depends(get_db),
+) -> SessionRead:
+    form = await db.get(TestForm, catalog_id)
+    if form is None:
+        raise HTTPException(status_code=404, detail="Catalog test not found")
+    if not form.is_available:
+        raise HTTPException(
+            status_code=409,
+            detail=form.unavailable_reason or "Catalog test is not available",
+        )
+    questions = await _load_questions(db, form.question_ids)
+    if len(questions) != form.question_count:
+        raise HTTPException(
+            status_code=409,
+            detail="Catalog test is stale; rebuild the catalog from the current bank",
+        )
+    started_at = utc_now()
+    session = PracticeSession(
+        user_key=payload.user_key,
+        catalog_id=form.id,
+        mode=form.mode,
+        subject_id=form.subject_id,
+        topic_id=None,
+        question_ids=list(form.question_ids),
+        question_count=form.question_count,
+        duration_seconds=form.duration_seconds,
+        total_marks=form.total_marks,
+        seed=form.seed,
+        started_at=started_at,
+        expires_at=started_at + timedelta(seconds=form.duration_seconds),
     )
     db.add(session)
     await db.commit()
@@ -736,6 +880,246 @@ async def progress_dashboard(
         else 0.0,
         subjects=subject_progress,
         recent_attempts=recent,
+    )
+
+
+def _weighted_accuracy(
+    responses: list[tuple[ResponseStatus, datetime]],
+    *,
+    now: datetime,
+) -> float:
+    answered = [
+        (response_status, submitted_at)
+        for response_status, submitted_at in responses
+        if response_status != ResponseStatus.UNANSWERED
+    ]
+    if not answered:
+        return 0.0
+    weighted_correct = 0.0
+    total_weight = 0.0
+    for response_status, submitted_at in answered:
+        age_days = max(0.0, (now - _aware(submitted_at)).total_seconds() / 86_400)
+        weight = 0.5 ** (age_days / 30.0)
+        total_weight += weight
+        if response_status == ResponseStatus.CORRECT:
+            weighted_correct += weight
+    return weighted_correct / total_weight if total_weight else 0.0
+
+
+def _mastery_score(
+    *,
+    accuracy: float,
+    recency_accuracy: float,
+    answered_count: int,
+    coverage: float,
+    volume_target: int,
+) -> float:
+    volume = min(answered_count / volume_target, 1.0)
+    return 100 * (
+        0.45 * accuracy
+        + 0.20 * recency_accuracy
+        + 0.20 * volume
+        + 0.15 * coverage
+    )
+
+
+@router.get(
+    "/progress/analytics",
+    response_model=AnalyticsDashboard,
+    tags=["Attempts and Progress"],
+)
+async def progress_analytics(
+    user_key: str = Query(default="local-user", min_length=1, max_length=100),
+    db: AsyncSession = Depends(get_db),
+) -> AnalyticsDashboard:
+    subjects = list(
+        (
+            await db.scalars(
+                select(Subject)
+                .options(selectinload(Subject.topics))
+                .order_by(Subject.order_index)
+            )
+        ).all()
+    )
+    topic_question_counts = dict(
+        (
+            await db.execute(
+                select(Question.topic_id, func.count(Question.id)).group_by(
+                    Question.topic_id
+                )
+            )
+        ).all()
+    )
+    attempts = await _attempts_for_user(db, user_key)
+    now = utc_now()
+    topic_responses: dict[int, list[tuple[AttemptResponse, datetime]]] = defaultdict(
+        list
+    )
+    for attempt in attempts:
+        for response in attempt.responses:
+            topic_responses[response.question.topic_id].append(
+                (response, attempt.submitted_at)
+            )
+
+    topics: list[TopicAnalytics] = []
+    for subject in subjects:
+        for topic in subject.topics:
+            response_rows = topic_responses[topic.id]
+            correct_count = sum(
+                response.status == ResponseStatus.CORRECT
+                for response, _ in response_rows
+            )
+            incorrect_count = sum(
+                response.status == ResponseStatus.INCORRECT
+                for response, _ in response_rows
+            )
+            unanswered_count = sum(
+                response.status == ResponseStatus.UNANSWERED
+                for response, _ in response_rows
+            )
+            answered_count = correct_count + incorrect_count
+            available_questions = topic_question_counts.get(topic.id, 0)
+            unique_questions = len(
+                {response.question_id for response, _ in response_rows}
+            )
+            accuracy = (
+                correct_count / answered_count if answered_count else 0.0
+            )
+            coverage = (
+                unique_questions / available_questions
+                if available_questions
+                else 0.0
+            )
+            recency_accuracy = _weighted_accuracy(
+                [
+                    (response.status, submitted_at)
+                    for response, submitted_at in response_rows
+                ],
+                now=now,
+            )
+            mastery = _mastery_score(
+                accuracy=accuracy,
+                recency_accuracy=recency_accuracy,
+                answered_count=answered_count,
+                coverage=coverage,
+                volume_target=10,
+            )
+            if not response_rows:
+                classification = "unattempted"
+            elif (
+                answered_count >= 5
+                and accuracy >= 0.75
+                and recency_accuracy >= 0.70
+                and mastery >= 65
+            ):
+                classification = "strong"
+            elif (
+                answered_count == 0
+                or accuracy < 0.60
+                or recency_accuracy < 0.55
+                or mastery < 50
+            ):
+                classification = "needs_practice"
+            else:
+                classification = "developing"
+            topics.append(
+                TopicAnalytics(
+                    topic_id=topic.id,
+                    topic_slug=topic.slug,
+                    topic_name=topic.name,
+                    subject_id=subject.id,
+                    subject_slug=subject.slug,
+                    subject_code=subject.code,
+                    subject_name=subject.name,
+                    available_questions=available_questions,
+                    attempt_count=len(response_rows),
+                    answered_count=answered_count,
+                    unique_questions_attempted=unique_questions,
+                    correct_count=correct_count,
+                    incorrect_count=incorrect_count,
+                    unanswered_count=unanswered_count,
+                    accuracy_percent=round(accuracy * 100, 2),
+                    coverage_percent=round(coverage * 100, 2),
+                    recency_weighted_accuracy_percent=round(
+                        recency_accuracy * 100, 2
+                    ),
+                    mastery_score=round(mastery, 2),
+                    status=classification,
+                    last_attempted_at=(
+                        max(_aware(submitted_at) for _, submitted_at in response_rows)
+                        if response_rows
+                        else None
+                    ),
+                )
+            )
+
+    all_responses = [
+        (response, attempt.submitted_at)
+        for attempt in attempts
+        for response in attempt.responses
+    ]
+    answered_responses = [
+        (response, submitted_at)
+        for response, submitted_at in all_responses
+        if response.status != ResponseStatus.UNANSWERED
+    ]
+    correct_responses = sum(
+        response.status == ResponseStatus.CORRECT
+        for response, _ in answered_responses
+    )
+    available_questions = sum(topic_question_counts.values())
+    unique_questions = len({response.question_id for response, _ in all_responses})
+    overall_accuracy = (
+        correct_responses / len(answered_responses) if answered_responses else 0.0
+    )
+    overall_coverage = (
+        unique_questions / available_questions if available_questions else 0.0
+    )
+    overall_recency = _weighted_accuracy(
+        [
+            (response.status, submitted_at)
+            for response, submitted_at in all_responses
+        ],
+        now=now,
+    )
+    overall = AnalyticsOverall(
+        attempted_responses=len(all_responses),
+        answered_responses=len(answered_responses),
+        unique_questions_attempted=unique_questions,
+        available_questions=available_questions,
+        accuracy_percent=round(overall_accuracy * 100, 2),
+        coverage_percent=round(overall_coverage * 100, 2),
+        recency_weighted_accuracy_percent=round(overall_recency * 100, 2),
+        mastery_score=round(
+            _mastery_score(
+                accuracy=overall_accuracy,
+                recency_accuracy=overall_recency,
+                answered_count=len(answered_responses),
+                coverage=overall_coverage,
+                volume_target=50,
+            ),
+            2,
+        ),
+    )
+    strong_topics = sorted(
+        (topic for topic in topics if topic.status == "strong"),
+        key=lambda topic: (-topic.mastery_score, topic.topic_name),
+    )
+    needs_practice_topics = sorted(
+        (topic for topic in topics if topic.status == "needs_practice"),
+        key=lambda topic: (topic.mastery_score, -topic.attempt_count, topic.topic_name),
+    )
+    unattempted_topics = [
+        topic for topic in topics if topic.status == "unattempted"
+    ]
+    return AnalyticsDashboard(
+        user_key=user_key,
+        generated_at=now,
+        overall=overall,
+        topics=topics,
+        strong_topics=strong_topics,
+        needs_practice_topics=needs_practice_topics,
+        unattempted_topics=unattempted_topics,
     )
 
 

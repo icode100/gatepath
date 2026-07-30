@@ -1,6 +1,6 @@
 # GATE 2027 Prep API
 
-FastAPI backend for a distraction-free GATE CSE preparation application. It provides the syllabus roadmap, revision notes, a filterable question bank, practice and timed test sessions, official-style scoring, and progress summaries.
+FastAPI backend for a distraction-free GATE CSE preparation application. It provides the syllabus roadmap, revision notes, a versioned local question bank, deterministic test forms, official-style scoring, and topic mastery analytics.
 
 ## Run locally
 
@@ -13,7 +13,14 @@ Copy-Item .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Open `http://localhost:8000/docs` for the interactive OpenAPI documentation. On first startup, tables are created and deterministic syllabus data is seeded.
+Open `http://localhost:8000/docs` for the interactive OpenAPI documentation. On startup the service:
+
+1. creates the schema when `AUTO_CREATE_DB=true`;
+2. idempotently seeds the syllabus and built-in fallback questions;
+3. imports `data/question_bank.json` when it exists and `AUTO_IMPORT_QUESTION_BANK=true`;
+4. deterministically materializes 25 full mocks and 10 course tests for each of the 10 technical courses.
+
+The default bank location can be changed with `QUESTION_BANK_PATH`. Relative paths are resolved from the backend directory.
 
 Run tests with:
 
@@ -45,26 +52,79 @@ All application endpoints use `/api/v1`.
 - `GET /topics/{id}` and `GET /topics/{id}/notes` — topic metadata and Markdown revision content.
 - `GET /questions` — filters: `subject_id`, `subject_slug`, `topic_id`, `source_kind`, `year`, `question_type`, `difficulty`, `limit`, `offset`.
 - `POST /practice-sessions` — creates an untimed filtered practice set.
-- `POST /tests` — creates a sectional test or a fixed 65-question, 180-minute, 100-mark full mock (10 GA and 55 subject questions).
+- `GET /tests/catalog` — lists 125 stable forms: 25 full mocks and 100 course tests. Optional filters are `mode` and `subject_slug`.
+- `POST /tests/{catalog_id}/sessions` — starts an immutable session snapshot for a catalog form.
+- `POST /tests` — preserves ad-hoc sectional/full-test creation. Full tests use the fixed 65-question, 180-minute, 100-mark pattern (10 GA and 55 subject questions).
 - `GET /sessions/{id}` — restores an active session and its timer metadata.
 - `POST /attempts` — submits answers once, scores every question, then reveals solutions.
 - `GET /attempts/{id}` — retrieves a submitted result.
 - `GET /progress/dashboard?user_key=...` — aggregate and per-subject performance.
+- `GET /progress/analytics?user_key=...` — per-topic accuracy, volume, coverage, recency-weighted accuracy, mastery and strong/needs-practice classifications.
+- `GET /question-bank/status` — current bank size and latest import audit record.
 - `GET /health` — service and database readiness (this endpoint is at the service root, outside `/api/v1`).
 
 Public question responses intentionally omit `correct_answer` and `explanation`. They are returned only after submission. Answers use an option ID for MCQ (`"B"`), an option-ID array for MSQ (`["A", "C"]`), and a number or numeric string for NAT (`3.14`).
 
 Scoring follows GATE rules: incorrect MCQs lose one third of the question's marks; MSQ and NAT questions have no negative marking; unanswered questions score zero.
 
-## Question provenance
+## Versioned local question bank
 
-The deterministic seed bank contains original GATE-style examples plus a verified set of official GATE 2024 CS1 questions. Every PYQ carries `source_kind`, `source_year`, `source_paper`, `source_question_number`, `source_url`, and `answer_key_url`; clients can link back to both official documents.
+The updater accepts a UTF-8 JSON document at `backend/data/question_bank.json`:
 
-To validate and import more topic-mapped questions from the official archive:
+```json
+{
+  "schema_version": "1.0",
+  "bank_version": "gate-cse-2017-2025-v1",
+  "generated_at": "2026-07-30T00:00:00Z",
+  "questions": [
+    {
+      "external_id": "gate-2025-cs1-q12",
+      "question": "Question text",
+      "options": [
+        {"id": "A", "text": "First option"},
+        {"id": "B", "text": "Second option"}
+      ],
+      "course": "COA",
+      "topic": "Instruction Pipelining",
+      "correct_answer": "A",
+      "question_type": "mcq",
+      "difficulty": "medium",
+      "marks": 1,
+      "explanation": "Solution or explanation",
+      "numerical_tolerance": 0.01,
+      "source_kind": "previous_year",
+      "source_year": 2025,
+      "source_paper": "GATE 2025 CS1",
+      "source_question_number": 12,
+      "source_url": "https://example.invalid/paper.pdf",
+      "answer_key_url": "https://example.invalid/key.pdf",
+      "tags": ["gate-2025", "official-pyq"]
+    }
+  ]
+}
+```
+
+The five user-requested fields are `question`, `options`, `course`, `topic`, and `correct_answer`. The additional fields make question type, scoring and provenance unambiguous. `text` is accepted as an alias for `question`; string option arrays are normalized to `A`, `B`, and so on. If `question_type` is omitted, the updater infers NAT from an empty option list and MSQ from an answer array.
+
+`external_id` is the upsert key. If it is absent, a stable provenance- or content-derived ID is generated. Re-importing identical bytes is a no-op; a changed document updates matching questions without duplicating them. Each import records the schema version, bank version, SHA-256 checksum, and inserted/updated/unchanged counts. Unknown courses or topics fail validation so imported content cannot silently leave the seeded syllabus.
+
+The legacy command-line importer remains available for manually curated files:
 
 ```powershell
 python scripts/import_questions.py data/question_import_template.json --dry-run
 python scripts/import_questions.py path\to\verified_questions.json
 ```
 
-The importer rejects incomplete PYQ provenance, validates MCQ/MSQ/NAT structure, skips duplicate paper/question identities by default, and supports `--update` for corrections. Only verified questions obtained under appropriate permissions should be loaded.
+## Test catalog rules
+
+- Full forms: 25 deterministic forms, each containing 5 one-mark GA, 5 two-mark GA, 25 one-mark technical and 30 two-mark technical questions. Every form is exactly 65 questions, 100 marks and 180 minutes.
+- Course forms: 10 deterministic forms for each of EM, DL, COA, PDS, ALG, TOC, CD, OS, DBMS and CN. Every available form has exactly 30 questions, includes MCQ/MSQ/NAT, and round-robins across syllabus topics.
+- A form remains visible with `is_available=false` and an explicit reason if the local bank lacks the required count/type/mark mix. Rebuilding with the same bank yields the same question IDs.
+
+## Analytics model
+
+Topic analytics use four signals: answered-question accuracy (45%), 30-day half-life recency-weighted accuracy (20%), practice volume capped at 10 answered questions (20%), and unique-question bank coverage (15%). Scores are returned on a 0–100 scale. Topics are classified as `strong`, `developing`, `needs_practice`, or `unattempted`; the API also returns pre-sorted strong and needs-practice lists for a simple dashboard.
+
+## Migrations
+
+`0002_question_bank_catalog` adds stable question IDs and bank versions, import audit records, persistent test forms, and the session-to-catalog reference. It is conditional so it works both when upgrading an existing `0001` database and when the original metadata-driven migration creates the current schema from scratch.

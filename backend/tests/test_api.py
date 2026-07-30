@@ -25,7 +25,7 @@ def test_question_answers_are_not_exposed(client: TestClient) -> None:
     response = client.get("/api/v1/questions", params={"limit": 5})
     assert response.status_code == 200
     body = response.json()
-    assert body["total"] == 88
+    assert body["total"] >= 88
     assert len(body["items"]) == 5
     assert "correct_answer" not in body["items"][0]
     assert "explanation" not in body["items"][0]
@@ -46,6 +46,58 @@ def test_full_mock_is_65_questions_100_marks_and_three_hours(client: TestClient)
     cs = [q for q in session["questions"] if q["subject_slug"] != "general-aptitude"]
     assert len(ga) == 10
     assert len(cs) == 55
+
+
+def test_catalog_exposes_25_full_and_10_forms_for_each_course(
+    client: TestClient,
+) -> None:
+    response = client.get("/api/v1/tests/catalog")
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["total"] == 125
+    assert body["full_test_count"] == 25
+    assert body["course_test_count"] == 100
+    full_forms = [item for item in body["items"] if item["mode"] == "full"]
+    assert all(item["question_count"] == 65 for item in full_forms)
+    assert all(item["duration_seconds"] == 10_800 for item in full_forms)
+    assert all(item["total_marks"] == 100 for item in full_forms)
+    course_codes = {
+        item["subject_code"]
+        for item in body["items"]
+        if item["mode"] == "sectional"
+    }
+    assert course_codes == {
+        "EM",
+        "DL",
+        "COA",
+        "PDS",
+        "ALG",
+        "TOC",
+        "CD",
+        "OS",
+        "DBMS",
+        "CN",
+    }
+    assert all(
+        sum(
+            item["subject_code"] == code
+            for item in body["items"]
+            if item["mode"] == "sectional"
+        )
+        == 10
+        for code in course_codes
+    )
+
+    selected = full_forms[0]
+    assert selected["is_available"]
+    session_response = client.post(
+        f"/api/v1/tests/{selected['id']}/sessions",
+        json={"user_key": "catalog-user"},
+    )
+    assert session_response.status_code == 201, session_response.text
+    session = session_response.json()
+    assert session["catalog_id"] == selected["id"]
+    assert session["question_count"] == 65
 
 
 def test_official_pyq_provenance(client: TestClient) -> None:
@@ -114,6 +166,24 @@ def test_submit_scores_and_updates_progress(client: TestClient) -> None:
     assert dashboard.status_code == 200
     assert dashboard.json()["total_attempts"] == 1
     assert dashboard.json()["total_responses"] == 6
+
+    analytics = client.get(
+        "/api/v1/progress/analytics", params={"user_key": user_key}
+    )
+    assert analytics.status_code == 200
+    analytics_body = analytics.json()
+    assert analytics_body["overall"]["attempted_responses"] == 6
+    assert analytics_body["overall"]["answered_responses"] == 2
+    assert analytics_body["topics"]
+    assert analytics_body["needs_practice_topics"]
+    assert analytics_body["unattempted_topics"]
+    assert {
+        "accuracy_percent",
+        "coverage_percent",
+        "recency_weighted_accuracy_percent",
+        "mastery_score",
+        "status",
+    }.issubset(analytics_body["topics"][0])
 
     roadmap = client.get("/api/v1/roadmap", params={"user_key": user_key})
     assert roadmap.status_code == 200

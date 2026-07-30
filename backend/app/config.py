@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./gate_prep.db"
     auto_create_db: bool = True
     seed_data: bool = True
+    auto_import_question_bank: bool = True
+    question_bank_path: str = "data/question_bank.json"
     sql_echo: bool = False
 
     cors_origins: str = "http://localhost:3000,http://localhost:5173"

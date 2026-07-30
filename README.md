@@ -25,6 +25,7 @@ The question type mix is deliberately not hard-coded because IIT Madras has not 
 - Revision notes with key ideas, formulas, worked examples, checkpoints, and common traps
 - Topic-, subject-, type-, difficulty-, and year-filterable question APIs
 - MCQ, MSQ, and NAT practice with explanations and official marking behavior
+- A 12-question live COA syllabus quiz covering all six official GATE 2027 areas
 - 65-question, 180-minute full mock with question palette and mark-for-review
 - Attempt scoring, subject analysis, roadmap progress, and activity summaries
 - Light and dark themes with responsive keyboard- and touch-friendly UI

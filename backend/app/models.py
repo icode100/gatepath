@@ -133,6 +133,12 @@ class Question(Base):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    external_id: Mapped[str | None] = mapped_column(
+        String(180), nullable=True, unique=True, index=True
+    )
+    bank_version: Mapped[str | None] = mapped_column(
+        String(80), nullable=True, index=True
+    )
     subject_id: Mapped[int] = mapped_column(
         ForeignKey("subjects.id", ondelete="CASCADE"), index=True
     )
@@ -183,6 +189,9 @@ class PracticeSession(Base):
         String(36), primary_key=True, default=lambda: str(uuid.uuid4())
     )
     user_key: Mapped[str] = mapped_column(String(100), default="local-user", index=True)
+    catalog_id: Mapped[str | None] = mapped_column(
+        ForeignKey("test_forms.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     mode: Mapped[SessionMode] = mapped_column(Enum(SessionMode, native_enum=False))
     subject_id: Mapped[int | None] = mapped_column(
         ForeignKey("subjects.id", ondelete="SET NULL"), nullable=True
@@ -202,6 +211,64 @@ class PracticeSession(Base):
     attempt: Mapped[Attempt | None] = relationship(
         back_populates="session", uselist=False, cascade="all, delete-orphan"
     )
+
+
+class QuestionBankImport(Base):
+    __tablename__ = "question_bank_imports"
+    __table_args__ = (
+        UniqueConstraint(
+            "bank_version", "checksum", name="uq_question_bank_version_checksum"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    schema_version: Mapped[str] = mapped_column(String(32))
+    bank_version: Mapped[str] = mapped_column(String(80), index=True)
+    source_path: Mapped[str] = mapped_column(Text)
+    checksum: Mapped[str] = mapped_column(String(64), index=True)
+    question_count: Mapped[int] = mapped_column(Integer)
+    inserted_count: Mapped[int] = mapped_column(Integer)
+    updated_count: Mapped[int] = mapped_column(Integer)
+    unchanged_count: Mapped[int] = mapped_column(Integer)
+    imported_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now
+    )
+
+
+class TestForm(Base):
+    __tablename__ = "test_forms"
+    __table_args__ = (
+        UniqueConstraint(
+            "mode", "subject_id", "form_number", name="uq_test_form_scope_number"
+        ),
+        Index("ix_test_forms_mode_active", "mode", "is_available"),
+    )
+
+    id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    title: Mapped[str] = mapped_column(String(180))
+    description: Mapped[str] = mapped_column(Text)
+    mode: Mapped[SessionMode] = mapped_column(
+        Enum(SessionMode, native_enum=False), index=True
+    )
+    subject_id: Mapped[int | None] = mapped_column(
+        ForeignKey("subjects.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    form_number: Mapped[int] = mapped_column(Integer)
+    question_ids: Mapped[list[int]] = mapped_column(JSON, default=list)
+    question_count: Mapped[int] = mapped_column(Integer)
+    duration_seconds: Mapped[int] = mapped_column(Integer)
+    total_marks: Mapped[int] = mapped_column(Integer)
+    seed: Mapped[int] = mapped_column(Integer)
+    question_type_counts: Mapped[dict[str, int]] = mapped_column(JSON, default=dict)
+    topic_count: Mapped[int] = mapped_column(Integer, default=0)
+    bank_version: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    is_available: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    unavailable_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+    subject: Mapped[Subject | None] = relationship()
 
 
 class Attempt(Base):

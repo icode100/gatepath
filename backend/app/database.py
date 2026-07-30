@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
-from sqlalchemy import event
+from sqlalchemy import event, inspect
+from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -58,6 +59,66 @@ async def create_database_schema() -> None:
 
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
+        await connection.run_sync(_add_local_upgrade_columns)
+
+
+def _add_local_upgrade_columns(connection: Connection) -> None:
+    """Keep AUTO_CREATE_DB useful for an existing zero-config local database.
+
+    Managed deployments should still run Alembic. ``create_all`` cannot add
+    columns to an existing SQLite file, so development startup performs only
+    the additive, nullable column changes needed before the importer/catalog
+    can run. New tables are already handled by ``create_all``.
+    """
+
+    inspector = inspect(connection)
+    table_names = set(inspector.get_table_names())
+    if "questions" in table_names:
+        question_columns = {
+            column["name"] for column in inspector.get_columns("questions")
+        }
+        if "external_id" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN external_id VARCHAR(180)"
+            )
+        if "bank_version" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN bank_version VARCHAR(80)"
+            )
+        question_indexes = {
+            index["name"]
+            for index in inspect(connection).get_indexes("questions")
+            if index.get("name")
+        }
+        if "ix_questions_external_id" not in question_indexes:
+            connection.exec_driver_sql(
+                "CREATE UNIQUE INDEX ix_questions_external_id "
+                "ON questions (external_id)"
+            )
+        if "ix_questions_bank_version" not in question_indexes:
+            connection.exec_driver_sql(
+                "CREATE INDEX ix_questions_bank_version "
+                "ON questions (bank_version)"
+            )
+
+    if "practice_sessions" in table_names:
+        session_columns = {
+            column["name"] for column in inspector.get_columns("practice_sessions")
+        }
+        if "catalog_id" not in session_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE practice_sessions ADD COLUMN catalog_id VARCHAR(80)"
+            )
+        session_indexes = {
+            index["name"]
+            for index in inspect(connection).get_indexes("practice_sessions")
+            if index.get("name")
+        }
+        if "ix_practice_sessions_catalog_id" not in session_indexes:
+            connection.exec_driver_sql(
+                "CREATE INDEX ix_practice_sessions_catalog_id "
+                "ON practice_sessions (catalog_id)"
+            )
 
 
 async def close_database() -> None:

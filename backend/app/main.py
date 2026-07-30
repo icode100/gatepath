@@ -10,17 +10,24 @@ from sqlalchemy import select
 from app.api import router as api_router
 from app.config import settings
 from app.database import AsyncSessionFactory, close_database, create_database_schema
+from app.question_bank import import_question_bank, resolve_question_bank_path
 from app.schemas import HealthResponse
 from app.seed import seed_database
+from app.test_catalog import rebuild_test_catalog
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     if settings.auto_create_db:
         await create_database_schema()
-    if settings.seed_data:
-        async with AsyncSessionFactory() as session:
+    async with AsyncSessionFactory() as session:
+        if settings.seed_data:
             await seed_database(session)
+        if settings.auto_import_question_bank:
+            question_bank_path = resolve_question_bank_path(settings.question_bank_path)
+            if question_bank_path.is_file():
+                await import_question_bank(session, question_bank_path)
+        await rebuild_test_catalog(session)
     yield
     await close_database()
 
