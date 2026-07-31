@@ -14,7 +14,10 @@ from app.database import Base
 
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.async_database_url.replace("%", "%%"))
+config.set_main_option(
+    "sqlalchemy.url",
+    settings.async_migration_database_url.replace("%", "%%"),
+)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -49,6 +52,7 @@ async def run_async_migrations() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=settings.migration_database_connect_args,
     )
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)

@@ -10,22 +10,41 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import NullPool, StaticPool
 
-from app.config import settings
+from app.config import Settings, settings
 
 
 class Base(DeclarativeBase):
     pass
 
 
-engine_kwargs: dict[str, object] = {
-    "echo": settings.sql_echo,
-    "pool_pre_ping": True,
-}
-if settings.async_database_url.endswith(":memory:"):
-    engine_kwargs["poolclass"] = StaticPool
+def build_engine_kwargs(
+    app_settings: Settings,
+    *,
+    database_url: str | None = None,
+    force_null_pool: bool = False,
+) -> dict[str, object]:
+    """Build engine options that are safe for both local and serverless use."""
 
+    source_url = database_url or app_settings.database_url
+    async_url = app_settings.normalize_async_database_url(source_url)
+    engine_options: dict[str, object] = {"echo": app_settings.sql_echo}
+    if async_url.endswith(":memory:"):
+        engine_options["poolclass"] = StaticPool
+    elif force_null_pool or app_settings.use_null_database_pool:
+        # A serverless instance must not retain its own PostgreSQL connection
+        # pool. Neon (or another managed pooler) remains the connection owner.
+        engine_options["poolclass"] = NullPool
+    else:
+        engine_options["pool_pre_ping"] = True
+    connect_args = app_settings.asyncpg_connect_args(source_url)
+    if connect_args:
+        engine_options["connect_args"] = connect_args
+    return engine_options
+
+
+engine_kwargs = build_engine_kwargs(settings)
 engine = create_async_engine(settings.async_database_url, **engine_kwargs)
 AsyncSessionFactory = async_sessionmaker(
     bind=engine,

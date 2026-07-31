@@ -3,39 +3,35 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
 from app.api import router as api_router
+from app.bootstrap import initialize_local_development_database
 from app.config import DEFAULT_ANONYMOUS_IDENTITY_SECRET, settings
-from app.database import AsyncSessionFactory, close_database, create_database_schema
+from app.database import AsyncSessionFactory, close_database
 from app.identity import issue_identity, verify_identity
-from app.question_bank import import_question_bank, resolve_question_bank_path
 from app.schemas import HealthResponse
-from app.seed import seed_database
-from app.test_catalog import rebuild_test_catalog
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    hosted = settings.is_production or settings.is_serverless_runtime
     if (
-        settings.environment.lower() == "production"
+        hosted
         and settings.anonymous_identity_secret == DEFAULT_ANONYMOUS_IDENTITY_SECRET
     ):
         raise RuntimeError(
-            "ANONYMOUS_IDENTITY_SECRET must be changed in production"
+            "ANONYMOUS_IDENTITY_SECRET must be changed in hosted environments"
         )
-    if settings.auto_create_db:
-        await create_database_schema()
-    async with AsyncSessionFactory() as session:
-        if settings.seed_data:
-            await seed_database(session)
-        if settings.auto_import_question_bank:
-            question_bank_path = resolve_question_bank_path(settings.question_bank_path)
-            if question_bank_path.is_file():
-                await import_question_bank(session, question_bank_path)
-        await rebuild_test_catalog(session)
+    if hosted and settings.async_database_url.startswith("sqlite"):
+        raise RuntimeError(
+            "DATABASE_URL must point to PostgreSQL in hosted environments; "
+            "SQLite is not persistent on Vercel"
+        )
+    if settings.should_bootstrap_on_startup:
+        await initialize_local_development_database()
     yield
     await close_database()
 
@@ -99,13 +95,14 @@ async def root() -> dict[str, str]:
 
 
 @app.get("/health", response_model=HealthResponse, tags=["Operations"])
-async def health() -> HealthResponse:
+async def health(response: Response) -> HealthResponse:
     database_status = "ok"
     try:
         async with AsyncSessionFactory() as session:
             await session.execute(select(1))
     except Exception:
         database_status = "unavailable"
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return HealthResponse(
         status="ok" if database_status == "ok" else "degraded",
         service=settings.app_name,
