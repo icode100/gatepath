@@ -57,6 +57,142 @@ Open:
 - API health: http://localhost:8000/health
 
 PostgreSQL data is retained in the `gatepath_postgres` named volume.
+Compose runs the explicit, idempotent database bootstrap before starting
+Uvicorn, so `docker compose up` still prepares the schema, syllabus, question
+bank, and test catalog in one command.
+
+## Deploy to Vercel
+
+The checked-in [`vercel.json`](vercel.json) deploys the repository as one
+[Vercel Services](https://vercel.com/kb/guide/vercel-services) project:
+
+- `frontend` builds the Next.js application from the repository root.
+- `backend` builds `backend/app/main.py` with Vercel's native FastAPI runtime.
+- `/api/v1/*`, `/health`, and the FastAPI documentation routes go directly to
+  FastAPI; every other path goes to Next.js on the same deployment domain.
+
+Vercel does not run `docker-compose.yml` or the PostgreSQL container. The
+Docker files remain the local and portable self-hosted deployment path; Vercel
+uses native framework services and an external managed database.
+
+### 1. Import the GitHub repository
+
+1. In Vercel, select **Add New → Project** and import
+   `icode100/gatepath`.
+2. Keep the project root at the repository root. Do not select `backend/`.
+3. Open **Settings → Build and Deployment** and set **Framework Preset** to
+   **Services**. This is required: Vercel only uses the `services` block when
+   the project preset is Services.
+4. Leave custom install, build, output, and development commands empty.
+   `vercel.json` pins Next.js and FastAPI for their respective roots.
+
+Services are currently Beta and available on all Vercel plans. If **Services**
+does not appear in the framework list for the account, do not deploy the
+repository as a plain Next.js project; use two Vercel projects as a temporary
+fallback or request Services access.
+
+### 2. Create and connect PostgreSQL
+
+1. In the project, open **Marketplace → Storage**, add
+   [Neon](https://vercel.com/marketplace/neon), and create or connect a
+   PostgreSQL database.
+2. Enable Neon's preview-branch integration so every Vercel Preview deployment
+   receives an isolated database branch.
+3. In **Settings → Environment Variables**, confirm that Neon provides
+   `DATABASE_URL`. Also retain its direct/non-pooled connection as
+   `DATABASE_URL_UNPOOLED` for migrations and bootstrap work. If the
+   integration uses differently named variables, add these two aliases.
+
+The API accepts ordinary `postgresql://` and `postgres://` URLs and selects the
+async PostgreSQL driver itself. Never prefix a browser-visible variable with a
+database secret.
+
+### 3. Configure Vercel environment variables
+
+Add the following under **Settings → Environment Variables**. Apply the
+runtime settings to Production and Preview; scope database URLs to their
+corresponding Neon production or preview branch.
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | Neon pooled runtime URL |
+| `DATABASE_URL_UNPOOLED` | Neon direct URL used by the bootstrap command |
+| `ENVIRONMENT` | `production` |
+| `ANONYMOUS_IDENTITY_SECRET` | A new random secret of at least 32 characters |
+| `IDENTITY_COOKIE_SECURE` | `true` |
+| `AUTO_BOOTSTRAP_ON_STARTUP` | `false` |
+| `AUTO_CREATE_DB` | `false` |
+| `SEED_DATA` | `false` |
+| `AUTO_IMPORT_QUESTION_BANK` | `false` |
+| `QUESTION_BANK_PATH` | `data/question_bank.json` |
+| `SQL_ECHO` | `false` |
+| `NEXT_PUBLIC_API_URL` | `/api/v1` |
+
+Generate the identity secret locally, then paste only its output into Vercel:
+
+```powershell
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+For Production, optionally set `NEXT_PUBLIC_SITE_URL` and `CORS_ORIGINS` to
+the final `https://...` domain. Leave `NEXT_PUBLIC_SITE_URL` unset for Preview
+so metadata follows each generated preview hostname. CORS is not required for
+the application's normal same-origin browser requests. Do not set
+`BACKEND_INTERNAL_URL` on Vercel; it is only used by the local Next.js/Docker
+proxy. Vercel supplies `VERCEL=1` automatically.
+
+### 4. Bootstrap the target database once
+
+Database migrations and the 2,607-question import must not run during a
+serverless cold start or every Vercel build. From a trusted local checkout,
+run the explicit bootstrap against the target Neon database:
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+$env:DATABASE_URL = "<Neon pooled PostgreSQL URL>"
+$env:DATABASE_URL_UNPOOLED = "<Neon direct PostgreSQL URL>"
+.venv\Scripts\python scripts/bootstrap_database.py
+Remove-Item Env:DATABASE_URL
+Remove-Item Env:DATABASE_URL_UNPOOLED
+```
+
+The command upgrades Alembic to `head`, seeds the official syllabus, imports
+the bundled question bank, and rebuilds all stable test forms. It is
+idempotent. With the shipped release data, its success line reports 2,695
+active questions (the 2,607-row bundled bank plus local seed/example rows) and
+125 test forms. Run it before the first production promotion and again when a
+release adds migrations or changes the bundled bank. Do not put this command
+in Vercel's Build Command.
+
+### 5. Deploy and verify
+
+Push to the connected branch or select **Deploy** in Vercel, then verify:
+
+```text
+https://<deployment-domain>/health
+https://<deployment-domain>/api/v1/question-bank/status
+https://<deployment-domain>/docs
+https://<deployment-domain>/
+```
+
+The legacy `/health/backend` URL redirects to `/health`. The three-hour mock
+timer does not require a three-hour request: the browser and database retain
+exam state while API calls remain short.
+
+### Preview and plan safety
+
+- Never expose the production `DATABASE_URL` to Preview. Use Neon database
+  branches, or a completely separate preview database.
+- A feature branch that changes migrations must be bootstrapped only against
+  its matching preview branch before testing.
+- Keep all automatic startup-write flags disabled. Vercel instances may start
+  concurrently and use a read-only filesystem apart from temporary storage.
+- Vercel Hobby is suitable for personal, non-commercial preparation subject
+  to its function and bandwidth quotas. A public or commercial service must
+  follow the current [Vercel plan terms](https://vercel.com/docs/plans/hobby)
+  and Neon limits.
 
 ## Local development
 
@@ -71,11 +207,13 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 # macOS/Linux: source .venv/bin/activate
 pip install -r requirements-dev.txt
-alembic upgrade head
+python scripts/bootstrap_database.py
 uvicorn app.main:app --reload --port 8000
 ```
 
 The default local database is SQLite. Copy `backend/.env.example` to `backend/.env` to override settings.
+After the explicit bootstrap, set `AUTO_BOOTSTRAP_ON_STARTUP=false` in that
+local file to avoid repeating the idempotent import on every Uvicorn reload.
 
 ### Frontend
 
@@ -111,10 +249,11 @@ docker compose config
 
 ## Question-bank and PYQ pipeline
 
-`backend/data/question_bank.json` is the authoritative local updater. Startup
-validates and imports it idempotently, records a checksum audit, reactivates
-questions when an older bank is deliberately restored, and retires omitted
-import-managed rows without breaking historical attempts.
+`backend/data/question_bank.json` is the authoritative local updater. The
+explicit database bootstrap validates and imports it idempotently, records a
+checksum audit, reactivates questions when an older bank is deliberately
+restored, and retires omitted import-managed rows without breaking historical
+attempts. Application cold starts do not mutate the bank or test catalog.
 
 The supplied archive is represented by exactly 845 audit rows in
 `backend/data/pyq_consolidated.json`. Of those, 387 verified rows are eligible
@@ -156,6 +295,7 @@ backend/scripts/     Extraction, generation, validation, and import tools
 public/              Frontend static assets
 Dockerfile           Production frontend image
 docker-compose.yml   Frontend, API, and PostgreSQL stack
+vercel.json           One-project Next.js and FastAPI Vercel Services routing
 ```
 
 ## Authoritative sources
