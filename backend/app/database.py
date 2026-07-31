@@ -44,8 +44,20 @@ def build_engine_kwargs(
     return engine_options
 
 
-engine_kwargs = build_engine_kwargs(settings)
-engine = create_async_engine(settings.async_database_url, **engine_kwargs)
+database_configuration_issue = settings.database_configuration_issue
+if database_configuration_issue is not None:
+    # Keep the application importable so /health can explain a hosted
+    # configuration problem. API requests remain blocked by the middleware in
+    # app.main, and this in-memory fallback is never used as production data.
+    engine_url = "sqlite+aiosqlite:///:memory:"
+    engine_kwargs: dict[str, object] = {
+        "echo": False,
+        "poolclass": StaticPool,
+    }
+else:
+    engine_url = settings.async_database_url
+    engine_kwargs = build_engine_kwargs(settings)
+engine = create_async_engine(engine_url, **engine_kwargs)
 AsyncSessionFactory = async_sessionmaker(
     bind=engine,
     class_=AsyncSession,
@@ -54,7 +66,7 @@ AsyncSessionFactory = async_sessionmaker(
 )
 
 
-if settings.async_database_url.startswith("sqlite"):
+if engine_url.startswith("sqlite"):
 
     @event.listens_for(engine.sync_engine, "connect")
     def enable_sqlite_foreign_keys(dbapi_connection: object, _: object) -> None:

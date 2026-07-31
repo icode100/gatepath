@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
-from fastapi import Response, status
+from fastapi import Request, Response, status
 from sqlalchemy.engine import make_url
 from sqlalchemy.pool import NullPool
 
@@ -88,7 +92,7 @@ async def test_hosted_lifespan_is_read_only(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 @pytest.mark.asyncio
-async def test_hosted_lifespan_rejects_default_secret(
+async def test_health_reports_default_secret_without_crashing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(settings, "environment", "development")
@@ -104,13 +108,21 @@ async def test_hosted_lifespan_rejects_default_secret(
         DEFAULT_ANONYMOUS_IDENTITY_SECRET,
     )
 
-    with pytest.raises(RuntimeError, match="ANONYMOUS_IDENTITY_SECRET"):
-        async with main_module.lifespan(main_module.app):
-            pass
+    response = Response(status_code=status.HTTP_200_OK)
+    payload = await main_module.health(response)
+
+    assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+    assert payload.status == "degraded"
+    assert payload.database == "not_checked"
+    assert payload.configuration == "invalid"
+    assert any(
+        issue == "ANONYMOUS_IDENTITY_SECRET_MISSING_OR_WEAK"
+        for issue in payload.configuration_issues
+    )
 
 
 @pytest.mark.asyncio
-async def test_hosted_lifespan_rejects_sqlite(
+async def test_health_reports_sqlite_without_crashing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(settings, "environment", "development")
@@ -122,9 +134,113 @@ async def test_hosted_lifespan_rejects_sqlite(
     )
     monkeypatch.setattr(settings, "anonymous_identity_secret", "s" * 40)
 
-    with pytest.raises(RuntimeError, match="PostgreSQL"):
-        async with main_module.lifespan(main_module.app):
-            pass
+    response = Response(status_code=status.HTTP_200_OK)
+    payload = await main_module.health(response)
+
+    assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+    assert payload.status == "degraded"
+    assert payload.database == "not_checked"
+    assert payload.configuration == "invalid"
+    assert "DATABASE_URL_NOT_POSTGRESQL" in payload.configuration_issues
+
+
+def test_hosted_settings_report_malformed_database_url_safely() -> None:
+    hosted = _hosted_settings(database_url="DATABASE_URL=not-a-url")
+
+    assert hosted.database_configuration_issue is not None
+    assert hosted.database_configuration_issue == "DATABASE_URL_MALFORMED"
+    assert "not-a-url" not in hosted.database_configuration_issue
+
+
+@pytest.mark.asyncio
+async def test_invalid_hosted_configuration_blocks_api_without_cookie(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "vercel", True)
+    monkeypatch.setattr(
+        settings,
+        "database_url",
+        "sqlite+aiosqlite:///./gate_prep.db",
+    )
+    monkeypatch.setattr(
+        settings,
+        "anonymous_identity_secret",
+        DEFAULT_ANONYMOUS_IDENTITY_SECRET,
+    )
+    request = Request(
+        {
+            "type": "http",
+            "http_version": "1.1",
+            "method": "GET",
+            "scheme": "https",
+            "path": "/api/v1/subjects",
+            "raw_path": b"/api/v1/subjects",
+            "query_string": b"",
+            "headers": [],
+            "client": ("127.0.0.1", 1234),
+            "server": ("testserver", 443),
+        }
+    )
+    call_next = AsyncMock()
+
+    response = await main_module.bind_anonymous_identity(request, call_next)
+
+    assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+    assert response.headers["cache-control"] == "no-store"
+    assert "set-cookie" not in response.headers
+    call_next.assert_not_awaited()
+    payload = json.loads(response.body)
+    assert payload["configuration_issues"] == [
+        "ANONYMOUS_IDENTITY_SECRET_MISSING_OR_WEAK",
+        "DATABASE_URL_NOT_POSTGRESQL",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("database_url", "expected_issue"),
+    [
+        (
+            "sqlite+aiosqlite:///./gate_prep.db",
+            "DATABASE_URL_NOT_POSTGRESQL",
+        ),
+        ("DATABASE_URL=not-a-url", "DATABASE_URL_MALFORMED"),
+    ],
+)
+def test_hosted_app_imports_safely_with_bad_database_configuration(
+    database_url: str,
+    expected_issue: str,
+) -> None:
+    backend_root = Path(__file__).resolve().parents[1]
+    environment = os.environ.copy()
+    environment.update(
+        {
+            "VERCEL": "1",
+            "ENVIRONMENT": "production",
+            "DATABASE_URL": database_url,
+            "ANONYMOUS_IDENTITY_SECRET": DEFAULT_ANONYMOUS_IDENTITY_SECRET,
+        }
+    )
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "from app.main import app; "
+                "from app.config import settings; "
+                "print(','.join(settings.hosted_configuration_issues))"
+            ),
+        ],
+        cwd=backend_root,
+        env=environment,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert "ANONYMOUS_IDENTITY_SECRET_MISSING_OR_WEAK" in completed.stdout
+    assert expected_issue in completed.stdout
 
 
 class _FailingSessionContext:

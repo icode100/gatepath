@@ -366,3 +366,5 @@ class HealthResponse(BaseModel):
     service: str
     version: str
     database: str
+    configuration: str = "ok"
+    configuration_issues: list[str] = Field(default_factory=list)

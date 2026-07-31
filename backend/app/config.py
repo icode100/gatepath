@@ -3,9 +3,9 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
+from sqlalchemy.exc import ArgumentError
 
 
 DEFAULT_ANONYMOUS_IDENTITY_SECRET = (
@@ -31,10 +31,7 @@ class Settings(BaseSettings):
     auto_import_question_bank: bool = True
     question_bank_path: str = "data/question_bank.json"
     sql_echo: bool = False
-    anonymous_identity_secret: str = Field(
-        default=DEFAULT_ANONYMOUS_IDENTITY_SECRET,
-        min_length=32,
-    )
+    anonymous_identity_secret: str = DEFAULT_ANONYMOUS_IDENTITY_SECRET
     identity_cookie_name: str = "gatepath_identity"
     identity_cookie_secure: bool = False
 
@@ -134,6 +131,42 @@ class Settings(BaseSettings):
     @property
     def is_serverless_runtime(self) -> bool:
         return self.serverless or self.vercel
+
+    @property
+    def is_hosted(self) -> bool:
+        return self.is_production or self.is_serverless_runtime
+
+    @property
+    def database_configuration_issue(self) -> str | None:
+        """Return a safe hosted-database diagnostic without exposing its URL."""
+
+        if not self.is_hosted:
+            return None
+        try:
+            parsed = make_url(self.database_url.strip())
+        except (ArgumentError, ValueError):
+            return "DATABASE_URL_MALFORMED"
+        if parsed.get_backend_name() != "postgresql":
+            return "DATABASE_URL_NOT_POSTGRESQL"
+        return None
+
+    @property
+    def hosted_configuration_issues(self) -> list[str]:
+        """List actionable, non-secret issues that must block hosted API use."""
+
+        if not self.is_hosted:
+            return []
+        issues: list[str] = []
+        if (
+            self.anonymous_identity_secret
+            == DEFAULT_ANONYMOUS_IDENTITY_SECRET
+            or len(self.anonymous_identity_secret) < 32
+        ):
+            issues.append("ANONYMOUS_IDENTITY_SECRET_MISSING_OR_WEAK")
+        database_issue = self.database_configuration_issue
+        if database_issue is not None:
+            issues.append(database_issue)
+        return issues
 
     @property
     def use_null_database_pool(self) -> bool:

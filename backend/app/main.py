@@ -5,11 +5,12 @@ from typing import AsyncIterator
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy import select
 
 from app.api import router as api_router
 from app.bootstrap import initialize_local_development_database
-from app.config import DEFAULT_ANONYMOUS_IDENTITY_SECRET, settings
+from app.config import settings
 from app.database import AsyncSessionFactory, close_database
 from app.identity import issue_identity, verify_identity
 from app.schemas import HealthResponse
@@ -17,19 +18,6 @@ from app.schemas import HealthResponse
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    hosted = settings.is_production or settings.is_serverless_runtime
-    if (
-        hosted
-        and settings.anonymous_identity_secret == DEFAULT_ANONYMOUS_IDENTITY_SECRET
-    ):
-        raise RuntimeError(
-            "ANONYMOUS_IDENTITY_SECRET must be changed in hosted environments"
-        )
-    if hosted and settings.async_database_url.startswith("sqlite"):
-        raise RuntimeError(
-            "DATABASE_URL must point to PostgreSQL in hosted environments; "
-            "SQLite is not persistent on Vercel"
-        )
     if settings.should_bootstrap_on_startup:
         await initialize_local_development_database()
     yield
@@ -60,8 +48,22 @@ app.add_middleware(
 
 @app.middleware("http")
 async def bind_anonymous_identity(request: Request, call_next):
-    if not request.url.path.startswith(settings.api_v1_prefix):
+    is_api_request = (
+        request.url.path == settings.api_v1_prefix
+        or request.url.path.startswith(f"{settings.api_v1_prefix}/")
+    )
+    if not is_api_request:
         return await call_next(request)
+    configuration_issues = settings.hosted_configuration_issues
+    if configuration_issues:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            headers={"Cache-Control": "no-store"},
+            content={
+                "detail": "Backend deployment configuration is incomplete",
+                "configuration_issues": configuration_issues,
+            },
+        )
     identity = verify_identity(request.cookies.get(settings.identity_cookie_name))
     new_token: str | None = None
     if identity is None:
@@ -96,6 +98,18 @@ async def root() -> dict[str, str]:
 
 @app.get("/health", response_model=HealthResponse, tags=["Operations"])
 async def health(response: Response) -> HealthResponse:
+    response.headers["Cache-Control"] = "no-store"
+    configuration_issues = settings.hosted_configuration_issues
+    if configuration_issues:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        return HealthResponse(
+            status="degraded",
+            service=settings.app_name,
+            version=settings.app_version,
+            database="not_checked",
+            configuration="invalid",
+            configuration_issues=configuration_issues,
+        )
     database_status = "ok"
     try:
         async with AsyncSessionFactory() as session:
