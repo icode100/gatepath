@@ -2,7 +2,12 @@
 
 Gatepath is a distraction-free GATE 2027 Computer Science preparation platform. It combines an official-syllabus roadmap, chapter-wise revision notes, topic-filtered practice, sectional tests, a provenance-aware previous-year question bank, progress tracking, and a full-length exam simulator.
 
-The product uses a React/Next.js frontend and a FastAPI backend. SQLite works for local development; PostgreSQL is used by the Docker Compose stack.
+The product uses a React/Next.js frontend and a FastAPI backend. SQLite works
+for local development; PostgreSQL is used by Docker Compose and Neon provides
+PostgreSQL on Vercel. Firebase Authentication adds optional account sign-in,
+with signed guest access retained when Firebase is disabled. If an existing
+account session cannot be verified, owned writes fail safely instead of being
+silently reassigned to a guest.
 
 ## Official exam format
 
@@ -28,8 +33,8 @@ The question type mix is deliberately not hard-coded because IIT Madras has not 
 - 2,607-question local JSON bank: 2,220 distinct reproducible syllabus-bounded variants plus 387 safely verified PYQs
 - 25 distinct full mocks: 65 questions, 100 marks, and 180 minutes each
 - 100 course tests: 10 per technical course, 30 questions each, with MCQ, MSQ, and NAT coverage
-- Topic mastery analytics, strong/needs-practice lists, roadmap progress, and attempt summaries
-- Immutable test snapshots, deadline enforcement, and signed anonymous progress isolation
+- Neon-backed topic mastery analytics, strong/needs-practice lists, roadmap progress, and attempt summaries
+- Immutable test snapshots, deadline enforcement, Firebase account ownership, and signed guest fallback
 - Light and dark themes with responsive keyboard- and touch-friendly UI
 - Local fallback content when the API is unavailable
 - Conservative 845-record extraction audit for all 13 supplied 2017-2025 papers; uncertain OCR and visual questions remain quarantined instead of being guessed
@@ -49,6 +54,13 @@ app over HTTPS. Use a URL-safe database password; if it contains reserved URI
 characters, set a percent-encoded `DATABASE_URL` instead. The backend requires
 an identity secret of at least 32 characters and refuses the shipped
 development value in production.
+
+Firebase Authentication is disabled by default in the local template, so
+Docker starts in signed guest mode without Firebase credentials. To exercise
+account sign-in locally, follow [the Firebase guide](docs/firebase-vercel.md),
+authorize `localhost`, and provide the Web SDK and Admin settings through an
+ignored local environment file. Never add a service-account JSON file to an
+image or commit.
 
 Open:
 
@@ -74,6 +86,12 @@ The checked-in [`vercel.json`](vercel.json) deploys the repository as one
 Vercel does not run `docker-compose.yml` or the PostgreSQL container. The
 Docker files remain the local and portable self-hosted deployment path; Vercel
 uses native framework services and an external managed database.
+
+Firebase is used for optional user sign-in and browser product telemetry only.
+Neon remains the application database and the source of truth for attempts,
+progress, and topic-mastery analytics. See the complete
+[Firebase and Vercel setup guide](docs/firebase-vercel.md) before enabling
+account sign-in.
 
 ### 1. Import the GitHub repository
 
@@ -107,11 +125,36 @@ The API accepts ordinary `postgresql://` and `postgres://` URLs and selects the
 async PostgreSQL driver itself. Never prefix a browser-visible variable with a
 database secret.
 
-### 3. Configure Vercel environment variables
+### 3. Configure Firebase Authentication and optional Analytics
 
-Add the following under **Settings → Environment Variables**. Apply the
-runtime settings to Production and Preview; scope database URLs to their
-corresponding Neon production or preview branch.
+1. In the [Firebase Console](https://console.firebase.google.com/), register a
+   Web app in the Firebase project.
+2. Under **Authentication → Sign-in method**, enable **Email/Password** and
+   **Google**.
+3. Under **Authentication → Settings → Authorized domains**, add
+   `gatepath.vercel.app` and the final custom domain. Add `localhost` only when
+   local sign-in is needed.
+4. Under **Project settings → Service accounts → Firebase Admin SDK**, generate
+   a private key. Store its complete JSON object only as the sensitive Vercel
+   variable `FIREBASE_SERVICE_ACCOUNT_JSON`; never commit it or expose it in a
+   `NEXT_PUBLIC_` variable.
+5. Copy the public Web SDK configuration into the corresponding
+   `NEXT_PUBLIC_FIREBASE_*` Vercel variables listed below. Enable Analytics in
+   **Project settings → Integrations** only if product telemetry is wanted.
+
+Projects created after April 28, 2025 do not authorize `localhost` by default.
+Generated Vercel preview hostnames also need deliberate authorization for
+OAuth sign-in; guest access remains available on previews that are not
+authorized. The detailed guide covers service-account handling, redirect-flow
+constraints, Analytics privacy, and end-to-end smoke checks.
+
+### 4. Configure Vercel environment variables
+
+Add the following under **Settings → Environment Variables**. Apply the core
+runtime settings to Production and Preview, and scope database URLs to their
+corresponding Neon production or preview branch. Apply Firebase credentials
+only to environments where account sign-in should work; set
+`FIREBASE_AUTH_ENABLED=false` and omit the Admin secret on guest-only previews.
 
 | Variable | Value |
 | --- | --- |
@@ -127,6 +170,20 @@ corresponding Neon production or preview branch.
 | `QUESTION_BANK_PATH` | `data/question_bank.json` |
 | `SQL_ECHO` | `false` |
 | `NEXT_PUBLIC_API_URL` | `/api/v1` |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase Web SDK `apiKey` |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Web SDK `authDomain` |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase Web SDK `projectId` |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase Web SDK `appId` |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | Optional Web SDK `measurementId` for Analytics |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Optional Web SDK `messagingSenderId` |
+| `FIREBASE_AUTH_ENABLED` | `true` |
+| `FIREBASE_PROJECT_ID` | Same Firebase project ID used by the web app |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Complete one-line service-account JSON; Sensitive and server-only |
+| `FIREBASE_SESSION_COOKIE_NAME` | `gatepath_session` |
+| `FIREBASE_CSRF_COOKIE_NAME` | `gatepath_csrf` |
+| `FIREBASE_SESSION_MAX_AGE_SECONDS` | `432000` |
+| `FIREBASE_RECENT_AUTH_SECONDS` | `300` |
+| `FIREBASE_CHECK_REVOKED` | `false` (set `true` only if per-request revocation lookups are acceptable) |
 
 Generate the identity secret locally, then paste only its output into Vercel:
 
@@ -141,7 +198,13 @@ the application's normal same-origin browser requests. Do not set
 `BACKEND_INTERNAL_URL` on Vercel; it is only used by the local Next.js/Docker
 proxy. Vercel supplies `VERCEL=1` automatically.
 
-### 4. Bootstrap the target database once
+The public Web SDK values identify the Firebase app and are intentionally
+browser-visible. The service-account JSON is an Admin private key and must stay
+server-only. Preserve its `private_key` `\n` escapes when storing the complete
+object as one-line JSON. Vercel environment changes apply only to new
+deployments, so redeploy after adding or rotating any Firebase value.
+
+### 5. Bootstrap the target database once
 
 Database migrations and the 2,607-question import must not run during a
 serverless cold start or every Vercel build. From a trusted local checkout,
@@ -166,13 +229,15 @@ active questions (the 2,607-row bundled bank plus local seed/example rows) and
 release adds migrations or changes the bundled bank. Do not put this command
 in Vercel's Build Command.
 
-### 5. Deploy and verify
+### 6. Deploy and verify
 
 Push to the connected branch or select **Deploy** in Vercel, then verify:
 
 ```text
 https://<deployment-domain>/health
 https://<deployment-domain>/api/v1/question-bank/status
+https://<deployment-domain>/api/v1/auth/csrf
+https://<deployment-domain>/api/v1/auth/me
 https://<deployment-domain>/docs
 https://<deployment-domain>/
 ```
@@ -180,6 +245,13 @@ https://<deployment-domain>/
 The legacy `/health/backend` URL redirects to `/health`. The three-hour mock
 timer does not require a three-hour request: the browser and database retain
 exam state while API calls remain short.
+
+An unauthenticated `/api/v1/auth/me` response intentionally reports guest state
+with status `200`. After sign-in, confirm that `/auth/me` reports the Firebase
+user, practice progress survives a refresh, and logout clears the
+`gatepath_session` cookie. Follow the
+[deployment smoke-check procedure](docs/firebase-vercel.md#6-smoke-check-the-deployment)
+for the complete sequence.
 
 ### Preview and plan safety
 
@@ -189,6 +261,9 @@ exam state while API calls remain short.
   its matching preview branch before testing.
 - Keep all automatic startup-write flags disabled. Vercel instances may start
   concurrently and use a read-only filesystem apart from temporary storage.
+- Use a separate Firebase project for Preview when account separation is
+  required. Otherwise authorize only selected preview hostnames and leave
+  Firebase disabled on throwaway previews; guest testing continues to work.
 - Vercel Hobby is suitable for personal, non-commercial preparation subject
   to its function and bandwidth quotas. A public or commercial service must
   follow the current [Vercel plan terms](https://vercel.com/docs/plans/hobby)
@@ -214,6 +289,10 @@ uvicorn app.main:app --reload --port 8000
 The default local database is SQLite. Copy `backend/.env.example` to `backend/.env` to override settings.
 After the explicit bootstrap, set `AUTO_BOOTSTRAP_ON_STARTUP=false` in that
 local file to avoid repeating the idempotent import on every Uvicorn reload.
+Firebase remains optional locally. For account testing, set
+`FIREBASE_AUTH_ENABLED=true`, `FIREBASE_PROJECT_ID`, and either the server-only
+`FIREBASE_SERVICE_ACCOUNT_JSON` or a trusted
+`GOOGLE_APPLICATION_CREDENTIALS` file path.
 
 ### Frontend
 
@@ -226,7 +305,10 @@ The frontend runs at http://localhost:3000 and proxies `/api/v1/*` to the
 backend. Set `BACKEND_INTERNAL_URL` when the API is on another internal host.
 The supported browser deployment is same-origin through this proxy (or
 same-site subdomains); unrelated frontend/API domains are not supported by the
-default `SameSite=Lax` anonymous cookie.
+default `SameSite=Lax` identity cookies. Add the public
+`NEXT_PUBLIC_FIREBASE_*` values to an ignored `.env.local` file to enable the
+sign-in UI. Analytics remains disabled when its optional measurement ID is
+absent.
 
 ## Verification
 
@@ -292,6 +374,7 @@ backend/migrations/  Alembic database migrations
 backend/tests/       API and marking-rule tests
 backend/data/        Live bank, 845-record PYQ audit, and validation manifests
 backend/scripts/     Extraction, generation, validation, and import tools
+docs/                 Firebase, Vercel, and operational deployment guidance
 public/              Frontend static assets
 Dockerfile           Production frontend image
 docker-compose.yml   Frontend, API, and PostgreSQL stack
