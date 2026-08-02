@@ -9,11 +9,6 @@
       "root": "backend",
       "framework": "fastapi",
       "entrypoint": "app.main:app"
-    },
-    "maintenance": {
-      "root": "backend",
-      "framework": "fastapi",
-      "entrypoint": "app.maintenance_main:app"
     }
   },
   "redirects": [
@@ -24,12 +19,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/internal/maintenance/user-state-migration",
-      "destination": {
-        "service": "maintenance"
-      }
-    },
     {
       "source": "/api/v1/:path*",
       "destination": {

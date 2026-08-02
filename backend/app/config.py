@@ -5,7 +5,6 @@ import os
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
@@ -47,8 +46,6 @@ class Settings(BaseSettings):
     firebase_check_revoked: bool = False
     user_state_backend: Literal["postgres", "firestore"] = "postgres"
     user_state_maintenance: bool = False
-    user_state_migration_enabled: bool = False
-    user_state_migration_secret: SecretStr | None = None
     firestore_database_id: str = "(default)"
     firestore_collection_prefix: str = "gatepath"
 
@@ -283,24 +280,6 @@ class Settings(BaseSettings):
         if self.user_state_backend != "firestore":
             return []
         return self.firestore_configuration_issues
-
-    @property
-    def user_state_migration_configuration_issues(self) -> list[str]:
-        """Validate the short-lived production migration control surface."""
-
-        if not self.user_state_migration_enabled:
-            return []
-        issues: list[str] = []
-        if not self.user_state_maintenance:
-            issues.append("USER_STATE_MAINTENANCE_REQUIRED")
-        secret = (
-            self.user_state_migration_secret.get_secret_value()
-            if self.user_state_migration_secret is not None
-            else ""
-        )
-        if len(secret.encode("utf-8")) < 32:
-            issues.append("USER_STATE_MIGRATION_SECRET_MISSING_OR_WEAK")
-        return issues
 
     @property
     def use_null_database_pool(self) -> bool:

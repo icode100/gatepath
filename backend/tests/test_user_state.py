@@ -19,7 +19,7 @@ from app.user_state.domain import (
     rebuild_progress_projection,
 )
 from app.user_state.memory import MemoryUserStateRepository
-from app.user_state.repository import UserStateNotFound
+from app.user_state.repository import UserStateNotFound, UserStateUnavailable
 
 
 BASE_TIME = datetime(2027, 1, 2, 3, 4, tzinfo=UTC)
@@ -604,3 +604,29 @@ def test_health_rejects_firestore_targets_without_matching_deployment_config(
     assert response.status_code == 503
     assert response.json()["user_state"] == "invalid"
     assert response.json()["user_state_issues"] == [issue]
+
+
+def test_maintenance_switch_blocks_user_state_repository(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "user_state_maintenance", True)
+    get_user_state_repository.cache_clear()
+
+    try:
+        with pytest.raises(UserStateUnavailable, match="maintenance window"):
+            get_user_state_repository()
+    finally:
+        get_user_state_repository.cache_clear()
+
+
+def test_health_reports_user_state_maintenance(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "user_state_maintenance", True)
+
+    response = client.get("/health")
+
+    assert response.status_code == 503
+    assert response.json()["status"] == "degraded"
+    assert response.json()["user_state"] == "maintenance"

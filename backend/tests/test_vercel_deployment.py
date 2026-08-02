@@ -37,6 +37,17 @@ def _hosted_settings(**overrides: object) -> Settings:
     return Settings(_env_file=None, **values)
 
 
+def test_vercel_manifest_exposes_only_application_services() -> None:
+    manifest_path = Path(__file__).resolve().parents[2] / "vercel.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    assert set(manifest["services"]) == {"frontend", "backend"}
+    assert all(
+        rewrite["source"] != "/internal/maintenance/user-state-migration"
+        for rewrite in manifest["rewrites"]
+    )
+
+
 def test_neon_urls_are_normalized_and_unpooled_url_is_preferred() -> None:
     hosted = _hosted_settings()
 

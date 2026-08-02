@@ -267,16 +267,12 @@ verification. After verification succeeds, set the Production Vercel value to
 `USER_STATE_BACKEND=firestore` and redeploy. The migration does not drop or
 rewrite legacy Neon rows.
 
-If the production credentials are stored only as non-readable Vercel
-Sensitive variables, use the isolated maintenance service instead of copying
-them out of Vercel. Keep `USER_STATE_BACKEND=postgres`, set
-`USER_STATE_MAINTENANCE=true`, `USER_STATE_MIGRATION_ENABLED=true`, and a
-one-time random `USER_STATE_MIGRATION_SECRET`, then redeploy. Open
-`/internal/maintenance/user-state-migration`, run `dry-run`, copy the returned
-source digest into `apply`, enter the displayed confirmation phrase, and finish
-with `verify-only`. Immediately after verification, switch to Firestore,
-disable maintenance and the migration service, remove the one-time secret, and
-redeploy.
+The production deployment intentionally exposes no HTTP migration endpoint.
+If Vercel's Sensitive variables cannot be read back, create a short-lived
+Firebase Admin credential for a trusted workstation, run the checked-in CLI,
+and revoke that credential immediately after verification. Keep
+`USER_STATE_MAINTENANCE=true` for the complete copy-and-verify window, then set
+it back to `false` when switching to Firestore.
 
 For a rollback, set `USER_STATE_BACKEND=postgres` and redeploy. This restores
 the pre-cutover PostgreSQL view while leaving Firestore untouched. Attempts
