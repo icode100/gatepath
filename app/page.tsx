@@ -498,13 +498,14 @@ function mergeAnalytics(
       toFiniteNumber(item.coverage_percent ?? item.coverage, local?.coverage),
     );
     const rawStatus = String(item.status ?? local?.status ?? "developing");
-    const status: TopicStatus = (
+    const reportedStatus: TopicStatus = (
       ["strong", "developing", "needs_practice", "unattempted"].includes(
         rawStatus,
       )
         ? rawStatus
         : "developing"
     ) as TopicStatus;
+    const status: TopicStatus = attempts === 0 ? "unattempted" : reportedStatus;
     return {
       topicId: localTopic?.id ?? topicSlug,
       topicName: String(item.topic_name ?? localTopic?.title ?? "Topic"),
@@ -1850,8 +1851,7 @@ export default function Home() {
       analytics.topics
         .filter(
           (topic) =>
-            topic.status === "needs_practice" ||
-            topic.status === "unattempted",
+            topic.status === "needs_practice" && topic.attempts > 0,
         )
         .sort(
           (a, b) =>
