@@ -4,10 +4,12 @@ Gatepath is a distraction-free GATE 2027 Computer Science preparation platform. 
 
 The product uses a React/Next.js frontend and a FastAPI backend. SQLite works
 for local development; PostgreSQL is used by Docker Compose and Neon provides
-PostgreSQL on Vercel. Firebase Authentication adds optional account sign-in,
-with signed guest access retained when Firebase is disabled. If an existing
-account session cannot be verified, owned writes fail safely instead of being
-silently reassigned to a guest.
+PostgreSQL on Vercel. PostgreSQL always owns the syllabus, question bank,
+revision notes, and deterministic test catalog. Mutable learner state can use
+PostgreSQL locally or Firestore in production. Firebase Authentication adds
+optional account sign-in, with signed guest access retained when Firebase is
+disabled. If an existing account session cannot be verified, owned writes fail
+safely instead of being silently reassigned to a guest.
 
 ## Official exam format
 
@@ -33,7 +35,7 @@ The question type mix is deliberately not hard-coded because IIT Madras has not 
 - 2,607-question local JSON bank: 2,220 distinct reproducible syllabus-bounded variants plus 387 safely verified PYQs
 - 25 distinct full mocks: 65 questions, 100 marks, and 180 minutes each
 - 100 course tests: 10 per technical course, 30 questions each, with MCQ, MSQ, and NAT coverage
-- Neon-backed topic mastery analytics, strong/needs-practice lists, roadmap progress, and attempt summaries
+- Per-user topic mastery analytics, strong/needs-practice lists, roadmap progress, and attempt summaries, with Firestore storage in production
 - Immutable test snapshots, deadline enforcement, Firebase account ownership, and signed guest fallback
 - Light and dark themes with responsive keyboard- and touch-friendly UI
 - Local fallback content when the API is unavailable
@@ -62,6 +64,11 @@ authorize `localhost`, and provide the Web SDK and Admin settings through an
 ignored local environment file. Never add a service-account JSON file to an
 image or commit.
 
+Compose also defaults `USER_STATE_BACKEND=postgres`, keeping mutable learner
+state in the local PostgreSQL container. Set it to `firestore` only when a
+Firestore database and Firebase Admin credentials are available. This switch
+does not move or delete existing PostgreSQL rows automatically.
+
 Open:
 
 - Application: http://localhost:3000
@@ -87,11 +94,12 @@ Vercel does not run `docker-compose.yml` or the PostgreSQL container. The
 Docker files remain the local and portable self-hosted deployment path; Vercel
 uses native framework services and an external managed database.
 
-Firebase is used for optional user sign-in and browser product telemetry only.
-Neon remains the application database and the source of truth for attempts,
-progress, and topic-mastery analytics. See the complete
-[Firebase and Vercel setup guide](docs/firebase-vercel.md) before enabling
-account sign-in.
+Neon remains required for static catalog data and explicit release bootstrap.
+Firebase provides account sign-in and optional browser telemetry; Firestore is
+the production source of truth for sessions, attempts, progress, and
+topic-mastery analytics when `USER_STATE_BACKEND=firestore`. See the complete
+[Firebase and Vercel setup guide](docs/firebase-vercel.md) before switching
+learner state.
 
 ### 1. Import the GitHub repository
 
@@ -109,7 +117,7 @@ does not appear in the framework list for the account, do not deploy the
 repository as a plain Next.js project; use two Vercel projects as a temporary
 fallback or request Services access.
 
-### 2. Create and connect PostgreSQL
+### 2. Create and connect PostgreSQL catalog storage
 
 1. In the project, open **Marketplace → Storage**, add
    [Neon](https://vercel.com/marketplace/neon), and create or connect a
@@ -122,10 +130,11 @@ fallback or request Services access.
    integration uses differently named variables, add these two aliases.
 
 The API accepts ordinary `postgresql://` and `postgres://` URLs and selects the
-async PostgreSQL driver itself. Never prefix a browser-visible variable with a
-database secret.
+async PostgreSQL driver itself. PostgreSQL remains required after Firestore is
+enabled because it owns all static curriculum and question-bank data. Never
+prefix a browser-visible variable with a database secret.
 
-### 3. Configure Firebase Authentication and optional Analytics
+### 3. Configure Firebase Authentication, Firestore, and optional Analytics
 
 1. In the [Firebase Console](https://console.firebase.google.com/), register a
    Web app in the Firebase project.
@@ -138,7 +147,13 @@ database secret.
    a private key. Store its complete JSON object only as the sensitive Vercel
    variable `FIREBASE_SERVICE_ACCOUNT_JSON`; never commit it or expose it in a
    `NEXT_PUBLIC_` variable.
-5. Copy the public Web SDK configuration into the corresponding
+5. Under **Build → Firestore Database**, create the Standard edition database
+   named `(default)`. Choose a region near both the Vercel backend functions and
+   the Neon region; this choice is difficult to change after creation.
+6. Deploy the deny-all browser rules and index configuration checked into this
+   repository. FastAPI reuses the same Firebase Admin service-account JSON and
+   bypasses these browser rules.
+7. Copy the public Web SDK configuration into the corresponding
    `NEXT_PUBLIC_FIREBASE_*` Vercel variables listed below. Enable Analytics in
    **Project settings → Integrations** only if product telemetry is wanted.
 
@@ -160,6 +175,9 @@ only to environments where account sign-in should work; set
 | --- | --- |
 | `DATABASE_URL` | Neon pooled runtime URL |
 | `DATABASE_URL_UNPOOLED` | Neon direct URL used by the bootstrap command |
+| `USER_STATE_BACKEND` | `firestore` in Production; `postgres` is the safe default and rollback value |
+| `FIRESTORE_DATABASE_ID` | `(default)` |
+| `FIRESTORE_COLLECTION_PREFIX` | `gatepath` |
 | `ENVIRONMENT` | `production` |
 | `ANONYMOUS_IDENTITY_SECRET` | A new random secret of at least 32 characters |
 | `IDENTITY_COOKIE_SECURE` | `true` |
@@ -229,7 +247,35 @@ active questions (the 2,607-row bundled bank plus local seed/example rows) and
 release adds migrations or changes the bundled bank. Do not put this command
 in Vercel's Build Command.
 
-### 6. Deploy and verify
+### 6. Migrate learner state and switch production
+
+Do not change `USER_STATE_BACKEND` until the Firestore configuration has been
+deployed and existing PostgreSQL learner state has been copied. From the
+repository root on a trusted workstation, provide the Neon connection and the
+same server-only Firebase Admin environment used by Vercel, then run:
+
+```powershell
+python backend/scripts/migrate_user_state_to_firestore.py --dry-run
+python backend/scripts/migrate_user_state_to_firestore.py --apply
+python backend/scripts/migrate_user_state_to_firestore.py --verify-only
+```
+
+Never run this migration during a Vercel build or function cold start. Use a
+brief maintenance window so new attempts cannot arrive between copy and
+verification. After verification succeeds, set the Production Vercel value to
+`USER_STATE_BACKEND=firestore` and redeploy. The migration does not drop or
+rewrite legacy Neon rows.
+
+For a rollback, set `USER_STATE_BACKEND=postgres` and redeploy. This restores
+the pre-cutover PostgreSQL view while leaving Firestore untouched. Attempts
+created after the Firestore cutover require reconciliation before PostgreSQL
+can again be considered current, so keep the initial validation window short.
+The detailed guide includes the rules/index deployment, free-tier capacity and
+retention notes, and smoke checks. Neon storage no longer grows with users in
+Firestore mode, although Neon remains required for catalog reads and Firestore
+retains its own usage quotas.
+
+### 7. Deploy and verify
 
 Push to the connected branch or select **Deploy** in Vercel, then verify:
 
@@ -250,7 +296,7 @@ An unauthenticated `/api/v1/auth/me` response intentionally reports guest state
 with status `200`. After sign-in, confirm that `/auth/me` reports the Firebase
 user, practice progress survives a refresh, and logout clears the
 `gatepath_session` cookie. Follow the
-[deployment smoke-check procedure](docs/firebase-vercel.md#6-smoke-check-the-deployment)
+[deployment smoke-check procedure](docs/firebase-vercel.md#7-smoke-check-the-deployment)
 for the complete sequence.
 
 ### Preview and plan safety
@@ -264,6 +310,10 @@ for the complete sequence.
 - Use a separate Firebase project for Preview when account separation is
   required. Otherwise authorize only selected preview hostnames and leave
   Firebase disabled on throwaway previews; guest testing continues to work.
+- Keep Preview on `USER_STATE_BACKEND=postgres`, or give it a separate Firebase
+  project with its own `(default)` database. The checked-in deny-all rules and
+  index exemptions deliberately support only the `gatepath` collection prefix;
+  never point arbitrary previews at the production learner-state collections.
 - Vercel Hobby is suitable for personal, non-commercial preparation subject
   to its function and bandwidth quotas. A public or commercial service must
   follow the current [Vercel plan terms](https://vercel.com/docs/plans/hobby)
@@ -376,6 +426,9 @@ backend/data/        Live bank, 845-record PYQ audit, and validation manifests
 backend/scripts/     Extraction, generation, validation, and import tools
 docs/                 Firebase, Vercel, and operational deployment guidance
 public/              Frontend static assets
+firebase.json         Firestore deployment and local emulator configuration
+firestore.rules       Deny-all browser access; FastAPI Admin access only
+firestore.indexes.json Firestore index exemptions for large learner-state fields
 Dockerfile           Production frontend image
 docker-compose.yml   Frontend, API, and PostgreSQL stack
 vercel.json           One-project Next.js and FastAPI Vercel Services routing

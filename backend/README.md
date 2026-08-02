@@ -20,13 +20,22 @@ Open `http://localhost:8000/docs` for the interactive OpenAPI documentation. On 
 3. imports `data/question_bank.json` when it exists and `AUTO_IMPORT_QUESTION_BANK=true`;
 4. deterministically materializes 25 full mocks and 10 course tests for each of the 10 technical courses.
 
-The default bank location can be changed with `QUESTION_BANK_PATH`. Relative paths are resolved from the backend directory.
-Progress is scoped to a signed, HttpOnly anonymous cookie. The API ignores
-client-supplied identity values. The supported browser topology is same-origin
-through the included Next.js proxy, or same-site subdomains with credentials
-included. Unrelated cross-site frontend/API domains are not supported by the
-default `SameSite=Lax` cookie. Set a strong `ANONYMOUS_IDENTITY_SECRET` and
-enable HTTPS before public deployment.
+The default bank location can be changed with `QUESTION_BANK_PATH`. Relative
+paths are resolved from the backend directory. PostgreSQL always stores the
+syllabus, notes, question bank, import audit, and deterministic test catalog.
+`USER_STATE_BACKEND=postgres` keeps mutable sessions, attempts, and progress in
+the same database; production uses `USER_STATE_BACKEND=firestore` after the
+documented migration. Firestore uses `FIRESTORE_DATABASE_ID=(default)` and the
+fixed `gatepath` collection prefix so the deployed deny-all rules and index
+exemptions always match the runtime target.
+
+Progress is scoped to a signed, HttpOnly anonymous cookie or a verified
+Firebase account session. The API ignores client-supplied identity values. The
+supported browser topology is same-origin through the included Next.js proxy,
+or same-site subdomains with credentials included. Unrelated cross-site
+frontend/API domains are not supported by the default `SameSite=Lax` cookie.
+Set a strong `ANONYMOUS_IDENTITY_SECRET` and enable HTTPS before public
+deployment.
 
 Run tests with:
 
@@ -47,12 +56,47 @@ SQLite is the zero-configuration default. For PostgreSQL set, for example:
 DATABASE_URL=postgresql+asyncpg://gate:gate@postgres:5432/gate_prep
 ```
 
+User-state selection is independent of catalog storage:
+
+```text
+USER_STATE_BACKEND=postgres
+FIRESTORE_DATABASE_ID=(default)
+FIRESTORE_COLLECTION_PREFIX=gatepath
+```
+
+With `USER_STATE_BACKEND=firestore`, the backend reuses
+`FIREBASE_SERVICE_ACCOUNT_JSON` (or Application Default Credentials) for
+Firestore Admin access. The browser never connects to Firestore directly.
+Deploy the repository's deny-all Firestore rules and index exemptions before
+switching the backend. PostgreSQL remains required for every mode.
+
 For managed deployments, set `AUTO_CREATE_DB=false` and run
 `alembic upgrade head` before starting the service. The included Compose stack
 does this automatically before launching Uvicorn. Set
 `ENVIRONMENT=production`, provide a non-default
 `ANONYMOUS_IDENTITY_SECRET`, set `IDENTITY_COOKIE_SECURE=true`, and serve the
 frontend/API over HTTPS.
+
+## Firestore learner-state cutover
+
+Create a Firestore Standard database named `(default)` and choose a region near
+the FastAPI deployment and PostgreSQL catalog database. Keep the runtime on
+`USER_STATE_BACKEND=postgres` while preparing and verifying the copy. From the
+repository root on a trusted workstation with both Neon and Firebase Admin
+environment variables configured, run:
+
+```powershell
+python backend/scripts/migrate_user_state_to_firestore.py --dry-run
+python backend/scripts/migrate_user_state_to_firestore.py --apply
+python backend/scripts/migrate_user_state_to_firestore.py --verify-only
+```
+
+This is an explicit operational migration, never a startup hook, Vercel build
+step, or cold-start action. Use a maintenance window, switch Production to
+`USER_STATE_BACKEND=firestore`, and redeploy only after verification succeeds.
+Legacy PostgreSQL user-state rows remain available. Roll back by restoring
+`USER_STATE_BACKEND=postgres` and redeploying; reconcile any attempts written
+to Firestore after cutover before treating PostgreSQL as current again.
 
 ## Main API contract
 

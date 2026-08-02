@@ -1,0 +1,35 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "gatepath_sessions",
+      "fieldPath": "question_snapshots",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_sessions",
+      "fieldPath": "question_ids",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_attempts",
+      "fieldPath": "responses",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_progress",
+      "fieldPath": "evidence",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_progress",
+      "fieldPath": "subjects",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_progress",
+      "fieldPath": "recent_attempts",
+      "indexes": []
+    }
+  ]
+}

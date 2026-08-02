@@ -1,17 +1,20 @@
-# Firebase authentication and Analytics on Vercel
+# Firebase authentication, Firestore learner state, and Analytics on Vercel
 
-Gatepath uses Firebase for account sign-in and optional product telemetry. It
-does **not** replace PostgreSQL:
+Gatepath uses Firebase for account sign-in, production learner-state storage,
+and optional product telemetry. It does **not** replace PostgreSQL:
 
 - Neon PostgreSQL remains the source of truth for the syllabus, questions,
-  tests, attempts, progress, and topic-mastery analytics.
+  revision notes, import history, and deterministic test catalog.
+- Firestore stores mutable sessions, attempts, progress evidence, and
+  topic-mastery analytics when `USER_STATE_BACKEND=firestore`.
 - Firebase Authentication supplies a stable user identity across devices.
 - Google Analytics for Firebase is optional browser-side product telemetry.
   It does not store or calculate Gatepath learning analytics.
 
 The browser signs in with the Firebase Web SDK and exchanges its short-lived ID
 token for a Firebase session cookie issued by FastAPI. The Admin service-account
-credential is used only by the backend.
+credential is reused by FastAPI for both Authentication and Firestore. The
+browser never connects to Firestore directly.
 
 ## 1. Create the Firebase web app
 
@@ -44,7 +47,36 @@ application is changed to use `signInWithRedirect`, follow Firebase's
 [redirect guidance for non-Firebase hosting](https://firebase.google.com/docs/auth/web/redirect-best-practices)
 to account for browsers that block third-party storage.
 
-## 2. Create the Admin credential
+## 2. Create the Firestore database and deploy server-only rules
+
+1. In the Firebase Console, open **Build → Firestore Database → Create
+   database**.
+2. Choose the **Standard** edition and keep the database ID `(default)`. The
+   checked-in deployment configuration and production default target this ID.
+3. Choose a location near both the Vercel FastAPI functions and the Neon
+   catalog database. Cross-region reads add latency to every session and
+   analytics request, and the database location is difficult to change later.
+4. From a trusted workstation with the Firebase CLI authenticated, deploy the
+   checked-in rules and index settings:
+
+   ```powershell
+   firebase deploy --only firestore:rules,firestore:indexes --project <firebase-project-id>
+   ```
+
+[`firestore.rules`](../firestore.rules) denies every browser read and write.
+This is intentional: all learner-state access goes through FastAPI, and the
+Firebase Admin SDK bypasses Firestore Security Rules. Do not add Firestore
+browser initialization or permissive client rules. [`firestore.indexes.json`](../firestore.indexes.json)
+has no composite indexes and exempts large snapshot, response, and analytics
+map/array fields from automatic single-field indexing.
+
+The checked-in exemptions name collections using the fixed `gatepath` prefix,
+and the deployment config targets `(default)`. The backend deliberately rejects
+other prefixes/database IDs so it cannot silently write large documents outside
+the protected index/rules target. Use a separate Firebase project—not a renamed
+collection prefix or database—for an isolated Preview environment.
+
+## 3. Create the Admin credential
 
 1. In Firebase, open **Project settings → Service accounts → Firebase Admin
    SDK**.
@@ -65,7 +97,7 @@ That file-path workflow is useful for trusted local/server environments. On
 Vercel, use the encrypted `FIREBASE_SERVICE_ACCOUNT_JSON` value; never create a
 `NEXT_PUBLIC_` version of it.
 
-## 3. Add Vercel environment variables
+## 4. Add Vercel environment variables
 
 Open the Gatepath project in Vercel and go to **Settings → Environment
 Variables**. Add these Firebase Web SDK values to Production and to any Preview
@@ -93,9 +125,15 @@ must be marked **Sensitive** in Vercel:
 | `FIREBASE_SESSION_MAX_AGE_SECONDS` | `432000` | Five-day session; allowed range is 300–1209600 |
 | `FIREBASE_RECENT_AUTH_SECONDS` | `300` | Requires sign-in within five minutes before exchange |
 | `FIREBASE_CHECK_REVOKED` | `false` | Avoids a remote revocation lookup on every authenticated API call |
+| `USER_STATE_BACKEND` | `firestore` | Uses Firestore for mutable learner state; `postgres` is the default and rollback value |
+| `FIRESTORE_DATABASE_ID` | `(default)` | Firestore database selected by the backend |
+| `FIRESTORE_COLLECTION_PREFIX` | `gatepath` | Prefix for server-owned learner-state collections |
 
 Keep the existing guest identity settings too. Firebase is additive: when it is
 disabled, the full application remains usable with the signed guest identity.
+Firestore Admin readiness is checked separately from browser sign-in, so a
+maintenance deployment may disable account login while retaining learner-state
+storage as long as the Admin credential remains configured.
 If a browser presents a Firebase session that cannot be verified during an
 Admin outage, public curriculum/catalog requests remain readable but owned
 progress, practice, and attempt requests return a temporary error. This avoids
@@ -113,7 +151,7 @@ Environment values are captured when a Vercel deployment is built. After
 adding or changing any variable, redeploy the latest `main` commit. Do not rely
 on an already-running deployment to pick up the new value.
 
-## 4. Configure Analytics safely
+## 5. Configure Analytics safely
 
 Analytics is optional. Enable it when creating the Firebase project, or later
 under **Project settings → Integrations → Google Analytics**, and make sure the
@@ -133,18 +171,18 @@ Before enabling telemetry publicly:
   identifying value as an Analytics user ID or event parameter;
 - use a stable, opaque identifier only if cross-device product telemetry is
   actually required;
-- keep detailed answer history and mastery calculations in Neon, where
-  Gatepath's application authorization applies.
+- keep detailed answer history and mastery calculations behind FastAPI in the
+  selected learner-state backend; do not send them to Google Analytics.
 
 Firebase documents a limit of 500 distinct Analytics event types for standard
 Analytics, and event names are case-sensitive. Prefer a small fixed vocabulary
 such as sign-in, practice-started, test-started, and test-completed rather than
 embedding course, topic, or user data in event names.
 
-## 5. Bootstrap Neon and deploy
+## 6. Bootstrap Neon, migrate learner state, and deploy
 
-Firebase setup does not initialize the application database. Neon remains a
-separate required dependency.
+Firestore setup does not initialize the static application catalog. Neon
+remains a separate required dependency in every user-state mode.
 
 1. Confirm Vercel has the correct Neon `DATABASE_URL` and
    `DATABASE_URL_UNPOOLED` for the target environment. Never give a Preview
@@ -161,14 +199,78 @@ separate required dependency.
    Remove-Item Env:DATABASE_URL_UNPOOLED
    ```
 
-3. In Vercel, redeploy the latest `main` commit after all Firebase and Neon
-   variables have been saved.
-4. Use the production alias for the first sign-in test. Add a custom domain to
+3. Keep `USER_STATE_BACKEND=postgres` while first deploying a release that
+   supports both state backends. Do not switch production yet.
+4. From the repository root on a trusted workstation, provide both Neon
+   connection variables and the same Firebase Admin variables used by Vercel.
+   Run the explicit migration in a brief maintenance window:
+
+   ```powershell
+   python backend/scripts/migrate_user_state_to_firestore.py --dry-run
+   python backend/scripts/migrate_user_state_to_firestore.py --apply
+   python backend/scripts/migrate_user_state_to_firestore.py --verify-only
+   ```
+
+   Review the dry-run counts before applying and require verification to pass.
+   Never add this command to Vercel's build command, startup path, or a
+   serverless cold start.
+5. Set Production `USER_STATE_BACKEND=firestore`, keep
+   `FIRESTORE_DATABASE_ID=(default)` and
+   `FIRESTORE_COLLECTION_PREFIX=gatepath`, then redeploy the latest `main`
+   commit. Vercel environment changes do not affect an existing deployment.
+6. Use the production alias for the first sign-in test. Add a custom domain to
    Firebase Authorized domains before moving production traffic to it.
 
-## 6. Smoke-check the deployment
+The migration does not delete or overwrite legacy Neon user-state rows. To
+roll back during the initial validation window, restore
+`USER_STATE_BACKEND=postgres` and redeploy; Firestore remains untouched.
+Post-cutover attempts written only to Firestore must be reconciled before Neon
+can again be treated as current, so keep that validation window short and do
+not accept extended traffic on both backends independently.
 
-First verify routing, FastAPI, and Neon:
+### Free-tier capacity and retention
+
+This split makes Neon storage independent of account and attempt growth, but it
+does not make learner state storage unlimited. Firestore's no-cost quota is
+currently one free database per project with 1 GiB stored data, 50,000 document
+reads per day, 20,000 writes per day, and 20,000 deletes per day. Check the
+[official Firestore quota page](https://firebase.google.com/docs/firestore/quotas)
+before a public launch because quotas and billing terms can change.
+
+Gatepath keeps the dashboard projection in one document per learner and
+exempts large snapshots, responses, and analytics maps from indexing. A test
+submission therefore needs only a small fixed number of document reads/writes;
+the main variable storage cost is the immutable session and attempt history.
+Monitor Firestore usage in the Firebase Console as the user base grows. TTL is
+not enabled by this repository because managed TTL deletes require billing;
+add an explicit retention policy before the history approaches the free
+storage limit. Small `gatepath_claims` tombstones are intentionally permanent:
+they prevent an old signed guest cookie from writing new state after its data
+has been linked to an account. Do not include that collection in routine
+cleanup.
+
+### Local Firestore emulator
+
+The Firebase CLI configuration includes a Firestore emulator on port `8080`.
+Start it from the repository root:
+
+```powershell
+firebase emulators:start --only firestore --project demo-gatepath
+```
+
+In the backend shell, set `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`,
+`FIREBASE_PROJECT_ID=demo-gatepath`, `FIREBASE_AUTH_ENABLED=false`, and
+`USER_STATE_BACKEND=firestore` before starting FastAPI. The local Firestore
+adapter uses anonymous emulator credentials; no Admin private key is required.
+When FastAPI runs inside Docker, use a hostname reachable from the container
+instead of `127.0.0.1`. The Next.js/browser application still talks only to
+FastAPI; do not install or initialize the Firestore web client for emulator
+testing. Clear the emulator or use a distinct demo project/prefix between test
+runs so state does not leak across scenarios.
+
+## 7. Smoke-check the deployment
+
+First verify routing, FastAPI, Neon catalog access, and Firestore state access:
 
 ```text
 GET https://<deployment-domain>/
@@ -194,20 +296,25 @@ Then use a private browser window:
    signed-in Firebase account. An unauthenticated request intentionally returns
    a `200` guest state rather than `401`.
 6. Start a practice session, submit an answer, and confirm the progress and
-   topic-mastery views update. These records should persist in Neon after a
-   refresh and a new Vercel function instance.
+   topic-mastery views update. With `USER_STATE_BACKEND=firestore`, these
+   records should appear under the prefixed Firestore collections and persist
+   after a refresh and a new Vercel function instance; static question and
+   catalog reads must continue to come from Neon.
 7. Log out through `POST /api/v1/auth/logout` with the current CSRF token.
    Confirm the session cookie is cleared and `/auth/me` returns guest state.
 8. If Analytics is enabled and consented, use Firebase Analytics DebugView to
    confirm only the intended product events are received. Do not use the
-   learning dashboard as an Analytics verification tool; it reads Neon.
+   learning dashboard as an Analytics verification tool; it reads the
+   server-side learner-state backend.
 
 If all FastAPI paths return `FUNCTION_INVOCATION_FAILED`, inspect the backend
 function logs first. Typical configuration causes are malformed
-`FIREBASE_SERVICE_ACCOUNT_JSON`, a `FIREBASE_PROJECT_ID` mismatch, or a missing
-Neon URL. Temporarily setting `FIREBASE_AUTH_ENABLED=false` can distinguish an
-Admin initialization problem from a database/routing problem while preserving
-guest access; do not treat that as the final production configuration.
+`FIREBASE_SERVICE_ACCOUNT_JSON`, a `FIREBASE_PROJECT_ID` mismatch, a missing
+Neon URL, a missing `(default)` Firestore database, or an invalid
+`USER_STATE_BACKEND`. Temporarily setting `USER_STATE_BACKEND=postgres` and
+redeploying isolates Firestore readiness from catalog/routing problems without
+deleting either store. Disabling Firebase Authentication is a separate guest
+mode diagnostic and is not a substitute for configuring production Firestore.
 
 ## Authoritative Firebase references
 
@@ -215,6 +322,10 @@ guest access; do not treat that as the final production configuration.
 - [Authenticate using Google with JavaScript](https://firebase.google.com/docs/auth/web/google-signin)
 - [Manage Firebase session cookies](https://firebase.google.com/docs/auth/admin/manage-cookies)
 - [Initialize the Firebase Admin SDK outside Google](https://firebase.google.com/docs/admin/setup)
+- [Create and manage Firestore databases](https://firebase.google.com/docs/firestore/manage-databases)
+- [Securely query data with Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started)
+- [Firestore emulator](https://firebase.google.com/docs/emulator-suite/connect_firestore)
+- [Manage Firestore indexes](https://firebase.google.com/docs/firestore/query-data/indexing)
 - [Manage Firebase Authentication authorized domains](https://firebase.google.com/support/faq)
 - [Get started with Google Analytics for Web](https://firebase.google.com/docs/analytics/web/get-started)
 - [Firebase Analytics JavaScript API and environment checks](https://firebase.google.com/docs/reference/js/analytics)
