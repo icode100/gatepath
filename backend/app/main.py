@@ -21,6 +21,14 @@ from app.identity import (
     verify_identity,
 )
 from app.schemas import HealthResponse
+from app.user_state import (
+    UserStateAlreadySubmitted,
+    UserStateError,
+    UserStateNotFound,
+    UserStatePayloadTooLarge,
+    UserStateUnavailable,
+)
+from app.user_state.dependencies import get_user_state_repository
 
 
 @asynccontextmanager
@@ -51,6 +59,32 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(UserStateError)
+async def handle_user_state_error(
+    _: Request,
+    exc: UserStateError,
+) -> JSONResponse:
+    """Fail user-owned routes safely without leaking provider diagnostics."""
+
+    if isinstance(exc, UserStateNotFound):
+        status_code = status.HTTP_404_NOT_FOUND
+        detail = "Session or attempt not found"
+    elif isinstance(exc, UserStateAlreadySubmitted):
+        status_code = status.HTTP_409_CONFLICT
+        detail = "Session has already been submitted"
+    elif isinstance(exc, UserStatePayloadTooLarge):
+        status_code = status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
+        detail = "The study record is too large to store safely"
+    else:
+        status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        detail = "User progress storage is temporarily unavailable"
+    return JSONResponse(
+        status_code=status_code,
+        headers={"Cache-Control": "no-store"},
+        content={"detail": detail},
+    )
 
 
 @app.middleware("http")
@@ -152,6 +186,7 @@ async def health(response: Response) -> HealthResponse:
     response.headers["Cache-Control"] = "no-store"
     configuration_issues = settings.hosted_configuration_issues
     firebase_issues = settings.firebase_configuration_issues
+    user_state_issues = settings.user_state_configuration_issues
     authentication_status = (
         "guest_only"
         if not settings.firebase_auth_enabled
@@ -170,6 +205,9 @@ async def health(response: Response) -> HealthResponse:
             configuration_issues=configuration_issues,
             authentication=authentication_status,
             authentication_issues=firebase_issues,
+            user_state_backend=settings.user_state_backend,
+            user_state="not_checked",
+            user_state_issues=user_state_issues,
         )
     database_status = "ok"
     try:
@@ -178,12 +216,33 @@ async def health(response: Response) -> HealthResponse:
     except Exception:
         database_status = "unavailable"
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-    if firebase_issues:
+
+    user_state_status = "postgres"
+    if settings.user_state_backend == "firestore":
+        if user_state_issues:
+            user_state_status = "invalid"
+        else:
+            try:
+                repository = get_user_state_repository()
+                if repository is None:  # Defensive: the selected backend is Firestore.
+                    raise UserStateUnavailable("Firestore user state is unavailable")
+                await repository.healthcheck()
+            except UserStateError:
+                user_state_status = "unavailable"
+            else:
+                user_state_status = "ok"
+
+    if firebase_issues or user_state_issues or user_state_status == "unavailable":
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return HealthResponse(
         status=(
             "ok"
-            if database_status == "ok" and not firebase_issues
+            if (
+                database_status == "ok"
+                and not firebase_issues
+                and not user_state_issues
+                and user_state_status in {"postgres", "ok"}
+            )
             else "degraded"
         ),
         service=settings.app_name,
@@ -191,4 +250,7 @@ async def health(response: Response) -> HealthResponse:
         database=database_status,
         authentication=authentication_status,
         authentication_issues=firebase_issues,
+        user_state_backend=settings.user_state_backend,
+        user_state=user_state_status,
+        user_state_issues=user_state_issues,
     )

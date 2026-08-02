@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import os
 import json
+import os
 from functools import lru_cache
 from typing import Literal
 
@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     firebase_session_max_age_seconds: int = 60 * 60 * 24 * 5
     firebase_recent_auth_seconds: int = 5 * 60
     firebase_check_revoked: bool = False
+    user_state_backend: Literal["postgres", "firestore"] = "postgres"
+    firestore_database_id: str = "(default)"
+    firestore_collection_prefix: str = "gatepath"
 
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
@@ -182,14 +185,32 @@ class Settings(BaseSettings):
     def firebase_configuration_issues(self) -> list[str]:
         """Return safe diagnostics for the optional Firebase auth feature.
 
-        Firebase is deliberately not part of ``hosted_configuration_issues``:
-        a missing Firebase credential must never make guest study mode
-        unavailable. Only the Firebase session exchange endpoint is disabled
-        while these issues are present.
+        Firebase Auth is deliberately not part of
+        ``hosted_configuration_issues``. PostgreSQL-backed guest mode remains
+        available when account sign-in is disabled; Firestore readiness is
+        validated separately when it is the selected user-state backend.
         """
 
         if not self.firebase_auth_enabled:
             return []
+        issues = list(self.firebase_admin_configuration_issues)
+        if not 300 <= self.firebase_session_max_age_seconds <= 60 * 60 * 24 * 14:
+            issues.append("FIREBASE_SESSION_MAX_AGE_INVALID")
+        if not 0 < self.firebase_recent_auth_seconds <= 60 * 60:
+            issues.append("FIREBASE_RECENT_AUTH_WINDOW_INVALID")
+        cookie_names = {
+            self.identity_cookie_name.strip(),
+            self.firebase_session_cookie_name.strip(),
+            self.firebase_csrf_cookie_name.strip(),
+        }
+        if "" in cookie_names or len(cookie_names) != 3:
+            issues.append("FIREBASE_COOKIE_NAMES_INVALID")
+        return issues
+
+    @property
+    def firebase_admin_configuration_issues(self) -> list[str]:
+        """Validate server credentials independently of browser sign-in."""
+
         issues: list[str] = []
         if not self.firebase_project_id.strip():
             issues.append("FIREBASE_PROJECT_ID_MISSING")
@@ -223,18 +244,41 @@ class Settings(BaseSettings):
                         != self.firebase_project_id.strip()
                     ):
                         issues.append("FIREBASE_SERVICE_ACCOUNT_PROJECT_MISMATCH")
-        if not 300 <= self.firebase_session_max_age_seconds <= 60 * 60 * 24 * 14:
-            issues.append("FIREBASE_SESSION_MAX_AGE_INVALID")
-        if not 0 < self.firebase_recent_auth_seconds <= 60 * 60:
-            issues.append("FIREBASE_RECENT_AUTH_WINDOW_INVALID")
-        cookie_names = {
-            self.identity_cookie_name.strip(),
-            self.firebase_session_cookie_name.strip(),
-            self.firebase_csrf_cookie_name.strip(),
-        }
-        if "" in cookie_names or len(cookie_names) != 3:
-            issues.append("FIREBASE_COOKIE_NAMES_INVALID")
         return issues
+
+    @property
+    def firestore_configuration_issues(self) -> list[str]:
+        """Validate the deployment-coupled Firestore target safely."""
+
+        emulator_host = os.environ.get("FIRESTORE_EMULATOR_HOST", "").strip()
+        if emulator_host and self.is_hosted:
+            return ["FIRESTORE_EMULATOR_NOT_ALLOWED"]
+
+        issues: list[str] = []
+        if not self.firebase_project_id.strip():
+            issues.append("FIREBASE_PROJECT_ID_MISSING")
+        # The local emulator accepts anonymous gRPC credentials. Every real
+        # database, including local development against Firebase, requires the
+        # same Admin credential used by the authentication service.
+        if not emulator_host:
+            issues.extend(
+                issue
+                for issue in self.firebase_admin_configuration_issues
+                if issue not in issues
+            )
+        if self.firestore_database_id.strip() != "(default)":
+            issues.append("FIRESTORE_DATABASE_ID_UNSUPPORTED")
+        if self.firestore_collection_prefix.strip() != "gatepath":
+            issues.append("FIRESTORE_COLLECTION_PREFIX_UNSUPPORTED")
+        return issues
+
+    @property
+    def user_state_configuration_issues(self) -> list[str]:
+        """Return safe diagnostics for the selected user-state backend."""
+
+        if self.user_state_backend != "firestore":
+            return []
+        return self.firestore_configuration_issues
 
     @property
     def use_null_database_pool(self) -> bool:

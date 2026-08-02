@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import uuid
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
@@ -60,6 +61,19 @@ from app.schemas import (
 from app.config import settings
 from app.question_bank import resolve_question_bank_path
 from app.scoring import score_question
+from app.user_state import (
+    ProgressProjection,
+    StudyAttempt,
+    StudyResponse,
+    StudySession,
+    UserStateAlreadySubmitted,
+    UserStateNotFound,
+    UserStatePayloadTooLarge,
+    UserStateRepository,
+    UserStateUnavailable,
+    rebuild_progress_projection,
+)
+from app.user_state.dependencies import get_user_state_repository
 
 
 router = APIRouter()
@@ -121,7 +135,9 @@ def _snapshot_question(snapshot: dict[str, Any]) -> SimpleNamespace:
     )
 
 
-def _snapshots_by_id(session: PracticeSession) -> dict[int, dict[str, Any]]:
+def _snapshots_by_id(
+    session: PracticeSession | StudySession,
+) -> dict[int, dict[str, Any]]:
     return {
         int(snapshot["id"]): snapshot
         for snapshot in (session.question_snapshots or [])
@@ -160,7 +176,10 @@ async def _load_questions(db: AsyncSession, question_ids: list[int]) -> list[Que
     return [by_id[item] for item in question_ids if item in by_id]
 
 
-async def _session_read(db: AsyncSession, session: PracticeSession) -> SessionRead:
+async def _session_read(
+    db: AsyncSession,
+    session: PracticeSession | StudySession,
+) -> SessionRead:
     if session.question_snapshots:
         public_questions = [
             QuestionPublic.model_validate(snapshot)
@@ -185,6 +204,88 @@ async def _session_read(db: AsyncSession, session: PracticeSession) -> SessionRe
         is_submitted=session.is_submitted,
         questions=public_questions,
     )
+
+
+def _raise_user_state_http(exc: Exception) -> None:
+    if isinstance(exc, UserStateNotFound):
+        raise HTTPException(status_code=404, detail="Session or attempt not found") from exc
+    if isinstance(exc, UserStateAlreadySubmitted):
+        raise HTTPException(status_code=409, detail="Session has already been submitted") from exc
+    if isinstance(exc, UserStatePayloadTooLarge):
+        raise HTTPException(
+            status_code=413,
+            detail="The study record is too large to store safely",
+        ) from exc
+    raise HTTPException(
+        status_code=503,
+        detail="User progress storage is temporarily unavailable",
+    ) from exc
+
+
+async def _persist_session(
+    db: AsyncSession,
+    user_state: UserStateRepository | None,
+    *,
+    user_key: str,
+    catalog_id: str | None,
+    mode: SessionMode,
+    subject_id: int | None,
+    topic_id: int | None,
+    questions: list[Question],
+    duration_seconds: int | None,
+    total_marks: int,
+    seed: int,
+    started_at: datetime,
+    expires_at: datetime | None,
+) -> PracticeSession | StudySession:
+    question_ids = [question.id for question in questions]
+    snapshots = [_question_snapshot(question) for question in questions]
+    if user_state is not None:
+        session = StudySession(
+            id=str(uuid.uuid4()),
+            user_key=user_key,
+            catalog_id=catalog_id,
+            mode=mode.value,
+            subject_id=subject_id,
+            topic_id=topic_id,
+            question_ids=tuple(question_ids),
+            question_snapshots=tuple(snapshots),
+            question_count=len(questions),
+            duration_seconds=duration_seconds,
+            total_marks=total_marks,
+            seed=seed,
+            started_at=started_at,
+            expires_at=expires_at,
+        )
+        try:
+            return await user_state.create_session(session)
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+
+    session = PracticeSession(
+        user_key=user_key,
+        catalog_id=catalog_id,
+        mode=mode,
+        subject_id=subject_id,
+        topic_id=topic_id,
+        question_ids=question_ids,
+        question_snapshots=snapshots,
+        question_count=len(questions),
+        duration_seconds=duration_seconds,
+        total_marks=total_marks,
+        seed=seed,
+        started_at=started_at,
+        expires_at=expires_at,
+    )
+    db.add(session)
+    await db.commit()
+    await db.refresh(session)
+    return session
 
 
 @router.get("/subjects", response_model=list[SubjectSummary], tags=["Curriculum"])
@@ -413,6 +514,7 @@ async def create_practice_session(
     payload: PracticeSessionCreate,
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> SessionRead:
     conditions: list[Any] = [Question.is_active.is_(True)]
     subject: Subject | None = None
@@ -453,23 +555,21 @@ async def create_practice_session(
     rng.shuffle(questions)
     selected = list(questions[: payload.count])
 
-    session = PracticeSession(
+    session = await _persist_session(
+        db,
+        user_state,
         user_key=user_key,
+        catalog_id=None,
         mode=SessionMode.PRACTICE,
         subject_id=subject.id if subject else None,
         topic_id=payload.topic_id,
-        question_ids=[question.id for question in selected],
-        question_snapshots=[_question_snapshot(question) for question in selected],
-        question_count=len(selected),
+        questions=selected,
         duration_seconds=None,
         total_marks=sum(question.marks for question in selected),
         seed=payload.seed,
         started_at=utc_now(),
         expires_at=None,
     )
-    db.add(session)
-    await db.commit()
-    await db.refresh(session)
     return await _session_read(db, session)
 
 
@@ -546,6 +646,7 @@ async def create_catalog_test_session(
     payload: CatalogSessionCreate,
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> SessionRead:
     form = await db.get(TestForm, catalog_id)
     if form is None:
@@ -574,24 +675,21 @@ async def create_catalog_test_session(
             detail="Catalog test is stale; rebuild the catalog from the current bank",
         )
     started_at = utc_now()
-    session = PracticeSession(
+    session = await _persist_session(
+        db,
+        user_state,
         user_key=user_key,
         catalog_id=form.id,
         mode=form.mode,
         subject_id=form.subject_id,
         topic_id=None,
-        question_ids=list(form.question_ids),
-        question_snapshots=[_question_snapshot(question) for question in questions],
-        question_count=form.question_count,
+        questions=questions,
         duration_seconds=form.duration_seconds,
         total_marks=form.total_marks,
         seed=form.seed,
         started_at=started_at,
         expires_at=started_at + timedelta(seconds=form.duration_seconds),
     )
-    db.add(session)
-    await db.commit()
-    await db.refresh(session)
     return await _session_read(db, session)
 
 
@@ -605,6 +703,7 @@ async def create_test(
     payload: TestCreate,
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> SessionRead:
     rng = random.Random(payload.seed)
     subject: Subject | None = None
@@ -708,23 +807,21 @@ async def create_test(
         mode = SessionMode.SECTIONAL
 
     started_at = utc_now()
-    session = PracticeSession(
+    session = await _persist_session(
+        db,
+        user_state,
         user_key=user_key,
+        catalog_id=None,
         mode=mode,
         subject_id=subject.id if subject else None,
         topic_id=None,
-        question_ids=[question.id for question in selected],
-        question_snapshots=[_question_snapshot(question) for question in selected],
-        question_count=len(selected),
+        questions=selected,
         duration_seconds=duration_minutes * 60,
         total_marks=sum(question.marks for question in selected),
         seed=payload.seed,
         started_at=started_at,
         expires_at=started_at + timedelta(minutes=duration_minutes),
     )
-    db.add(session)
-    await db.commit()
-    await db.refresh(session)
     return await _session_read(db, session)
 
 
@@ -733,7 +830,20 @@ async def get_session(
     session_id: str,
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> SessionRead:
+    if user_state is not None:
+        try:
+            session = await user_state.get_session(user_key, session_id)
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+        return await _session_read(db, session)
+
     session = await db.get(PracticeSession, session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -743,7 +853,7 @@ async def get_session(
 
 
 def _attempt_result(
-    attempt: Attempt,
+    attempt: Attempt | StudyAttempt,
     questions: dict[int, Question] | None = None,
 ) -> AttemptResult:
     questions = questions or {}
@@ -756,7 +866,11 @@ def _attempt_result(
                 if response.correct_answer_snapshot is not None
                 else questions[response.question_id].correct_answer
             ),
-            status=response.status,
+            status=(
+                response.status
+                if isinstance(response.status, ResponseStatus)
+                else ResponseStatus(response.status)
+            ),
             awarded_marks=response.awarded_marks,
             max_marks=response.max_marks,
             negative_marks=response.negative_marks,
@@ -795,14 +909,38 @@ async def submit_attempt(
     payload: AttemptSubmit,
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> AttemptResult:
-    session = await db.get(PracticeSession, payload.session_id)
-    if session is None:
-        raise HTTPException(status_code=404, detail="Session not found")
-    if session.user_key != user_key:
-        raise HTTPException(status_code=404, detail="Session not found")
-    if session.is_submitted:
-        raise HTTPException(status_code=409, detail="Session has already been submitted")
+    if user_state is not None:
+        try:
+            session: PracticeSession | StudySession = await user_state.get_session(
+                user_key,
+                payload.session_id,
+            )
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+        if session.is_submitted and session.attempt_id:
+            try:
+                existing = await user_state.get_attempt(user_key, session.attempt_id)
+            except (
+                UserStateNotFound,
+                UserStateAlreadySubmitted,
+                UserStatePayloadTooLarge,
+                UserStateUnavailable,
+            ) as exc:
+                _raise_user_state_http(exc)
+            return _attempt_result(existing)
+    else:
+        session = await db.get(PracticeSession, payload.session_id)
+        if session is None or session.user_key != user_key:
+            raise HTTPException(status_code=404, detail="Session not found")
+        if session.is_submitted:
+            raise HTTPException(status_code=409, detail="Session has already been submitted")
 
     submitted_ids = {answer.question_id for answer in payload.answers}
     unknown_ids = submitted_ids.difference(session.question_ids)
@@ -812,20 +950,41 @@ async def submit_attempt(
             detail=f"Answers include questions outside this session: {sorted(unknown_ids)}",
         )
     answer_by_id = {answer.question_id: answer.answer for answer in payload.answers}
-    question_list = await _load_questions(db, session.question_ids)
-    questions = {question.id: question for question in question_list}
-    if len(questions) != len(session.question_ids):
-        raise HTTPException(status_code=409, detail="One or more session questions no longer exist")
-
     now = _aware(utc_now())
     timed_out = bool(session.expires_at and now >= _aware(session.expires_at))
     snapshots = _snapshots_by_id(session)
+    missing_snapshot_ids = [
+        question_id
+        for question_id in session.question_ids
+        if question_id not in snapshots
+    ]
+    questions = {
+        question.id: question
+        for question in await _load_questions(db, missing_snapshot_ids)
+    }
+    if any(
+        question_id not in snapshots and question_id not in questions
+        for question_id in session.question_ids
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="One or more immutable session questions are unavailable",
+        )
+
     response_models: list[AttemptResponse] = []
+    stored_responses: list[StudyResponse] = []
     correct = incorrect = unanswered = 0
 
     for question_id in session.question_ids:
-        question = questions[question_id]
-        snapshot = snapshots.get(question_id) or _question_snapshot(question)
+        question = questions.get(question_id)
+        snapshot = snapshots.get(question_id)
+        if snapshot is None and question is not None:
+            snapshot = _question_snapshot(question)
+        if snapshot is None:  # Defensive: the completeness check above must hold.
+            raise HTTPException(
+                status_code=409,
+                detail="An immutable session question is unavailable",
+            )
         grading_question = _snapshot_question(snapshot)
         # Answers arriving at or after the deadline are deliberately discarded:
         # a late network request cannot turn an expired session into a score.
@@ -837,25 +996,77 @@ async def submit_attempt(
             incorrect += 1
         else:
             unanswered += 1
-        response_models.append(
-            AttemptResponse(
-                question_id=question.id,
-                answer=answer,
-                correct_answer_snapshot=snapshot["correct_answer"],
-                explanation_snapshot=str(snapshot.get("explanation") or ""),
-                status=result.status,
-                awarded_marks=result.awarded_marks,
-                max_marks=float(grading_question.marks),
-                negative_marks=result.negative_marks,
-            )
+        stored_response = StudyResponse(
+            question_id=question_id,
+            subject_id=int(snapshot["subject_id"]),
+            topic_id=int(snapshot["topic_id"]),
+            answer=answer,
+            correct_answer_snapshot=snapshot["correct_answer"],
+            explanation_snapshot=str(snapshot.get("explanation") or ""),
+            status=result.status.value,
+            awarded_marks=result.awarded_marks,
+            max_marks=float(grading_question.marks),
+            negative_marks=result.negative_marks,
         )
+        stored_responses.append(stored_response)
+        if user_state is None:
+            response_models.append(
+                AttemptResponse(
+                    question_id=question_id,
+                    answer=answer,
+                    correct_answer_snapshot=stored_response.correct_answer_snapshot,
+                    explanation_snapshot=stored_response.explanation_snapshot,
+                    status=result.status,
+                    awarded_marks=result.awarded_marks,
+                    max_marks=stored_response.max_marks,
+                    negative_marks=result.negative_marks,
+                )
+            )
+
+    score = round(sum(item.awarded_marks for item in stored_responses), 6)
+    if user_state is not None:
+        candidate = StudyAttempt(
+            id=session.id,
+            session_id=session.id,
+            user_key=user_key,
+            submitted_at=now,
+            timed_out=timed_out,
+            score=score,
+            max_score=float(session.total_marks),
+            correct_count=correct,
+            incorrect_count=incorrect,
+            unanswered_count=unanswered,
+            mode=(
+                session.mode.value
+                if isinstance(session.mode, SessionMode)
+                else session.mode
+            ),
+            subject_id=session.subject_id,
+            topic_id=session.topic_id,
+            catalog_id=session.catalog_id,
+            responses=tuple(stored_responses),
+        )
+        try:
+            stored_attempt = await user_state.submit_attempt(
+                user_key,
+                session.id,
+                candidate,
+            )
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+        return _attempt_result(stored_attempt)
 
     attempt = Attempt(
         session=session,
         user_key=user_key,
         submitted_at=now,
         timed_out=timed_out,
-        score=round(sum(item.awarded_marks for item in response_models), 6),
+        score=score,
         max_score=float(session.total_marks),
         correct_count=correct,
         incorrect_count=incorrect,
@@ -880,7 +1091,20 @@ async def get_attempt(
     attempt_id: str,
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> AttemptResult:
+    if user_state is not None:
+        try:
+            attempt = await user_state.get_attempt(user_key, attempt_id)
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+        return _attempt_result(attempt)
+
     attempt = await db.scalar(
         select(Attempt)
         .where(Attempt.id == attempt_id)
@@ -922,69 +1146,114 @@ async def _attempts_for_user(db: AsyncSession, user_key: str) -> list[Attempt]:
     )
 
 
+def _study_attempt_from_orm(attempt: Attempt) -> StudyAttempt:
+    return StudyAttempt(
+        id=attempt.id,
+        session_id=attempt.session_id,
+        user_key=attempt.user_key,
+        submitted_at=_aware(attempt.submitted_at),
+        timed_out=attempt.timed_out,
+        score=attempt.score,
+        max_score=attempt.max_score,
+        correct_count=attempt.correct_count,
+        incorrect_count=attempt.incorrect_count,
+        unanswered_count=attempt.unanswered_count,
+        mode=attempt.session.mode.value,
+        subject_id=attempt.session.subject_id,
+        topic_id=attempt.session.topic_id,
+        catalog_id=attempt.session.catalog_id,
+        responses=tuple(
+            StudyResponse(
+                question_id=response.question_id,
+                subject_id=response.question.subject_id,
+                topic_id=response.question.topic_id,
+                answer=response.answer,
+                correct_answer_snapshot=(
+                    response.correct_answer_snapshot
+                    if response.correct_answer_snapshot is not None
+                    else response.question.correct_answer
+                ),
+                explanation_snapshot=(
+                    response.explanation_snapshot
+                    if response.explanation_snapshot is not None
+                    else response.question.explanation
+                ),
+                status=response.status.value,
+                awarded_marks=response.awarded_marks,
+                max_marks=response.max_marks,
+                negative_marks=response.negative_marks,
+            )
+            for response in attempt.responses
+        ),
+    )
+
+
+async def _progress_for_user(
+    db: AsyncSession,
+    user_state: UserStateRepository | None,
+    user_key: str,
+) -> ProgressProjection:
+    if user_state is not None:
+        try:
+            return await user_state.get_progress(user_key)
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+    attempts = await _attempts_for_user(db, user_key)
+    return rebuild_progress_projection(
+        user_key,
+        tuple(_study_attempt_from_orm(attempt) for attempt in attempts),
+    )
+
+
 @router.get("/progress/dashboard", response_model=ProgressDashboard, tags=["Attempts and Progress"])
 async def progress_dashboard(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> ProgressDashboard:
     subjects = list((await db.scalars(select(Subject).order_by(Subject.order_index))).all())
-    attempts = await _attempts_for_user(db, user_key)
-    stats: dict[int, dict[str, Any]] = {
-        subject.id: {
-            "attempted": 0,
-            "unique": set(),
-            "correct": 0,
-            "incorrect": 0,
-            "unanswered": 0,
-            "earned": 0.0,
-            "available": 0.0,
-        }
-        for subject in subjects
-    }
-    for attempt in attempts:
-        for response in attempt.responses:
-            bucket = stats[response.question.subject_id]
-            bucket["attempted"] += 1
-            bucket["unique"].add(response.question_id)
-            bucket[response.status.value] += 1
-            bucket["earned"] += response.awarded_marks
-            bucket["available"] += response.max_marks
+    progress = await _progress_for_user(db, user_state, user_key)
 
     subject_progress: list[SubjectProgress] = []
     for subject in subjects:
-        bucket = stats[subject.id]
-        answered = bucket["correct"] + bucket["incorrect"]
-        accuracy = round(bucket["correct"] / answered * 100, 2) if answered else 0.0
+        bucket = progress.subjects.get(subject.id)
+        correct = bucket.correct_count if bucket else 0
+        incorrect = bucket.incorrect_count if bucket else 0
+        unanswered = bucket.unanswered_count if bucket else 0
+        answered = correct + incorrect
+        accuracy = round(correct / answered * 100, 2) if answered else 0.0
         subject_progress.append(
             SubjectProgress(
                 subject_id=subject.id,
                 subject_slug=subject.slug,
                 subject_name=subject.name,
-                attempted_questions=bucket["attempted"],
-                unique_questions_attempted=len(bucket["unique"]),
-                correct=bucket["correct"],
-                incorrect=bucket["incorrect"],
-                unanswered=bucket["unanswered"],
+                attempted_questions=bucket.attempted_questions if bucket else 0,
+                unique_questions_attempted=(
+                    bucket.unique_questions_attempted if bucket else 0
+                ),
+                correct=correct,
+                incorrect=incorrect,
+                unanswered=unanswered,
                 accuracy=accuracy,
-                marks_earned=round(bucket["earned"], 4),
-                marks_available=bucket["available"],
+                marks_earned=round(bucket.marks_earned, 4) if bucket else 0.0,
+                marks_available=bucket.marks_available if bucket else 0.0,
             )
         )
 
-    total_correct = sum(attempt.correct_count for attempt in attempts)
-    total_incorrect = sum(attempt.incorrect_count for attempt in attempts)
-    total_unanswered = sum(attempt.unanswered_count for attempt in attempts)
+    total_correct = progress.correct_count
+    total_incorrect = progress.incorrect_count
+    total_unanswered = progress.unanswered_count
     answered_total = total_correct + total_incorrect
-    percentages = [
-        attempt.score / attempt.max_score * 100
-        for attempt in attempts
-        if attempt.max_score
-    ]
     recent = [
         RecentAttempt(
-            attempt_id=attempt.id,
+            attempt_id=attempt.attempt_id,
             session_id=attempt.session_id,
-            mode=attempt.session.mode,
+            mode=SessionMode(attempt.mode),
             submitted_at=attempt.submitted_at,
             score=round(attempt.score, 4),
             max_score=attempt.max_score,
@@ -992,20 +1261,23 @@ async def progress_dashboard(
             if attempt.max_score
             else 0.0,
         )
-        for attempt in attempts[:5]
+        for attempt in progress.recent_attempts
     ]
     return ProgressDashboard(
         user_key=user_key,
-        total_attempts=len(attempts),
+        total_attempts=progress.total_attempts,
         total_responses=total_correct + total_incorrect + total_unanswered,
         correct=total_correct,
         incorrect=total_incorrect,
         unanswered=total_unanswered,
         accuracy=round(total_correct / answered_total * 100, 2) if answered_total else 0.0,
-        total_score=round(sum(attempt.score for attempt in attempts), 4),
-        total_max_score=sum(attempt.max_score for attempt in attempts),
-        average_test_percentage=round(sum(percentages) / len(percentages), 2)
-        if percentages
+        total_score=round(progress.total_score, 4),
+        total_max_score=progress.total_max_score,
+        average_test_percentage=round(
+            progress.percentage_sum / progress.total_attempts,
+            2,
+        )
+        if progress.total_attempts
         else 0.0,
         subjects=subject_progress,
         recent_attempts=recent,
@@ -1060,6 +1332,7 @@ def _mastery_score(
 async def progress_analytics(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> AnalyticsDashboard:
     subjects = list(
         (
@@ -1070,57 +1343,44 @@ async def progress_analytics(
             )
         ).all()
     )
-    topic_question_counts = dict(
-        (
-            await db.execute(
-                select(Question.topic_id, func.count(Question.id))
-                .where(Question.is_active.is_(True))
-                .group_by(Question.topic_id)
+    active_question_rows = (
+        await db.execute(
+            select(Question.id, Question.topic_id).where(
+                Question.is_active.is_(True)
             )
-        ).all()
-    )
-    attempts = await _attempts_for_user(db, user_key)
+        )
+    ).all()
+    active_question_ids = {question_id for question_id, _ in active_question_rows}
+    topic_question_counts: dict[int, int] = defaultdict(int)
+    for _, topic_id in active_question_rows:
+        topic_question_counts[topic_id] += 1
+    progress = await _progress_for_user(db, user_state, user_key)
     now = utc_now()
-    topic_responses: dict[int, list[tuple[AttemptResponse, datetime]]] = defaultdict(
-        list
-    )
-    for attempt in attempts:
-        for response in attempt.responses:
-            topic_responses[response.question.topic_id].append(
-                (response, attempt.submitted_at)
-            )
+    topic_evidence: dict[int, list[Any]] = defaultdict(list)
+    for evidence in progress.evidence.values():
+        topic_evidence[evidence.topic_id].append(evidence)
 
     topics: list[TopicAnalytics] = []
     for subject in subjects:
         for topic in subject.topics:
-            response_rows = topic_responses[topic.id]
-            latest_answered_by_question: dict[
-                int, tuple[AttemptResponse, datetime]
-            ] = {}
-            for response, submitted_at in response_rows:
-                if (
-                    response.status != ResponseStatus.UNANSWERED
-                    and response.question.is_active
-                    and response.question_id not in latest_answered_by_question
-                ):
-                    # Attempts arrive newest-first. Only the latest answered
-                    # response for each active question is mastery evidence.
-                    latest_answered_by_question[response.question_id] = (
-                        response,
-                        submitted_at,
-                    )
-            answered_rows = list(latest_answered_by_question.values())
+            evidence_rows = topic_evidence[topic.id]
+            answered_rows = [
+                evidence
+                for evidence in evidence_rows
+                if evidence.question_id in active_question_ids
+                and evidence.latest_answered_status is not None
+                and evidence.latest_answered_at is not None
+            ]
             correct_count = sum(
-                response.status == ResponseStatus.CORRECT
-                for response, _ in answered_rows
+                evidence.latest_answered_status == ResponseStatus.CORRECT.value
+                for evidence in answered_rows
             )
             incorrect_count = sum(
-                response.status == ResponseStatus.INCORRECT
-                for response, _ in answered_rows
+                evidence.latest_answered_status == ResponseStatus.INCORRECT.value
+                for evidence in answered_rows
             )
             unanswered_count = sum(
-                response.status == ResponseStatus.UNANSWERED
-                for response, _ in response_rows
+                evidence.unanswered_count for evidence in evidence_rows
             )
             answered_count = len(answered_rows)
             available_questions = topic_question_counts.get(topic.id, 0)
@@ -1135,8 +1395,11 @@ async def progress_analytics(
             )
             recency_accuracy = _weighted_accuracy(
                 [
-                    (response.status, submitted_at)
-                    for response, submitted_at in answered_rows
+                    (
+                        ResponseStatus(evidence.latest_answered_status),
+                        evidence.latest_answered_at,
+                    )
+                    for evidence in answered_rows
                 ],
                 now=now,
             )
@@ -1175,7 +1438,9 @@ async def progress_analytics(
                     subject_code=subject.code,
                     subject_name=subject.name,
                     available_questions=available_questions,
-                    attempt_count=len(response_rows),
+                    attempt_count=sum(
+                        evidence.attempt_count for evidence in evidence_rows
+                    ),
                     answered_count=answered_count,
                     unique_questions_attempted=unique_questions,
                     correct_count=correct_count,
@@ -1189,35 +1454,27 @@ async def progress_analytics(
                     mastery_score=round(mastery, 2),
                     status=classification,
                     last_attempted_at=(
-                        max(_aware(submitted_at) for _, submitted_at in answered_rows)
+                        max(
+                            _aware(evidence.latest_answered_at)
+                            for evidence in answered_rows
+                            if evidence.latest_answered_at is not None
+                        )
                         if answered_rows
                         else None
                     ),
                 )
             )
 
-    all_responses = [
-        (response, attempt.submitted_at)
-        for attempt in attempts
-        for response in attempt.responses
+    answered_responses = [
+        evidence
+        for evidence in progress.evidence.values()
+        if evidence.question_id in active_question_ids
+        and evidence.latest_answered_status is not None
+        and evidence.latest_answered_at is not None
     ]
-    latest_answered_by_question: dict[
-        int, tuple[AttemptResponse, datetime]
-    ] = {}
-    for response, submitted_at in all_responses:
-        if (
-            response.status != ResponseStatus.UNANSWERED
-            and response.question.is_active
-            and response.question_id not in latest_answered_by_question
-        ):
-            latest_answered_by_question[response.question_id] = (
-                response,
-                submitted_at,
-            )
-    answered_responses = list(latest_answered_by_question.values())
     correct_responses = sum(
-        response.status == ResponseStatus.CORRECT
-        for response, _ in answered_responses
+        evidence.latest_answered_status == ResponseStatus.CORRECT.value
+        for evidence in answered_responses
     )
     available_questions = sum(topic_question_counts.values())
     unique_questions = len(answered_responses)
@@ -1229,13 +1486,16 @@ async def progress_analytics(
     )
     overall_recency = _weighted_accuracy(
         [
-            (response.status, submitted_at)
-            for response, submitted_at in answered_responses
+            (
+                ResponseStatus(evidence.latest_answered_status),
+                evidence.latest_answered_at,
+            )
+            for evidence in answered_responses
         ],
         now=now,
     )
     overall = AnalyticsOverall(
-        attempted_responses=len(all_responses),
+        attempted_responses=progress.total_responses,
         answered_responses=len(answered_responses),
         unique_questions_attempted=unique_questions,
         available_questions=available_questions,
@@ -1279,6 +1539,7 @@ async def progress_analytics(
 async def roadmap(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> RoadmapResponse:
     subjects = list(
         (
@@ -1292,19 +1553,21 @@ async def roadmap(
             )
         ).all()
     )
-    attempts = await _attempts_for_user(db, user_key)
-    subject_stats: dict[int, list[ResponseStatus]] = defaultdict(list)
-    topic_stats: dict[int, list[ResponseStatus]] = defaultdict(list)
-    for attempt in attempts:
-        for response in attempt.responses:
-            subject_stats[response.question.subject_id].append(response.status)
-            topic_stats[response.question.topic_id].append(response.status)
+    progress = await _progress_for_user(db, user_state, user_key)
+    topic_stats: dict[int, dict[str, int]] = defaultdict(
+        lambda: {"attempted": 0, "correct": 0, "incorrect": 0}
+    )
+    for evidence in progress.evidence.values():
+        bucket = topic_stats[evidence.topic_id]
+        bucket["attempted"] += evidence.attempt_count
+        bucket["correct"] += evidence.correct_count
+        bucket["incorrect"] += evidence.incorrect_count
 
-    def accuracy(statuses: list[ResponseStatus]) -> float | None:
-        answered = [item for item in statuses if item != ResponseStatus.UNANSWERED]
+    def accuracy(correct: int, incorrect: int) -> float | None:
+        answered = correct + incorrect
         if not answered:
             return None
-        return round(answered.count(ResponseStatus.CORRECT) / len(answered) * 100, 2)
+        return round(correct / answered * 100, 2)
 
     roadmap_subjects: list[RoadmapSubject] = []
     for subject in subjects:
@@ -1315,11 +1578,15 @@ async def roadmap(
                 name=topic.name,
                 question_count=sum(question.is_active for question in topic.questions),
                 note_available=topic.note is not None,
-                attempted_questions=len(topic_stats[topic.id]),
-                accuracy=accuracy(topic_stats[topic.id]),
+                attempted_questions=topic_stats[topic.id]["attempted"],
+                accuracy=accuracy(
+                    topic_stats[topic.id]["correct"],
+                    topic_stats[topic.id]["incorrect"],
+                ),
             )
             for topic in subject.topics
         ]
+        subject_progress = progress.subjects.get(subject.id)
         roadmap_subjects.append(
             RoadmapSubject(
                 id=subject.id,
@@ -1329,8 +1596,19 @@ async def roadmap(
                 order_index=subject.order_index,
                 topic_count=len(subject.topics),
                 question_count=sum(item.question_count for item in topics),
-                attempted_questions=len(subject_stats[subject.id]),
-                accuracy=accuracy(subject_stats[subject.id]),
+                attempted_questions=(
+                    subject_progress.attempted_questions
+                    if subject_progress
+                    else 0
+                ),
+                accuracy=(
+                    accuracy(
+                        subject_progress.correct_count,
+                        subject_progress.incorrect_count,
+                    )
+                    if subject_progress
+                    else None
+                ),
                 topics=topics,
             )
         )

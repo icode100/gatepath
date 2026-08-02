@@ -27,6 +27,8 @@ from app.schemas import (
     FirebaseLogout,
     FirebaseSessionCreate,
 )
+from app.user_state import UserStateError, UserStateRepository
+from app.user_state.dependencies import get_user_state_repository
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -113,6 +115,7 @@ async def _claim_guest_progress(
     *,
     principal: IdentityPrincipal,
     firebase_user_key: str,
+    user_state: UserStateRepository | None,
 ) -> None:
     if principal.mode != "guest":
         return
@@ -120,6 +123,18 @@ async def _claim_guest_progress(
     if guest_user_key != principal.user_key:
         return
     if not guest_user_key or not guest_user_key.startswith("anon-"):
+        return
+    if user_state is not None:
+        try:
+            await user_state.claim_guest_state(
+                guest_user_key,
+                firebase_user_key,
+            )
+        except UserStateError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Progress could not be linked to the signed-in account",
+            ) from exc
         return
     try:
         await db.execute(
@@ -155,6 +170,7 @@ async def create_session(
     request: Request,
     response: Response,
     db: AsyncSession = Depends(get_db),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> AuthStatus:
     response.headers["Cache-Control"] = "no-store"
     _require_csrf(request, payload.csrf_token)
@@ -190,6 +206,7 @@ async def create_session(
             db,
             principal=principal,
             firebase_user_key=firebase_session.identity.user_key,
+            user_state=user_state,
         )
     firebase_auth.set_firebase_session_cookie(response, firebase_session.cookie)
     clear_identity_cookie(response)

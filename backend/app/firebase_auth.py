@@ -86,9 +86,9 @@ def _firebase_modules() -> tuple[Any, Any, Any]:
 def _admin_app() -> tuple[Any, Any]:
     global _ADMIN_APP, _ADMIN_APP_CONFIGURATION_KEY
 
-    issues = settings.firebase_configuration_issues
-    if not settings.firebase_auth_enabled or issues:
-        raise FirebaseAuthUnavailable("Firebase authentication is not configured")
+    issues = settings.firebase_admin_configuration_issues
+    if issues:
+        raise FirebaseAuthUnavailable("Firebase Admin is not configured")
 
     configuration_key = _configuration_key()
     if _ADMIN_APP is not None:
@@ -138,6 +138,13 @@ def _admin_app() -> tuple[Any, Any]:
         _ADMIN_APP = app
         _ADMIN_APP_CONFIGURATION_KEY = configuration_key
         return app, auth
+
+
+def get_firebase_admin_app() -> Any:
+    """Return the process-wide Admin app shared by Auth and Firestore."""
+
+    app, _ = _admin_app()
+    return app
 
 
 _INVALID_TOKEN_ERROR_NAMES = {

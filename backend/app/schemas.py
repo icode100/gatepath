@@ -402,3 +402,6 @@ class HealthResponse(BaseModel):
     configuration_issues: list[str] = Field(default_factory=list)
     authentication: str = "guest_only"
     authentication_issues: list[str] = Field(default_factory=list)
+    user_state_backend: str = "postgres"
+    user_state: str = "postgres"
+    user_state_issues: list[str] = Field(default_factory=list)

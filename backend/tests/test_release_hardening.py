@@ -250,6 +250,7 @@ async def test_session_snapshot_is_immutable_for_display_and_grading() -> None:
             ),
             db=session,
             user_key=user_key,
+            user_state=None,
         )
         public_question = created.questions[0]
         question = await session.get(Question, public_question.id)
@@ -276,6 +277,7 @@ async def test_session_snapshot_is_immutable_for_display_and_grading() -> None:
             created.id,
             db=session,
             user_key=user_key,
+            user_state=None,
         )
         assert reread.questions[0].text == original_text
         result = await submit_attempt(
@@ -290,6 +292,7 @@ async def test_session_snapshot_is_immutable_for_display_and_grading() -> None:
             ),
             db=session,
             user_key=user_key,
+            user_state=None,
         )
         assert result.correct_count == 1
         assert result.results[0].correct_answer == original_answer
@@ -439,7 +442,11 @@ async def test_analytics_uses_latest_unique_answered_questions() -> None:
         session.add(unanswered_session)
         await session.commit()
 
-        dashboard = await progress_analytics(db=session, user_key=user_key)
+        dashboard = await progress_analytics(
+            db=session,
+            user_key=user_key,
+            user_state=None,
+        )
         topic_result = next(item for item in dashboard.topics if item.topic_id == topic.id)
         assert topic_result.attempt_count == 7
         assert topic_result.answered_count == 1
