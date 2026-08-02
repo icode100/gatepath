@@ -7,7 +7,6 @@ import { trackEvent } from "@/lib/firebase/analytics";
 import {
   practiceQuestions,
   subjects as localSubjects,
-  weeklyActivity,
   type PracticeQuestion,
   type QuestionType,
   type Subject,
@@ -39,6 +38,23 @@ const COA_SYLLABUS_TOPICS = [
   "io-interface",
   "pipelining",
 ] as const;
+
+const EMPTY_ROADMAP_SUBJECTS: Subject[] = localSubjects.map((subject) => ({
+  ...subject,
+  progress: 0,
+  mastery: 0,
+  topics: subject.topics.map((topic) => ({ ...topic, progress: 0 })),
+}));
+
+const SUGGESTED_STUDY_RHYTHM = [
+  { day: "M", minutes: 75 },
+  { day: "T", minutes: 75 },
+  { day: "W", minutes: 90 },
+  { day: "T", minutes: 75 },
+  { day: "F", minutes: 90 },
+  { day: "S", minutes: 120 },
+  { day: "S", minutes: 75 },
+];
 
 type Screen =
   | "dashboard"
@@ -375,40 +391,24 @@ function mapCatalog(payload: unknown): CatalogTest[] {
 }
 
 function buildLocalAnalytics(subjects: Subject[]): AnalyticsSnapshot {
-  const topics = subjects.flatMap((subject, subjectIndex) =>
-    subject.topics.map((topic, topicIndex): TopicAnalytics => {
-      const attempts = Math.max(
-        topic.progress > 0 ? 1 : 0,
-        Math.round((topic.questions * topic.progress) / 100),
-      );
-      const accuracy = clampPercent(
-        subject.mastery + ((subjectIndex + topicIndex) % 5 - 2) * 6,
-      );
-      const mastery = clampPercent(accuracy * 0.7 + topic.progress * 0.3);
-      const status: TopicStatus =
-        attempts === 0
-          ? "unattempted"
-          : accuracy >= 72 && topic.progress >= 55
-            ? "strong"
-            : accuracy < 55 || topic.progress < 32
-              ? "needs_practice"
-              : "developing";
-      return {
+  const topics = subjects.flatMap((subject) =>
+    subject.topics.map(
+      (topic): TopicAnalytics => ({
         topicId: topic.id,
         topicName: topic.title,
         subjectId: subject.id,
         subjectCode: subject.code,
         subjectName: subject.shortTitle,
         availableQuestions: topic.questions,
-        attempts,
-        uniqueAttempted: attempts,
-        correct: Math.round((attempts * accuracy) / 100),
-        accuracy,
-        coverage: topic.progress,
-        mastery,
-        status,
-      };
-    }),
+        attempts: 0,
+        uniqueAttempted: 0,
+        correct: 0,
+        accuracy: 0,
+        coverage: 0,
+        mastery: 0,
+        status: "unattempted",
+      }),
+    ),
   );
   const attemptedResponses = topics.reduce(
     (total, topic) => total + topic.attempts,
@@ -613,13 +613,13 @@ function mergeAnalytics(
 }
 
 function mergeRoadmap(payload: unknown): Subject[] {
-  if (!payload || typeof payload !== "object") return localSubjects;
+  if (!payload || typeof payload !== "object") return EMPTY_ROADMAP_SUBJECTS;
   const source = payload as { subjects?: RemoteRoadmap[] };
   if (!Array.isArray(source.subjects) || source.subjects.length === 0) {
-    return localSubjects;
+    return EMPTY_ROADMAP_SUBJECTS;
   }
 
-  return localSubjects.map((fallback) => {
+  return EMPTY_ROADMAP_SUBJECTS.map((fallback) => {
     const remote = source.subjects?.find(
       (item) => item.slug === fallback.id || item.code === fallback.code,
     );
@@ -924,12 +924,14 @@ export default function Home() {
   const [screen, setScreen] = useState<Screen>("dashboard");
   const [theme, setTheme] = useState<Theme>("light");
   const [apiState, setApiState] = useState<ApiState>("checking");
-  const [roadmapSubjects, setRoadmapSubjects] = useState(localSubjects);
+  const [roadmapSubjects, setRoadmapSubjects] = useState(
+    EMPTY_ROADMAP_SUBJECTS,
+  );
   const [testCatalog, setTestCatalog] =
     useState<CatalogTest[]>(LOCAL_TEST_CATALOG);
   const [catalogSource, setCatalogSource] = useState<"live" | "local">("local");
   const [analytics, setAnalytics] = useState<AnalyticsSnapshot>(() =>
-    buildLocalAnalytics(localSubjects),
+    buildLocalAnalytics(EMPTY_ROADMAP_SUBJECTS),
   );
   const [analyticsSource, setAnalyticsSource] =
     useState<"live" | "local">("local");
@@ -987,12 +989,6 @@ export default function Home() {
   const submitRunnerRef = useRef<(() => Promise<void>) | null>(null);
   const submitExamRef =
     useRef<((skipConfirmation?: boolean) => Promise<void>) | null>(null);
-  const roadmapSubjectsRef = useRef(roadmapSubjects);
-
-  useEffect(() => {
-    roadmapSubjectsRef.current = roadmapSubjects;
-  }, [roadmapSubjects]);
-
   const selectedSubject = useMemo(
     () =>
       roadmapSubjects.find((subject) => subject.id === selectedSubjectId) ??
@@ -1041,23 +1037,52 @@ export default function Home() {
   }, [theme]);
 
   useEffect(() => {
+    let active = true;
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 3500);
-    fetch(`${API_BASE}/roadmap`, {
-      credentials: "include",
-      signal: controller.signal,
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("API unavailable");
-        return response.json();
-      })
-      .then((payload) => {
-        setRoadmapSubjects(mergeRoadmap(payload));
-        setApiState("online");
-      })
-      .catch(() => setApiState("offline"))
-      .finally(() => window.clearTimeout(timeout));
+    const timeout = window.setTimeout(() => controller.abort(), 5000);
+
+    const fetchJson = async (path: string, unavailableMessage: string) => {
+      const response = await fetch(`${API_BASE}${path}`, {
+        credentials: "include",
+        cache: "no-store",
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error(unavailableMessage);
+      return response.json() as Promise<unknown>;
+    };
+
+    const loadLearnerState = async () => {
+      const [roadmapResult, analyticsResult] = await Promise.allSettled([
+        fetchJson("/roadmap", "Roadmap unavailable"),
+        fetchJson("/progress/analytics", "Analytics unavailable"),
+      ]);
+      if (!active) return;
+
+      const mergedRoadmap =
+        roadmapResult.status === "fulfilled"
+          ? mergeRoadmap(roadmapResult.value)
+          : EMPTY_ROADMAP_SUBJECTS;
+      setRoadmapSubjects(mergedRoadmap);
+
+      if (analyticsResult.status === "fulfilled") {
+        setAnalytics(mergeAnalytics(analyticsResult.value, mergedRoadmap));
+        setAnalyticsSource("live");
+      } else {
+        setAnalytics(buildLocalAnalytics(mergedRoadmap));
+        setAnalyticsSource("local");
+      }
+
+      setApiState(
+        roadmapResult.status === "fulfilled" ||
+          analyticsResult.status === "fulfilled"
+          ? "online"
+          : "offline",
+      );
+    };
+
+    void loadLearnerState().finally(() => window.clearTimeout(timeout));
     return () => {
+      active = false;
       controller.abort();
       window.clearTimeout(timeout);
     };
@@ -1098,33 +1123,6 @@ export default function Home() {
       window.clearTimeout(timeout);
     };
   }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 5000);
-    fetch(`${API_BASE}/progress/analytics`, {
-      credentials: "include",
-      signal: controller.signal,
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Analytics unavailable");
-        return response.json();
-      })
-      .then((payload) => {
-        setAnalytics(mergeAnalytics(payload, roadmapSubjectsRef.current));
-        setAnalyticsSource("live");
-        setApiState("online");
-      })
-      .catch(() => {
-        setAnalytics(buildLocalAnalytics(roadmapSubjectsRef.current));
-        setAnalyticsSource("local");
-      })
-      .finally(() => window.clearTimeout(timeout));
-    return () => {
-      controller.abort();
-      window.clearTimeout(timeout);
-    };
-  }, [learnerStateRefreshKey]);
 
   useEffect(() => {
     if (screen !== "library" || libraryTab !== "bank") return;
@@ -1402,7 +1400,9 @@ export default function Home() {
   const startCoaQuiz = () => {
     const subject =
       roadmapSubjects.find((item) => item.id === "computer-organization") ??
-      localSubjects.find((item) => item.id === "computer-organization") ??
+      EMPTY_ROADMAP_SUBJECTS.find(
+        (item) => item.id === "computer-organization",
+      ) ??
       selectedSubject;
     setSelectedSubjectId(subject.id);
     setSelectedTopicId("memory-hierarchy");
@@ -2005,11 +2005,16 @@ export default function Home() {
 
   const renderDashboard = () => {
     const phases = ["Foundations", "Core reasoning", "Systems"] as const;
+    const cacheProgress =
+      roadmapSubjects
+        .find((subject) => subject.id === "computer-organization")
+        ?.topics.find((topic) => topic.id === "memory-hierarchy")?.progress ??
+      0;
     return (
       <div className="page dashboard-page">
         <section className="dashboard-hero">
           <div className="hero-copy">
-            <div className="eyebrow">Tuesday · focused plan</div>
+            <div className="eyebrow">Today · focused plan</div>
             <h1>One clear path to<br /><em>GATE 2027.</em></h1>
             <p>Test every official Computer Organization & Architecture area in one focused, GATE-style live quiz.</p>
             <div className="hero-actions">
@@ -2036,11 +2041,11 @@ export default function Home() {
                 <span className="card-kicker">Today’s focus</span>
                 <h2>Cache memory</h2>
               </div>
-              <ProgressRing value={42} />
+              <ProgressRing value={cacheProgress} />
             </div>
           <div className="plan-steps">
               <button onClick={() => { setSelectedSubjectId("computer-organization"); setSelectedTopicId("memory-hierarchy"); navigate("notes"); }}>
-                <span className="step-status done">✓</span>
+                <span className="step-status">01</span>
                 <span><strong>Revise mapping</strong><small>12 min · concept</small></span>
                 <span className="step-arrow">↗</span>
               </button>
@@ -2054,9 +2059,9 @@ export default function Home() {
         </section>
 
         <section className="pulse-strip" aria-label="Study summary">
-          <div><span className="metric-icon flame">12</span><span><strong>12 day streak</strong><small>Personal best: 19 days</small></span></div>
-          <div><span className="metric-icon">67%</span><span><strong>Overall accuracy</strong><small>+4% this month</small></span></div>
-          <div><span className="metric-icon">18h</span><span><strong>Deep work</strong><small>Across the last 14 days</small></span></div>
+          <div><span className="metric-icon">{analytics.testsCompleted}</span><span><strong>Tests completed</strong><small>Full and course attempts</small></span></div>
+          <div><span className="metric-icon">{analytics.accuracy}%</span><span><strong>Overall accuracy</strong><small>Across answered questions</small></span></div>
+          <div><span className="metric-icon">{analytics.coverage}%</span><span><strong>Syllabus coverage</strong><small>{analytics.uniqueQuestionsAttempted.toLocaleString()} unique questions attempted</small></span></div>
           <button className="strip-link" onClick={() => navigate("progress")}>View insights <span>→</span></button>
         </section>
 
@@ -3109,10 +3114,13 @@ export default function Home() {
   };
 
   const renderProgress = () => {
-    const maxMinutes = Math.max(...weeklyActivity.map((item) => item.minutes));
+    const maxMinutes = Math.max(
+      ...SUGGESTED_STUDY_RHYTHM.map((item) => item.minutes),
+    );
     const strongest = strongTopics;
+    const hasPracticePriorities = needsPracticeTopics.length > 0;
     const priorities =
-      needsPracticeTopics.length > 0
+      hasPracticePriorities
         ? needsPracticeTopics
         : [...analytics.topics]
             .sort((a, b) => a.mastery - b.mastery)
@@ -3124,15 +3132,16 @@ export default function Home() {
             <div className="eyebrow">Learning signals</div>
             <h1>Know what is strong. Fix what is not.</h1>
             <p>
-              Every recommendation below is tied to three pieces of evidence:
-              accuracy, attempts and syllabus coverage.
+              Recommendations use accuracy, attempts and syllabus coverage.
+              Unattempted topics appear as starting suggestions until you build
+              enough evidence.
             </p>
           </div>
           <span className={`insight-source ${analyticsSource}`}>
             <i />
             {analyticsSource === "live"
               ? "Updated from your attempts"
-              : "Local profile preview"}
+              : "Progress data unavailable"}
           </span>
         </section>
 
@@ -3210,10 +3219,21 @@ export default function Home() {
           <div className="strength-card needs">
             <div className="strength-heading">
               <div>
-                <span className="eyebrow">Needs practice</span>
-                <h2>Best next moves</h2>
+                <span className="eyebrow">
+                  {hasPracticePriorities
+                    ? "Needs practice"
+                    : "Suggested starting topics"}
+                </span>
+                <h2>
+                  {hasPracticePriorities
+                    ? "Best next moves"
+                    : "Build your first signals"}
+                </h2>
               </div>
-              <span>{priorities.length} priorities</span>
+              <span>
+                {priorities.length}{" "}
+                {hasPracticePriorities ? "priorities" : "suggestions"}
+              </span>
             </div>
             <div className="insight-topic-list">
               {priorities.map((topic) => (
@@ -3312,13 +3332,13 @@ export default function Home() {
           <div className="activity-card compact-activity">
             <div className="panel-heading">
               <div>
-                <span className="eyebrow">Study rhythm</span>
-                <h2>This week</h2>
+                <span className="eyebrow">Suggested study rhythm</span>
+                <h2>Weekly plan</h2>
               </div>
-              <strong>9h 09m</strong>
+              <strong>10h plan</strong>
             </div>
             <div className="bar-chart">
-              {weeklyActivity.map((item, index) => (
+              {SUGGESTED_STUDY_RHYTHM.map((item, index) => (
                 <div key={`${item.day}-${index}`}>
                   <span className="bar-value">{item.minutes}m</span>
                   <div className="bar-track">
@@ -3337,7 +3357,7 @@ export default function Home() {
               <p>
                 <strong>Start with the first priority above.</strong>
                 <small>
-                  One revision block, then a focused question set.
+                  Suggested plan only; study time is not tracked yet.
                 </small>
               </p>
             </div>
@@ -3394,7 +3414,7 @@ export default function Home() {
           <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span className="nav-icon">↗</span><span>Progress</span></button>
         </nav>
         <div className="sidebar-spacer" />
-        <div className="sidebar-target"><span className="target-label">Weekly target</span><div><strong>9h 09m</strong><span>of 12 hours</span></div><MiniProgress value={76} /><small>2h 51m to go</small></div>
+        <div className="sidebar-target"><span className="target-label">Question coverage</span><div><strong>{analytics.uniqueQuestionsAttempted.toLocaleString()}</strong><span>of {analytics.availableQuestions.toLocaleString()} questions</span></div><MiniProgress value={analytics.coverage} /><small>{analytics.coverage}% of the bank explored</small></div>
         <button
           className="profile"
           aria-haspopup="dialog"
