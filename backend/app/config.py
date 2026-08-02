@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+import json
 from functools import lru_cache
 from typing import Literal
 
@@ -34,6 +36,14 @@ class Settings(BaseSettings):
     anonymous_identity_secret: str = DEFAULT_ANONYMOUS_IDENTITY_SECRET
     identity_cookie_name: str = "gatepath_identity"
     identity_cookie_secure: bool = False
+    firebase_auth_enabled: bool = False
+    firebase_project_id: str = ""
+    firebase_service_account_json: str | None = None
+    firebase_session_cookie_name: str = "gatepath_session"
+    firebase_csrf_cookie_name: str = "gatepath_csrf"
+    firebase_session_max_age_seconds: int = 60 * 60 * 24 * 5
+    firebase_recent_auth_seconds: int = 5 * 60
+    firebase_check_revoked: bool = False
 
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
@@ -166,6 +176,64 @@ class Settings(BaseSettings):
         database_issue = self.database_configuration_issue
         if database_issue is not None:
             issues.append(database_issue)
+        return issues
+
+    @property
+    def firebase_configuration_issues(self) -> list[str]:
+        """Return safe diagnostics for the optional Firebase auth feature.
+
+        Firebase is deliberately not part of ``hosted_configuration_issues``:
+        a missing Firebase credential must never make guest study mode
+        unavailable. Only the Firebase session exchange endpoint is disabled
+        while these issues are present.
+        """
+
+        if not self.firebase_auth_enabled:
+            return []
+        issues: list[str] = []
+        if not self.firebase_project_id.strip():
+            issues.append("FIREBASE_PROJECT_ID_MISSING")
+        if not (
+            self.firebase_service_account_json
+            or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+        ):
+            issues.append("FIREBASE_ADMIN_CREDENTIALS_MISSING")
+        if self.firebase_service_account_json:
+            try:
+                service_account = json.loads(self.firebase_service_account_json)
+            except (TypeError, ValueError):
+                issues.append("FIREBASE_SERVICE_ACCOUNT_JSON_MALFORMED")
+            else:
+                if not isinstance(service_account, dict):
+                    issues.append("FIREBASE_SERVICE_ACCOUNT_JSON_MALFORMED")
+                else:
+                    required_fields = ("project_id", "client_email", "private_key")
+                    if any(
+                        not isinstance(service_account.get(field), str)
+                        or not service_account[field].strip()
+                        for field in required_fields
+                    ):
+                        issues.append("FIREBASE_SERVICE_ACCOUNT_JSON_INVALID")
+                    credential_project = service_account.get("project_id")
+                    if (
+                        isinstance(credential_project, str)
+                        and credential_project.strip()
+                        and self.firebase_project_id.strip()
+                        and credential_project.strip()
+                        != self.firebase_project_id.strip()
+                    ):
+                        issues.append("FIREBASE_SERVICE_ACCOUNT_PROJECT_MISMATCH")
+        if not 300 <= self.firebase_session_max_age_seconds <= 60 * 60 * 24 * 14:
+            issues.append("FIREBASE_SESSION_MAX_AGE_INVALID")
+        if not 0 < self.firebase_recent_auth_seconds <= 60 * 60:
+            issues.append("FIREBASE_RECENT_AUTH_WINDOW_INVALID")
+        cookie_names = {
+            self.identity_cookie_name.strip(),
+            self.firebase_session_cookie_name.strip(),
+            self.firebase_csrf_cookie_name.strip(),
+        }
+        if "" in cookie_names or len(cookie_names) != 3:
+            issues.append("FIREBASE_COOKIE_NAMES_INVALID")
         return issues
 
     @property

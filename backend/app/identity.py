@@ -4,10 +4,24 @@ import base64
 import hashlib
 import hmac
 import uuid
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, Response
 
 from app.config import settings
+
+
+ANONYMOUS_IDENTITY_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
+
+
+@dataclass(frozen=True)
+class IdentityPrincipal:
+    user_key: str
+    mode: Literal["guest", "firebase"]
+    guest_user_key: str | None = None
+    firebase_uid: str | None = None
+    claims: dict[str, Any] = field(default_factory=dict)
 
 
 def _signature(identity: str) -> str:
@@ -38,8 +52,61 @@ def verify_identity(token: str | None) -> str | None:
     return identity
 
 
+def set_identity_cookie(response: Response, token: str) -> None:
+    response.set_cookie(
+        key=settings.identity_cookie_name,
+        value=token,
+        httponly=True,
+        secure=settings.secure_identity_cookie,
+        samesite="lax",
+        max_age=ANONYMOUS_IDENTITY_MAX_AGE_SECONDS,
+        path="/",
+    )
+
+
+def clear_identity_cookie(response: Response) -> None:
+    response.delete_cookie(
+        key=settings.identity_cookie_name,
+        httponly=True,
+        secure=settings.secure_identity_cookie,
+        samesite="lax",
+        path="/",
+    )
+
+
+def current_principal(request: Request) -> IdentityPrincipal:
+    verification_failure = getattr(
+        request.state, "firebase_auth_verification_failure", None
+    )
+    if verification_failure == "invalid":
+        raise HTTPException(
+            status_code=401,
+            detail="Firebase session is invalid or expired",
+        )
+    if verification_failure == "unavailable":
+        raise HTTPException(
+            status_code=503,
+            detail="Firebase authentication is temporarily unavailable",
+        )
+    principal = getattr(request.state, "principal", None)
+    if not isinstance(principal, IdentityPrincipal):
+        raise HTTPException(status_code=500, detail="Identity is unavailable")
+    return principal
+
+
+def provisional_principal(request: Request) -> IdentityPrincipal:
+    """Return middleware identity without accepting it for owned operations.
+
+    Session exchange and logout need to recover from an invalid or temporarily
+    unverifiable Firebase cookie. Callers using this helper must not authorize
+    access with the returned guest fallback while a verification failure is set.
+    """
+
+    principal = getattr(request.state, "principal", None)
+    if not isinstance(principal, IdentityPrincipal):
+        raise HTTPException(status_code=500, detail="Identity is unavailable")
+    return principal
+
+
 def current_user_key(request: Request) -> str:
-    identity = getattr(request.state, "user_key", None)
-    if not identity:
-        raise HTTPException(status_code=500, detail="Anonymous identity is unavailable")
-    return str(identity)
+    return current_principal(request).user_key

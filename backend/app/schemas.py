@@ -18,6 +18,38 @@ class ApiModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CsrfResponse(BaseModel):
+    csrf_token: str
+
+
+class FirebaseSessionCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id_token: str = Field(min_length=1, max_length=20_000)
+    csrf_token: str = Field(min_length=16, max_length=512)
+
+
+class FirebaseLogout(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    csrf_token: str = Field(min_length=16, max_length=512)
+
+
+class AuthUser(BaseModel):
+    uid: str
+    display_name: str | None = None
+    email: str | None = None
+    photo_url: str | None = None
+    email_verified: bool = False
+
+
+class AuthStatus(BaseModel):
+    authenticated: bool
+    mode: Literal["guest", "firebase"]
+    user_key: str
+    user: AuthUser | None = None
+
+
 class TopicSummary(ApiModel):
     id: int
     subject_id: int
@@ -368,3 +400,5 @@ class HealthResponse(BaseModel):
     database: str
     configuration: str = "ok"
     configuration_issues: list[str] = Field(default_factory=list)
+    authentication: str = "guest_only"
+    authentication_issues: list[str] = Field(default_factory=list)
