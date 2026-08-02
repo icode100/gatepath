@@ -126,6 +126,7 @@ must be marked **Sensitive** in Vercel:
 | `FIREBASE_RECENT_AUTH_SECONDS` | `300` | Requires sign-in within five minutes before exchange |
 | `FIREBASE_CHECK_REVOKED` | `false` | Avoids a remote revocation lookup on every authenticated API call |
 | `USER_STATE_BACKEND` | `firestore` | Uses Firestore for mutable learner state; `postgres` is the default and rollback value |
+| `USER_STATE_MAINTENANCE` | `false` | Blocks learner-state access during the brief migration window |
 | `FIRESTORE_DATABASE_ID` | `(default)` | Firestore database selected by the backend |
 | `FIRESTORE_COLLECTION_PREFIX` | `gatepath` | Prefix for server-owned learner-state collections |
 
@@ -214,6 +215,19 @@ remains a separate required dependency in every user-state mode.
    Review the dry-run counts before applying and require verification to pass.
    Never add this command to Vercel's build command, startup path, or a
    serverless cold start.
+
+   When the production credentials exist only as Vercel Sensitive variables,
+   use the checked-in isolated maintenance service. While
+   `USER_STATE_BACKEND=postgres`, set `USER_STATE_MAINTENANCE=true`,
+   `USER_STATE_MIGRATION_ENABLED=true`, and a one-time random
+   `USER_STATE_MIGRATION_SECRET` of at least 32 bytes, then redeploy. Visit
+   `/internal/maintenance/user-state-migration` and run `dry-run`, `apply`, and
+   `verify-only` in order. Apply requires both the fixed confirmation phrase
+   shown on the page and the exact SHA-256 source digest returned by dry-run.
+   The endpoint holds a PostgreSQL transaction advisory lock and returns only
+   sanitized counts. After verification, disable both maintenance flags,
+   remove the one-time secret, and redeploy; the maintenance service then
+   returns `404`.
 5. Set Production `USER_STATE_BACKEND=firestore`, keep
    `FIRESTORE_DATABASE_ID=(default)` and
    `FIRESTORE_COLLECTION_PREFIX=gatepath`, then redeploy the latest `main`

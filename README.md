@@ -176,6 +176,7 @@ only to environments where account sign-in should work; set
 | `DATABASE_URL` | Neon pooled runtime URL |
 | `DATABASE_URL_UNPOOLED` | Neon direct URL used by the bootstrap command |
 | `USER_STATE_BACKEND` | `firestore` in Production; `postgres` is the safe default and rollback value |
+| `USER_STATE_MAINTENANCE` | `false`; set `true` only for the brief learner-state migration window |
 | `FIRESTORE_DATABASE_ID` | `(default)` |
 | `FIRESTORE_COLLECTION_PREFIX` | `gatepath` |
 | `ENVIRONMENT` | `production` |
@@ -265,6 +266,17 @@ brief maintenance window so new attempts cannot arrive between copy and
 verification. After verification succeeds, set the Production Vercel value to
 `USER_STATE_BACKEND=firestore` and redeploy. The migration does not drop or
 rewrite legacy Neon rows.
+
+If the production credentials are stored only as non-readable Vercel
+Sensitive variables, use the isolated maintenance service instead of copying
+them out of Vercel. Keep `USER_STATE_BACKEND=postgres`, set
+`USER_STATE_MAINTENANCE=true`, `USER_STATE_MIGRATION_ENABLED=true`, and a
+one-time random `USER_STATE_MIGRATION_SECRET`, then redeploy. Open
+`/internal/maintenance/user-state-migration`, run `dry-run`, copy the returned
+source digest into `apply`, enter the displayed confirmation phrase, and finish
+with `verify-only`. Immediately after verification, switch to Firestore,
+disable maintenance and the migration service, remove the one-time secret, and
+redeploy.
 
 For a rollback, set `USER_STATE_BACKEND=postgres` and redeploy. This restores
 the pre-cutover PostgreSQL view while leaving Firestore untouched. Attempts

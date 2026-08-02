@@ -186,7 +186,14 @@ async def health(response: Response) -> HealthResponse:
     response.headers["Cache-Control"] = "no-store"
     configuration_issues = settings.hosted_configuration_issues
     firebase_issues = settings.firebase_configuration_issues
-    user_state_issues = settings.user_state_configuration_issues
+    user_state_issues = list(
+        dict.fromkeys(
+            [
+                *settings.user_state_configuration_issues,
+                *settings.user_state_migration_configuration_issues,
+            ]
+        )
+    )
     authentication_status = (
         "guest_only"
         if not settings.firebase_auth_enabled
@@ -218,7 +225,10 @@ async def health(response: Response) -> HealthResponse:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 
     user_state_status = "postgres"
-    if settings.user_state_backend == "firestore":
+    if settings.user_state_maintenance:
+        user_state_status = "maintenance"
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    elif settings.user_state_backend == "firestore":
         if user_state_issues:
             user_state_status = "invalid"
         else:

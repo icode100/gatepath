@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
+import inspect
+import json
 import sys
 from collections import defaultdict
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
@@ -71,6 +75,36 @@ class SourceSnapshot:
     def response_count(self) -> int:
         return sum(len(attempt.responses) for attempt in self.attempts)
 
+    @property
+    def digest(self) -> str:
+        """Return a stable review token for this exact Postgres snapshot."""
+
+        payload = [
+            {
+                "session": session_to_document(record.session),
+                "attempt": (
+                    attempt_to_document(record.attempt)
+                    if record.attempt is not None
+                    else None
+                ),
+            }
+            for record in self.records
+        ]
+
+        def json_default(value: Any) -> str:
+            if isinstance(value, datetime):
+                return value.isoformat()
+            raise TypeError(f"Unsupported digest value: {type(value).__name__}")
+
+        canonical = json.dumps(
+            payload,
+            default=json_default,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return hashlib.sha256(canonical).hexdigest()
+
 
 @dataclass(frozen=True, slots=True)
 class MigrationPlan:
@@ -88,6 +122,36 @@ class ApplySummary:
     created_sessions: int = 0
     submitted_attempts: int = 0
     rebuilt_progress: int = 0
+
+
+@dataclass(frozen=True, slots=True)
+class SourceSummary:
+    sessions: int
+    attempts: int
+    responses: int
+    owners: int
+
+
+@dataclass(frozen=True, slots=True)
+class MigrationReport:
+    mode: MigrationMode
+    source: SourceSummary
+    source_digest: str
+    plan: MigrationPlan | None = None
+    applied: ApplySummary | None = None
+    verified: bool = False
+
+    def public_dict(self) -> dict[str, Any]:
+        """Serialize only safe counts and the reviewed snapshot digest."""
+
+        return {
+            "mode": self.mode,
+            "source": asdict(self.source),
+            "source_digest": self.source_digest,
+            "plan": asdict(self.plan) if self.plan is not None else None,
+            "applied": asdict(self.applied) if self.applied is not None else None,
+            "verified": self.verified,
+        }
 
 
 def _value(value: Any) -> str:
@@ -213,8 +277,10 @@ def _source_record(session: PracticeSession) -> SourceRecord:
     return SourceRecord(session=study_session, attempt=study_attempt)
 
 
-async def load_source_snapshot() -> SourceSnapshot:
-    async with AsyncSessionFactory() as database:
+async def load_source_snapshot(
+    session_factory: Any = AsyncSessionFactory,
+) -> SourceSnapshot:
+    async with session_factory() as database:
         sessions = list(
             (
                 await database.scalars(
@@ -251,6 +317,15 @@ class FirestoreMigrationStore:
         # The repository owns and caches the Admin SDK client. Reusing that
         # client keeps this one-shot script on the exact production database.
         self._client = await self.repository._get_client()  # noqa: SLF001
+
+    async def close(self) -> None:
+        client = self._client
+        self._client = None
+        if client is None:
+            return
+        result = client.close()
+        if inspect.isawaitable(result):
+            await result
 
     @property
     def client(self) -> Any:
@@ -520,52 +595,122 @@ def _validate_configuration() -> None:
         )
 
 
-async def migrate(mode: MigrationMode) -> None:
-    _validate_configuration()
-    store = FirestoreMigrationStore()
-    await store.connect()
-    source = await load_source_snapshot()
-    _print_source(source)
+async def execute_migration(
+    mode: MigrationMode,
+    *,
+    expected_source_digest: str | None = None,
+    session_factory: Any = AsyncSessionFactory,
+    store: Any | None = None,
+) -> MigrationReport:
+    """Execute an idempotent migration and return a provider-safe report."""
 
-    if mode == "verify-only":
-        issues = await verification_issues(source, store)
+    _validate_configuration()
+    migration_store = store or FirestoreMigrationStore()
+    owns_store = store is None
+    try:
+        connect = getattr(migration_store, "connect", None)
+        if connect is not None:
+            await connect()
+        source = await load_source_snapshot(session_factory)
+        summary = SourceSummary(
+            sessions=len(source.records),
+            attempts=len(source.attempts),
+            responses=source.response_count,
+            owners=len(source.owners),
+        )
+        source_digest = source.digest
+
+        if mode == "apply" and expected_source_digest is not None:
+            if expected_source_digest.strip().lower() != source_digest:
+                raise MigrationError(
+                    "Legacy Postgres learner state changed after the reviewed dry run"
+                )
+
+        if mode == "verify-only":
+            issues = await verification_issues(source, migration_store)
+            if issues:
+                preview = ", ".join(issues[:10])
+                remainder = len(issues) - min(len(issues), 10)
+                suffix = f" (and {remainder} more)" if remainder else ""
+                raise MigrationError(f"Verification failed: {preview}{suffix}")
+            return MigrationReport(
+                mode=mode,
+                source=summary,
+                source_digest=source_digest,
+                verified=True,
+            )
+
+        plan = await build_plan(source, migration_store)
+        if mode == "dry-run":
+            return MigrationReport(
+                mode=mode,
+                source=summary,
+                source_digest=source_digest,
+                plan=plan,
+            )
+
+        applied = await apply_migration(source, migration_store)
+        refreshed_source = await load_source_snapshot(session_factory)
+        if refreshed_source != source:
+            raise MigrationError(
+                "Legacy Postgres learner state changed during migration. "
+                "Keep the maintenance window active and rerun --apply."
+            )
+        issues = await verification_issues(refreshed_source, migration_store)
         if issues:
             preview = ", ".join(issues[:10])
             remainder = len(issues) - min(len(issues), 10)
             suffix = f" (and {remainder} more)" if remainder else ""
-            raise MigrationError(f"Verification failed: {preview}{suffix}")
+            raise MigrationError(f"Post-apply verification failed: {preview}{suffix}")
+        return MigrationReport(
+            mode=mode,
+            source=summary,
+            source_digest=source_digest,
+            plan=plan,
+            applied=applied,
+            verified=True,
+        )
+    finally:
+        if owns_store:
+            close = getattr(migration_store, "close", None)
+            if close is not None:
+                await close()
+
+
+def _print_report(report: MigrationReport) -> None:
+    source = report.source
+    print(
+        "Legacy Postgres source: "
+        f"{source.sessions} sessions, "
+        f"{source.attempts} attempts, "
+        f"{source.responses} responses, "
+        f"{source.owners} owners."
+    )
+    print(f"Reviewed source digest: {report.source_digest}")
+    if report.plan is not None:
+        _print_plan(report.plan)
+    if report.mode == "dry-run":
+        print("Dry run complete. No Firestore or Postgres records were written.")
+    elif report.mode == "apply":
+        applied = report.applied or ApplySummary()
+        print(
+            "Migration applied: "
+            f"{applied.created_sessions} sessions created, "
+            f"{applied.submitted_attempts} attempts committed, "
+            f"{applied.rebuilt_progress} progress projections rebuilt."
+        )
+        print("Verification passed. Legacy Postgres records were not modified.")
+    else:
         print(
             "Verification passed. Firestore contains the complete legacy "
             "source and progress is current."
         )
-        return
 
-    plan = await build_plan(source, store)
-    _print_plan(plan)
-    if mode == "dry-run":
-        print("Dry run complete. No Firestore or Postgres records were written.")
-        return
 
-    applied = await apply_migration(source, store)
-    refreshed_source = await load_source_snapshot()
-    if refreshed_source != source:
-        raise MigrationError(
-            "Legacy Postgres learner state changed during migration. "
-            "Keep the maintenance window active and rerun --apply."
-        )
-    issues = await verification_issues(refreshed_source, store)
-    if issues:
-        preview = ", ".join(issues[:10])
-        remainder = len(issues) - min(len(issues), 10)
-        suffix = f" (and {remainder} more)" if remainder else ""
-        raise MigrationError(f"Post-apply verification failed: {preview}{suffix}")
-    print(
-        "Migration applied: "
-        f"{applied.created_sessions} sessions created, "
-        f"{applied.submitted_attempts} attempts committed, "
-        f"{applied.rebuilt_progress} progress projections rebuilt."
-    )
-    print("Verification passed. Legacy Postgres records were not modified.")
+async def migrate(mode: MigrationMode) -> MigrationReport:
+    report = await execute_migration(mode)
+    _print_report(report)
+    return report
 
 
 def parse_args() -> argparse.Namespace:

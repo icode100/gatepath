@@ -11,6 +11,8 @@ from app.user_state.repository import UserStateRepository, UserStateUnavailable
 def get_user_state_repository() -> UserStateRepository | None:
     """Return Firestore state storage, or None while legacy Postgres is selected."""
 
+    if settings.user_state_maintenance:
+        raise UserStateUnavailable("Learner state is in a maintenance window")
     if settings.user_state_backend == "postgres":
         return None
     if settings.user_state_configuration_issues:
