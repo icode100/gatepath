@@ -663,7 +663,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
       progress: total ? Math.min(100, Math.round((attempted / total) * 100)) : 0,
       mastery:
         remote.accuracy == null
-          ? fallback.mastery
+          ? 0
           : Math.round(Number(remote.accuracy)),
       topics,
     };
@@ -933,7 +933,7 @@ export default function Home() {
   );
   const [analyticsSource, setAnalyticsSource] =
     useState<"live" | "local">("local");
-  const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
+  const [learnerStateRefreshKey, setLearnerStateRefreshKey] = useState(0);
   const [libraryTab, setLibraryTab] = useState<LibraryTab>("full");
   const [catalogSubjectId, setCatalogSubjectId] = useState(
     "computer-organization",
@@ -987,6 +987,11 @@ export default function Home() {
   const submitRunnerRef = useRef<(() => Promise<void>) | null>(null);
   const submitExamRef =
     useRef<((skipConfirmation?: boolean) => Promise<void>) | null>(null);
+  const roadmapSubjectsRef = useRef(roadmapSubjects);
+
+  useEffect(() => {
+    roadmapSubjectsRef.current = roadmapSubjects;
+  }, [roadmapSubjects]);
 
   const selectedSubject = useMemo(
     () =>
@@ -1056,7 +1061,7 @@ export default function Home() {
       controller.abort();
       window.clearTimeout(timeout);
     };
-  }, []);
+  }, [learnerStateRefreshKey]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -1106,12 +1111,12 @@ export default function Home() {
         return response.json();
       })
       .then((payload) => {
-        setAnalytics(mergeAnalytics(payload, roadmapSubjects));
+        setAnalytics(mergeAnalytics(payload, roadmapSubjectsRef.current));
         setAnalyticsSource("live");
         setApiState("online");
       })
       .catch(() => {
-        setAnalytics(buildLocalAnalytics(roadmapSubjects));
+        setAnalytics(buildLocalAnalytics(roadmapSubjectsRef.current));
         setAnalyticsSource("local");
       })
       .finally(() => window.clearTimeout(timeout));
@@ -1119,7 +1124,7 @@ export default function Home() {
       controller.abort();
       window.clearTimeout(timeout);
     };
-  }, [analyticsRefreshKey, roadmapSubjects]);
+  }, [learnerStateRefreshKey]);
 
   useEffect(() => {
     if (screen !== "library" || libraryTab !== "bank") return;
@@ -1527,7 +1532,7 @@ export default function Home() {
       saved_to_profile: recordedAttempt,
     });
     if (recordedAttempt) {
-      setAnalyticsRefreshKey((current) => current + 1);
+      setLearnerStateRefreshKey((current) => current + 1);
     }
     setSubmitBusy(false);
   };
@@ -1739,7 +1744,7 @@ export default function Home() {
           timed_out: Boolean(result.timedOut),
           saved_to_profile: true,
         });
-        setAnalyticsRefreshKey((current) => current + 1);
+        setLearnerStateRefreshKey((current) => current + 1);
       } catch {
         setApiState("offline");
         const now = Date.now();
