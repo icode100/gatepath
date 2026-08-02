@@ -124,12 +124,13 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     title: "Boolean Algebra",
     summary:
       "Boolean algebra turns logical conditions into expressions that can be analyzed, minimized, and implemented with gates. GATE problems reward precise use of duality, complements, canonical forms, and Karnaugh-map adjacency rather than lengthy expansion by trial and error.",
-    estimatedMinutes: 50,
+    estimatedMinutes: 60,
     prerequisites: ["Binary values", "Elementary set logic"],
     objectives: [
       "Apply Boolean identities and De Morgan laws",
       "Convert between truth tables, minterms, maxterms, SOP, and POS",
       "Minimize small functions algebraically and with Karnaugh maps",
+      "Apply the Quine-McCluskey tabular method and select essential prime implicants",
       "Recognize equivalent gate-level realizations",
     ],
     concepts: [
@@ -185,6 +186,25 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
             "The listed assignments are 001,011,101,111. In every one, C=1 while A and B take all possibilities. The four cells form one group of four, eliminating A and B. Therefore the minimal function is simply F=C.",
         },
       },
+      {
+        title: "Quine-McCluskey tabular minimization",
+        explanation:
+          "The Quine-McCluskey method performs the same adjacency-based simplification as a Karnaugh map in a systematic table. Write each required minterm in fixed-width binary, group terms by their number of ones, and compare only adjacent groups. Two terms combine when they differ in exactly one fixed bit and have dashes in identical positions; replace that differing bit by a dash and mark both parents as combined. Deduplicate the new terms and repeat until no further combination is possible. Every uncombined term is a prime implicant. A prime-implicant chart then shows which required minterms each implicant covers, so essential prime implicants and any remaining minimum cover can be selected. Don't-cares may help form implicants but need not be covered in the final chart.",
+        keyIdeas: [
+          "Group binary minterms by one-count and compare adjacent groups",
+          "Combine only one-bit-different terms with matching dash positions, then repeat",
+          "Use the prime-implicant chart to select essentials and cover every required minterm",
+          "Allow don't-cares during combination but do not require their final coverage",
+        ],
+        examFocus:
+          "For a tabular-minimization question, keep each term's covered-minterm set beside its dash pattern. That record prevents invalid combinations and makes the prime-implicant chart, essential-column test, and minimum-cover choice much faster.",
+        example: {
+          prompt:
+            "Use tabular minimization for F(A,B,C)=Sigma m(1,2,3,5,7).",
+          walkthrough:
+            "Start with 001, 010, 011, 101, and 111, grouped by one-count. First-round valid combinations include 001 with 011 to give 0-1, 001 with 101 to give -01, 010 with 011 to give 01-, 011 with 111 to give -11, and 101 with 111 to give 1-1. In the next round, 0-1 combines with 1-1, and -01 combines with -11; both routes produce --1, representing C. The remaining uncombined 01- represents A'B. In the prime-implicant chart, minterm 2 is covered only by A'B, while minterms 1,3,5,7 are covered by C. Therefore F=C+A'B.",
+        },
+      },
     ],
     formulae: [
       {
@@ -201,6 +221,13 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
         label: "Consensus",
         expression: "XY + X'Z + YZ = XY + X'Z",
         useWhen: "Removing a term implied by two complementary-variable terms",
+      },
+      {
+        label: "Quine-McCluskey procedure",
+        expression:
+          "group by one-count -> combine one-bit differences -> repeat -> build prime-implicant chart -> select essential minimum cover",
+        useWhen:
+          "Minimizing an SOP systematically, especially when a Karnaugh map becomes crowded or the question explicitly requests the tabular method",
       },
     ],
     checkpoints: [
@@ -228,6 +255,12 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
         question: "Why is X XOR X always zero?",
         answer:
           "XOR is one only when its inputs differ. The two copies of X always have equal values, so inequality never occurs and the result is zero.",
+      },
+      {
+        question:
+          "In the tabular minimization of Sigma m(1,2,3,5,7), why must A'B appear in the minimum SOP?",
+        answer:
+          "Minterm 2 has binary pattern 010 and is not covered by the prime implicant C, because C=0 there. The prime implicant 01-, representing A'B, is the only prime implicant that covers minterm 2, so it is essential. Together with C it gives the minimum cover F=C+A'B.",
       },
     ],
   },
@@ -586,13 +619,13 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     title: "Linear Algebra",
     summary:
       "Linear algebra for GATE centers on matrices as transformations and systems of equations. The important habits are tracking legal row operations, interpreting rank and determinants, recognizing eigen-information, and understanding why triangular factorization simplifies repeated solution work.",
-    estimatedMinutes: 55,
+    estimatedMinutes: 65,
     prerequisites: ["Simultaneous linear equations", "Polynomial algebra"],
     objectives: [
       "Determine consistency and solution count using ranks",
       "Compute determinants efficiently and interpret singularity",
       "Find and reason about eigenvalues and eigenvectors",
-      "Use triangular systems and LU decomposition correctly",
+      "Construct Doolittle LU factors from elimination multipliers and solve by substitution",
     ],
     concepts: [
       {
@@ -632,13 +665,13 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
         },
       },
       {
-        title: "Eigenvalues, eigenvectors, and LU factorization",
+        title: "Eigenvalues and eigenvectors",
         explanation:
-          "An eigenvector keeps its direction under a linear transformation: Av=lambda v for a nonzero v. Eigenvalues are roots of det(A-lambda I)=0. Their sum equals the trace and their product equals the determinant when algebraic multiplicity is counted. Distinct eigenvalues have linearly independent eigenvectors, but repeated eigenvalues do not guarantee diagonalizability. LU decomposition writes A as a lower-triangular matrix times an upper-triangular matrix, turning Ax=b into two inexpensive triangular solves and becoming especially useful for several right-hand sides.",
+          "An eigenvector keeps its direction under a linear transformation: Av=lambda v for a nonzero v. Eigenvalues are roots of det(A-lambda I)=0, and an eigenvector for a chosen eigenvalue lies in the null space of A-lambda I. Their sum equals the trace and their product equals the determinant when algebraic multiplicity is counted. Distinct eigenvalues have linearly independent eigenvectors, but repeated eigenvalues do not by themselves guarantee diagonalizability; the matrix must supply enough independent eigenvectors to form a basis.",
         keyIdeas: [
           "Eigenvalues solve the characteristic equation",
           "Trace and determinant give eigenvalue sum and product",
-          "LU reduces a solve to forward and backward substitution",
+          "Distinct eigenvalues produce linearly independent eigenvectors",
         ],
         examFocus:
           "Exploit triangular matrices, trace, determinant, and known eigenvectors before expanding a characteristic polynomial; GATE rewards structural shortcuts.",
@@ -647,6 +680,25 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
             "A 2x2 matrix has trace 7 and determinant 10. Determine its eigenvalues and whether they must be distinct.",
           walkthrough:
             "The characteristic polynomial is lambda^2-7lambda+10. Factoring gives (lambda-5)(lambda-2), so the eigenvalues are 5 and 2. They are distinct, which guarantees two linearly independent eigenvectors and hence diagonalizability for this 2x2 matrix.",
+        },
+      },
+      {
+        title: "LU factorization from elimination multipliers",
+        explanation:
+          "Doolittle factorization records ordinary Gaussian elimination instead of discarding its multipliers. Begin with U as a working copy of A and L as an identity matrix. At pivot column k, compute each multiplier m_ik=u_ik/u_kk, store it as l_ik, and replace row i of U by row i minus m_ik times pivot row k. When elimination finishes, U is upper triangular and the stored multipliers form a unit-diagonal lower-triangular L satisfying A=LU. To solve Ax=b, first use forward substitution on Ly=b, then backward substitution on Ux=y. If a required pivot is zero, a row permutation may be necessary, leading to PA=LU rather than the unpivoted form.",
+        keyIdeas: [
+          "Store each Gaussian-elimination multiplier below the diagonal of L",
+          "The row-reduced working matrix becomes U while L keeps a unit diagonal",
+          "Solve Ly=b forward, then Ux=y backward",
+          "A zero pivot may require a permutation and the form PA=LU",
+        ],
+        examFocus:
+          "GATE commonly gives a small matrix that permits factorization without pivoting. Reuse the exact elimination multipliers in L, preserve their signs, and verify one entry of LU before starting the two triangular solves.",
+        example: {
+          prompt:
+            "Factor A=[[2,1,1],[4,-6,0],[-2,7,2]] as A=LU and solve Ax=[7,-8,18]^T.",
+          walkthrough:
+            "Use pivot 2: m21=4/2=2 and m31=-2/2=-1. The new U rows are [0,-8,-2] and [0,8,3]. At the second pivot, m32=8/(-8)=-1, producing final row [0,0,1]. Thus L=[[1,0,0],[2,1,0],[-1,-1,1]] and U=[[2,1,1],[0,-8,-2],[0,0,1]]. Forward substitution in Ly=b gives y=[7,-22,3]^T. Backward substitution in Ux=y gives x3=3, x2=2, and x1=1. Multiplying A by [1,2,3]^T recovers [7,-8,18]^T.",
         },
       },
     ],
@@ -665,6 +717,18 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
         label: "Eigenvalue invariants",
         expression: "sum(lambda_i)=trace(A), product(lambda_i)=det(A)",
         useWhen: "Checking or inferring eigenvalues without full expansion",
+      },
+      {
+        label: "Doolittle elimination step",
+        expression: "m_ik=u_ik/u_kk; l_ik=m_ik; R_i(U) <- R_i(U)-m_ik R_k(U); A=LU",
+        useWhen:
+          "Constructing a unit-diagonal lower factor L and upper factor U without pivoting",
+      },
+      {
+        label: "Solve with LU",
+        expression: "Ly=b by forward substitution, then Ux=y by backward substitution",
+        useWhen:
+          "Solving Ax=b after factorization, especially for several right-hand sides",
       },
     ],
     checkpoints: [
@@ -692,6 +756,12 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
         question: "Why is LU useful for multiple right-hand sides?",
         answer:
           "The expensive factorization of A is performed once. Each new b then requires only forward substitution in Ly=b and backward substitution in Ux=y.",
+      },
+      {
+        question:
+          "For A=[[2,1],[6,4]], what multiplier is stored in L, and what are the Doolittle factors?",
+        answer:
+          "The first-pivot multiplier is m21=6/2=3. Subtracting three times row 1 from row 2 leaves [0,1], so L=[[1,0],[3,1]] and U=[[2,1],[0,1]]. Their product is [[2,1],[6,4]], confirming A=LU.",
       },
     ],
   },

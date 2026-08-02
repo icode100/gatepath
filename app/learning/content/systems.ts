@@ -1,8 +1,99 @@
 import type { LearningTopic } from "../types";
 
+const summaryExtension = (topic: LearningTopic): string => {
+  switch (topic.subjectCode) {
+    case "TOC":
+      return `Study ${topic.title} by moving between a formal definition and a concrete language witness: build one valid recognizer or derivation, test a near-miss, and state the exact closure, acceptance, or decidability claim before drawing a conclusion.`;
+    case "CD":
+      return `For ${topic.title}, follow a small source fragment through the relevant compiler representation, record the invariant expected at the phase boundary, and connect each table, tree, graph, environment, or instruction back to the program meaning it must preserve.`;
+    case "OS":
+      return `Learn ${topic.title} through explicit machine-state snapshots: identify the active process or thread, owned and requested resources, triggering event, and measurable cost, then compare the state before and after the operating-system action.`;
+    case "DBMS":
+      return `Approach ${topic.title} with a tiny legal database instance or schedule, apply the rule step by step, and then alter one tuple, dependency, key value, or operation order to expose exactly when the claimed property stops holding.`;
+    case "CN":
+      return `For ${topic.title}, place each action at its correct layer, annotate a packet or timing line with headers, addresses, units, and state, and verify both the path through the network and the endpoint behavior at boundary conditions.`;
+    case "GA":
+      return `Practise ${topic.title} by externalizing the evidence in a sentence map, constraint table, labelled diagram, or unit-aware calculation, eliminating choices against that representation, and finishing with an independent grammar, magnitude, logic, or symmetry check.`;
+    default:
+      return `Develop ${topic.title} from its governing model, work a representative case, and test the result against the assumptions and boundary conditions stated in the official syllabus.`;
+  }
+};
+
+const conceptFocus = (subjectCode: string, title: string): string => {
+  if (subjectCode === "TOC") {
+    if (/DFA|NFA|Regular expressions|state/i.test(title)) return "a transition table, a complete string trace, and a distinguishing suffix";
+    if (/Production|Parse|Grammar|derivation/i.test(title)) return "a full derivation alongside the corresponding parse structure";
+    if (/PDA|stack|CFG-PDA/i.test(title)) return "an instantaneous configuration containing state, unread input, and stack contents";
+    if (/Pumping/i.test(title)) return "the pumping quantifiers, an adversarial decomposition, and a witness that defeats every legal split";
+    if (/Closure|decision/i.test(title)) return "the direction of the closure construction and a counterexample to any unsupported converse";
+    return "a machine configuration, halting outcome, language witness, and correctly directed reduction";
+  }
+
+  if (subjectCode === "CD") {
+    if (/Token|Automata|lexeme|Disambiguation/i.test(title)) return "the source characters, maximal token boundary, recognizer state, and emitted token stream";
+    if (/FIRST|FOLLOW|parsing|Grammar|LR/i.test(title)) return "the grammar item or parser stack, lookahead symbol, table entry, and resulting parser action";
+    if (/Attribute|semantic|Dependency|attributed/i.test(title)) return "the parse-tree dependencies and the order in which semantic values become available";
+    if (/Activation|links|Storage|parameters/i.test(title)) return "the call sequence, activation-record fields, binding path, and lifetime of each stored value";
+    if (/Three-address|Trees|DAG|Control-flow translation/i.test(title)) return "the source expression, generated intermediate form, evaluation order, and any safely reused value";
+    return "the control-flow graph, predecessor facts, transfer result, and meet value at every affected program point";
+  }
+
+  if (subjectCode === "OS") {
+    if (/kernel|Process-control|I\/O calls/i.test(title)) return "the user/kernel boundary, call arguments, process state, and return or blocking event";
+    if (/Process states|Thread|IPC|threading/i.test(title)) return "a state-transition timeline plus the resources that are private, shared, or transferred";
+    if (/Race|Semaphore|mutex|Monitor|classical/i.test(title)) return "one interleaving, the protected invariant, and the happens-before relation created by synchronization";
+    if (/Necessary conditions|Safe states|Handling/i.test(title)) return "the allocation and request state, wait-for relation, and a concrete completion or deadlock sequence";
+    if (/scheduling|CPU policies|Disk/i.test(title)) return "an arrival-and-service timeline with every waiting, turnaround, response, or seek quantity labelled";
+    if (/Allocation|Page tables|paging|replacement/i.test(title)) return "the virtual address fields, translation path, resident-set change, and memory-access cost";
+    return "the directory or inode lookup path, logical-to-physical block mapping, and metadata or free-space update";
+  }
+
+  if (subjectCode === "DBMS") {
+    if (/Entities|Relationships|Weak/i.test(title)) return "a small ER instance with keys, participation, cardinality, and the exact relational mapping";
+    if (/Relations and algebra|Joins|calculus/i.test(title)) return "a tiny relation instance, tuple lineage through each operator, and one tuple that tests the predicate boundary";
+    if (/Query|Grouping|Subqueries|NULL/i.test(title)) return "the logical SQL processing stages, intermediate rows or groups, and three-valued truth where NULL appears";
+    if (/Domains|Referential|Constraint/i.test(title)) return "the database state before and after one insert, delete, or update that challenges the constraint";
+    if (/Functional|Normal-form|Decomposition/i.test(title)) return "attribute closure, a candidate-key check, and a legal relation instance or join that exposes anomalies";
+    if (/File|tree|Index/i.test(title)) return "the search path, page occupancy, fan-out, and number of disk-page reads or writes";
+    return "the read/write schedule, precedence edges, lock or log actions, and the database state after failure or recovery";
+  }
+
+  if (subjectCode === "CN") {
+    if (/Services|encapsulation|switching|Virtual circuits/i.test(title)) return "an end-to-end packet journey showing encapsulation, forwarding state, and the service exposed at each layer";
+    if (/Framing|Medium|Ethernet/i.test(title)) return "the transmitted bit or frame sequence, error or contention event, and switch or access-control state";
+    if (/Shortest|Distance-vector|Link-state/i.test(title)) return "a weighted topology, one algorithm iteration, and the resulting next-hop entry";
+    if (/CIDR|Fragmentation|NAT|PAT/i.test(title)) return "the packet's address and header fields before and after forwarding, fragmentation, or boundary translation";
+    if (/Ports|TCP|Connection|congestion/i.test(title)) return "a segment timeline with ports, sequence ranges, acknowledgements, windows, timers, and sender state";
+    if (/DNS|HTTP|Email|file transfer/i.test(title)) return "the ordered application exchange, names or status fields, transport connection use, and cache or server state";
+    return "a timing diagram whose propagation, transmission, queueing, processing, bandwidth, and byte/bit units remain explicit";
+  }
+
+  if (/Grammar|Vocabulary|Comprehension/i.test(title)) return "the exact words supplying agreement, reference, contrast, sequence, or passage evidence";
+  if (/Ratio|Counting|Data|statistics|mensuration|probability/i.test(title)) return "a quantity table with its base, denominator, sample space, scale, and physical units";
+  if (/Deduction|Ordering|Analogy|constraint|induction/i.test(title)) return "a symbolic implication, constraint grid, countermodel, or term-by-term pattern test";
+  return "a labelled sketch that preserves adjacency, handedness, fold order, orientation, and any coincident images";
+};
+
+const reasoningExtension = (subjectCode: string, title: string, variant: number): string => {
+  const focus = conceptFocus(subjectCode, title);
+  const label = title.toLowerCase();
+
+  if (variant % 3 === 0) {
+    return `Reason about ${label} using ${focus}. Name the governing invariant before computing, preserve every stated convention, and test the smallest nontrivial or boundary case. A final answer is credible only when the constructed trace or evidence still supports it without importing an unstated assumption.`;
+  }
+  if (variant % 3 === 1) {
+    return `A reliable analysis of ${label} starts with ${focus}. Carry the representation through one complete example, then change a single input condition to see which conclusion changes. This contrast separates a definition from its converse and exposes distractors that are correct only for a convenient special case.`;
+  }
+  return `For ${label}, write down ${focus} before evaluating options. Keep the representation consistent from the initial condition to the claimed outcome, and challenge it with one near-miss or counterexample. Also verify the relevant endpoint, empty case, unit, or tie convention instead of letting an implicit default decide the result.`;
+};
+
 const lesson = (topic: LearningTopic): LearningTopic => ({
   ...topic,
-  summary: `${topic.summary} This lesson stays inside the official GATE 2027 boundary and develops the idea from its definition through original worked reasoning, common traps, and exam-style checkpoints.`,
+  summary: `${topic.summary} ${summaryExtension(topic)}`,
+  concepts: topic.concepts.map((entry, index) => ({
+    ...entry,
+    explanation: `${entry.explanation} ${reasoningExtension(topic.subjectCode, entry.title, index)}`,
+  })),
 });
 
 const concept = (
@@ -14,7 +105,7 @@ const concept = (
   walkthrough: string,
 ): LearningTopic["concepts"][number] => ({
   title,
-  explanation: `${explanation} For a GATE question on ${title.toLowerCase()}, first name the mathematical or operational model and write its invariant before calculating. Check the smallest valid case, trace exactly one transition, and reject choices that silently change an assumption. This method is valuable in MCQ, MSQ, and NAT formats because a nearly correct distractor usually fails at a boundary case.`,
+  explanation,
   keyIdeas,
   examFocus,
   example: { prompt, walkthrough },
