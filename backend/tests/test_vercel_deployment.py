@@ -42,10 +42,12 @@ def test_vercel_manifest_exposes_only_application_services() -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
     assert set(manifest["services"]) == {"frontend", "backend"}
-    assert all(
-        rewrite["source"] != "/internal/maintenance/user-state-migration"
+    retired_route = next(
+        rewrite
         for rewrite in manifest["rewrites"]
+        if rewrite["source"] == "/internal/maintenance/user-state-migration"
     )
+    assert retired_route["destination"] == {"service": "backend"}
 
 
 def test_neon_urls_are_normalized_and_unpooled_url_is_preferred() -> None:

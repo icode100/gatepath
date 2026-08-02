@@ -20,6 +20,12 @@
   ],
   "rewrites": [
     {
+      "source": "/internal/maintenance/user-state-migration",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
       "source": "/api/v1/:path*",
       "destination": {
         "service": "backend"
