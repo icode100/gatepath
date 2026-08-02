@@ -27,9 +27,10 @@ The question type mix is deliberately not hard-coded because IIT Madras has not 
 
 ## Included features
 
-- Interactive roadmap for every official CS syllabus section and topic
+- Interactive roadmap for all 11 official CS/GA courses and 64 syllabus chapters
 - Subject workspace with `Revise`, `Practice`, and `Sectional test` actions
-- Topic-specific revision notes with key ideas, formulas, checkpoints, common traps, and at least three worked bank examples
+- Dedicated Learn library with original guided lessons, prerequisites, objectives, formulas or methods, worked examples, and answer-reveal checkpoints
+- Topic-specific revision notes with key ideas, common traps, authoritative IITM/NPTEL references, and at least three worked bank examples
 - Topic-, subject-, type-, difficulty-, and year-filterable question APIs
 - MCQ, MSQ, and NAT practice with explanations and official marking behavior
 - 2,607-question local JSON bank: 2,220 distinct reproducible syllabus-bounded variants plus 387 safely verified PYQs
@@ -375,11 +376,19 @@ cd backend
 pytest
 python scripts/validate_pyq_consolidation.py
 python scripts/validate_question_bank.py
+python scripts/check_learning_originality.py path/to/reference.pdf
 
 cd ..
 npm run typecheck
 npm run build
 ```
+
+The frontend build validates the learning library as a curriculum: all 64
+canonical chapter IDs must be present exactly once, and every chapter must meet
+minimum depth requirements for objectives, concept explanations, examples,
+formula or method cards, and checkpoints. The optional originality audit flags
+long phrase overlap by file and line without printing copyrighted reference
+text.
 
 To validate the deployment definition without starting containers:
 
