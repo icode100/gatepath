@@ -11,6 +11,12 @@ import {
   type QuestionType,
   type Subject,
 } from "./data";
+import {
+  LEARNING_REFERENCES,
+  LEARNING_TOPIC_BY_KEY,
+  LEARNING_TOPICS,
+  type LearningTopic,
+} from "./learning";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
@@ -30,6 +36,228 @@ const clientSlugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
+const LEARNING_SUBJECT_ORDER = [
+  "EM",
+  "DL",
+  "COA",
+  "PDS",
+  "ALG",
+  "TOC",
+  "CD",
+  "OS",
+  "DBMS",
+  "CN",
+  "GA",
+] as const;
+
+const LEARNING_SUBJECT_ID_ALIASES: Record<string, string> = {
+  "computer-organization-and-architecture": "computer-organization",
+  "programming-and-data-structures": "programming-data-structures",
+  "theory-of-computation": "theory-computation",
+};
+
+const canonicalLearningSubjectId = (subjectId: string) =>
+  LEARNING_SUBJECT_ID_ALIASES[subjectId] ?? subjectId;
+
+const normalizedTopicLabel = (value: string) =>
+  clientSlugify(value.replace(/&/g, " and "));
+
+const learningTopicMatchesRoadmapTopic = (
+  learningTopic: LearningTopic,
+  roadmapTopic: Subject["topics"][number],
+) =>
+  learningTopic.topicId === roadmapTopic.id ||
+  normalizedTopicLabel(learningTopic.title) ===
+    normalizedTopicLabel(roadmapTopic.title);
+
+const GENERAL_APTITUDE_FALLBACK_TOPICS: Subject["topics"] = [
+  {
+    id: "verbal-aptitude",
+    title: "Verbal Aptitude",
+    progress: 0,
+    questions: 0,
+    duration: "2h",
+  },
+  {
+    id: "quantitative-aptitude",
+    title: "Quantitative Aptitude",
+    progress: 0,
+    questions: 0,
+    duration: "3h",
+  },
+  {
+    id: "analytical-aptitude",
+    title: "Analytical Aptitude",
+    progress: 0,
+    questions: 0,
+    duration: "2h",
+  },
+  {
+    id: "spatial-aptitude",
+    title: "Spatial Aptitude",
+    progress: 0,
+    questions: 0,
+    duration: "2h",
+  },
+];
+
+function createLearningSubject(
+  code: string,
+  learningTopics: LearningTopic[],
+): Subject {
+  const firstTopic = learningTopics[0];
+  const firstConcept = firstTopic?.concepts[0];
+  const firstFormula = firstTopic?.formulae[0];
+  const topics = learningTopics.length
+    ? learningTopics.map((topic) => ({
+        id: topic.topicId,
+        title: topic.title,
+        progress: 0,
+        questions: 0,
+        duration: `${Math.max(1, Math.round(topic.estimatedMinutes / 60))}h`,
+      }))
+    : GENERAL_APTITUDE_FALLBACK_TOPICS;
+
+  return {
+    id: canonicalLearningSubjectId(
+      firstTopic?.subjectId ?? "general-aptitude",
+    ),
+    code,
+    title: code === "GA" ? "General Aptitude" : code,
+    shortTitle: code === "GA" ? "General Aptitude" : code,
+    description:
+      code === "GA"
+        ? "Verbal, quantitative, analytical and spatial aptitude for the common GATE section."
+        : firstTopic?.summary ?? "Official GATE 2027 syllabus concepts.",
+    progress: 0,
+    mastery: 0,
+    questionCount: 0,
+    estimatedHours: Math.max(
+      1,
+      Math.round(
+        learningTopics.reduce(
+          (total, topic) => total + topic.estimatedMinutes,
+          0,
+        ) / 60,
+      ),
+    ),
+    accent: code === "GA" ? "#b36b42" : "#667085",
+    phase: "Foundations",
+    topics,
+    note: {
+      title: firstTopic?.title ?? "Aptitude through clear structure",
+      summary:
+        firstTopic?.summary ??
+        "Translate each prompt into a small, checkable model before calculating or eliminating options.",
+      intuition:
+        firstConcept?.explanation ??
+        "Name what is given, what is asked, and which constraints must remain true.",
+      formula: firstFormula?.expression ?? "result = valid model + careful check",
+      formulaHint:
+        firstFormula?.useWhen ??
+        "Use estimation, units and boundary cases to verify the result.",
+      exampleTitle:
+        firstConcept?.example.prompt ?? "Turn words into explicit constraints",
+      exampleSteps: [
+        firstConcept?.example.walkthrough ??
+          "Write the conditions, remove impossible cases, and verify the remaining choice.",
+      ],
+      checkpoint: firstTopic?.checkpoints.map((item) => item.question) ?? [
+        "What information is fixed?",
+        "Which conclusion must follow?",
+      ],
+      traps: [
+        "Assuming a statement that the prompt does not guarantee",
+        "Skipping a final unit or boundary check",
+      ],
+    },
+  };
+}
+
+function enrichSubjectWithLearningTopics(subject: Subject): Subject {
+  const learningTopics = LEARNING_TOPICS.filter(
+    (topic) =>
+      topic.subjectCode === subject.code ||
+      canonicalLearningSubjectId(topic.subjectId) === subject.id,
+  );
+  if (!learningTopics.length) return subject;
+
+  const canonicalTopics = learningTopics.map((learningTopic) => {
+    const existing = subject.topics.find((roadmapTopic) =>
+      learningTopicMatchesRoadmapTopic(learningTopic, roadmapTopic),
+    );
+    return {
+      id: learningTopic.topicId,
+      apiId: existing?.apiId,
+      title: learningTopic.title,
+      progress: existing?.progress ?? 0,
+      questions: existing?.questions ?? 0,
+      duration:
+        existing?.duration ??
+        `${Math.max(1, Math.round(learningTopic.estimatedMinutes / 60))}h`,
+    };
+  });
+  return {
+    ...subject,
+    estimatedHours: Math.max(
+      subject.estimatedHours,
+      Math.round(
+        learningTopics.reduce(
+          (total, topic) => total + topic.estimatedMinutes,
+          0,
+        ) / 60,
+      ),
+    ),
+    // The learning catalog is the official 64-chapter roadmap. Older local
+    // fallbacks grouped several chapters together, so retaining unmatched
+    // fallback rows here would create duplicate or out-of-date roadmap nodes.
+    topics: canonicalTopics,
+  };
+}
+
+function ensureLearningRoadmapSubjects(subjects: Subject[]): Subject[] {
+  const enriched = subjects.map(enrichSubjectWithLearningTopics);
+
+  LEARNING_SUBJECT_ORDER.forEach((code) => {
+    if (enriched.some((subject) => subject.code === code)) return;
+    const learningTopics = LEARNING_TOPICS.filter(
+      (topic) => topic.subjectCode === code,
+    );
+    if (learningTopics.length || code === "GA") {
+      enriched.push(createLearningSubject(code, learningTopics));
+    }
+  });
+
+  const order = new Map(
+    LEARNING_SUBJECT_ORDER.map((code, index) => [code, index]),
+  );
+  return enriched.sort(
+    (left, right) =>
+      (order.get(left.code as (typeof LEARNING_SUBJECT_ORDER)[number]) ??
+        Number.MAX_SAFE_INTEGER) -
+      (order.get(right.code as (typeof LEARNING_SUBJECT_ORDER)[number]) ??
+        Number.MAX_SAFE_INTEGER),
+  );
+}
+
+function learningTopicForSelection(
+  subject: Subject,
+  topic: Subject["topics"][number],
+) {
+  return (
+    LEARNING_TOPIC_BY_KEY.get(`${subject.id}:${topic.id}`) ??
+    LEARNING_TOPICS.find(
+      (learningTopic) =>
+        (learningTopic.subjectCode === subject.code ||
+          canonicalLearningSubjectId(learningTopic.subjectId) === subject.id) &&
+        (learningTopic.topicId === topic.id ||
+          normalizedTopicLabel(learningTopic.title) ===
+            normalizedTopicLabel(topic.title)),
+    ) ??
+    null
+  );
+}
+
 const COA_SYLLABUS_TOPICS = [
   "instruction-set-addressing",
   "alu-design",
@@ -39,12 +267,14 @@ const COA_SYLLABUS_TOPICS = [
   "pipelining",
 ] as const;
 
-const EMPTY_ROADMAP_SUBJECTS: Subject[] = localSubjects.map((subject) => ({
-  ...subject,
-  progress: 0,
-  mastery: 0,
-  topics: subject.topics.map((topic) => ({ ...topic, progress: 0 })),
-}));
+const EMPTY_ROADMAP_SUBJECTS: Subject[] = ensureLearningRoadmapSubjects(
+  localSubjects.map((subject) => ({
+    ...subject,
+    progress: 0,
+    mastery: 0,
+    topics: subject.topics.map((topic) => ({ ...topic, progress: 0 })),
+  })),
+);
 
 const SUGGESTED_STUDY_RHYTHM = [
   { day: "M", minutes: 75 },
@@ -58,6 +288,7 @@ const SUGGESTED_STUDY_RHYTHM = [
 
 type Screen =
   | "dashboard"
+  | "learn"
   | "library"
   | "subject"
   | "notes"
@@ -620,9 +851,12 @@ function mergeRoadmap(payload: unknown): Subject[] {
     return EMPTY_ROADMAP_SUBJECTS;
   }
 
-  return EMPTY_ROADMAP_SUBJECTS.map((fallback) => {
+  const mergedSubjects = EMPTY_ROADMAP_SUBJECTS.map((fallback) => {
     const remote = source.subjects?.find(
-      (item) => item.slug === fallback.id || item.code === fallback.code,
+      (item) =>
+        item.slug === fallback.id ||
+        item.slug === apiSubjectSlug(fallback.id) ||
+        item.code === fallback.code,
     );
     if (!remote) return fallback;
     const attempted = remote.attempted_questions ?? 0;
@@ -669,6 +903,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
       topics,
     };
   });
+  return ensureLearningRoadmapSubjects(mergedSubjects);
 }
 
 function mapServerQuestions(payload: unknown): PracticeQuestion[] {
@@ -945,6 +1180,10 @@ export default function Home() {
   const [bankTopicId, setBankTopicId] = useState("all");
   const [bankType, setBankType] = useState<"all" | QuestionType>("all");
   const [bankQuery, setBankQuery] = useState("");
+  const [learnQuery, setLearnQuery] = useState("");
+  const [learnSubjectId, setLearnSubjectId] = useState("all");
+  const [notesReturnScreen, setNotesReturnScreen] =
+    useState<"learn" | "subject">("subject");
   const [progressSubjectId, setProgressSubjectId] = useState("all");
   const [bankQuestions, setBankQuestions] =
     useState<PracticeQuestion[] | null>(null);
@@ -999,6 +1238,73 @@ export default function Home() {
   const selectedTopic =
     selectedSubject.topics.find((item) => item.id === selectedTopicId) ??
     selectedSubject.topics[0];
+  const selectedLearningTopic = useMemo(
+    () => learningTopicForSelection(selectedSubject, selectedTopic),
+    [selectedSubject, selectedTopic],
+  );
+  const learningSubjects = useMemo(
+    () =>
+      LEARNING_SUBJECT_ORDER.flatMap((code) => {
+        const subject = roadmapSubjects.find((item) => item.code === code);
+        return subject ? [subject] : [];
+      }),
+    [roadmapSubjects],
+  );
+  const orderedLearningTopics = useMemo(() => {
+    const subjectOrder = new Map(
+      learningSubjects.map((subject, index) => [subject.code, index]),
+    );
+    const topicOrder = new Map(
+      learningSubjects.flatMap((subject) =>
+        subject.topics.map((topic, index) => [
+          `${subject.code}:${topic.id}`,
+          index,
+        ] as const),
+      ),
+    );
+    return [...LEARNING_TOPICS].sort(
+      (left, right) =>
+        (subjectOrder.get(left.subjectCode) ?? Number.MAX_SAFE_INTEGER) -
+          (subjectOrder.get(right.subjectCode) ?? Number.MAX_SAFE_INTEGER) ||
+        (topicOrder.get(`${left.subjectCode}:${left.topicId}`) ??
+          Number.MAX_SAFE_INTEGER) -
+          (topicOrder.get(`${right.subjectCode}:${right.topicId}`) ??
+            Number.MAX_SAFE_INTEGER),
+    );
+  }, [learningSubjects]);
+  const filteredLearningTopics = useMemo(() => {
+    const selectedLearningSubject =
+      learnSubjectId === "all"
+        ? null
+        : learningSubjects.find((subject) => subject.id === learnSubjectId) ??
+          null;
+    const query = learnQuery.trim().toLowerCase();
+    return orderedLearningTopics.filter((topic) => {
+      if (
+        selectedLearningSubject &&
+        topic.subjectCode !== selectedLearningSubject.code
+      ) {
+        return false;
+      }
+      if (!query) return true;
+      const searchable = [
+        topic.subjectCode,
+        topic.title,
+        topic.summary,
+        ...topic.prerequisites,
+        ...topic.objectives,
+        ...topic.concepts.flatMap((concept) => [
+          concept.title,
+          concept.explanation,
+          ...concept.keyIdeas,
+          concept.examFocus,
+        ]),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return searchable.includes(query);
+    });
+  }, [learnQuery, learnSubjectId, learningSubjects, orderedLearningTopics]);
   const fullTests = useMemo(
     () =>
       testCatalog
@@ -1186,7 +1492,10 @@ export default function Home() {
       setNoteLoading(false);
       return;
     }
+    let active = true;
     const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 5000);
+    setRevisionNote(null);
     setNoteLoading(true);
     fetch(`${API_BASE}/topics/${selectedTopic.apiId}/notes`, {
       credentials: "include",
@@ -1197,13 +1506,23 @@ export default function Home() {
         return response.json();
       })
       .then((payload) => {
+        if (!active) return;
         setRevisionNote(payload as RemoteRevisionNote);
         setApiState("online");
       })
-      .catch(() => setRevisionNote(null))
-      .finally(() => setNoteLoading(false));
-    return () => controller.abort();
-  }, [screen, selectedTopic.apiId]);
+      .catch(() => {
+        if (active) setRevisionNote(null);
+      })
+      .finally(() => {
+        window.clearTimeout(timeout);
+        if (active) setNoteLoading(false);
+      });
+    return () => {
+      active = false;
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [screen, selectedSubject.id, selectedTopic.apiId, selectedTopic.id]);
 
   useEffect(() => {
     if (!examRunning || examDeadlineMs == null) return;
@@ -1880,6 +2199,9 @@ export default function Home() {
       ? "dashboard"
       : screen === "library"
         ? "library"
+      : screen === "learn" ||
+          (screen === "notes" && notesReturnScreen === "learn")
+        ? "learn"
       : screen === "mock" || screen === "mock-setup" || screen === "results"
         ? "mock-setup"
         : screen === "progress"
@@ -1893,6 +2215,8 @@ export default function Home() {
       ? "COA syllabus quiz"
       : screen === "library"
         ? "Test library"
+      : screen === "learn"
+        ? "Learn concepts"
       : screen === "dashboard"
       ? "Study roadmap"
       : screen === "progress"
@@ -1902,6 +2226,29 @@ export default function Home() {
           : screen === "results"
             ? "Mock analysis"
             : selectedSubject.shortTitle;
+
+  const openLearningTopic = (topic: LearningTopic) => {
+    const subject =
+      roadmapSubjects.find(
+        (item) =>
+          item.code === topic.subjectCode ||
+          item.id === canonicalLearningSubjectId(topic.subjectId),
+      ) ?? selectedSubject;
+    const roadmapTopic =
+      subject.topics.find(
+        (item) =>
+          item.id === topic.topicId ||
+          normalizedTopicLabel(item.title) === normalizedTopicLabel(topic.title),
+      ) ?? subject.topics[0];
+    void trackEvent("select_content", {
+      content_type: "learning_topic",
+      item_id: `${topic.subjectCode}:${topic.topicId}`,
+    });
+    setSelectedSubjectId(subject.id);
+    setSelectedTopicId(roadmapTopic.id);
+    setNotesReturnScreen("learn");
+    navigate("notes");
+  };
 
   const openAnalyticsTopic = (
     topic: TopicAnalytics,
@@ -1919,6 +2266,7 @@ export default function Home() {
       void startPractice("practice", subject, subjectTopic.id);
       return;
     }
+    setNotesReturnScreen("subject");
     navigate("notes");
   };
 
@@ -2044,7 +2392,7 @@ export default function Home() {
               <ProgressRing value={cacheProgress} />
             </div>
           <div className="plan-steps">
-              <button onClick={() => { setSelectedSubjectId("computer-organization"); setSelectedTopicId("memory-hierarchy"); navigate("notes"); }}>
+              <button onClick={() => { setSelectedSubjectId("computer-organization"); setSelectedTopicId("memory-hierarchy"); setNotesReturnScreen("subject"); navigate("notes"); }}>
                 <span className="step-status">01</span>
                 <span><strong>Revise mapping</strong><small>12 min · concept</small></span>
                 <span className="step-arrow">↗</span>
@@ -2104,6 +2452,171 @@ export default function Home() {
           <div><span className="callout-label">Exam simulation</span><h2>When you are ready, practise the real rhythm.</h2><p>65 questions · 100 marks · 180 minutes · MCQ, MSQ and NAT</p></div>
           <button className="button light" onClick={() => navigate("mock-setup")}>Open mock centre <span>→</span></button>
         </section>
+      </div>
+    );
+  };
+
+  const renderLearn = () => {
+    const visibleGroups = learningSubjects
+      .map((subject) => ({
+        subject,
+        topics: filteredLearningTopics.filter(
+          (topic) => topic.subjectCode === subject.code,
+        ),
+      }))
+      .filter((group) => group.topics.length > 0);
+    const totalMinutes = LEARNING_TOPICS.reduce(
+      (total, topic) => total + topic.estimatedMinutes,
+      0,
+    );
+
+    return (
+      <div className="page learn-page">
+        <section className="learn-hero">
+          <div>
+            <div className="eyebrow">Syllabus-locked concept library</div>
+            <h1>
+              Learn the idea.
+              <br />
+              <em>Then make it usable.</em>
+            </h1>
+            <p>
+              Follow the GATE 2027 roadmap from foundations to systems. Every
+              chapter includes guided reasoning, examples, recall checks and
+              official references without leaving the syllabus.
+            </p>
+          </div>
+          <div className="learn-summary" aria-label="Learning library summary">
+            <div>
+              <strong>{LEARNING_TOPICS.length}</strong>
+              <span>chapters</span>
+            </div>
+            <div>
+              <strong>{learningSubjects.length}</strong>
+              <span>courses</span>
+            </div>
+            <div>
+              <strong>{Math.max(1, Math.round(totalMinutes / 60))}h</strong>
+              <span>guided review</span>
+            </div>
+            <small>Technical syllabus + General Aptitude</small>
+          </div>
+        </section>
+
+        <section className="learn-controls" aria-label="Filter learning topics">
+          <label className="learn-search">
+            <span>Search concepts</span>
+            <input
+              type="search"
+              value={learnQuery}
+              onChange={(event) => setLearnQuery(event.target.value)}
+              placeholder="e.g. cache, deadlock, Bayes, grammar"
+            />
+          </label>
+          <div className="learn-subject-filter" role="group" aria-label="Course filter">
+            <button
+              type="button"
+              className={learnSubjectId === "all" ? "active" : ""}
+              onClick={() => setLearnSubjectId("all")}
+            >
+              All <span>{LEARNING_TOPICS.length}</span>
+            </button>
+            {learningSubjects.map((subject) => {
+              const topicCount = LEARNING_TOPICS.filter(
+                (topic) => topic.subjectCode === subject.code,
+              ).length;
+              return (
+                <button
+                  type="button"
+                  key={subject.id}
+                  className={learnSubjectId === subject.id ? "active" : ""}
+                  onClick={() => setLearnSubjectId(subject.id)}
+                >
+                  {subject.code} <span>{topicCount}</span>
+                </button>
+              );
+            })}
+          </div>
+          <p className="learn-result-count" aria-live="polite">
+            {filteredLearningTopics.length} chapter
+            {filteredLearningTopics.length === 1 ? "" : "s"} ready to open
+          </p>
+        </section>
+
+        <div className="learn-course-list">
+          {visibleGroups.map(({ subject, topics }) => (
+            <section
+              className="learn-course-section"
+              key={subject.id}
+              style={{ "--subject-accent": subject.accent } as React.CSSProperties}
+            >
+              <header className="learn-course-heading">
+                <div>
+                  <span className="subject-code">{subject.code}</span>
+                  <div>
+                    <h2>{subject.title}</h2>
+                    <p>{subject.description}</p>
+                  </div>
+                </div>
+                <span>
+                  {topics.length} chapter{topics.length === 1 ? "" : "s"}
+                </span>
+              </header>
+              <div className="learn-topic-grid">
+                {topics.map((topic, index) => (
+                  <button
+                    type="button"
+                    className="learn-topic-card"
+                    key={`${topic.subjectCode}:${topic.topicId}`}
+                    onClick={() => openLearningTopic(topic)}
+                  >
+                    <span className="learn-topic-number">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="learn-topic-copy">
+                      <strong>{topic.title}</strong>
+                      <small>{topic.summary}</small>
+                    </span>
+                    <span className="learn-topic-objective">
+                      {topic.objectives[0] ??
+                        "Build a reliable GATE problem-solving method."}
+                    </span>
+                    <span className="learn-topic-meta">
+                      <span>{topic.estimatedMinutes} min</span>
+                      <span>
+                        {topic.concepts.length} concept
+                        {topic.concepts.length === 1 ? "" : "s"}
+                      </span>
+                      <span>
+                        {topic.checkpoints.length} recall check
+                        {topic.checkpoints.length === 1 ? "" : "s"}
+                      </span>
+                    </span>
+                    <span className="learn-topic-open" aria-hidden="true">
+                      Open chapter →
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          ))}
+          {visibleGroups.length === 0 && (
+            <section className="learn-empty">
+              <strong>No chapter matches that search.</strong>
+              <p>Try a broader keyword or choose another course.</p>
+              <button
+                className="button quiet"
+                type="button"
+                onClick={() => {
+                  setLearnQuery("");
+                  setLearnSubjectId("all");
+                }}
+              >
+                Clear filters
+              </button>
+            </section>
+          )}
+        </div>
       </div>
     );
   };
@@ -2412,7 +2925,7 @@ export default function Home() {
       </section>
 
       <section className="mode-grid" aria-label="Study modes">
-        <button className="mode-card revise" onClick={() => navigate("notes")}>
+        <button className="mode-card revise" onClick={() => { setNotesReturnScreen("subject"); navigate("notes"); }}>
           <span className="mode-number">01</span><span className="mode-icon">Aa</span>
           <span><strong>Revise concepts</strong><small>Notes, formulas and worked examples</small></span><span className="mode-arrow">→</span>
         </button>
@@ -2463,7 +2976,7 @@ export default function Home() {
             <div><span>2</span><p><strong>Targeted practice</strong><small>{Math.min(8, selectedTopic.questions)} selected questions</small></p><b>18m</b></div>
             <div><span>3</span><p><strong>Recall check</strong><small>3 checkpoint prompts</small></p><b>5m</b></div>
           </div>
-          <button className="button primary full" onClick={() => navigate("notes")}>Start this chapter <span>→</span></button>
+          <button className="button primary full" onClick={() => { setNotesReturnScreen("subject"); navigate("notes"); }}>Start this chapter <span>→</span></button>
         </aside>
       </section>
     </div>
@@ -2471,17 +2984,32 @@ export default function Home() {
 
   const renderNotes = () => {
     const fallbackNote = selectedSubject.note;
-    const keyPoints =
-      revisionNote?.key_points?.filter(Boolean) ?? [
-        fallbackNote.intuition,
-        fallbackNote.formulaHint,
-      ];
-    const syllabusScope = revisionNote
+    const learningTopic = selectedLearningTopic;
+    const staticKeyPoints =
+      learningTopic?.concepts.flatMap((concept) => concept.keyIdeas) ?? [];
+    const keyPoints = Array.from(
+      new Set([
+        ...(revisionNote?.key_points?.filter(Boolean) ?? []),
+        ...staticKeyPoints,
+      ]),
+    );
+    if (!keyPoints.length) {
+      keyPoints.push(fallbackNote.intuition, fallbackNote.formulaHint);
+    }
+    const remoteSyllabusScope = revisionNote
       ? markdownSection(revisionNote.content_md, "Syllabus scope")
-      : fallbackNote.intuition;
-    const reasoningPattern = revisionNote
-      ? markdownSection(revisionNote.content_md, "Standard reasoning pattern")
-      : fallbackNote.formulaHint;
+      : "";
+    const syllabusScope =
+      learningTopic?.summary ||
+      remoteSyllabusScope ||
+      revisionNote?.summary ||
+      fallbackNote.intuition;
+    const reasoningPattern =
+      (revisionNote
+        ? markdownSection(revisionNote.content_md, "Standard reasoning pattern")
+        : "") ||
+      learningTopic?.concepts[0]?.examFocus ||
+      fallbackNote.formulaHint;
     const workedExamples =
       revisionNote?.worked_examples?.length
         ? revisionNote.worked_examples
@@ -2491,58 +3019,196 @@ export default function Home() {
               solution: fallbackNote.exampleSteps.join(" "),
             },
           ];
-    const checkpoints = revisionNote
-      ? keyPoints.slice(0, 4).map((point) => `Can you explain why this is true: ${point}`)
+    const fallbackCheckpoints = revisionNote
+      ? keyPoints
+          .slice(0, 4)
+          .map((point) => `Can you explain why this is true: ${point}`)
       : fallbackNote.checkpoint;
+    const checkpoints = learningTopic?.checkpoints.length
+      ? learningTopic.checkpoints
+      : fallbackCheckpoints.map((question) => ({
+          question,
+          answer:
+            "State the governing rule in your own words, then verify it against the key ideas and worked examples above.",
+        }));
     const traps = revisionNote
       ? markdownListSection(revisionNote.content_md, "Common traps")
       : fallbackNote.traps;
+    const references =
+      LEARNING_REFERENCES[learningTopic?.subjectCode ?? selectedSubject.code] ??
+      [];
+    const guidedExampleCount = learningTopic?.concepts.length ?? 0;
     return (
       <div className="page notes-page">
         <div className="notes-toolbar">
-          <button className="back-link" onClick={() => navigate("subject")}>← {selectedSubject.shortTitle}</button>
-          <div className="notes-actions"><span>{noteLoading ? "Loading topic notes…" : revisionNote ? "Synced to the question bank" : "Built-in syllabus note"}</span><button className="button small" onClick={() => void startPractice("practice", selectedSubject, selectedTopic.id)}>Practise this topic →</button></div>
+          <button
+            className="back-link"
+            onClick={() => navigate(notesReturnScreen)}
+          >
+            ← {notesReturnScreen === "learn" ? "Concept library" : selectedSubject.shortTitle}
+          </button>
+          <div className="notes-actions">
+            <span>
+              {noteLoading
+                ? "Loading question-bank notes…"
+                : revisionNote
+                  ? "Canonical lesson + question-bank notes"
+                  : learningTopic
+                    ? "Canonical syllabus lesson"
+                    : "Built-in syllabus note"}
+            </span>
+            <button
+              className="button small"
+              onClick={() =>
+                void startPractice(
+                  "practice",
+                  selectedSubject,
+                  selectedTopic.id,
+                )
+              }
+            >
+              Practise this topic →
+            </button>
+          </div>
         </div>
         <div className="notes-layout">
           <aside className="notes-index">
             <span className="eyebrow">In this review</span>
-            <a href="#big-idea">01 · Big idea</a>
-            <a href="#formula">02 · Standard method</a>
-            <a href="#example">03 · Worked examples</a>
-            <a href="#checkpoint">04 · Recall checkpoint</a>
+            <a href="#big-idea">01 · Learning plan</a>
+            {learningTopic?.concepts.length ? (
+              <a href="#concepts">02 · Concepts</a>
+            ) : null}
+            <a href="#formula">03 · Formulae & methods</a>
+            <a href="#example">04 · Worked examples</a>
+            <a href="#checkpoint">05 · Recall checkpoint</a>
+            {references.length ? <a href="#references">06 · Sources</a> : null}
             <div className="syllabus-lock"><span>✓</span><p><strong>Syllabus locked</strong><small>Content stays within the official GATE CS scope.</small></p></div>
           </aside>
           <article className="notes-article">
             <header>
               <div className="eyebrow">{selectedSubject.code} · {selectedTopic.title}</div>
-              <h1>{revisionNote?.title ?? fallbackNote.title}</h1>
-              <p>{revisionNote?.summary ?? fallbackNote.summary}</p>
-              <div className="note-meta"><span>{Math.max(6, 4 + workedExamples.length * 2)} min read</span><span>{workedExamples.length} worked example{workedExamples.length === 1 ? "" : "s"}</span><span>{checkpoints.length} checkpoints</span></div>
+              <h1>{revisionNote?.title ?? learningTopic?.title ?? fallbackNote.title}</h1>
+              <p>{learningTopic?.summary ?? revisionNote?.summary ?? fallbackNote.summary}</p>
+              <div className="note-meta">
+                <span>{learningTopic?.estimatedMinutes ?? Math.max(6, 4 + workedExamples.length * 2)} min review</span>
+                <span>{workedExamples.length + guidedExampleCount} worked example{workedExamples.length + guidedExampleCount === 1 ? "" : "s"}</span>
+                <span>{checkpoints.length} checkpoints</span>
+              </div>
             </header>
             <section id="big-idea" className="note-section">
-              <span className="section-number">01</span><div><h2>The big idea</h2><p>{syllabusScope || revisionNote?.summary || fallbackNote.intuition}</p><div className="margin-note"><strong>Reasoning anchor</strong><span>{reasoningPattern || keyPoints[0]}</span></div></div>
-            </section>
-            <section id="formula" className="formula-card">
+              <span className="section-number">01</span>
               <div>
-                <span className="card-kicker">{revisionNote ? "Standard reasoning pattern" : "Formula to remember"}</span>
-                {revisionNote ? (
-                  <>
+                <h2>What this chapter builds</h2>
+                <p>{syllabusScope}</p>
+                {learningTopic && (
+                  <div className="learning-overview-grid">
+                    <div className="learning-overview-card">
+                      <span className="card-kicker">Prerequisites</span>
+                      {learningTopic.prerequisites.length ? (
+                        <ul>
+                          {learningTopic.prerequisites.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>Start here—no earlier chapter is required.</p>
+                      )}
+                    </div>
+                    <div className="learning-overview-card">
+                      <span className="card-kicker">By the end, you can</span>
+                      <ul>
+                        {learningTopic.objectives.map((objective) => (
+                          <li key={objective}>{objective}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+                <div className="margin-note"><strong>Reasoning anchor</strong><span>{reasoningPattern || keyPoints[0]}</span></div>
+              </div>
+            </section>
+
+            {learningTopic?.concepts.length ? (
+              <section id="concepts" className="note-section learning-concepts">
+                <span className="section-number">02</span>
+                <div>
+                  <h2>Concepts and exam reasoning</h2>
+                  <p>Build each idea in order, then use the guided example to make the reasoning concrete.</p>
+                  <div className="learning-concept-list">
+                    {learningTopic.concepts.map((concept, index) => (
+                      <article className="learning-concept-card" key={concept.title}>
+                        <header>
+                          <span>{String(index + 1).padStart(2, "0")}</span>
+                          <h3>{concept.title}</h3>
+                        </header>
+                        <p>{concept.explanation}</p>
+                        <div className="learning-key-ideas">
+                          <span className="card-kicker">Key ideas</span>
+                          <ul>
+                            {concept.keyIdeas.map((idea) => (
+                              <li key={idea}>{idea}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="learning-exam-focus">
+                          <strong>Exam focus</strong>
+                          <span>{concept.examFocus}</span>
+                        </div>
+                        <div className="learning-guided-example">
+                          <span className="card-kicker">Guided example</span>
+                          <h4>{concept.example.prompt}</h4>
+                          <p>{concept.example.walkthrough}</p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
+            <section id="formula" className="note-section learning-method-section">
+              <span className="section-number">03</span>
+              <div>
+                <h2>Formulae and standard methods</h2>
+                {learningTopic?.formulae.length ? (
+                  <div className="learning-formula-grid">
+                    {learningTopic.formulae.map((formula) => (
+                      <article className="learning-formula-card" key={`${formula.label}:${formula.expression}`}>
+                        <span className="card-kicker">{formula.label}</span>
+                        <code>{formula.expression}</code>
+                        <p>{formula.useWhen}</p>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="formula-card">
+                    <div>
+                      <span className="card-kicker">Formula to remember</span>
+                      <code>{fallbackNote.formula}</code>
+                      <p>{fallbackNote.formulaHint}</p>
+                    </div>
+                  </div>
+                )}
+                <div className="formula-card learning-reasoning-card">
+                  <div>
+                    <span className="card-kicker">Standard reasoning pattern</span>
                     <p>{reasoningPattern}</p>
                     <span className="card-kicker">Key rules to remember</span>
                     <ul className="note-key-points">
-                      {keyPoints.map((point) => <li key={point}>{point}</li>)}
+                      {keyPoints.map((point, index) => (
+                        <li key={`${point}-${index}`}>{point}</li>
+                      ))}
                     </ul>
-                  </>
-                ) : (
-                  <><code>{fallbackNote.formula}</code><p>{fallbackNote.formulaHint}</p></>
-                )}
+                  </div>
+                  <button aria-label="Mark key rules as remembered">✓</button>
+                </div>
               </div>
-              <button aria-label="Mark key rules as remembered">✓</button>
             </section>
             <section id="example" className="note-section example-section">
-              <span className="section-number">02</span>
+              <span className="section-number">04</span>
               <div>
-                <h2>Worked examples</h2>
+                <h2>{revisionNote ? "Question-bank worked examples" : "Extra worked example"}</h2>
+                <p>{revisionNote ? "These examples are retained from the live topic note and complement the guided examples above." : "Use this shorter example as a final transfer check."}</p>
                 <div className="worked-example-list">
                   {workedExamples.map((example, index) => (
                     <article key={`${example.question}-${index}`}>
@@ -2558,9 +3224,41 @@ export default function Home() {
             <section className="trap-card"><div><span>!</span><h3>Common traps</h3></div><ul>{traps.map((trap) => <li key={trap}>{trap}</li>)}</ul></section>
             <section id="checkpoint" className="checkpoint-card">
               <div><span className="card-kicker">Active recall</span><h2>Close the note. Can you answer these?</h2></div>
-              <div className="checkpoint-list">{checkpoints.map((check, index) => <details key={check}><summary><span>{index + 1}</span>{check}</summary><p>Say the rule in your own words, then verify it against the key rules and worked examples above.</p></details>)}</div>
+              <div className="checkpoint-list">
+                {checkpoints.map((checkpoint, index) => (
+                  <details key={`${checkpoint.question}-${index}`}>
+                    <summary><span>{index + 1}</span>{checkpoint.question}</summary>
+                    <p>{checkpoint.answer}</p>
+                  </details>
+                ))}
+              </div>
               <button className="button primary" onClick={() => void startPractice("practice", selectedSubject, selectedTopic.id)}>I’m ready to practise <span>→</span></button>
             </section>
+            {references.length ? (
+              <section id="references" className="note-section learning-references">
+                <span className="section-number">06</span>
+                <div>
+                  <h2>Official syllabus and trusted references</h2>
+                  <p>Use these links to verify the syllabus boundary or go deeper with IIT and NPTEL material.</p>
+                  <div className="learning-reference-list">
+                    {references.map((reference) => (
+                      <a
+                        className="learning-reference-card"
+                        href={reference.url}
+                        key={reference.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <span>{reference.publisher}</span>
+                        <strong>{reference.title}</strong>
+                        <p>{reference.note}</p>
+                        <small>Open source ↗</small>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : null}
           </article>
         </div>
       </div>
@@ -3409,6 +4107,7 @@ export default function Home() {
         <button className="brand" onClick={() => navigate("dashboard")}><span className="brand-mark">G</span><span><strong>Gatepath</strong><small>2027 · CSE</small></span></button>
         <nav aria-label="Primary navigation">
           <button className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span className="nav-icon">⌂</span><span>Roadmap</span></button>
+          <button className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span className="nav-icon">Aa</span><span>Learn</span><em>{LEARNING_TOPICS.length}</em></button>
           <button className={activeNav === "library" ? "active" : ""} onClick={() => navigate("library")}><span className="nav-icon">▦</span><span>Test library</span><em>125</em></button>
           <button className={activeNav === "mock-setup" ? "active" : ""} onClick={() => navigate("mock-setup")}><span className="nav-icon">◷</span><span>Full mock</span><em>65</em></button>
           <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span className="nav-icon">↗</span><span>Progress</span></button>
@@ -3432,9 +4131,10 @@ export default function Home() {
       {mobileNavOpen && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />}
       <div className="content-shell">
         <header className="topbar"><div><span className="topbar-kicker">GATE 2027 · Computer Science</span><strong>{headerTitle}</strong></div><div className="topbar-actions"><span className={`api-status ${apiState}`}><i />{apiState === "online" ? "Synced" : apiState === "checking" ? "Connecting" : "Local mode"}</span><button className="theme-toggle" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} onClick={() => setTheme((current) => current === "light" ? "dark" : "light")}><span className={theme === "light" ? "active" : ""}>☼</span><span className={theme === "dark" ? "active" : ""}>◐</span></button></div></header>
-        <main>{screen === "dashboard" && renderDashboard()}{screen === "library" && renderLibrary()}{screen === "subject" && renderSubject()}{screen === "notes" && renderNotes()}{screen === "practice" && renderPractice()}{screen === "mock-setup" && renderMockSetup()}{screen === "results" && renderResults()}{screen === "progress" && renderProgress()}</main>
+        <main>{screen === "dashboard" && renderDashboard()}{screen === "learn" && renderLearn()}{screen === "library" && renderLibrary()}{screen === "subject" && renderSubject()}{screen === "notes" && renderNotes()}{screen === "practice" && renderPractice()}{screen === "mock-setup" && renderMockSetup()}{screen === "results" && renderResults()}{screen === "progress" && renderProgress()}</main>
         <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
           <button className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span>⌂</span>Roadmap</button>
+          <button className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span>Aa</span>Learn</button>
           <button className={activeNav === "library" ? "active" : ""} onClick={() => navigate("library")}><span>▦</span>Tests</button>
           <button className={activeNav === "mock-setup" ? "active" : ""} onClick={() => navigate("mock-setup")}><span>◷</span>Mock</button>
           <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span>↗</span>Progress</button>
