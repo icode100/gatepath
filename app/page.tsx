@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AuthDialog } from "@/components/auth/AuthDialog";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { trackEvent } from "@/lib/firebase/analytics";
 import {
   practiceQuestions,
   subjects as localSubjects,
@@ -912,6 +915,12 @@ function TypeBadge({ type }: { type: QuestionType }) {
 }
 
 export default function Home() {
+  const {
+    user,
+    status: authStatus,
+    isConfigured: authConfigured,
+  } = useAuth();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("dashboard");
   const [theme, setTheme] = useState<Theme>("light");
   const [apiState, setApiState] = useState<ApiState>("checking");
@@ -1237,6 +1246,10 @@ export default function Home() {
   }, []);
 
   const openSubject = (subject: Subject) => {
+    void trackEvent("select_content", {
+      content_type: "subject",
+      item_id: subject.code,
+    });
     setSelectedSubjectId(subject.id);
     setSelectedTopicId(subject.topics[0].id);
     navigate("subject");
@@ -1281,6 +1294,13 @@ export default function Home() {
   ) => {
     const requestId = ++practiceRequestId.current;
     const questionCount = mode === "syllabus" ? 12 : mode === "sectional" ? 10 : 8;
+    const trackPracticeStarted = () =>
+      void trackEvent("practice_started", {
+        practice_mode: mode,
+        subject_code: subjectForRun.code,
+        topic_scope: topicForRun ? "topic" : "course",
+        question_count: questionCount,
+      });
     const apiTopicId = topicForRun
       ? subjectForRun.topics.find((topic) => topic.id === topicForRun)?.apiId
       : undefined;
@@ -1311,6 +1331,7 @@ export default function Home() {
 
     if (!requiresLiveQuestions) {
       setIsLoadingQuestions(false);
+      if (fallbackQuestions.length) trackPracticeStarted();
       return;
     }
 
@@ -1344,16 +1365,19 @@ export default function Home() {
       if (mode === "sectional" && deadlineMs == null) {
         throw new Error("Timed section did not include a valid deadline");
       }
-      if (requestId === practiceRequestId.current && mapped.length) {
-        setRunnerQuestions(mapped);
-        setSessionId(payload.id == null ? null : String(payload.id));
-        if (deadlineMs != null) {
-          setRunnerDeadlineMs(deadlineMs);
-          setRunnerSeconds(secondsUntilDeadline(deadlineMs));
-          setRunnerTimerRunning(true);
-        }
-        setApiState("online");
+      if (requestId !== practiceRequestId.current) return;
+      if (!mapped.length) {
+        throw new Error("The question service returned an empty practice set");
       }
+      setRunnerQuestions(mapped);
+      setSessionId(payload.id == null ? null : String(payload.id));
+      if (deadlineMs != null) {
+        setRunnerDeadlineMs(deadlineMs);
+        setRunnerSeconds(secondsUntilDeadline(deadlineMs));
+        setRunnerTimerRunning(true);
+      }
+      setApiState("online");
+      trackPracticeStarted();
     } catch {
       if (requestId === practiceRequestId.current) {
         setApiState("offline");
@@ -1361,6 +1385,7 @@ export default function Home() {
         setLaunchError(
           "The live question bank is unavailable, so this guided set is using the small built-in sample.",
         );
+        if (fallbackQuestions.length) trackPracticeStarted();
       }
     } finally {
       if (requestId === practiceRequestId.current) {
@@ -1495,6 +1520,12 @@ export default function Home() {
     setCheckedQuestions(new Set(runnerQuestions.map((question) => question.id)));
     setRunnerSubmitted(true);
     setRunnerSummary(summary);
+    void trackEvent("attempt_submitted", {
+      attempt_kind: practiceMode,
+      percentage: summary.percentage,
+      timed_out: Boolean(summary.timedOut),
+      saved_to_profile: recordedAttempt,
+    });
     if (recordedAttempt) {
       setAnalyticsRefreshKey((current) => current + 1);
     }
@@ -1563,6 +1594,11 @@ export default function Home() {
       setExamSeconds(secondsUntilDeadline(deadlineMs));
       setApiState("online");
       setExamRunning(true);
+      void trackEvent("test_started", {
+        test_kind: "full",
+        test_sequence: test.sequence,
+        question_count: test.questionCount,
+      });
     } catch (error) {
       setApiState("offline");
       setLaunchError(
@@ -1620,6 +1656,11 @@ export default function Home() {
         setRunnerSeconds(secondsUntilDeadline(deadlineMs));
         setRunnerTimerRunning(true);
         setApiState("online");
+        void trackEvent("test_started", {
+          test_kind: "course",
+          test_sequence: test.sequence,
+          question_count: test.questionCount,
+        });
       } else if (requestId === practiceRequestId.current) {
         throw new Error(
           "The course test did not include all questions and a valid deadline",
@@ -1690,7 +1731,14 @@ export default function Home() {
           throw new Error("Unable to score test");
         }
         const payload = (await response.json()) as AttemptResultPayload;
-        setServerResult(mapAttemptResult(payload, examQuestions));
+        const result = mapAttemptResult(payload, examQuestions);
+        setServerResult(result);
+        void trackEvent("attempt_submitted", {
+          attempt_kind: "full",
+          percentage: result.percentage,
+          timed_out: Boolean(result.timedOut),
+          saved_to_profile: true,
+        });
         setAnalyticsRefreshKey((current) => current + 1);
       } catch {
         setApiState("offline");
@@ -3294,6 +3342,39 @@ export default function Home() {
     );
   };
 
+  const identityChangeBlocked =
+    (!runnerSubmitted &&
+      (isLoadingQuestions || runnerQuestions.length > 0)) ||
+    (serverResult === null &&
+      (isLoadingQuestions || examQuestions.length > 0));
+  const profileName =
+    authStatus === "authenticated"
+      ? user?.displayName || user?.email || "Synced study space"
+      : authStatus === "loading"
+        ? "Checking your account"
+        : authStatus === "unavailable"
+          ? "Account check unavailable"
+        : "Your study space";
+  const profileSubtitle =
+    authStatus === "authenticated"
+      ? "Progress synced"
+      : authStatus === "loading"
+        ? "Connecting securely"
+        : authStatus === "unavailable"
+          ? "Retry or continue as guest"
+        : authConfigured
+          ? "Sign in to sync"
+          : "Guest profile";
+  const profileInitials =
+    authStatus === "authenticated"
+      ? profileName
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase())
+          .join("") || "G"
+      : "G";
+
   if (screen === "mock") return renderMock();
 
   return (
@@ -3309,7 +3390,19 @@ export default function Home() {
         </nav>
         <div className="sidebar-spacer" />
         <div className="sidebar-target"><span className="target-label">Weekly target</span><div><strong>9h 09m</strong><span>of 12 hours</span></div><MiniProgress value={76} /><small>2h 51m to go</small></div>
-        <button className="profile"><span>IS</span><span><strong>Your study space</strong><small>Local profile</small></span><i>···</i></button>
+        <button
+          className="profile"
+          aria-haspopup="dialog"
+          aria-expanded={authDialogOpen}
+          onClick={() => {
+            setMobileNavOpen(false);
+            setAuthDialogOpen(true);
+          }}
+        >
+          <span>{profileInitials}</span>
+          <span><strong>{profileName}</strong><small>{profileSubtitle}</small></span>
+          <i aria-hidden="true">···</i>
+        </button>
       </aside>
       {mobileNavOpen && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />}
       <div className="content-shell">
@@ -3322,6 +3415,11 @@ export default function Home() {
           <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span>↗</span>Progress</button>
         </nav>
       </div>
+      <AuthDialog
+        open={authDialogOpen}
+        onClose={() => setAuthDialogOpen(false)}
+        identityChangeBlocked={identityChangeBlocked}
+      />
     </div>
   );
 }
