@@ -7,12 +7,14 @@ from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, select
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+from sqlalchemy import delete, func, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.database import get_db
+from app.csrf import require_csrf
 from app.identity import current_user_key
 from app.models import (
     Attempt,
@@ -38,6 +40,8 @@ from app.schemas import (
     CatalogSessionCreate,
     PracticeSessionCreate,
     ProgressDashboard,
+    ProgressResetRequest,
+    ProgressResetResult,
     QuestionListResponse,
     QuestionBankImportSummary,
     QuestionBankStatus,
@@ -1284,6 +1288,63 @@ async def progress_dashboard(
     )
 
 
+@router.post(
+    "/progress/reset",
+    response_model=ProgressResetResult,
+    tags=["Attempts and Progress"],
+)
+async def reset_progress(
+    payload: ProgressResetRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    user_key: str = Depends(current_user_key),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
+) -> ProgressResetResult:
+    """Irreversibly clear study state for the current cookie identity only."""
+
+    response.headers["Cache-Control"] = "no-store"
+    require_csrf(request, payload.csrf_token)
+    if user_state is not None:
+        try:
+            summary = await user_state.reset_progress(user_key)
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+        return ProgressResetResult(
+            user_key=user_key,
+            sessions_deleted=summary.sessions_deleted,
+            attempts_deleted=summary.attempts_deleted,
+            progress_deleted=summary.progress_deleted,
+        )
+
+    try:
+        attempt_result = await db.execute(
+            delete(Attempt).where(Attempt.user_key == user_key)
+        )
+        session_result = await db.execute(
+            delete(PracticeSession).where(PracticeSession.user_key == user_key)
+        )
+        await db.commit()
+    except SQLAlchemyError as exc:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Progress reset is temporarily unavailable",
+        ) from exc
+
+    return ProgressResetResult(
+        user_key=user_key,
+        sessions_deleted=max(0, int(session_result.rowcount or 0)),
+        attempts_deleted=max(0, int(attempt_result.rowcount or 0)),
+        progress_deleted=False,
+    )
+
+
 def _weighted_accuracy(
     responses: list[tuple[ResponseStatus, datetime]],
     *,
@@ -1554,14 +1615,34 @@ async def roadmap(
         ).all()
     )
     progress = await _progress_for_user(db, user_state, user_key)
+    active_question_topic_ids = {
+        question.id: topic.id
+        for subject in subjects
+        for topic in subject.topics
+        for question in topic.questions
+        if question.is_active
+    }
     topic_stats: dict[int, dict[str, int]] = defaultdict(
-        lambda: {"attempted": 0, "correct": 0, "incorrect": 0}
+        lambda: {
+            "attempted": 0,
+            "solved": 0,
+            "correct": 0,
+            "incorrect": 0,
+        }
     )
     for evidence in progress.evidence.values():
-        bucket = topic_stats[evidence.topic_id]
+        current_topic_id = active_question_topic_ids.get(evidence.question_id)
+        if current_topic_id is None:
+            continue
+        bucket = topic_stats[current_topic_id]
         bucket["attempted"] += evidence.attempt_count
-        bucket["correct"] += evidence.correct_count
-        bucket["incorrect"] += evidence.incorrect_count
+        bucket["solved"] += int(evidence.correct_count > 0)
+        bucket["correct"] += int(
+            evidence.latest_answered_status == ResponseStatus.CORRECT.value
+        )
+        bucket["incorrect"] += int(
+            evidence.latest_answered_status == ResponseStatus.INCORRECT.value
+        )
 
     def accuracy(correct: int, incorrect: int) -> float | None:
         answered = correct + incorrect
@@ -1579,6 +1660,7 @@ async def roadmap(
                 question_count=sum(question.is_active for question in topic.questions),
                 note_available=topic.note is not None,
                 attempted_questions=topic_stats[topic.id]["attempted"],
+                solved_questions=topic_stats[topic.id]["solved"],
                 accuracy=accuracy(
                     topic_stats[topic.id]["correct"],
                     topic_stats[topic.id]["incorrect"],
@@ -1586,7 +1668,18 @@ async def roadmap(
             )
             for topic in subject.topics
         ]
-        subject_progress = progress.subjects.get(subject.id)
+        subject_attempted = sum(
+            topic_stats[topic.id]["attempted"] for topic in subject.topics
+        )
+        subject_solved = sum(
+            topic_stats[topic.id]["solved"] for topic in subject.topics
+        )
+        subject_correct = sum(
+            topic_stats[topic.id]["correct"] for topic in subject.topics
+        )
+        subject_incorrect = sum(
+            topic_stats[topic.id]["incorrect"] for topic in subject.topics
+        )
         roadmap_subjects.append(
             RoadmapSubject(
                 id=subject.id,
@@ -1596,19 +1689,9 @@ async def roadmap(
                 order_index=subject.order_index,
                 topic_count=len(subject.topics),
                 question_count=sum(item.question_count for item in topics),
-                attempted_questions=(
-                    subject_progress.attempted_questions
-                    if subject_progress
-                    else 0
-                ),
-                accuracy=(
-                    accuracy(
-                        subject_progress.correct_count,
-                        subject_progress.incorrect_count,
-                    )
-                    if subject_progress
-                    else None
-                ),
+                attempted_questions=subject_attempted,
+                solved_questions=subject_solved,
+                accuracy=accuracy(subject_correct, subject_incorrect),
                 topics=topics,
             )
         )

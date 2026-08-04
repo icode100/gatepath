@@ -145,6 +145,106 @@ async def test_memory_repository_enforces_ownership_and_idempotent_submit() -> N
 
 
 @pytest.mark.asyncio
+async def test_memory_reset_is_idempotent_and_owner_scoped() -> None:
+    repository = MemoryUserStateRepository()
+    owner_session = _session("reset-owner-session", "reset-owner")
+    other_session = _session(
+        "reset-other-session",
+        "reset-other",
+        question_ids=(201,),
+    )
+    owner_attempt = _attempt(
+        owner_session.id,
+        "reset-owner",
+        (_response(101, "correct", awarded_marks=1.0),),
+    )
+    other_attempt = _attempt(
+        other_session.id,
+        "reset-other",
+        (_response(201, "incorrect", awarded_marks=-1 / 3),),
+    )
+    await repository.create_session(owner_session)
+    await repository.create_session(other_session)
+    await repository.submit_attempt(
+        "reset-owner",
+        owner_session.id,
+        owner_attempt,
+    )
+    await repository.submit_attempt(
+        "reset-other",
+        other_session.id,
+        other_attempt,
+    )
+
+    first = await repository.reset_progress("reset-owner")
+    second = await repository.reset_progress("reset-owner")
+
+    assert first.sessions_deleted == 1
+    assert first.attempts_deleted == 1
+    assert first.progress_deleted is True
+    assert second.sessions_deleted == 0
+    assert second.attempts_deleted == 0
+    assert second.progress_deleted is False
+    with pytest.raises(UserStateNotFound):
+        await repository.get_session("reset-owner", owner_session.id)
+    with pytest.raises(UserStateNotFound):
+        await repository.get_attempt("reset-owner", owner_attempt.id)
+    assert (await repository.get_progress("reset-owner")).total_attempts == 0
+    assert await repository.get_session("reset-other", other_session.id)
+    assert await repository.get_attempt("reset-other", other_attempt.id)
+    assert (await repository.get_progress("reset-other")).total_attempts == 1
+
+
+@pytest.mark.asyncio
+async def test_memory_reset_allows_fresh_post_reset_submission() -> None:
+    repository = MemoryUserStateRepository()
+    stale_session = _session("reset-stale-session", "reset-learner")
+    stale_attempt = _attempt(
+        stale_session.id,
+        "reset-learner",
+        (_response(101, "incorrect", awarded_marks=-1 / 3),),
+    )
+    await repository.create_session(stale_session)
+    await repository.submit_attempt(
+        "reset-learner",
+        stale_session.id,
+        stale_attempt,
+    )
+    await repository.reset_progress("reset-learner")
+
+    with pytest.raises(UserStateNotFound):
+        await repository.submit_attempt(
+            "reset-learner",
+            stale_session.id,
+            stale_attempt,
+        )
+
+    fresh_session = _session(
+        "reset-fresh-session",
+        "reset-learner",
+        question_ids=(301,),
+    )
+    fresh_attempt = _attempt(
+        fresh_session.id,
+        "reset-learner",
+        (_response(301, "correct", awarded_marks=1.0),),
+        submitted_at=BASE_TIME + timedelta(minutes=1),
+    )
+    await repository.create_session(fresh_session)
+    committed = await repository.submit_attempt(
+        "reset-learner",
+        fresh_session.id,
+        fresh_attempt,
+    )
+
+    assert committed == fresh_attempt
+    progress = await repository.get_progress("reset-learner")
+    assert progress.total_attempts == 1
+    assert progress.correct_count == 1
+    assert set(progress.evidence) == {301}
+
+
+@pytest.mark.asyncio
 async def test_memory_progress_tracks_unique_questions_and_latest_answered_state() -> None:
     repository = MemoryUserStateRepository()
     first_session = _session("progress-1", "learner", question_ids=(101, 102))
@@ -245,6 +345,8 @@ async def test_memory_guest_claim_merges_state_and_is_repeatable() -> None:
 
     with pytest.raises(UserStateNotFound):
         await repository.claim_guest_state("anon-guest", "different-target")
+    with pytest.raises(UserStateNotFound):
+        await repository.reset_progress("anon-guest")
     with pytest.raises(UserStateNotFound):
         await repository.create_session(
             _session("late-guest-session", "anon-guest")
@@ -487,6 +589,19 @@ def test_api_uses_user_state_repository_for_sessions_attempts_and_progress(
             assert intruder.get(f"/api/v1/attempts/{submitted['id']}").status_code == 404
         finally:
             intruder.close()
+
+        csrf_token = client.get("/api/v1/auth/csrf").json()["csrf_token"]
+        reset = client.post(
+            "/api/v1/progress/reset",
+            json={"csrf_token": csrf_token, "confirmation": "RESET"},
+        )
+        assert reset.status_code == 200, reset.text
+        assert reset.json()["progress_deleted"] is True
+        assert reset.json()["sessions_deleted"] == 1
+        assert reset.json()["attempts_deleted"] == 1
+        assert client.get(f"/api/v1/sessions/{created['id']}").status_code == 404
+        assert client.get(f"/api/v1/attempts/{submitted['id']}").status_code == 404
+        assert client.get("/api/v1/progress/dashboard").json()["total_attempts"] == 0
     finally:
         app.dependency_overrides.pop(get_user_state_repository, None)
 

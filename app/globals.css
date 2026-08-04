@@ -646,6 +646,84 @@ select:focus-visible {
   justify-content: center;
 }
 
+.auth-settings {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.auth-settings > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.auth-settings > div:first-child > strong {
+  font-size: 14px;
+}
+
+.auth-settings p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.auth-reset-trigger {
+  justify-content: center;
+  border-color: color-mix(in srgb, var(--danger) 36%, var(--line));
+  color: var(--danger);
+}
+
+.auth-reset-trigger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 7%, var(--surface));
+}
+
+.auth-reset-confirm {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--line));
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--danger) 7%, var(--surface));
+}
+
+.auth-reset-confirm label {
+  color: var(--ink-soft);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.auth-reset-confirm input {
+  width: 100%;
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  color: var(--ink);
+  background: var(--surface);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.auth-reset-confirm input:focus {
+  border-color: var(--danger);
+  outline: 2px solid color-mix(in srgb, var(--danger) 18%, transparent);
+  outline-offset: 1px;
+}
+
+.auth-reset-confirm > div {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 8px;
+}
+
+.auth-reset-confirm .button {
+  justify-content: center;
+}
+
 .auth-privacy {
   margin: 20px 0 0;
   color: var(--muted-2);

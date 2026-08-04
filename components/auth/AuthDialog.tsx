@@ -6,12 +6,14 @@ import { friendlyAuthError, useAuth } from "./AuthProvider";
 type AuthDialogProps = {
   open: boolean;
   onClose: () => void;
+  onProgressReset?: () => void | Promise<void>;
   identityChangeBlocked?: boolean;
 };
 
 export function AuthDialog({
   open,
   onClose,
+  onProgressReset,
   identityChangeBlocked = false,
 }: AuthDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -23,6 +25,7 @@ export function AuthDialog({
     signInWithEmail,
     createAccount,
     resetPassword,
+    resetProgress,
     signOut,
   } = useAuth();
   const [mode, setMode] = useState<"signin" | "create">("signin");
@@ -31,6 +34,8 @@ export function AuthDialog({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [resetConfirming, setResetConfirming] = useState(false);
+  const [resetConfirmation, setResetConfirmation] = useState("");
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -39,6 +44,8 @@ export function AuthDialog({
       setError(null);
       setMessage(null);
       setPassword("");
+      setResetConfirming(false);
+      setResetConfirmation("");
       dialog.showModal();
     } else if (!open && dialog.open) {
       setPassword("");
@@ -80,6 +87,28 @@ export function AuthDialog({
     });
   };
 
+  const handleProgressReset = async () => {
+    if (identityChangeBlocked || busy) return;
+    if (resetConfirmation !== "RESET") {
+      setError("Type RESET exactly to confirm.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      await resetProgress();
+      await onProgressReset?.();
+      setResetConfirming(false);
+      setResetConfirmation("");
+      setMessage("Your progress and attempt history have been reset.");
+    } catch (resetError) {
+      setError(friendlyAuthError(resetError));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const close = () => {
     if (!busy) {
       setPassword("");
@@ -116,7 +145,7 @@ export function AuthDialog({
         <div className="auth-dialog-heading">
           <span className="auth-dialog-mark">G</span>
           <div>
-            <span className="eyebrow">Gatepath account</span>
+            <span className="eyebrow">Account &amp; settings</span>
             <h2 id="auth-dialog-title">
               {status === "authenticated" ? "Your study space" : "Sync your progress"}
             </h2>
@@ -284,6 +313,75 @@ export function AuthDialog({
               </button>
             </p>
           </div>
+        )}
+
+        {status !== "loading" && status !== "unavailable" && (
+          <section className="auth-settings" aria-labelledby="study-data-heading">
+            <div>
+              <span className="eyebrow">Settings · Study data</span>
+              <strong id="study-data-heading">Reset progress</strong>
+              <p>
+                Remove your attempts, test history, and analytics from this
+                study profile. The shared question bank and your account stay
+                unchanged.
+              </p>
+            </div>
+            {!resetConfirming ? (
+              <button
+                type="button"
+                className="button quiet full auth-reset-trigger"
+                disabled={busy || identityChangeBlocked}
+                onClick={() => {
+                  setResetConfirming(true);
+                  setError(null);
+                  setMessage(null);
+                }}
+              >
+                Reset progress…
+              </button>
+            ) : (
+              <div className="auth-reset-confirm">
+                <label htmlFor="reset-progress-confirmation">
+                  Type <strong>RESET</strong> to confirm. This cannot be undone.
+                </label>
+                <input
+                  id="reset-progress-confirmation"
+                  value={resetConfirmation}
+                  onChange={(event) => setResetConfirmation(event.target.value)}
+                  autoComplete="off"
+                  spellCheck={false}
+                  disabled={busy}
+                  placeholder="RESET"
+                />
+                <div>
+                  <button
+                    type="button"
+                    className="button quiet"
+                    disabled={busy}
+                    onClick={() => {
+                      setResetConfirming(false);
+                      setResetConfirmation("");
+                      setError(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="button danger"
+                    disabled={
+                      busy ||
+                      identityChangeBlocked ||
+                      resetConfirmation !== "RESET"
+                    }
+                    onClick={() => void handleProgressReset()}
+                  >
+                    {busy ? "Resetting…" : "Reset everything"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
         )}
 
         <p className="auth-privacy">

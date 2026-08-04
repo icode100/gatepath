@@ -212,6 +212,229 @@ def test_submit_scores_and_updates_progress(client: TestClient) -> None:
         item for item in roadmap.json()["subjects"] if item["slug"] == "engineering-mathematics"
     )
     assert mathematics["attempted_questions"] == 6
+    assert mathematics["solved_questions"] == 0
+    assert all(topic["solved_questions"] == 0 for topic in mathematics["topics"])
+
+
+def test_progress_reset_requires_confirmation_and_is_owner_scoped() -> None:
+    owner = TestClient(app)
+    other = TestClient(app)
+    try:
+        owner_session_response = owner.post(
+            "/api/v1/practice-sessions",
+            json={
+                "subject_slug": "operating-systems",
+                "count": 3,
+                "seed": 971,
+            },
+        )
+        other_session_response = other.post(
+            "/api/v1/practice-sessions",
+            json={
+                "subject_slug": "computer-networks",
+                "count": 1,
+                "seed": 972,
+            },
+        )
+        assert owner_session_response.status_code == 201
+        assert other_session_response.status_code == 201
+        owner_session = owner_session_response.json()
+        other_session = other_session_response.json()
+
+        owner_attempt_response = owner.post(
+            "/api/v1/attempts",
+            json={"session_id": owner_session["id"], "answers": []},
+        )
+        other_attempt_response = other.post(
+            "/api/v1/attempts",
+            json={"session_id": other_session["id"], "answers": []},
+        )
+        assert owner_attempt_response.status_code == 201
+        assert other_attempt_response.status_code == 201
+        owner_attempt = owner_attempt_response.json()
+
+        repeated_owner_session = owner.post(
+            "/api/v1/practice-sessions",
+            json={
+                "subject_slug": "operating-systems",
+                "count": 3,
+                "seed": 971,
+            },
+        ).json()
+        repeated_skip = owner.post(
+            "/api/v1/attempts",
+            json={"session_id": repeated_owner_session["id"], "answers": []},
+        )
+        assert repeated_skip.status_code == 201
+        assert repeated_skip.json()["unanswered_count"] == 3
+
+        owner_roadmap = owner.get("/api/v1/roadmap").json()
+        operating_systems = next(
+            item
+            for item in owner_roadmap["subjects"]
+            if item["slug"] == "operating-systems"
+        )
+        assert operating_systems["attempted_questions"] == 6
+        assert operating_systems["solved_questions"] == 0
+
+        csrf_token = owner.get("/api/v1/auth/csrf").json()["csrf_token"]
+        invalid_csrf = owner.post(
+            "/api/v1/progress/reset",
+            json={"csrf_token": "x" * 32, "confirmation": "RESET"},
+        )
+        assert invalid_csrf.status_code == 403
+
+        invalid_confirmation = owner.post(
+            "/api/v1/progress/reset",
+            json={"csrf_token": csrf_token, "confirmation": "reset"},
+        )
+        assert invalid_confirmation.status_code == 422
+
+        reset_response = owner.post(
+            "/api/v1/progress/reset",
+            json={"csrf_token": csrf_token, "confirmation": "RESET"},
+        )
+        assert reset_response.status_code == 200, reset_response.text
+        assert reset_response.headers["cache-control"] == "no-store"
+        reset = reset_response.json()
+        assert reset["reset"] is True
+        assert reset["sessions_deleted"] == 2
+        assert reset["attempts_deleted"] == 2
+        assert owner.get(f"/api/v1/sessions/{owner_session['id']}").status_code == 404
+        assert owner.get(f"/api/v1/attempts/{owner_attempt['id']}").status_code == 404
+
+        dashboard = owner.get("/api/v1/progress/dashboard")
+        assert dashboard.status_code == 200
+        assert dashboard.json()["total_attempts"] == 0
+        reset_roadmap = owner.get("/api/v1/roadmap").json()
+        assert all(subject["solved_questions"] == 0 for subject in reset_roadmap["subjects"])
+        assert all(subject["attempted_questions"] == 0 for subject in reset_roadmap["subjects"])
+
+        other_dashboard = other.get("/api/v1/progress/dashboard")
+        assert other_dashboard.status_code == 200
+        assert other_dashboard.json()["total_attempts"] == 1
+        assert other.get(f"/api/v1/sessions/{other_session['id']}").status_code == 200
+
+        repeated = owner.post(
+            "/api/v1/progress/reset",
+            json={"csrf_token": csrf_token, "confirmation": "RESET"},
+        )
+        assert repeated.status_code == 200
+        assert repeated.json()["sessions_deleted"] == 0
+        assert repeated.json()["attempts_deleted"] == 0
+        assert owner.get("/api/v1/questions", params={"limit": 1}).json()["total"] > 0
+    finally:
+        owner.close()
+        other.close()
+
+
+def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None:
+    learner = TestClient(app)
+    try:
+        session_payload = {
+            "subject_slug": "operating-systems",
+            "question_types": ["mcq"],
+            "count": 1,
+            "seed": 982,
+        }
+
+        first_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        question = first_session["questions"][0]
+        wrong = learner.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": first_session["id"],
+                "answers": [
+                    {
+                        "question_id": question["id"],
+                        "answer": "definitely-not-a-valid-option",
+                    }
+                ],
+            },
+        )
+        assert wrong.status_code == 201
+        assert wrong.json()["incorrect_count"] == 1
+        correct_answer = wrong.json()["results"][0]["correct_answer"]
+
+        def operating_systems_progress() -> tuple[dict, dict]:
+            roadmap = learner.get("/api/v1/roadmap")
+            assert roadmap.status_code == 200
+            subject = next(
+                item
+                for item in roadmap.json()["subjects"]
+                if item["slug"] == "operating-systems"
+            )
+            topic = next(
+                item for item in subject["topics"] if item["id"] == question["topic_id"]
+            )
+            return subject, topic
+
+        subject, topic = operating_systems_progress()
+        assert subject["solved_questions"] == 0
+        assert topic["solved_questions"] == 0
+
+        correct_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        assert correct_session["questions"][0]["id"] == question["id"]
+        correct = learner.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": correct_session["id"],
+                "answers": [
+                    {"question_id": question["id"], "answer": correct_answer}
+                ],
+            },
+        )
+        assert correct.status_code == 201
+        assert correct.json()["correct_count"] == 1
+        subject, topic = operating_systems_progress()
+        assert subject["solved_questions"] == 1
+        assert topic["solved_questions"] == 1
+
+        later_wrong_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        learner.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": later_wrong_session["id"],
+                "answers": [
+                    {
+                        "question_id": question["id"],
+                        "answer": "still-not-a-valid-option",
+                    }
+                ],
+            },
+        )
+        subject, topic = operating_systems_progress()
+        assert subject["solved_questions"] == 1
+        assert topic["solved_questions"] == 1
+        assert topic["accuracy"] == 0
+
+        repeated_correct_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        learner.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": repeated_correct_session["id"],
+                "answers": [
+                    {"question_id": question["id"], "answer": correct_answer}
+                ],
+            },
+        )
+        subject, topic = operating_systems_progress()
+        assert subject["solved_questions"] == 1
+        assert topic["solved_questions"] == 1
+    finally:
+        learner.close()
 
 
 def test_topic_note_contains_examples(client: TestClient) -> None:

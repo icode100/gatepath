@@ -28,6 +28,7 @@ from app.user_state.repository import (
     UserStateAlreadySubmitted,
     UserStateError,
     UserStateNotFound,
+    UserStateResetSummary,
     UserStateUnavailable,
 )
 
@@ -64,6 +65,8 @@ class FirestoreUserStateRepository:
         self._attempts_name = f"{self._collection_prefix}_attempts"
         self._progress_name = f"{self._collection_prefix}_progress"
         self._claims_name = f"{self._collection_prefix}_claims"
+        self._claim_targets_name = f"{self._collection_prefix}_claim_targets"
+        self._resets_name = f"{self._collection_prefix}_resets"
 
     async def _get_client(self) -> Any:
         if self._client is not None:
@@ -117,6 +120,9 @@ class FirestoreUserStateRepository:
                 if session.user_key.startswith("anon-")
                 else None
             )
+            reset_ref = client.collection(self._resets_name).document(
+                session.user_key
+            )
             transaction = client.transaction()
             transactional = import_module(
                 "google.cloud.firestore_v1"
@@ -124,12 +130,15 @@ class FirestoreUserStateRepository:
 
             @transactional
             async def create_in_transaction(transaction: Any) -> StudySession:
+                reset_snapshot = await reset_ref.get(transaction=transaction)
                 claim_snapshot = (
                     await claim_ref.get(transaction=transaction)
                     if claim_ref is not None
                     else None
                 )
                 existing_snapshot = await reference.get(transaction=transaction)
+                if reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
                 if claim_snapshot is not None and claim_snapshot.exists:
                     raise UserStateNotFound("User state is no longer available")
                 if existing_snapshot.exists:
@@ -201,16 +210,20 @@ class FirestoreUserStateRepository:
                 if user_key.startswith("anon-")
                 else None
             )
+            reset_ref = client.collection(self._resets_name).document(user_key)
             transaction = client.transaction()
 
             @transactional
             async def commit_attempt(transaction: Any) -> StudyAttempt:
+                reset_snapshot = await reset_ref.get(transaction=transaction)
                 claim_snapshot = (
                     await claim_ref.get(transaction=transaction)
                     if claim_ref is not None
                     else None
                 )
                 session_snapshot = await session_ref.get(transaction=transaction)
+                if reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
                 if claim_snapshot is not None and claim_snapshot.exists:
                     raise UserStateNotFound("User state is no longer available")
                 if not session_snapshot.exists:
@@ -331,19 +344,179 @@ class FirestoreUserStateRepository:
         except Exception as exc:
             raise UserStateUnavailable("Progress storage is unavailable") from exc
 
+    async def _delete_owner_documents(
+        self,
+        client: Any,
+        collection: Any,
+        user_key: str,
+    ) -> int:
+        deleted = 0
+        while True:
+            snapshots: list[Any] = []
+            query = collection.where("user_key", "==", user_key).limit(
+                FIRESTORE_BATCH_WRITE_LIMIT
+            )
+            async for snapshot in query.stream():
+                snapshots.append(snapshot)
+            if not snapshots:
+                return deleted
+            batch = client.batch()
+            for snapshot in snapshots:
+                batch.delete(snapshot.reference)
+            await batch.commit()
+            deleted += len(snapshots)
+
+    async def reset_progress(self, user_key: str) -> UserStateResetSummary:
+        user_key = _validate_document_id(user_key, "Progress")
+        try:
+            client = await self._get_client()
+            sessions = client.collection(self._sessions_name)
+            attempts = client.collection(self._attempts_name)
+            progress_ref = client.collection(self._progress_name).document(user_key)
+            reset_ref = client.collection(self._resets_name).document(user_key)
+            target_claim_ref = client.collection(self._claim_targets_name).document(
+                user_key
+            )
+            claim_ref = (
+                client.collection(self._claims_name).document(user_key)
+                if user_key.startswith("anon-")
+                else None
+            )
+            transactional = import_module(
+                "google.cloud.firestore_v1"
+            ).async_transactional
+
+            @transactional
+            async def begin_reset(transaction: Any) -> None:
+                reset_snapshot = await reset_ref.get(transaction=transaction)
+                target_claim_snapshot = await target_claim_ref.get(
+                    transaction=transaction
+                )
+                claim_snapshot = (
+                    await claim_ref.get(transaction=transaction)
+                    if claim_ref is not None
+                    else None
+                )
+                if target_claim_snapshot.exists:
+                    raise UserStateUnavailable("Progress claim is in progress")
+                if claim_snapshot is not None and claim_snapshot.exists:
+                    control = claim_snapshot.to_dict()
+                    if (
+                        control.get("user_key") != user_key
+                        or str(control.get("status", ""))
+                        not in {"claiming", "claimed"}
+                    ):
+                        raise UserStateUnavailable(
+                            "Guest claim state is unavailable"
+                        )
+                    raise UserStateNotFound("User state is no longer available")
+                if reset_snapshot.exists:
+                    control = reset_snapshot.to_dict()
+                    if (
+                        control.get("user_key") != user_key
+                        or control.get("status") != "resetting"
+                    ):
+                        raise UserStateUnavailable(
+                            "Progress reset state is unavailable"
+                        )
+                    return
+                now = datetime.now(UTC)
+                transaction.create(
+                    reset_ref,
+                    {
+                        "schema_version": 1,
+                        "user_key": user_key,
+                        "status": "resetting",
+                        "started_at": now,
+                        "updated_at": now,
+                    },
+                )
+
+            await begin_reset(client.transaction())
+            sessions_deleted = await self._delete_owner_documents(
+                client,
+                sessions,
+                user_key,
+            )
+            attempts_deleted = await self._delete_owner_documents(
+                client,
+                attempts,
+                user_key,
+            )
+
+            @transactional
+            async def finalize_reset(transaction: Any) -> bool:
+                reset_snapshot = await reset_ref.get(transaction=transaction)
+                progress_snapshot = await progress_ref.get(transaction=transaction)
+                if not reset_snapshot.exists:
+                    return False
+                control = reset_snapshot.to_dict()
+                if (
+                    control.get("user_key") != user_key
+                    or control.get("status") != "resetting"
+                ):
+                    raise UserStateUnavailable(
+                        "Progress reset state is unavailable"
+                    )
+                if progress_snapshot.exists:
+                    transaction.delete(progress_ref)
+                transaction.delete(reset_ref)
+                return progress_snapshot.exists
+
+            progress_deleted = await finalize_reset(client.transaction())
+            return UserStateResetSummary(
+                sessions_deleted=sessions_deleted,
+                attempts_deleted=attempts_deleted,
+                progress_deleted=progress_deleted,
+            )
+        except UserStateError:
+            raise
+        except Exception as exc:
+            raise UserStateUnavailable("Progress reset is unavailable") from exc
+
     async def _commit_owner_updates(
         self,
         client: Any,
         snapshots: list[Any],
+        guest_user_key: str,
         target_user_key: str,
     ) -> None:
+        reset_ref = client.collection(self._resets_name).document(target_user_key)
+        target_claim_ref = client.collection(self._claim_targets_name).document(
+            target_user_key
+        )
+        transactional = import_module(
+            "google.cloud.firestore_v1"
+        ).async_transactional
         for offset in range(0, len(snapshots), FIRESTORE_BATCH_WRITE_LIMIT):
-            batch = client.batch()
-            for snapshot in snapshots[
+            batch_snapshots = snapshots[
                 offset : offset + FIRESTORE_BATCH_WRITE_LIMIT
-            ]:
-                batch.update(snapshot.reference, {"user_key": target_user_key})
-            await batch.commit()
+            ]
+
+            @transactional
+            async def commit_updates(transaction: Any) -> None:
+                reset_snapshot = await reset_ref.get(transaction=transaction)
+                target_claim_snapshot = await target_claim_ref.get(
+                    transaction=transaction
+                )
+                if reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
+                if not target_claim_snapshot.exists:
+                    raise UserStateUnavailable("Progress claim is unavailable")
+                target_control = target_claim_snapshot.to_dict()
+                if (
+                    target_control.get("guest_user_key") != guest_user_key
+                    or target_control.get("target_user_key") != target_user_key
+                    or target_control.get("status") != "claiming"
+                ):
+                    raise UserStateUnavailable("Progress claim is unavailable")
+                for snapshot in batch_snapshots:
+                    transaction.update(
+                        snapshot.reference,
+                        {"user_key": target_user_key},
+                    )
+
+            await commit_updates(client.transaction())
 
     async def _transfer_owner_documents(
         self,
@@ -359,6 +532,7 @@ class FirestoreUserStateRepository:
             await self._commit_owner_updates(
                 client,
                 snapshots,
+                guest_user_key,
                 target_user_key,
             )
 
@@ -383,13 +557,33 @@ class FirestoreUserStateRepository:
             claim_ref = client.collection(self._claims_name).document(
                 guest_user_key
             )
+            guest_reset_ref = client.collection(self._resets_name).document(
+                guest_user_key
+            )
+            target_reset_ref = client.collection(self._resets_name).document(
+                target_user_key
+            )
+            target_claim_ref = client.collection(
+                self._claim_targets_name
+            ).document(target_user_key)
             transactional = import_module(
                 "google.cloud.firestore_v1"
             ).async_transactional
 
             @transactional
             async def begin_claim(transaction: Any) -> str:
+                guest_reset_snapshot = await guest_reset_ref.get(
+                    transaction=transaction
+                )
+                target_reset_snapshot = await target_reset_ref.get(
+                    transaction=transaction
+                )
                 snapshot = await claim_ref.get(transaction=transaction)
+                target_claim_snapshot = await target_claim_ref.get(
+                    transaction=transaction
+                )
+                if guest_reset_snapshot.exists or target_reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
                 if snapshot.exists:
                     control = snapshot.to_dict()
                     if (
@@ -404,7 +598,36 @@ class FirestoreUserStateRepository:
                         raise UserStateUnavailable(
                             "Guest claim state is unavailable"
                         )
+                    if target_claim_snapshot.exists:
+                        target_control = target_claim_snapshot.to_dict()
+                        if (
+                            target_control.get("guest_user_key")
+                            != guest_user_key
+                            or target_control.get("target_user_key")
+                            != target_user_key
+                            or target_control.get("status") != "claiming"
+                        ):
+                            raise UserStateUnavailable(
+                                "Progress claim is unavailable"
+                            )
+                        if claim_status == "claimed":
+                            transaction.delete(target_claim_ref)
+                    elif claim_status == "claiming":
+                        now = datetime.now(UTC)
+                        transaction.create(
+                            target_claim_ref,
+                            {
+                                "schema_version": 1,
+                                "guest_user_key": guest_user_key,
+                                "target_user_key": target_user_key,
+                                "status": "claiming",
+                                "started_at": now,
+                                "updated_at": now,
+                            },
+                        )
                     return claim_status
+                if target_claim_snapshot.exists:
+                    raise UserStateUnavailable("Another progress claim is in progress")
                 now = datetime.now(UTC)
                 transaction.create(
                     claim_ref,
@@ -420,6 +643,17 @@ class FirestoreUserStateRepository:
                         "claimed_at": None,
                     },
                 )
+                transaction.create(
+                    target_claim_ref,
+                    {
+                        "schema_version": 1,
+                        "guest_user_key": guest_user_key,
+                        "target_user_key": target_user_key,
+                        "status": "claiming",
+                        "started_at": now,
+                        "updated_at": now,
+                    },
+                )
                 return "claiming"
 
             claim_status = await begin_claim(client.transaction())
@@ -428,6 +662,15 @@ class FirestoreUserStateRepository:
 
             @transactional
             async def merge_progress(transaction: Any) -> ProgressProjection:
+                guest_reset_snapshot = await guest_reset_ref.get(
+                    transaction=transaction
+                )
+                target_reset_snapshot = await target_reset_ref.get(
+                    transaction=transaction
+                )
+                target_claim_snapshot = await target_claim_ref.get(
+                    transaction=transaction
+                )
                 claim_snapshot = await claim_ref.get(transaction=transaction)
                 guest_snapshot = await guest_progress_ref.get(
                     transaction=transaction
@@ -435,6 +678,17 @@ class FirestoreUserStateRepository:
                 target_snapshot = await target_progress_ref.get(
                     transaction=transaction
                 )
+                if guest_reset_snapshot.exists or target_reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
+                if not target_claim_snapshot.exists:
+                    raise UserStateUnavailable("Progress claim is unavailable")
+                target_control = target_claim_snapshot.to_dict()
+                if (
+                    target_control.get("guest_user_key") != guest_user_key
+                    or target_control.get("target_user_key") != target_user_key
+                    or target_control.get("status") != "claiming"
+                ):
+                    raise UserStateUnavailable("Progress claim is unavailable")
                 if not claim_snapshot.exists:
                     raise UserStateUnavailable("Guest claim state is unavailable")
                 control = claim_snapshot.to_dict()
@@ -504,7 +758,27 @@ class FirestoreUserStateRepository:
 
             @transactional
             async def finalize_claim(transaction: Any) -> None:
+                guest_reset_snapshot = await guest_reset_ref.get(
+                    transaction=transaction
+                )
+                target_reset_snapshot = await target_reset_ref.get(
+                    transaction=transaction
+                )
+                target_claim_snapshot = await target_claim_ref.get(
+                    transaction=transaction
+                )
                 snapshot = await claim_ref.get(transaction=transaction)
+                if guest_reset_snapshot.exists or target_reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
+                if not target_claim_snapshot.exists:
+                    raise UserStateUnavailable("Progress claim is unavailable")
+                target_control = target_claim_snapshot.to_dict()
+                if (
+                    target_control.get("guest_user_key") != guest_user_key
+                    or target_control.get("target_user_key") != target_user_key
+                    or target_control.get("status") != "claiming"
+                ):
+                    raise UserStateUnavailable("Progress claim is unavailable")
                 if not snapshot.exists:
                     raise UserStateUnavailable("Guest claim state is unavailable")
                 control = snapshot.to_dict()
@@ -514,6 +788,7 @@ class FirestoreUserStateRepository:
                 ):
                     raise UserStateNotFound("Guest state is no longer available")
                 if control.get("status") == "claimed":
+                    transaction.delete(target_claim_ref)
                     return
                 if control.get("projection_merged") is not True:
                     raise UserStateUnavailable("Guest claim state is unavailable")
@@ -528,6 +803,7 @@ class FirestoreUserStateRepository:
                 )
                 if control.get("guest_progress_existed") is True:
                     transaction.delete(guest_progress_ref)
+                transaction.delete(target_claim_ref)
 
             await finalize_claim(client.transaction())
             return await self.get_progress(target_user_key)

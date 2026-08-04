@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
 from app.user_state.domain import ProgressProjection, StudyAttempt, StudySession
@@ -23,6 +24,15 @@ class UserStateUnavailable(UserStateError):
 
 class UserStatePayloadTooLarge(UserStateError):
     """A record is too large for the conservative Firestore safety limit."""
+
+
+@dataclass(frozen=True, slots=True)
+class UserStateResetSummary:
+    """Owner-scoped records removed by a completed progress reset."""
+
+    sessions_deleted: int
+    attempts_deleted: int
+    progress_deleted: bool
 
 
 @runtime_checkable
@@ -49,6 +59,8 @@ class UserStateRepository(Protocol):
     ) -> StudyAttempt: ...
 
     async def get_progress(self, user_key: str) -> ProgressProjection: ...
+
+    async def reset_progress(self, user_key: str) -> UserStateResetSummary: ...
 
     async def claim_guest_state(
         self,

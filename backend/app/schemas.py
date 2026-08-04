@@ -35,6 +35,21 @@ class FirebaseLogout(BaseModel):
     csrf_token: str = Field(min_length=16, max_length=512)
 
 
+class ProgressResetRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    csrf_token: str = Field(min_length=16, max_length=512)
+    confirmation: Literal["RESET"]
+
+
+class ProgressResetResult(BaseModel):
+    user_key: str
+    reset: bool = True
+    sessions_deleted: int
+    attempts_deleted: int
+    progress_deleted: bool
+
+
 class AuthUser(BaseModel):
     uid: str
     display_name: str | None = None
@@ -274,6 +289,7 @@ class RoadmapTopic(BaseModel):
     question_count: int
     note_available: bool
     attempted_questions: int
+    solved_questions: int
     accuracy: float | None
 
 
@@ -286,6 +302,7 @@ class RoadmapSubject(BaseModel):
     topic_count: int
     question_count: int
     attempted_questions: int
+    solved_questions: int
     accuracy: float | None
     topics: list[RoadmapTopic]
 

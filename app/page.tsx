@@ -361,6 +361,7 @@ type RemoteRoadmap = {
   name?: string;
   question_count?: number;
   attempted_questions?: number;
+  solved_questions?: number;
   accuracy?: number;
   topics?: Array<{
     id?: number;
@@ -368,6 +369,7 @@ type RemoteRoadmap = {
     name?: string;
     question_count?: number;
     attempted_questions?: number;
+    solved_questions?: number;
     accuracy?: number;
   }>;
 };
@@ -859,7 +861,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
         item.code === fallback.code,
     );
     if (!remote) return fallback;
-    const attempted = remote.attempted_questions ?? 0;
+    const solved = remote.solved_questions ?? 0;
     const total = remote.question_count ?? fallback.questionCount;
     const topics =
       remote.topics && remote.topics.length > 0
@@ -872,7 +874,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
             );
             const remoteTotal =
               remoteTopic.question_count ?? fallbackTopic?.questions ?? 0;
-            const remoteAttempted = remoteTopic.attempted_questions ?? 0;
+            const remoteSolved = remoteTopic.solved_questions ?? 0;
             return {
               id: remoteSlug,
               apiId: remoteTopic.id,
@@ -882,7 +884,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
               progress: remoteTotal
                 ? Math.min(
                     100,
-                    Math.round((remoteAttempted / remoteTotal) * 100),
+                    Math.round((remoteSolved / remoteTotal) * 100),
                   )
                 : 0,
               duration:
@@ -895,7 +897,7 @@ function mergeRoadmap(payload: unknown): Subject[] {
       ...fallback,
       title: remote.name ?? fallback.title,
       questionCount: total,
-      progress: total ? Math.min(100, Math.round((attempted / total) * 100)) : 0,
+      progress: total ? Math.min(100, Math.round((solved / total) * 100)) : 0,
       mastery:
         remote.accuracy == null
           ? 0
@@ -1565,6 +1567,37 @@ export default function Home() {
   const navigate = useCallback((target: Screen) => {
     setScreen(target);
     setMobileNavOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const handleProgressReset = useCallback(() => {
+    practiceRequestId.current += 1;
+    runnerAutoSubmitAttempted.current = false;
+    examAutoSubmitAttempted.current = false;
+    setRoadmapSubjects(EMPTY_ROADMAP_SUBJECTS);
+    setAnalytics(buildLocalAnalytics(EMPTY_ROADMAP_SUBJECTS));
+    setAnalyticsSource("local");
+    setApiState("checking");
+    setRunnerQuestions([]);
+    setRunnerCatalogTest(null);
+    setPracticeAnswers({});
+    setCheckedQuestions(new Set());
+    setRunnerSummary(null);
+    setRunnerSubmitted(false);
+    setRunnerDeadlineMs(null);
+    setRunnerTimerRunning(false);
+    setSessionId(null);
+    setExamQuestions([]);
+    setExamAnswers({});
+    setReviewed(new Set());
+    setExamDeadlineMs(null);
+    setExamRunning(false);
+    setServerResult(null);
+    setSubmitBusy(false);
+    setLaunchError(null);
+    setScreen("dashboard");
+    setMobileNavOpen(false);
+    setLearnerStateRefreshKey((current) => current + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -2409,7 +2442,7 @@ export default function Home() {
         <section className="pulse-strip" aria-label="Study summary">
           <div><span className="metric-icon">{analytics.testsCompleted}</span><span><strong>Tests completed</strong><small>Full and course attempts</small></span></div>
           <div><span className="metric-icon">{analytics.accuracy}%</span><span><strong>Overall accuracy</strong><small>Across answered questions</small></span></div>
-          <div><span className="metric-icon">{analytics.coverage}%</span><span><strong>Syllabus coverage</strong><small>{analytics.uniqueQuestionsAttempted.toLocaleString()} unique questions attempted</small></span></div>
+          <div><span className="metric-icon">{analytics.coverage}%</span><span><strong>Answered coverage</strong><small>{analytics.uniqueQuestionsAttempted.toLocaleString()} unique questions answered</small></span></div>
           <button className="strip-link" onClick={() => navigate("progress")}>View insights <span>→</span></button>
         </section>
 
@@ -2919,7 +2952,7 @@ export default function Home() {
           <div className="eyebrow">{selectedSubject.phase} · {selectedSubject.estimatedHours} hours mapped</div>
           <h1>{selectedSubject.title}</h1>
           <p>{selectedSubject.description}</p>
-          <div className="subject-stats"><span><strong>{selectedSubject.progress}%</strong> syllabus</span><span><strong>{selectedSubject.mastery}%</strong> accuracy</span><span><strong>{selectedSubject.questionCount}</strong> questions</span></div>
+          <div className="subject-stats"><span><strong>{selectedSubject.progress}%</strong> completed</span><span><strong>{selectedSubject.mastery}%</strong> accuracy</span><span><strong>{selectedSubject.questionCount}</strong> questions</span></div>
         </div>
         <ProgressRing value={selectedSubject.progress} />
       </section>
@@ -3830,7 +3863,7 @@ export default function Home() {
             <div className="eyebrow">Learning signals</div>
             <h1>Know what is strong. Fix what is not.</h1>
             <p>
-              Recommendations use accuracy, attempts and syllabus coverage.
+              Recommendations use accuracy, attempts and answered coverage.
               Unattempted topics appear as starting suggestions until you build
               enough evidence.
             </p>
@@ -3855,7 +3888,7 @@ export default function Home() {
             <p>Across answered questions</p>
           </div>
           <div>
-            <span>Syllabus coverage</span>
+            <span>Answered coverage</span>
             <strong>{analytics.coverage}%</strong>
             <p>{analytics.topics.length} topics measured</p>
           </div>
@@ -4113,7 +4146,7 @@ export default function Home() {
           <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span className="nav-icon">↗</span><span>Progress</span></button>
         </nav>
         <div className="sidebar-spacer" />
-        <div className="sidebar-target"><span className="target-label">Question coverage</span><div><strong>{analytics.uniqueQuestionsAttempted.toLocaleString()}</strong><span>of {analytics.availableQuestions.toLocaleString()} questions</span></div><MiniProgress value={analytics.coverage} /><small>{analytics.coverage}% of the bank explored</small></div>
+        <div className="sidebar-target"><span className="target-label">Answered coverage</span><div><strong>{analytics.uniqueQuestionsAttempted.toLocaleString()}</strong><span>of {analytics.availableQuestions.toLocaleString()} questions</span></div><MiniProgress value={analytics.coverage} /><small>{analytics.coverage}% of the bank answered</small></div>
         <button
           className="profile"
           aria-haspopup="dialog"
@@ -4143,6 +4176,7 @@ export default function Home() {
       <AuthDialog
         open={authDialogOpen}
         onClose={() => setAuthDialogOpen(false)}
+        onProgressReset={handleProgressReset}
         identityChangeBlocked={identityChangeBlocked}
       />
     </div>

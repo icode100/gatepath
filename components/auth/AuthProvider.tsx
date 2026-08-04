@@ -44,6 +44,7 @@ type AuthContextValue = {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   createAccount: (email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  resetProgress: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -249,6 +250,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await trackEvent("password_reset_requested", { method: "email" });
   }, []);
 
+  const resetProgress = useCallback(async () => {
+    const csrfToken = await requestCsrfToken();
+    const response = await fetch(`${API_BASE}/progress/reset`, {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        csrf_token: csrfToken,
+        confirmation: "RESET",
+      }),
+    });
+    if (!response.ok) {
+      throw await responseError(
+        response,
+        "Your progress could not be reset. Please try again.",
+      );
+    }
+    await trackEvent("progress_reset", { method: "account_settings" });
+  }, []);
+
   const signOut = useCallback(async () => {
     const csrfToken = await requestCsrfToken();
     const response = await fetch(`${API_BASE}/auth/logout`, {
@@ -277,11 +299,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithEmail,
       createAccount,
       resetPassword,
+      resetProgress,
       signOut,
     }),
     [
       createAccount,
       resetPassword,
+      resetProgress,
       signInWithEmail,
       signInWithGoogle,
       signOut,

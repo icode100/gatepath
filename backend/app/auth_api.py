@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import firebase_auth
 from app.config import settings
+from app.csrf import clear_csrf_cookie, require_csrf, set_csrf_cookie
 from app.database import get_db
 from app.identity import (
     IdentityPrincipal,
@@ -32,42 +33,6 @@ from app.user_state.dependencies import get_user_state_repository
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
-CSRF_COOKIE_MAX_AGE_SECONDS = 60 * 60
-
-
-def _set_csrf_cookie(response: Response, token: str) -> None:
-    response.set_cookie(
-        key=settings.firebase_csrf_cookie_name,
-        value=token,
-        httponly=False,
-        secure=settings.secure_identity_cookie,
-        samesite="strict",
-        max_age=CSRF_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
-
-
-def _clear_csrf_cookie(response: Response) -> None:
-    response.delete_cookie(
-        key=settings.firebase_csrf_cookie_name,
-        httponly=False,
-        secure=settings.secure_identity_cookie,
-        samesite="strict",
-        path="/",
-    )
-
-
-def _require_csrf(request: Request, submitted_token: str) -> None:
-    cookie_token = request.cookies.get(settings.firebase_csrf_cookie_name)
-    if (
-        not cookie_token
-        or not submitted_token
-        or not secrets.compare_digest(cookie_token, submitted_token)
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="CSRF validation failed",
-        )
 
 
 def _claim_text(claims: dict[str, Any], key: str) -> str | None:
@@ -160,7 +125,7 @@ async def _claim_guest_progress(
 async def issue_csrf_token(response: Response) -> CsrfResponse:
     token = secrets.token_urlsafe(32)
     response.headers["Cache-Control"] = "no-store"
-    _set_csrf_cookie(response, token)
+    set_csrf_cookie(response, token)
     return CsrfResponse(csrf_token=token)
 
 
@@ -173,7 +138,7 @@ async def create_session(
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
 ) -> AuthStatus:
     response.headers["Cache-Control"] = "no-store"
-    _require_csrf(request, payload.csrf_token)
+    require_csrf(request, payload.csrf_token)
     if not settings.firebase_auth_enabled or settings.firebase_configuration_issues:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -210,7 +175,7 @@ async def create_session(
         )
     firebase_auth.set_firebase_session_cookie(response, firebase_session.cookie)
     clear_identity_cookie(response)
-    _clear_csrf_cookie(response)
+    clear_csrf_cookie(response)
     request.state.firebase_session_replaced = True
     request.state.suppress_guest_cookie = True
     return _firebase_status(firebase_session.identity)
@@ -232,12 +197,12 @@ async def logout(
     response: Response,
 ) -> AuthStatus:
     response.headers["Cache-Control"] = "no-store"
-    _require_csrf(request, payload.csrf_token)
+    require_csrf(request, payload.csrf_token)
     guest_user_key, guest_token = issue_identity()
     firebase_auth.clear_firebase_session_cookie(response)
     clear_identity_cookie(response)
     set_identity_cookie(response, guest_token)
-    _clear_csrf_cookie(response)
+    clear_csrf_cookie(response)
     request.state.firebase_session_replaced = True
     request.state.suppress_guest_cookie = True
     return AuthStatus(

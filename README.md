@@ -36,7 +36,7 @@ The question type mix is deliberately not hard-coded because IIT Madras has not 
 - 2,607-question local JSON bank: 2,220 distinct reproducible syllabus-bounded variants plus 387 safely verified PYQs
 - 25 distinct full mocks: 65 questions, 100 marks, and 180 minutes each
 - 100 course tests: 10 per technical course, 30 questions each, with MCQ, MSQ, and NAT coverage
-- Per-user topic mastery analytics, strong/needs-practice lists, roadmap progress, and attempt summaries, with Firestore storage in production
+- Per-user topic mastery analytics, strong/needs-practice lists, correct-only roadmap completion, attempt summaries, and an explicitly confirmed progress reset, with Firestore storage in production
 - Immutable test snapshots, deadline enforcement, Firebase account ownership, and signed guest fallback
 - Light and dark themes with responsive keyboard- and touch-friendly UI
 - Local fallback content when the API is unavailable

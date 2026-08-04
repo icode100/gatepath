@@ -24,6 +24,7 @@ from app.user_state.repository import (
     UserStateNotFound,
     UserStatePayloadTooLarge,
     UserStateRepository,
+    UserStateResetSummary,
     UserStateUnavailable,
 )
 
@@ -42,6 +43,7 @@ __all__ = [
     "UserStateNotFound",
     "UserStatePayloadTooLarge",
     "UserStateRepository",
+    "UserStateResetSummary",
     "UserStateUnavailable",
     "apply_attempt_to_projection",
     "empty_progress_projection",

@@ -21,6 +21,7 @@ from app.user_state.domain import (
 from app.user_state.repository import (
     UserStateAlreadySubmitted,
     UserStateNotFound,
+    UserStateResetSummary,
 )
 
 
@@ -150,6 +151,32 @@ class MemoryUserStateRepository:
                 empty_progress_projection(user_key),
             )
             return self._copy(progress)
+
+    async def reset_progress(self, user_key: str) -> UserStateResetSummary:
+        async with self._lock:
+            if user_key.startswith("anon-") and user_key in self._claims:
+                raise UserStateNotFound("User state is no longer available")
+
+            session_ids = [
+                session_id
+                for session_id, session in self._sessions.items()
+                if session.user_key == user_key
+            ]
+            attempt_ids = [
+                attempt_id
+                for attempt_id, attempt in self._attempts.items()
+                if attempt.user_key == user_key
+            ]
+            for session_id in session_ids:
+                self._sessions.pop(session_id, None)
+            for attempt_id in attempt_ids:
+                self._attempts.pop(attempt_id, None)
+            progress_deleted = self._progress.pop(user_key, None) is not None
+            return UserStateResetSummary(
+                sessions_deleted=len(session_ids),
+                attempts_deleted=len(attempt_ids),
+                progress_deleted=progress_deleted,
+            )
 
     async def claim_guest_state(
         self,

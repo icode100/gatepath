@@ -102,7 +102,7 @@ to Firestore after cutover before treating PostgreSQL as current again.
 
 All application endpoints use `/api/v1`.
 
-- `GET /roadmap` — ordered, clickable subject/topic tree with progress for the current signed anonymous identity.
+- `GET /roadmap` — ordered, clickable subject/topic tree; completion counts unique active questions solved correctly at least once, so skipped/wrong/repeated responses cannot inflate it.
 - `GET /subjects` and `GET /subjects/{id-or-slug}` — curriculum and topic details.
 - `GET /topics/{id}` and `GET /topics/{id}/notes` — topic metadata and Markdown revision content.
 - `GET /questions` — filters: `subject_id`, `subject_slug`, `topic_id`, `source_kind`, `year`, `question_type`, `difficulty`, `limit`, `offset`.
@@ -115,6 +115,7 @@ All application endpoints use `/api/v1`.
 - `GET /attempts/{id}` — retrieves a submitted result.
 - `GET /progress/dashboard` — aggregate and per-subject performance.
 - `GET /progress/analytics` — per-topic accuracy, volume, coverage, recency-weighted accuracy, mastery and strong/needs-practice classifications.
+- `POST /progress/reset` — CSRF-protected, explicit-confirmation reset of the current identity's sessions, attempts, and progress projection; static curriculum and question-bank data are never touched.
 - `GET /question-bank/status` — current bank size and latest import audit record.
 - `GET /health` — service and database readiness (this endpoint is at the service root, outside `/api/v1`).
 
