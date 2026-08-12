@@ -133,15 +133,15 @@ const tocTopics: LearningTopic[] = [
         ["One transition per state-symbol pair", "A state summarizes relevant prefix history", "Acceptance is tested after the whole string"],
         "Trace strings carefully and distinguish a missing transition from an implicit dead state.",
         "Build a DFA over {0,1} that accepts strings with an even number of 1s.",
-        "Use E for even parity and O for odd parity. Symbol 0 leaves parity unchanged, while 1 toggles E and O. Start in E and make only E accepting; for 1011 the trace E→O→O→E→O rejects.",
+        "Use E for even parity and O for odd parity. Symbol 0 leaves parity unchanged, while 1 toggles E and O. Start in E and make only E accepting; for 1011 the trace \\(E \\to O \\to O \\to E \\to O\\) rejects.",
       ),
       concept(
         "NFA equivalence and subset construction",
         "An NFA may offer several next states and epsilon moves, yet it accepts when at least one complete path ends in an accepting state. Subset construction records the entire reachable NFA-state set as one DFA state. Epsilon-closure must be applied initially and after every symbol-induced move, otherwise reachable accepting paths are lost.",
         ["Nondeterministic choice is existential", "A DFA state is a set of NFA states", "Epsilon-closure consumes no input"],
         "Compute reachable subsets only; inaccessible powerset members do not become DFA states.",
-        "An NFA starts at q0, has q0 --ε→ q1, and q1 --a→ q2 where q2 is final. What is the DFA move on a?",
-        "The initial DFA state is ε-closure({q0})={q0,q1}. On a, q0 contributes nothing and q1 reaches q2. The closure of {q2} is {q2}, an accepting DFA state because it contains the NFA final state.",
+        "An NFA starts at \\(q_0\\), has \\(q_0 \\xrightarrow{\\varepsilon} q_1\\), and \\(q_1 \\xrightarrow{a} q_2\\), where \\(q_2\\) is final. What is the DFA move on \\(a\\)?",
+        "The initial DFA state is \\(\\varepsilon\\text{-closure}(\\{q_0\\})=\\{q_0,q_1\\}\\). On \\(a\\), \\(q_0\\) contributes nothing and \\(q_1\\) reaches \\(q_2\\). The closure of \\(\\{q_2\\}\\) is \\(\\{q_2\\}\\), an accepting DFA state because it contains the NFA final state.",
       ),
       concept(
         "Regular expressions and minimization",
@@ -153,8 +153,8 @@ const tocTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "DFA transition extension", expression: "δ*(q, xa) = δ(δ*(q, x), a)", useWhen: "Tracing a complete string through a DFA" },
-      { label: "Subset move", expression: "D(S, a) = ε-closure(⋃q∈S δN(q,a))", useWhen: "Converting an epsilon-NFA to a DFA" },
+      { label: "DFA transition extension", expression: "\\delta^*(q,xa)=\\delta(\\delta^*(q,x),a)", useWhen: "Tracing a complete string through a DFA" },
+      { label: "Subset move", expression: "D(S,a)=\\varepsilon\\text{-closure}\\left(\\bigcup_{q\\in S}\\delta_N(q,a)\\right)", useWhen: "Converting an epsilon-NFA to a DFA" },
     ],
     checkpoints: [
       { question: "Can an NFA recognize a language that no DFA recognizes?", answer: "No. NFAs and DFAs have equal expressive power; subset construction produces an equivalent DFA, although it may have exponentially more states." },
@@ -273,15 +273,15 @@ const tocTopics: LearningTopic[] = [
         "If a language is regular, every sufficiently long accepted string contains an early nonempty segment that can be repeated any number of times without leaving the language. In a nonregularity proof, the adversary chooses a legal split after the learner chooses the witness, so the contradiction must work for every split meeting the length constraints.",
         ["Choose a string at least the pumping length", "The pumped segment is nonempty and lies early", "One pumping exponent must break every legal split"],
         "Respect the quantifier order; selecting the decomposition yourself does not disprove regularity.",
-        "Show why L={0^n1^n | n≥0} violates the regular pumping property.",
-        "Assume pumping length p and choose 0^p1^p. Every legal y within the first p symbols contains only zeros and at least one zero. Pumping y twice increases zeros without changing ones, producing unequal counts, so the pumped string leaves L for every legal split.",
+        "Show why \\(L=\\{0^n1^n \\mid n\\ge 0\\}\\) violates the regular pumping property.",
+        "Assume pumping length \\(p\\) and choose \\(0^p1^p\\). Every legal \\(y\\) within the first \\(p\\) symbols contains only zeros and at least one zero. Pumping \\(y\\) twice increases zeros without changing ones, producing unequal counts, so the pumped string leaves \\(L\\) for every legal split.",
       ),
       concept(
         "Context-free pumping lemma",
         "For a sufficiently long string in a CFL, a decomposition uvxyz exists where v and y are pumped together, at least one is nonempty, and the combined window vxy is bounded by the pumping length. The extra freedom makes CFL non-membership proofs harder; the witness and case analysis must defeat all placements of both pumped pieces.",
         ["v and y pump synchronously", "|vy| is positive", "|vxy| is bounded"],
         "Partition possible locations of v and y systematically; do not assume both occupy the same symbol block.",
-        "Why is 0^p1^p2^p a useful witness against context-freeness?",
+        "Why is \\(0^p1^p2^p\\) a useful witness against context-freeness?",
         "The bounded window vxy cannot cover all three long blocks. Pumping v and y therefore changes at most two blocks while leaving at least one count fixed, or disrupts block order. In every case the equality among all three counts fails.",
       ),
       concept(
@@ -294,8 +294,8 @@ const tocTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "Regular pumping constraints", expression: "s=xyz, |xy|≤p, |y|>0, and xy^iz∈L for all i≥0", useWhen: "Deriving a contradiction from assumed regularity" },
-      { label: "CFL pumping constraints", expression: "s=uvxyz, |vxy|≤p, |vy|>0, and uv^ixy^iz∈L", useWhen: "Deriving a contradiction from assumed context-freeness" },
+      { label: "Regular pumping constraints", expression: "s=xyz,\\quad |xy|\\le p,\\quad |y|>0,\\quad xy^iz\\in L\\quad \\text{for all }i\\ge0", useWhen: "Deriving a contradiction from assumed regularity" },
+      { label: "CFL pumping constraints", expression: "s=uvxyz,\\quad |vxy|\\le p,\\quad |vy|>0,\\quad uv^i x y^i z\\in L", useWhen: "Deriving a contradiction from assumed context-freeness" },
     ],
     checkpoints: [
       { question: "Can the pumping lemma prove that a language is regular?", answer: "Not by itself. It gives a necessary property of regular languages, and some nonregular languages may still satisfy that property." },
@@ -391,8 +391,8 @@ const compilerTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "Longest-match rule", expression: "Choose the longest input prefix accepted by any token pattern", useWhen: "Resolving token boundaries in a source stream" },
-      { label: "Tie-breaking rule", expression: "Equal match length ⇒ choose the earliest or highest-priority rule", useWhen: "A keyword and identifier pattern accept the same lexeme" },
+      { label: "Longest-match rule", expression: "Choose the longest input prefix accepted by any token pattern", presentation: "text", useWhen: "Resolving token boundaries in a source stream" },
+      { label: "Tie-breaking rule", expression: "Equal match length ⇒ choose the earliest or highest-priority rule", presentation: "text", useWhen: "A keyword and identifier pattern accept the same lexeme" },
     ],
     checkpoints: [
       { question: "Is the spelling count a token or a lexeme?", answer: "It is a lexeme. The category returned for that source substring is typically the token ID with a symbol-table attribute." },
@@ -580,7 +580,7 @@ const compilerTopics: LearningTopic[] = [
     ],
     formulae: [
       { label: "Quadruple layout", expression: "(op, arg1, arg2, result)", useWhen: "Encoding a three-address instruction with explicit result names" },
-      { label: "Short-circuit AND", expression: "B1 true → evaluate B2; B1 false → false exit", useWhen: "Generating control-flow code for B1 && B2" },
+      { label: "Short-circuit AND", expression: "B1 true → evaluate B2; B1 false → false exit", presentation: "code", useWhen: "Generating control-flow code for B1 && B2" },
     ],
     checkpoints: [
       { question: "Why is three-address code called machine independent?", answer: "Its operations and temporaries describe computation without committing to a particular target's registers, instruction encoding, or addressing constraints." },
@@ -772,7 +772,7 @@ const operatingSystemTopics: LearningTopic[] = [
     ],
     formulae: [
       { label: "Bounded-buffer capacity invariant", expression: "0 ≤ full ≤ N and empty + full = N", useWhen: "Checking producer-consumer semaphore accounting across buffer operations" },
-      { label: "Critical-section requirements", expression: "Mutual exclusion + Progress + Bounded waiting", useWhen: "Evaluating a software or hardware synchronization solution" },
+      { label: "Critical-section requirements", expression: "Mutual exclusion + Progress + Bounded waiting", presentation: "text", useWhen: "Evaluating a software or hardware synchronization solution" },
     ],
     checkpoints: [
       { question: "Why is count=count+1 vulnerable without synchronization?", answer: "It normally expands into separate load, arithmetic, and store operations that can interleave with another thread and lose an update." },
@@ -1011,7 +1011,7 @@ const databaseTopics: LearningTopic[] = [
     ],
     formulae: [
       { label: "Weak-entity key", expression: "owner primary key ∪ weak partial key", useWhen: "Mapping an identifying relationship to a relation" },
-      { label: "Many-to-many mapping", expression: "Relationship relation primary key usually combines participating entity keys", useWhen: "Creating a separate relation for an M:N relationship" },
+      { label: "Many-to-many mapping", expression: "Relationship relation primary key usually combines participating entity keys", presentation: "text", useWhen: "Creating a separate relation for an M:N relationship" },
     ],
     checkpoints: [
       { question: "What does total participation mean?", answer: "Every entity in that entity set must participate in at least one instance of the specified relationship." },
@@ -1105,8 +1105,8 @@ const databaseTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "Logical query order", expression: "FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY", useWhen: "Explaining aliases, aggregates, and row counts" },
-      { label: "Aggregate counting", expression: "COUNT(*) counts rows; COUNT(A) counts non-NULL A values", useWhen: "NULL values appear in an aggregate question" },
+      { label: "Logical query order", expression: "FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY", presentation: "code", useWhen: "Explaining aliases, aggregates, and row counts" },
+      { label: "Aggregate counting", expression: "COUNT(*) counts rows; COUNT(A) counts non-NULL A values", presentation: "code", useWhen: "NULL values appear in an aggregate question" },
     ],
     checkpoints: [
       { question: "Does SELECT DISTINCT remove duplicates before WHERE?", answer: "No. WHERE first filters source rows; DISTINCT removes duplicate selected result rows later in logical processing." },
@@ -1294,9 +1294,9 @@ const databaseTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "Conflict condition", expression: "Different transactions, same item, and at least one write", useWhen: "Constructing a transaction precedence graph from schedule operations" },
-      { label: "Conflict serializability", expression: "Schedule is conflict serializable iff precedence graph is acyclic", useWhen: "Testing and deriving equivalent serial orders" },
-      { label: "WAL rule", expression: "log record durable before corresponding data page; commit record durable before success", useWhen: "Reasoning about undo and redo safety" },
+      { label: "Conflict condition", expression: "Different transactions, same item, and at least one write", presentation: "text", useWhen: "Constructing a transaction precedence graph from schedule operations" },
+      { label: "Conflict serializability", expression: "Schedule is conflict serializable iff precedence graph is acyclic", presentation: "text", useWhen: "Testing and deriving equivalent serial orders" },
+      { label: "WAL rule", expression: "log record durable before corresponding data page; commit record durable before success", presentation: "text", useWhen: "Reasoning about undo and redo safety" },
     ],
     checkpoints: [
       { question: "Do two reads of the same item conflict?", answer: "No. Neither changes the value, so swapping their order cannot affect either transaction's observed database state." },
@@ -1392,7 +1392,7 @@ const networkTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "CRC redundancy", expression: "r = degree of generator; append r zeros and transmit data followed by r-bit remainder", useWhen: "Constructing a CRC codeword from data and generator" },
+      { label: "CRC redundancy", expression: "\\(r=\\deg(G)\\); append \\(r\\) zeros and transmit the data followed by the \\(r\\)-bit remainder", presentation: "mixed", useWhen: "Constructing a CRC codeword from data and generator" },
       { label: "Slotted ALOHA throughput", expression: "S = G e^(−G), maximum 1/e at G=1", useWhen: "A syllabus-aligned random-access throughput question explicitly gives slotted ALOHA" },
     ],
     checkpoints: [
@@ -1440,7 +1440,7 @@ const networkTopics: LearningTopic[] = [
     ],
     formulae: [
       { label: "Distance-vector update", expression: "Dx(y) = min_v { c(x,v) + Dv(y) }", useWhen: "Router x evaluates routes through neighbors v" },
-      { label: "Path cost", expression: "Sum of link costs along the path", useWhen: "Comparing candidate routes under additive metrics" },
+      { label: "Path cost", expression: "Sum of link costs along the path", presentation: "text", useWhen: "Comparing candidate routes under additive metrics" },
     ],
     checkpoints: [
       { question: "What information does a distance-vector router normally know?", answer: "It knows costs to direct neighbors and distance estimates advertised by those neighbors, not necessarily the complete network topology." },
@@ -1680,8 +1680,8 @@ const aptitudeTopics: LearningTopic[] = [
       ),
     ],
     formulae: [
-      { label: "Evidence rule", expression: "Valid answer = stated claim or necessary inference from the passage", useWhen: "Eliminating attractive but unsupported comprehension choices" },
-      { label: "Connector map", expression: "contrast: however; cause: because; result: therefore; addition: moreover", useWhen: "Selecting a sentence connector that preserves the intended logical relation" },
+      { label: "Evidence rule", expression: "Valid answer = stated claim or necessary inference from the passage", presentation: "text", useWhen: "Eliminating attractive but unsupported comprehension choices" },
+      { label: "Connector map", expression: "contrast: however; cause: because; result: therefore; addition: moreover", presentation: "text", useWhen: "Selecting a sentence connector that preserves the intended logical relation" },
     ],
     checkpoints: [
       { question: "What controls agreement in 'A set of tools is available'?", answer: "The head noun set is singular, so the verb is singular even though the modifying phrase contains plural tools." },
@@ -1776,7 +1776,7 @@ const aptitudeTopics: LearningTopic[] = [
     ],
     formulae: [
       { label: "Contrapositive", expression: "P→Q is equivalent to ¬Q→¬P", useWhen: "Deriving a valid implication from a necessary condition" },
-      { label: "Constraint validity", expression: "candidate is valid iff every stated constraint evaluates true", useWhen: "Checking arrangements or grouping options" },
+      { label: "Constraint validity", expression: "candidate is valid iff every stated constraint evaluates true", presentation: "text", useWhen: "Checking arrangements or grouping options" },
     ],
     checkpoints: [
       { question: "From P→Q and Q, may P be concluded?", answer: "No. That is affirming the consequent; Q may hold for reasons other than P." },
@@ -1823,7 +1823,7 @@ const aptitudeTopics: LearningTopic[] = [
     ],
     formulae: [
       { label: "Planar quarter-turn", expression: "90° clockwise: (x,y)→(y,−x) about the origin", useWhen: "Coordinates or marked points are rotated in 2D" },
-      { label: "Single off-axis fold", expression: "one punch produces a reflected pair after complete unfolding", useWhen: "There is one fold and the punch is not on its axis" },
+      { label: "Single off-axis fold", expression: "one punch produces a reflected pair after complete unfolding", presentation: "text", useWhen: "There is one fold and the punch is not on its axis" },
     ],
     checkpoints: [
       { question: "Which transformation reverses handedness?", answer: "A reflection reverses orientation or chirality, whereas translations and rotations preserve it." },

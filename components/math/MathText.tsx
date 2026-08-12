@@ -191,19 +191,25 @@ export function normalizeLegacyFormula(expression: string): string {
       .replace(/\u2061/g, "")
       .replace(/\.\.\./g, "\\ldots ")
       .replace(/\bsuch\s+that\b/gi, "\\text{ such that }")
-      .replace(/\b(for|if|where|and|or|not|no|of|to|in)\b/gi, (word) => `\\text{ ${word.toLowerCase()} }`)
+      // Do not reinterpret the names of commands created above (for example
+      // `\\to` and `\\in`) as ordinary prose. Doing so turns them into an
+      // invalid double-backslash sequence that KaTeX displays as text.
+      .replace(/(?<!\\)\b(for|if|where|and|or|not|no|of|to|in)\b/gi, (word) => `\\text{ ${word.toLowerCase()} }`)
       .replace(/\bmod\b/gi, "\\bmod")
       .replace(/\bunion\b/gi, "\\cup")
       .replace(/\bintersection\b/gi, "\\cap")
       .replace(/\bsubseteq\b/gi, "\\subseteq")
       .replace(/\bsubset\b/gi, "\\subset")
       .replace(/\biff\b/gi, "\\iff")
-      .replace(/\bsum\s*\(/gi, "\\sum(")
-      .replace(/\b(log|ln|max|min|rank|det|sin|cos|tan)\b/g, "\\$1")
+      .replace(/(?<!\\)\bsum\s*\(/gi, "\\sum(")
+      .replace(/\brank\b/g, "\\operatorname{rank}")
+      .replace(/\b(log|ln|max|min|det|sin|cos|tan)\b/g, "\\$1")
       .replace(/((?:\\Theta|\\Omega|O)\s*\(\s*)([nmkx])([2-9])(?=\s|\\|[)])/g, "$1$2^{$3}")
       .replace(/\b(deg|color|id)\b/g, "\\operatorname{$1}")
       .replace(/\b([A-Z]{2,8})\b/g, "\\mathrm{$1}")
       .replace(/([A-Za-z])_\(([^)]+)\)/g, "$1_{$2}")
+      .replace(/\^\(([^()]*)\)/g, "^{$1}")
+      .replace(/\^(-?\d+(?:\.\d+)?|[A-Za-z])/g, "^{$1}")
       .replace(/\b([A-Za-z])(\d+)\b/g, "$1_{$2}");
   }
 
@@ -229,12 +235,15 @@ const hasLegacyMathAnchor = (token: string) =>
     );
   });
 
-function parseLegacyMathSegments(value: string): MathSegment[] {
-  const asciiEquationSafe = !/(?:#include|printf\s*\(|scanf\s*\(|int\s+main|SELECT\s|INSERT\s|UPDATE\s|DELETE\s|while\s*\(|for\s*\(|if\s*\(|return\s+)/i.test(value);
+export function parseLegacyMathSegments(value: string): MathSegment[] {
+  const asciiEquationSafe = !/(?:#include|printf\s*\(|scanf\s*\(|int\s+main|SELECT\s|INSERT\s|UPDATE\s|DELETE\s|while\s*\(|for\s*\(|if\s*\(|return\s+|\bbitwise\b|\bxor\b)/i.test(value);
   const hasAsciiEquation =
     asciiEquationSafe &&
     /[A-Za-z0-9_)}\]]\s*=\s*[A-Za-z0-9_{([]/.test(value);
-  if (!hasLegacyMathAnchor(value) && !hasAsciiEquation) {
+  const hasAsciiPower =
+    asciiEquationSafe &&
+    /[A-Za-z0-9)}\]]\^(?:\([^()\n]+\)|-?[A-Za-z0-9])/.test(value);
+  if (!hasLegacyMathAnchor(value) && !hasAsciiEquation && !hasAsciiPower) {
     return [{ kind: "text", value }];
   }
   const tokenPattern = /[\p{L}]+|\d+(?:\.\d+)?|\s+|./gu;
@@ -257,7 +266,12 @@ function parseLegacyMathSegments(value: string): MathSegment[] {
     const isAsciiMath =
       hasAsciiEquation &&
       /[A-Za-z0-9_)}\]]\s*=\s*[A-Za-z0-9_{([]/.test(expression);
-    if (!isUnicodeMath && !isAsciiMath) return;
+    const isAsciiPower =
+      hasAsciiPower &&
+      /[A-Za-z0-9)}\]]\^(?:\([^()\n]+\)|-?[A-Za-z0-9])/.test(
+        expression,
+      );
+    if (!isUnicodeMath && !isAsciiMath && !isAsciiPower) return;
     if (start > emittedUntil) {
       segments.push({ kind: "text", value: value.slice(emittedUntil, start) });
     }
@@ -287,7 +301,11 @@ function parseLegacyMathSegments(value: string): MathSegment[] {
 
     if (isAllowed) {
       if (pendingStart == null) pendingStart = index;
-      if (hasLegacyMathAnchor(token) || (hasAsciiEquation && token === "=")) anchored = true;
+      if (
+        hasLegacyMathAnchor(token) ||
+        (hasAsciiEquation && token === "=") ||
+        (hasAsciiPower && token === "^")
+      ) anchored = true;
       continue;
     }
 

@@ -13,6 +13,7 @@ export type LearningFormula = {
   label: string;
   expression: string;
   useWhen: string;
+  presentation?: "math" | "mixed" | "text" | "code";
 };
 
 export type LearningCheckpoint = {
@@ -40,4 +41,3 @@ export type LearningReference = {
   url: string;
   note: string;
 };
-

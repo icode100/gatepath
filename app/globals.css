@@ -2693,12 +2693,8 @@ body:has(.auth-dialog[open]) {
 }
 
 .math-inline {
-  display: inline-block;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  vertical-align: -0.12em;
-  scrollbar-width: thin;
+  display: inline;
+  vertical-align: baseline;
 }
 
 .math-display,
@@ -2939,15 +2935,34 @@ body:has(.auth-dialog[open]) {
   display: none;
 }
 
-.checkpoint-list summary span {
+.checkpoint-number {
   display: grid;
   width: 25px;
   height: 25px;
+  flex: 0 0 25px;
   place-items: center;
   border-radius: 50%;
   color: var(--green);
   background: var(--green-pale);
   font-size: 9px;
+}
+
+.checkpoint-list summary > .math-text {
+  min-width: 0;
+  flex: 1;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+
+.focus-reset-note {
+  display: block;
+  margin-top: 6px;
+  color: #cdd5ff;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .checkpoint-list details p {
@@ -3119,6 +3134,21 @@ body:has(.auth-dialog[open]) {
 }
 
 .learning-formula-card .math-formula { font-size: 17px; }
+
+.learning-formula-code,
+.learning-formula-mixed,
+.learning-formula-text {
+  display: block;
+  margin: 10px 0 8px;
+  color: var(--primary);
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.learning-formula-code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
 
 .learning-formula-card p {
   color: var(--ink-soft);

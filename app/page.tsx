@@ -9,6 +9,11 @@ import { usePwa } from "@/components/pwa/PwaProvider";
 import { RoadmapMap } from "@/components/roadmap/RoadmapMap";
 import { trackEvent } from "@/lib/firebase/analytics";
 import {
+  istDayNumber,
+  millisecondsUntilNextIstMidnight,
+  selectDailyFocus,
+} from "@/lib/daily-focus";
+import {
   activeSessionDraftOwnerKey,
   activateSessionDraftOwner,
   clearSessionDraft,
@@ -83,6 +88,12 @@ const learningTopicMatchesRoadmapTopic = (
   learningTopic.topicId === roadmapTopic.id ||
   normalizedTopicLabel(learningTopic.title) ===
     normalizedTopicLabel(roadmapTopic.title);
+
+const DAILY_FOCUS_TOPICS = LEARNING_TOPICS.map((topic) => ({
+  key: `${canonicalLearningSubjectId(topic.subjectId)}:${topic.topicId}`,
+  subjectId: canonicalLearningSubjectId(topic.subjectId),
+  topicId: topic.topicId,
+}));
 
 const GENERAL_APTITUDE_FALLBACK_TOPICS: Subject["topics"] = [
   {
@@ -1302,6 +1313,7 @@ export default function Home() {
   const [serverResult, setServerResult] = useState<ServerResult | null>(null);
   const [submitBusy, setSubmitBusy] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [focusDay, setFocusDay] = useState<number | null>(null);
   const [draftOwnerKey, setDraftOwnerKey] = useState<string | null>(null);
   const [draftRestoreReady, setDraftRestoreReady] = useState(false);
   const [activeTest, setActiveTest] = useState<CatalogTest>(
@@ -1396,6 +1408,45 @@ export default function Home() {
       return searchable.includes(query);
     });
   }, [learnQuery, learnSubjectId, learningSubjects, orderedLearningTopics]);
+
+  const dailyFocus = useMemo(() => {
+    if (focusDay == null) return null;
+    const focus = selectDailyFocus(DAILY_FOCUS_TOPICS, focusDay);
+    if (!focus) return null;
+    const subject = roadmapSubjects.find(
+      (item) => item.id === focus.subjectId,
+    );
+    const topic = subject?.topics.find((item) => item.id === focus.topicId);
+    return subject && topic ? { subject, topic } : null;
+  }, [focusDay, roadmapSubjects]);
+
+  useEffect(() => {
+    let resetTimer: number | undefined;
+
+    const syncFocusDay = () => {
+      const now = Date.now();
+      setFocusDay(istDayNumber(now));
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(
+        syncFocusDay,
+        millisecondsUntilNextIstMidnight(now) + 50,
+      );
+    };
+    const syncWhenVisible = () => {
+      if (!document.hidden) syncFocusDay();
+    };
+
+    syncFocusDay();
+    window.addEventListener("focus", syncFocusDay);
+    window.addEventListener("pageshow", syncFocusDay);
+    document.addEventListener("visibilitychange", syncWhenVisible);
+    return () => {
+      window.clearTimeout(resetTimer);
+      window.removeEventListener("focus", syncFocusDay);
+      window.removeEventListener("pageshow", syncFocusDay);
+      document.removeEventListener("visibilitychange", syncWhenVisible);
+    };
+  }, []);
   const fullTests = useMemo(
     () =>
       testCatalog
@@ -2843,53 +2894,83 @@ export default function Home() {
   };
 
   const renderDashboard = () => {
-    const cacheProgress =
-      roadmapSubjects
-        .find((subject) => subject.id === "computer-organization")
-        ?.topics.find((topic) => topic.id === "memory-hierarchy")?.progress ??
-      0;
+    const focusSubject = dailyFocus?.subject;
+    const focusTopic = dailyFocus?.topic;
+    const focusLabel = focusTopic?.title.toLocaleLowerCase() ?? "today’s topic";
+    const focusHasLocalQuestions = Boolean(
+      focusSubject &&
+        focusTopic &&
+        practiceQuestions.some(
+          (question) =>
+            question.subjectId === focusSubject.id &&
+            question.topicId === focusTopic.id,
+        ),
+    );
+    const focusPracticeAvailable = Boolean(
+      focusTopic?.apiId != null || focusHasLocalQuestions,
+    );
+    const openFocusNotes = () => {
+      if (!focusSubject || !focusTopic) return;
+      setSelectedSubjectId(focusSubject.id);
+      setSelectedTopicId(focusTopic.id);
+      setNotesReturnScreen("subject");
+      navigate("notes");
+    };
+    const startFocusPractice = () => {
+      if (!focusSubject || !focusTopic || !focusPracticeAvailable) return;
+      setSelectedSubjectId(focusSubject.id);
+      setSelectedTopicId(focusTopic.id);
+      void startPractice("practice", focusSubject, focusTopic.id);
+    };
     return (
       <div className="page dashboard-page">
         <section className="dashboard-hero">
           <div className="hero-copy">
             <div className="eyebrow">Today · focused plan</div>
             <h1>One clear path to<br /><em>GATE 2027.</em></h1>
-            <p>Test every official Computer Organization & Architecture area in one focused, GATE-style live quiz.</p>
+            <p>Build today’s recall around {focusLabel}, then lock it in with a focused GATE-style question set.</p>
             <div className="hero-actions">
-              <button className="button primary" onClick={startCoaQuiz}>
-                Start COA syllabus quiz <span aria-hidden="true">→</span>
+              <button
+                className="button primary"
+                disabled={!focusPracticeAvailable}
+                onClick={startFocusPractice}
+                title={focusPracticeAvailable ? undefined : "Connect to load this topic’s question set"}
+              >
+                {focusPracticeAvailable ? "Start today’s practice" : "Loading today’s questions"} <span aria-hidden="true">→</span>
               </button>
               <button
                 className="button quiet"
                 onClick={() => {
-                  const subject =
-                    roadmapSubjects.find(
-                      (item) => item.id === "computer-organization",
-                    ) ?? selectedSubject;
-                  openSubject(subject);
+                  if (focusSubject) openSubject(focusSubject);
                 }}
+                disabled={!focusSubject}
               >
-                Explore COA topics
+                Explore {focusSubject?.code ?? "course"} topics
               </button>
             </div>
           </div>
           <div className="today-card">
             <div className="today-card-top">
               <div>
-                <span className="card-kicker">Today’s focus</span>
-                <h2>Cache memory</h2>
+                <span className="card-kicker">Today’s focus{focusSubject ? ` · ${focusSubject.code}` : ""}</span>
+                <h2>{focusTopic?.title ?? "Preparing today’s plan…"}</h2>
+                <small className="focus-reset-note">Refreshes at midnight IST</small>
               </div>
-              <ProgressRing value={cacheProgress} />
+              <ProgressRing value={focusTopic?.progress ?? 0} />
             </div>
           <div className="plan-steps">
-              <button onClick={() => { setSelectedSubjectId("computer-organization"); setSelectedTopicId("memory-hierarchy"); setNotesReturnScreen("subject"); navigate("notes"); }}>
+              <button disabled={!focusTopic} onClick={openFocusNotes}>
                 <span className="step-status">01</span>
-                <span><strong>Revise mapping</strong><small>12 min · concept</small></span>
+                <span><strong>Revise concepts</strong><small>{focusSubject?.shortTitle ?? "Syllabus"} · guided lesson</small></span>
                 <span className="step-arrow">↗</span>
               </button>
-              <button onClick={() => { const subject = roadmapSubjects.find((item) => item.id === "computer-organization") ?? selectedSubject; setSelectedSubjectId(subject.id); setSelectedTopicId("memory-hierarchy"); void startPractice("practice", subject, "memory-hierarchy"); }}>
+              <button
+                disabled={!focusPracticeAvailable}
+                onClick={startFocusPractice}
+                title={focusPracticeAvailable ? undefined : "Connect to load this topic’s question set"}
+              >
                 <span className="step-status current">02</span>
-                <span><strong>Solve a cache set</strong><small>Targeted questions · practice</small></span>
+                <span><strong>Practise {focusLabel}</strong><small>Targeted questions · practice</small></span>
                 <span className="step-arrow">↗</span>
               </button>
             </div>
@@ -3641,7 +3722,15 @@ export default function Home() {
                     {learningTopic.formulae.map((formula) => (
                       <article className="learning-formula-card" key={`${formula.label}:${formula.expression}`}>
                         <span className="card-kicker">{formula.label}</span>
-                        <MathFormula expression={formula.expression} />
+                        {formula.presentation === "code" ? (
+                          <code className="learning-formula-code">{formula.expression}</code>
+                        ) : formula.presentation === "text" ? (
+                          <span className="learning-formula-text">{formula.expression}</span>
+                        ) : formula.presentation === "mixed" ? (
+                          <MathText className="learning-formula-mixed">{formula.expression}</MathText>
+                        ) : (
+                          <MathFormula expression={formula.expression} />
+                        )}
                         <p><MathText>{formula.useWhen}</MathText></p>
                       </article>
                     ))}
@@ -3693,7 +3782,7 @@ export default function Home() {
               <div className="checkpoint-list">
                 {checkpoints.map((checkpoint, index) => (
                   <details key={`${checkpoint.question}-${index}`}>
-                    <summary><span>{index + 1}</span><MathText>{checkpoint.question}</MathText></summary>
+                    <summary><span className="checkpoint-number">{index + 1}</span><MathText>{checkpoint.question}</MathText></summary>
                     <p><MathText>{checkpoint.answer}</MathText></p>
                   </details>
                 ))}

@@ -226,6 +226,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
         label: "Quine-McCluskey procedure",
         expression:
           "group by one-count -> combine one-bit differences -> repeat -> build prime-implicant chart -> select essential minimum cover",
+        presentation: "text",
         useWhen:
           "Minimizing an SOP systematically, especially when a Karnaugh map becomes crowded or the question explicitly requests the tabular method",
       },
@@ -417,7 +418,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
       {
         title: "Characteristic and excitation reasoning",
         explanation:
-          "A characteristic relation predicts next state from current state and inputs; an excitation table works backward, identifying inputs needed for a desired transition. A D flip-flop has Q_next=D. A T flip-flop holds for T=0 and toggles for T=1. A JK flip-flop holds at 00, resets at 01, sets at 10, and toggles at 11, avoiding the forbidden SR combination. Converting one flip-flop type into another means equating its characteristic behavior to the required next-state function and simplifying the necessary input logic.",
+          "A characteristic relation predicts next state from current state and inputs; an excitation table works backward, identifying inputs needed for a desired transition. A D flip-flop has \\(Q_{\\text{next}}=D\\). A T flip-flop holds for \\(T=0\\) and toggles for \\(T=1\\). A JK flip-flop holds at 00, resets at 01, sets at 10, and toggles at 11, avoiding the forbidden SR combination. Converting one flip-flop type into another means equating its characteristic behavior to the required next-state function and simplifying the necessary input logic.",
         keyIdeas: [
           "Characteristic tables analyze; excitation tables design",
           "T=1 and JK=11 both toggle the stored bit",
@@ -429,7 +430,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
           prompt:
             "Implement a T flip-flop behavior using a D flip-flop. What D input is required?",
           walkthrough:
-            "A T flip-flop requires Q_next=Q when T=0 and Q_next=Q' when T=1, which is Q xor T. Since a D flip-flop sets Q_next equal to D, connect D=Q xor T.",
+            "A T flip-flop requires \\(Q_{\\text{next}}=Q\\) when \\(T=0\\) and \\(Q_{\\text{next}}=Q'\\) when \\(T=1\\), which is \\(Q \\oplus T\\). Since a D flip-flop sets \\(Q_{\\text{next}}\\) equal to \\(D\\), connect \\(D=Q \\oplus T\\).",
         },
       },
       {
@@ -454,12 +455,12 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       {
         label: "D flip-flop",
-        expression: "Q_next = D",
+        expression: "Q_{\\text{next}} = D",
         useWhen: "The desired next-state function can directly drive D",
       },
       {
         label: "T flip-flop",
-        expression: "Q_next = Q xor T",
+        expression: "Q_{\\text{next}} = Q \\oplus T",
         useWhen: "A state bit should conditionally toggle",
       },
       {
@@ -631,7 +632,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
       {
         title: "Systems, elimination, and rank",
         explanation:
-          "Gaussian elimination replaces a system by an equivalent echelon-form system through row swaps, nonzero row scaling, and adding a multiple of one row to another. Rank is the number of pivots and measures the dimension of the row or column space. For Ax=b, consistency requires rank(A)=rank([A|b]). If that common rank equals the number of unknowns, the solution is unique; if it is smaller, free variables create infinitely many solutions. A greater augmented rank identifies a contradictory row and therefore no solution.",
+          "Gaussian elimination replaces a system by an equivalent echelon-form system through row swaps, nonzero row scaling, and adding a multiple of one row to another. Rank is the number of pivots and measures the dimension of the row or column space. For \\(Ax=b\\), consistency requires \\(\\operatorname{rank}(A)=\\operatorname{rank}([A\\mid b])\\). If that common rank equals the number of unknowns, the solution is unique; if it is smaller, free variables create infinitely many solutions. A greater augmented rank identifies a contradictory row and therefore no solution.",
         keyIdeas: [
           "Elementary row operations preserve the solution set",
           "Rank counts independent rows, columns, or pivots",
@@ -643,7 +644,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
           prompt:
             "For which k does x+y=2 and 2x+2y=k have infinitely many solutions, and when is it inconsistent?",
           walkthrough:
-            "The second equation has the same left side as twice the first. If k=4, both equations represent one line, rank(A)=rank([A|b])=1<2, so infinitely many solutions exist. If k differs from 4, elimination gives 0=k-4, making the augmented rank 2 while rank(A)=1; the system is inconsistent.",
+            "The second equation has the same left side as twice the first. If \\(k=4\\), both equations represent one line, \\(\\operatorname{rank}(A)=\\operatorname{rank}([A\\mid b])=1<2\\), so infinitely many solutions exist. If \\(k\\ne4\\), elimination gives \\(0=k-4\\), making the augmented rank 2 while \\(\\operatorname{rank}(A)=1\\); the system is inconsistent.",
         },
       },
       {
@@ -705,7 +706,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       {
         label: "Consistency criterion",
-        expression: "rank(A) = rank([A|b])",
+        expression: "\\operatorname{rank}(A) = \\operatorname{rank}([A\\mid b])",
         useWhen: "Deciding whether Ax=b has at least one solution",
       },
       {
@@ -1138,9 +1139,9 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
       },
     ],
     formulae: [
-      { label: "Clock constraint", expression: "clock period >= longest active combinational path + register overhead", useWhen: "Finding a safe datapath clock" },
-      { label: "Control-store bits", expression: "words * bits per control word", useWhen: "Sizing a microprogrammed control memory" },
-      { label: "Micro-operation scheduling rule", expression: "one source per bus and no more operations than available units/ports", useWhen: "Packing transfers into a clock cycle" },
+      { label: "Clock constraint", expression: "T_{\\text{clock}} \\ge T_{\\text{longest combinational path}} + T_{\\text{register overhead}}", useWhen: "Finding a safe datapath clock" },
+      { label: "Control-store bits", expression: "B_{\\text{store}} = N_{\\text{words}} \\times W_{\\text{control word}}", useWhen: "Sizing a microprogrammed control memory" },
+      { label: "Micro-operation scheduling rule", expression: "one source per bus and no more operations than available units/ports", presentation: "text", useWhen: "Packing transfers into a clock cycle" },
     ],
     checkpoints: [
       { question: "What is stored in a register file?", answer: "It stores the processor's general-purpose register values and provides read and write ports for instruction operands and results." },
@@ -1347,7 +1348,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       { label: "Polling utilization", expression: "poll cost / polling interval", useWhen: "Polling executes once per fixed interval" },
       { label: "Interrupt utilization", expression: "event rate * service cycles / CPU cycles per second", useWhen: "Estimating processor overhead from repeated device interrupts" },
-      { label: "Handshake rule", expression: "sender holds data until acknowledgement", useWhen: "Reasoning about asynchronous transfer correctness" },
+      { label: "Handshake rule", expression: "sender holds data until acknowledgement", presentation: "text", useWhen: "Reasoning about asynchronous transfer correctness" },
     ],
     checkpoints: [
       { question: "What is the purpose of an I/O status register?", answer: "It reports device conditions such as ready, busy, completion, or error so software can decide when and how to transfer." },
@@ -1415,8 +1416,8 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     ],
     formulae: [
       { label: "DMA block time", expression: "setup time + words * transfer time per word", useWhen: "Estimating a complete unoverlapped DMA operation" },
-      { label: "Priority selection", expression: "highest-priority active and unmasked request", useWhen: "Resolving several simultaneous pending interrupt requests" },
-      { label: "DMA speed benefit", expression: "saved CPU work approximately per-word programmed overhead minus setup overhead per block", useWhen: "Comparing DMA with programmed transfer" },
+      { label: "Priority selection", expression: "highest-priority active and unmasked request", presentation: "text", useWhen: "Resolving several simultaneous pending interrupt requests" },
+      { label: "DMA speed benefit", expression: "saved CPU work approximately per-word programmed overhead minus setup overhead per block", presentation: "text", useWhen: "Comparing DMA with programmed transfer" },
     ],
     checkpoints: [
       { question: "Why must interrupt context be saved?", answer: "The service routine changes registers and control flow; saved context lets the processor restore the interrupted program's exact continuation state." },
@@ -1485,7 +1486,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       { label: "Pointer stepping", expression: "address(p+k) = address(p) + k*sizeof(*p)", useWhen: "Moving within an array through a typed pointer" },
       { label: "Row-major address", expression: "base + ((i*columns)+j)*element_size", useWhen: "Addressing element a[i][j] of a two-dimensional C array" },
-      { label: "Pass-by-pointer method", expression: "pass &object; update through *parameter", useWhen: "A function must modify the caller's object" },
+      { label: "Pass-by-pointer method", expression: "pass &object; update through *parameter", presentation: "code", useWhen: "A function must modify the caller's object" },
     ],
     checkpoints: [
       { question: "Does C pass arrays by reference?", answer: "No. In a function parameter declaration an array parameter adjusts to a pointer. That pointer value is passed by value, though it can access the caller's elements." },
@@ -1554,7 +1555,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       { label: "Linear recursion", expression: "T(n)=T(n-1)+Theta(1) => Theta(n)", useWhen: "One constant-work call reduces n by one" },
       { label: "Binary decrement recursion", expression: "T(n)=2T(n-1)+Theta(1) => Theta(2^n)", useWhen: "Two uncached calls each reduce n by one" },
-      { label: "Stack rule", expression: "space proportional to maximum active call depth", useWhen: "Finding auxiliary stack space used by recursion" },
+      { label: "Stack rule", expression: "space proportional to maximum active call depth", presentation: "text", useWhen: "Finding auxiliary stack space used by recursion" },
     ],
     checkpoints: [
       { question: "What two ingredients are needed for recursive termination?", answer: "A reachable base case and guaranteed progress toward it on every recursive branch under a well-founded measure." },
@@ -1623,7 +1624,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       { label: "One-dimensional address", expression: "base + (i-L)*w", useWhen: "Array lower bound is L and element width is w" },
       { label: "Two-dimensional row-major address", expression: "base + ((i-Lr)*C + (j-Lc))*w", useWhen: "A matrix has C columns" },
-      { label: "Insertion shifts", expression: "n-i elements for insertion at zero-based position i", useWhen: "Spare capacity exists and order is preserved" },
+      { label: "Insertion shifts", expression: "n-i elements for insertion at zero-based position i", presentation: "text", useWhen: "Spare capacity exists and order is preserved" },
     ],
     checkpoints: [
       { question: "Why is array indexing constant time?", answer: "The address is computed directly from base, index, lower bound, and fixed element size without traversing earlier elements." },
@@ -1692,7 +1693,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     formulae: [
       { label: "Circular advance", expression: "next(i)=(i+1) mod capacity", useWhen: "Moving front or rear with wrap-around" },
       { label: "Reserved-slot occupancy", expression: "(rear-front+capacity) mod capacity", useWhen: "front is next removal and rear is next insertion" },
-      { label: "Postfix reduction", expression: "right=pop(); left=pop(); push(left op right)", useWhen: "Evaluating a binary postfix operator" },
+      { label: "Postfix reduction", expression: "right=pop(); left=pop(); push(left op right)", presentation: "code", useWhen: "Evaluating a binary postfix operator" },
     ],
     checkpoints: [
       { question: "What ordering does a stack enforce?", answer: "Last-in, first-out: the newest element that has not been removed is the next one accessible." },
@@ -1759,9 +1760,9 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
       },
     ],
     formulae: [
-      { label: "Singly linked insertion", expression: "new.next=pred.next; pred.next=new", useWhen: "Inserting after a known predecessor" },
-      { label: "Reversal step", expression: "next=cur.next; cur.next=prev; prev=cur; cur=next", useWhen: "Reversing a singly linked list in place" },
-      { label: "Floyd movement", expression: "slow=slow.next; fast=fast.next.next", useWhen: "Detecting a reachable cycle with constant extra space" },
+      { label: "Singly linked insertion", expression: "new.next=pred.next; pred.next=new", presentation: "code", useWhen: "Inserting after a known predecessor" },
+      { label: "Reversal step", expression: "next=cur.next; cur.next=prev; prev=cur; cur=next", presentation: "code", useWhen: "Reversing a singly linked list in place" },
+      { label: "Floyd movement", expression: "slow=slow.next; fast=fast.next.next", presentation: "code", useWhen: "Detecting a reachable cycle with constant extra space" },
     ],
     checkpoints: [
       { question: "Why is linked-list indexed access linear?", answer: "Nodes are reached through predecessor links rather than an address formula, so the traversal must follow each earlier link." },
@@ -2242,7 +2243,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
       },
     ],
     formulae: [
-      { label: "Activity rule", expression: "repeatedly choose the compatible activity with minimum finish time", useWhen: "Maximizing count of nonoverlapping single-resource activities" },
+      { label: "Activity rule", expression: "repeatedly choose the compatible activity with minimum finish time", presentation: "text", useWhen: "Maximizing count of nonoverlapping single-resource activities" },
       { label: "Fractional density", expression: "value/weight", useWhen: "Items may be divided and capacity should receive highest value per unit" },
       { label: "MST size", expression: "V-1 edges", useWhen: "A connected undirected spanning tree covers V vertices" },
     ],
@@ -2312,7 +2313,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     ],
     formulae: [
       { label: "DP running time", expression: "number of states * transition work per state", useWhen: "Acyclic state dependencies are computed once" },
-      { label: "LCS recurrence", expression: "match:1+L[i-1][j-1]; else:max(L[i-1][j],L[i][j-1])", useWhen: "Comparing prefixes of two symbol sequences for common order" },
+      { label: "LCS recurrence", expression: "match:1+L[i-1][j-1]; else:max(L[i-1][j],L[i][j-1])", presentation: "code", useWhen: "Comparing prefixes of two symbol sequences for common order" },
       { label: "Zero-one knapsack", expression: "DP[i,w]=max(DP[i-1,w], value_i+DP[i-1,w-weight_i])", useWhen: "Item i fits and may be selected at most once" },
     ],
     checkpoints: [
@@ -2381,7 +2382,7 @@ export const FOUNDATION_LEARNING_TOPICS: LearningTopic[] = [
     ],
     formulae: [
       { label: "Adjacency-list traversal", expression: "Theta(V+E)", useWhen: "BFS or DFS processes all reachable graph entries" },
-      { label: "Relaxation", expression: "if d[v] > d[u]+w(u,v), set d[v]=d[u]+w(u,v)", useWhen: "Testing an edge for a shorter route" },
+      { label: "Relaxation", expression: "if d[v] > d[u]+w(u,v), set d[v]=d[u]+w(u,v)", presentation: "code", useWhen: "Testing an edge for a shorter route" },
       { label: "Spanning-tree edge count", expression: "V-1", useWhen: "A tree spans every vertex of a connected graph" },
     ],
     checkpoints: [
