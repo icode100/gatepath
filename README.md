@@ -1,6 +1,6 @@
-# Gatepath 2027
+# GatePath 2027
 
-Gatepath is a distraction-free GATE 2027 Computer Science preparation platform. It combines an official-syllabus roadmap, chapter-wise revision notes, topic-filtered practice, sectional tests, a provenance-aware previous-year question bank, progress tracking, and a full-length exam simulator.
+GatePath is a distraction-free GATE 2027 Computer Science preparation platform. It combines an official-syllabus roadmap, chapter-wise revision notes, topic-filtered practice, sectional tests, a provenance-aware previous-year question bank, progress tracking, and a full-length exam simulator.
 
 The product uses a React/Next.js frontend and a FastAPI backend. SQLite works
 for local development; PostgreSQL is used by Docker Compose and Neon provides
@@ -458,4 +458,4 @@ vercel.json           One-project Next.js and FastAPI Vercel Services routing
 - [GATE 2027 syllabus index](https://gate2027.iitm.ac.in/exam_papers_and_syllabus)
 - [Official previous papers and answer keys](https://gate2027.iitm.ac.in/download)
 
-Gatepath is an independent preparation tool and is not affiliated with IIT Madras or the GATE organizing committee.
+GatePath is an independent preparation tool and is not affiliated with IIT Madras or the GATE organizing committee.

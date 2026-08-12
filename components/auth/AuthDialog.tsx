@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { GatePathLogo } from "@/components/brand/GatePathLogo";
 import { friendlyAuthError, useAuth } from "./AuthProvider";
 
 type AuthDialogProps = {
@@ -116,7 +117,7 @@ export function AuthDialog({
     }
   };
 
-  const displayName = user?.displayName || user?.email || "Gatepath learner";
+  const displayName = user?.displayName || user?.email || "GatePath learner";
 
   return (
     <dialog
@@ -143,7 +144,7 @@ export function AuthDialog({
         </button>
 
         <div className="auth-dialog-heading">
-          <span className="auth-dialog-mark">G</span>
+          <GatePathLogo className="auth-dialog-mark" />
           <div>
             <span className="eyebrow">Account &amp; settings</span>
             <h2 id="auth-dialog-title">
@@ -182,7 +183,7 @@ export function AuthDialog({
             </div>
             <p>
               Your attempts and topic analytics are synced through your secure
-              Gatepath session.
+              GatePath session.
             </p>
             <button
               type="button"
@@ -297,7 +298,7 @@ export function AuthDialog({
             </form>
 
             <p className="auth-switch">
-              {mode === "create" ? "Already have an account?" : "New to Gatepath?"}
+              {mode === "create" ? "Already have an account?" : "New to GatePath?"}
               <button
                 type="button"
                 className="auth-text-button"
@@ -385,7 +386,7 @@ export function AuthDialog({
         )}
 
         <p className="auth-privacy">
-          Gatepath never sends your email, answers, or question text to Analytics.
+          GatePath never sends your email, answers, or question text to Analytics.
         </p>
       </div>
     </dialog>

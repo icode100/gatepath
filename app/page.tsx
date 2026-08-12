@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AuthDialog } from "@/components/auth/AuthDialog";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { GatePathLogo } from "@/components/brand/GatePathLogo";
+import { MathFormula, MathText } from "@/components/math/MathText";
+import { RoadmapMap } from "@/components/roadmap/RoadmapMap";
 import { trackEvent } from "@/lib/firebase/analytics";
 import {
   practiceQuestions,
@@ -141,7 +144,7 @@ function createLearningSubject(
         ) / 60,
       ),
     ),
-    accent: code === "GA" ? "#b36b42" : "#667085",
+    accent: code === "GA" ? "#c26748" : "#6676b8",
     phase: "Foundations",
     topics,
     note: {
@@ -2385,7 +2388,6 @@ export default function Home() {
   };
 
   const renderDashboard = () => {
-    const phases = ["Foundations", "Core reasoning", "Systems"] as const;
     const cacheProgress =
       roadmapSubjects
         .find((subject) => subject.id === "computer-organization")
@@ -2453,38 +2455,14 @@ export default function Home() {
               <h2>Your subject roadmap</h2>
               <p>Move in order, or jump straight to the chapter you need.</p>
             </div>
-            <div className="legend"><span className="legend-dot complete" /> Strong <span className="legend-dot active" /> In progress</div>
           </div>
-          <div className="roadmap-phases">
-            {phases.map((phase, phaseIndex) => (
-              <div className="roadmap-phase" key={phase}>
-                <div className="phase-label"><span>0{phaseIndex + 1}</span>{phase}</div>
-                <div className="subject-grid">
-                  {roadmapSubjects.filter((subject) => subject.phase === phase).map((subject, index) => (
-                    <button
-                      key={subject.id}
-                      className="subject-card"
-                      onClick={() => openSubject(subject)}
-                      style={{ "--subject-accent": subject.accent } as React.CSSProperties}
-                    >
-                      <span className="subject-order">{String(index + 1).padStart(2, "0")}</span>
-                      <span className="subject-code">{subject.code}</span>
-                      <span className="subject-card-title">{subject.shortTitle}</span>
-                      <span className="subject-meta">{subject.topics.length} chapters · {subject.questionCount} Qs</span>
-                      <span className="subject-progress-row"><MiniProgress value={subject.progress} /><strong>{subject.progress}%</strong></span>
-                      <span className="subject-open" aria-hidden="true">↗</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <RoadmapMap
+            onOpenMock={() => navigate("mock-setup")}
+            onOpenSubject={openSubject}
+            subjects={roadmapSubjects}
+          />
         </section>
 
-        <section className="bottom-callout">
-          <div><span className="callout-label">Exam simulation</span><h2>When you are ready, practise the real rhythm.</h2><p>65 questions · 100 marks · 180 minutes · MCQ, MSQ and NAT</p></div>
-          <button className="button light" onClick={() => navigate("mock-setup")}>Open mock centre <span>→</span></button>
-        </section>
       </div>
     );
   };
@@ -2909,7 +2887,7 @@ export default function Home() {
                             : question.source}
                         </span>
                       </div>
-                      <h3>{question.prompt}</h3>
+                      <h3><MathText>{question.prompt}</MathText></h3>
                     </div>
                     <button
                       className="button quiet small"
@@ -3121,7 +3099,7 @@ export default function Home() {
             <header>
               <div className="eyebrow">{selectedSubject.code} · {selectedTopic.title}</div>
               <h1>{revisionNote?.title ?? learningTopic?.title ?? fallbackNote.title}</h1>
-              <p>{learningTopic?.summary ?? revisionNote?.summary ?? fallbackNote.summary}</p>
+              <p><MathText>{learningTopic?.summary ?? revisionNote?.summary ?? fallbackNote.summary}</MathText></p>
               <div className="note-meta">
                 <span>{learningTopic?.estimatedMinutes ?? Math.max(6, 4 + workedExamples.length * 2)} min review</span>
                 <span>{workedExamples.length + guidedExampleCount} worked example{workedExamples.length + guidedExampleCount === 1 ? "" : "s"}</span>
@@ -3132,7 +3110,7 @@ export default function Home() {
               <span className="section-number">01</span>
               <div>
                 <h2>What this chapter builds</h2>
-                <p>{syllabusScope}</p>
+                <p><MathText>{syllabusScope}</MathText></p>
                 {learningTopic && (
                   <div className="learning-overview-grid">
                     <div className="learning-overview-card">
@@ -3140,7 +3118,7 @@ export default function Home() {
                       {learningTopic.prerequisites.length ? (
                         <ul>
                           {learningTopic.prerequisites.map((item) => (
-                            <li key={item}>{item}</li>
+                            <li key={item}><MathText>{item}</MathText></li>
                           ))}
                         </ul>
                       ) : (
@@ -3151,13 +3129,13 @@ export default function Home() {
                       <span className="card-kicker">By the end, you can</span>
                       <ul>
                         {learningTopic.objectives.map((objective) => (
-                          <li key={objective}>{objective}</li>
+                          <li key={objective}><MathText>{objective}</MathText></li>
                         ))}
                       </ul>
                     </div>
                   </div>
                 )}
-                <div className="margin-note"><strong>Reasoning anchor</strong><span>{reasoningPattern || keyPoints[0]}</span></div>
+                <div className="margin-note"><strong>Reasoning anchor</strong><span><MathText>{reasoningPattern || keyPoints[0]}</MathText></span></div>
               </div>
             </section>
 
@@ -3174,23 +3152,23 @@ export default function Home() {
                           <span>{String(index + 1).padStart(2, "0")}</span>
                           <h3>{concept.title}</h3>
                         </header>
-                        <p>{concept.explanation}</p>
+                        <p><MathText>{concept.explanation}</MathText></p>
                         <div className="learning-key-ideas">
                           <span className="card-kicker">Key ideas</span>
                           <ul>
                             {concept.keyIdeas.map((idea) => (
-                              <li key={idea}>{idea}</li>
+                              <li key={idea}><MathText>{idea}</MathText></li>
                             ))}
                           </ul>
                         </div>
                         <div className="learning-exam-focus">
                           <strong>Exam focus</strong>
-                          <span>{concept.examFocus}</span>
+                          <span><MathText>{concept.examFocus}</MathText></span>
                         </div>
                         <div className="learning-guided-example">
                           <span className="card-kicker">Guided example</span>
-                          <h4>{concept.example.prompt}</h4>
-                          <p>{concept.example.walkthrough}</p>
+                          <h4><MathText>{concept.example.prompt}</MathText></h4>
+                          <p><MathText>{concept.example.walkthrough}</MathText></p>
                         </div>
                       </article>
                     ))}
@@ -3208,8 +3186,8 @@ export default function Home() {
                     {learningTopic.formulae.map((formula) => (
                       <article className="learning-formula-card" key={`${formula.label}:${formula.expression}`}>
                         <span className="card-kicker">{formula.label}</span>
-                        <code>{formula.expression}</code>
-                        <p>{formula.useWhen}</p>
+                        <MathFormula expression={formula.expression} />
+                        <p><MathText>{formula.useWhen}</MathText></p>
                       </article>
                     ))}
                   </div>
@@ -3217,19 +3195,19 @@ export default function Home() {
                   <div className="formula-card">
                     <div>
                       <span className="card-kicker">Formula to remember</span>
-                      <code>{fallbackNote.formula}</code>
-                      <p>{fallbackNote.formulaHint}</p>
+                      <MathFormula expression={fallbackNote.formula} />
+                      <p><MathText>{fallbackNote.formulaHint}</MathText></p>
                     </div>
                   </div>
                 )}
                 <div className="formula-card learning-reasoning-card">
                   <div>
                     <span className="card-kicker">Standard reasoning pattern</span>
-                    <p>{reasoningPattern}</p>
+                    <p><MathText>{reasoningPattern}</MathText></p>
                     <span className="card-kicker">Key rules to remember</span>
                     <ul className="note-key-points">
                       {keyPoints.map((point, index) => (
-                        <li key={`${point}-${index}`}>{point}</li>
+                        <li key={`${point}-${index}`}><MathText>{point}</MathText></li>
                       ))}
                     </ul>
                   </div>
@@ -3246,22 +3224,22 @@ export default function Home() {
                   {workedExamples.map((example, index) => (
                     <article key={`${example.question}-${index}`}>
                       <span>Example {String(index + 1).padStart(2, "0")}</span>
-                      <p className="example-title">{example.question}</p>
-                      <p>{example.solution}</p>
+                      <p className="example-title"><MathText>{example.question}</MathText></p>
+                      <p><MathText>{example.solution}</MathText></p>
                     </article>
                   ))}
                 </div>
                 <div className="answer-strip"><span>Exam habit</span>Sanity-check the units and boundary cases before choosing an answer.</div>
               </div>
             </section>
-            <section className="trap-card"><div><span>!</span><h3>Common traps</h3></div><ul>{traps.map((trap) => <li key={trap}>{trap}</li>)}</ul></section>
+            <section className="trap-card"><div><span>!</span><h3>Common traps</h3></div><ul>{traps.map((trap) => <li key={trap}><MathText>{trap}</MathText></li>)}</ul></section>
             <section id="checkpoint" className="checkpoint-card">
               <div><span className="card-kicker">Active recall</span><h2>Close the note. Can you answer these?</h2></div>
               <div className="checkpoint-list">
                 {checkpoints.map((checkpoint, index) => (
                   <details key={`${checkpoint.question}-${index}`}>
-                    <summary><span>{index + 1}</span>{checkpoint.question}</summary>
-                    <p>{checkpoint.answer}</p>
+                    <summary><span>{index + 1}</span><MathText>{checkpoint.question}</MathText></summary>
+                    <p><MathText>{checkpoint.answer}</MathText></p>
                   </details>
                 ))}
               </div>
@@ -3334,7 +3312,7 @@ export default function Home() {
               aria-checked={active}
               onClick={() => updateAnswer(question, option.id, target)}
             >
-              <span className="option-key">{option.id}</span><span>{option.label}</span><span className="option-check">{active ? "✓" : ""}</span>
+              <span className="option-key">{option.id}</span><MathText>{option.label}</MathText><span className="option-check">{active ? "✓" : ""}</span>
             </button>
           );
         })}
@@ -3459,13 +3437,13 @@ export default function Home() {
               <span className="source-tag">{question.year ? `GATE ${question.year}` : question.source}</span>
             </header>
             <div className="question-number">Question {String(questionIndex + 1).padStart(2, "0")}</div>
-            <h1>{question.prompt}</h1>
+            <h1><MathText>{question.prompt}</MathText></h1>
             {question.type === "MSQ" && <p className="question-instruction">Select one or more options. No partial marks.</p>}
             {renderQuestionInput(question, practiceAnswers, "practice", checked && immediateFeedback)}
             {checked && (immediateFeedback || runnerSubmitted) && !serverLocked && (
               <div className={`explanation ${correct ? "correct" : "incorrect"}`} aria-live="polite">
                 <div className="explanation-title"><span>{correct ? "✓" : "×"}</span><strong>{correct ? "Correct — well reasoned." : "Not quite. Review the reasoning."}</strong></div>
-                <p>{question.explanation}</p>
+                <p><MathText>{question.explanation}</MathText></p>
                 {question.correct.length > 0 && <small>Correct answer: {question.correct.join(", ")}</small>}
               </div>
             )}
@@ -3685,13 +3663,13 @@ export default function Home() {
     const marked = reviewed.size;
     return (
       <div className="exam-shell">
-        <header className="exam-header"><div className="exam-brand"><span>G</span><div><strong>GATE CS · Full mock {String(activeTest.sequence).padStart(2, "0")}</strong><small>Official-format simulation</small></div></div><div className={`exam-clock ${examSeconds < 900 ? "warning" : ""}`}><span>Time remaining</span><strong>{formatTime(examSeconds)}</strong></div><button className="button danger" onClick={() => void submitExam()} disabled={submitBusy}>{submitBusy ? "Submitting…" : "Submit test"}</button></header>
+        <header className="exam-header"><div className="exam-brand"><GatePathLogo /><div><strong>GATE CS · Full mock {String(activeTest.sequence).padStart(2, "0")}</strong><small>Official-format simulation</small></div></div><div className={`exam-clock ${examSeconds < 900 ? "warning" : ""}`}><span>Time remaining</span><strong>{formatTime(examSeconds)}</strong></div><button className="button danger" onClick={() => void submitExam()} disabled={submitBusy}>{submitBusy ? "Submitting…" : "Submit test"}</button></header>
         {launchError && <div className="loading-banner warning" role="alert">{launchError}</div>}
         <div className="exam-body">
           <main className="exam-question">
             <div className="exam-section-bar"><div><span>{examIndex < 10 ? "General Aptitude" : "Computer Science"}</span><strong>Question {examIndex + 1} of {examQuestions.length}</strong></div><div><TypeBadge type={question.type} /><span>{question.marks} mark{question.marks > 1 ? "s" : ""}</span></div></div>
             <article>
-              <h1>{question.prompt}</h1>
+              <h1><MathText>{question.prompt}</MathText></h1>
               {question.type === "MSQ" && <p className="question-instruction">Select one or more options. No partial marks and no negative marks.</p>}
               {renderQuestionInput(question, examAnswers, "exam")}
             </article>
@@ -4137,7 +4115,7 @@ export default function Home() {
     <div className="app-shell">
       <button className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-expanded={mobileNavOpen} aria-controls="primary-sidebar" aria-label={`${mobileNavOpen ? "Close" : "Open"} navigation`}>{mobileNavOpen ? "×" : "≡"}</button>
       <aside id="primary-sidebar" className={`sidebar ${mobileNavOpen ? "open" : ""}`}>
-        <button className="brand" onClick={() => navigate("dashboard")}><span className="brand-mark">G</span><span><strong>Gatepath</strong><small>2027 · CSE</small></span></button>
+        <button className="brand" onClick={() => navigate("dashboard")}><GatePathLogo className="brand-mark" /><span><strong>GatePath</strong><small>2027 · CSE</small></span></button>
         <nav aria-label="Primary navigation">
           <button className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span className="nav-icon">⌂</span><span>Roadmap</span></button>
           <button className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span className="nav-icon">Aa</span><span>Learn</span><em>{LEARNING_TOPICS.length}</em></button>

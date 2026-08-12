@@ -67,7 +67,7 @@ export const subjects: Subject[] = [
     mastery: 72,
     questionCount: 312,
     estimatedHours: 18,
-    accent: "#6d7df4",
+    accent: "#596fe8",
     phase: "Foundations",
     topics: [
       topic("discrete-math", "Discrete Mathematics", 82, 96, "4h 20m"),
@@ -101,7 +101,7 @@ export const subjects: Subject[] = [
     mastery: 61,
     questionCount: 196,
     estimatedHours: 11,
-    accent: "#df895b",
+    accent: "#d97757",
     phase: "Foundations",
     topics: [
       topic("boolean-algebra", "Boolean Algebra", 76, 48, "2h 30m"),
@@ -131,7 +131,7 @@ export const subjects: Subject[] = [
     mastery: 48,
     questionCount: 286,
     estimatedHours: 19,
-    accent: "#2f9f83",
+    accent: "#4f67d8",
     phase: "Foundations",
     topics: [
       topic("instruction-set-addressing", "Instruction Set & Addressing Modes", 71, 54, "2h 20m"),
@@ -163,7 +163,7 @@ export const subjects: Subject[] = [
     mastery: 81,
     questionCount: 344,
     estimatedHours: 16,
-    accent: "#4778d0",
+    accent: "#3f79c9",
     phase: "Core reasoning",
     topics: [
       topic("c-programming", "C Programming", 88, 92, "3h 20m"),
@@ -193,7 +193,7 @@ export const subjects: Subject[] = [
     mastery: 67,
     questionCount: 318,
     estimatedHours: 20,
-    accent: "#9b6cc5",
+    accent: "#8359c7",
     phase: "Core reasoning",
     topics: [
       topic("complexity", "Asymptotic Analysis", 82, 58, "2h 35m"),
@@ -223,7 +223,7 @@ export const subjects: Subject[] = [
     mastery: 44,
     questionCount: 272,
     estimatedHours: 18,
-    accent: "#d1647f",
+    accent: "#c65d7b",
     phase: "Core reasoning",
     topics: [
       topic("regular-languages", "Regular Languages & Automata", 62, 84, "4h 10m"),
@@ -253,7 +253,7 @@ export const subjects: Subject[] = [
     mastery: 35,
     questionCount: 184,
     estimatedHours: 13,
-    accent: "#c78b2d",
+    accent: "#b9822b",
     phase: "Core reasoning",
     topics: [
       topic("lexical-analysis", "Lexical Analysis", 54, 38, "1h 55m"),
@@ -283,7 +283,7 @@ export const subjects: Subject[] = [
     mastery: 63,
     questionCount: 326,
     estimatedHours: 19,
-    accent: "#3d8ca8",
+    accent: "#4773b8",
     phase: "Systems",
     topics: [
       topic("processes-threads", "Processes, Threads & IPC", 78, 65, "3h 00m"),
@@ -314,7 +314,7 @@ export const subjects: Subject[] = [
     mastery: 69,
     questionCount: 304,
     estimatedHours: 17,
-    accent: "#568f56",
+    accent: "#6070b8",
     phase: "Systems",
     topics: [
       topic("relational-model", "ER & Relational Models", 82, 57, "2h 30m"),
@@ -345,7 +345,7 @@ export const subjects: Subject[] = [
     mastery: 53,
     questionCount: 296,
     estimatedHours: 18,
-    accent: "#327c9f",
+    accent: "#397ba8",
     phase: "Systems",
     topics: [
       topic("link-layer", "Data Link Layer", 64, 61, "3h 00m"),

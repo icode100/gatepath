@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const description =
@@ -16,11 +17,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(origin),
     title: {
-      default: "Gatepath 2027 · GATE CSE Preparation",
-      template: "%s · Gatepath 2027",
+      default: "GatePath 2027 · GATE CSE Preparation",
+      template: "%s · GatePath 2027",
     },
     description,
-    applicationName: "Gatepath 2027",
+    applicationName: "GatePath 2027",
     keywords: [
       "GATE 2027",
       "GATE CSE",
@@ -30,19 +31,27 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     openGraph: {
       type: "website",
-      siteName: "Gatepath 2027",
-      title: "Gatepath 2027 · One clear path to GATE CSE",
+      siteName: "GatePath 2027",
+      title: "GatePath 2027 · One clear path to GATE CSE",
       description,
-      images: [{ url: "/og.png", width: 1730, height: 907, alt: "Gatepath 2027 study roadmap" }],
+      images: [{ url: "/og.png", width: 1730, height: 907, alt: "GatePath 2027 study roadmap" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Gatepath 2027 · One clear path to GATE CSE",
+      title: "GatePath 2027 · One clear path to GATE CSE",
       description,
       images: ["/og.png"],
     },
   };
 }
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F5F7FB" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B1020" },
+  ],
+};
 
 export default function RootLayout({
   children,
