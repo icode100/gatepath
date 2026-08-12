@@ -7,6 +7,29 @@ const nextConfig: NextConfig = {
   // service owns its build output and function tracing.
   output: isVercel ? undefined : "standalone",
   poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; object-src 'none'" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+      {
+        source: "/offline.html",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+          },
+        ],
+      },
+    ];
+  },
   async rewrites() {
     // Vercel Services routes these paths before the request reaches Next.js.
     // Keep the proxy here for `npm run dev` and the Docker Compose frontend.

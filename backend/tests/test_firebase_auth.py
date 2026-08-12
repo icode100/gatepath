@@ -116,7 +116,13 @@ def test_auth_me_preserves_zero_configuration_guest_mode(
         "user": None,
     }
     assert response.json()["user_key"].startswith("anon-")
-    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["cache-control"] == "private, no-store"
+    assert {"cookie", "authorization"}.issubset(
+        {
+            value.strip().casefold()
+            for value in response.headers["vary"].split(",")
+        }
+    )
     assert "httponly" in response.headers["set-cookie"].lower()
 
 

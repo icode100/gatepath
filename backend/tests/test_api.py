@@ -295,7 +295,13 @@ def test_progress_reset_requires_confirmation_and_is_owner_scoped() -> None:
             json={"csrf_token": csrf_token, "confirmation": "RESET"},
         )
         assert reset_response.status_code == 200, reset_response.text
-        assert reset_response.headers["cache-control"] == "no-store"
+        assert reset_response.headers["cache-control"] == "private, no-store"
+        assert {"cookie", "authorization"}.issubset(
+            {
+                value.strip().casefold()
+                for value in reset_response.headers["vary"].split(",")
+            }
+        )
         reset = reset_response.json()
         assert reset["reset"] is True
         assert reset["sessions_deleted"] == 2

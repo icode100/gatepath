@@ -10,6 +10,7 @@
     "build": "node node_modules/next/dist/bin/next build",
     "start": "node node_modules/next/dist/bin/next start --hostname 0.0.0.0",
     "test": "npm run typecheck",
+    "test:pwa": "node --test tests/service-worker.test.mjs",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {

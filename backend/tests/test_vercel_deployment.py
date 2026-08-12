@@ -50,6 +50,40 @@ def test_vercel_manifest_exposes_only_application_services() -> None:
     assert retired_route["destination"] == {"service": "backend"}
 
 
+@pytest.mark.parametrize(
+    ("path", "expected_status"),
+    [
+        ("/api/v1/subjects", status.HTTP_200_OK),
+        ("/api/v1/auth/me", status.HTTP_200_OK),
+        ("/api/v1/does-not-exist", status.HTTP_404_NOT_FOUND),
+    ],
+)
+def test_every_api_response_disables_private_and_shared_caching(
+    client,
+    path: str,
+    expected_status: int,
+) -> None:
+    response = client.get(path)
+
+    assert response.status_code == expected_status
+    assert response.headers["cache-control"] == "private, no-store"
+    vary = {
+        value.strip().casefold()
+        for value in response.headers["vary"].split(",")
+    }
+    assert {"cookie", "authorization"}.issubset(vary)
+
+
+def test_api_privacy_headers_preserve_existing_vary_values() -> None:
+    response = Response(headers={"Vary": "Origin"})
+
+    main_module._apply_api_privacy_headers(response)
+    main_module._apply_api_privacy_headers(response)
+
+    assert response.headers["cache-control"] == "private, no-store"
+    assert response.headers["vary"] == "Origin, Cookie, Authorization"
+
+
 def test_neon_urls_are_normalized_and_unpooled_url_is_preferred() -> None:
     hosted = _hosted_settings()
 
@@ -199,7 +233,8 @@ async def test_invalid_hosted_configuration_blocks_api_without_cookie(
     response = await main_module.bind_anonymous_identity(request, call_next)
 
     assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
-    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["cache-control"] == "private, no-store"
+    assert response.headers["vary"] == "Cookie, Authorization"
     assert "set-cookie" not in response.headers
     call_next.assert_not_awaited()
     payload = json.loads(response.body)

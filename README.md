@@ -39,6 +39,9 @@ The question type mix is deliberately not hard-coded because IIT Madras has not 
 - Per-user topic mastery analytics, strong/needs-practice lists, correct-only roadmap completion, attempt summaries, and an explicitly confirmed progress reset, with Firestore storage in production
 - Immutable test snapshots, deadline enforcement, Firebase account ownership, and signed guest fallback
 - Light and dark themes with responsive keyboard- and touch-friendly UI
+- Installable mobile PWA with Android/iOS Home Screen support, safe-area-aware
+  navigation, explicit updates, mobile attempt recovery, and a private offline
+  fallback that never caches learner data or test submissions
 - Local fallback content when the API is unavailable
 - Conservative 845-record extraction audit for all 13 supplied 2017-2025 papers; uncertain OCR and visual questions remain quarantined instead of being guessed
 
@@ -80,6 +83,23 @@ PostgreSQL data is retained in the `gatepath_postgres` named volume.
 Compose runs the explicit, idempotent database bootstrap before starting
 Uvicorn, so `docker compose up` still prepares the schema, syllabus, question
 bank, and test catalog in one command.
+
+## Install on a phone
+
+GatePath is shipped as a Progressive Web App from the same production URL, so
+it does not require a separate mobile backend or a second user account.
+
+- On Android in Chrome or Edge, open **Settings → Mobile app** and choose
+  **Install GatePath** when the browser offers it.
+- On iPhone or iPad in Safari, open the Share menu and choose
+  **Add to Home Screen**.
+- Launch the new GatePath icon for a standalone, full-screen app experience.
+
+The generic offline screen is available when the network is unavailable, but
+questions, scoring, authentication, analytics, and all progress writes remain
+network-only by design. Active practice and mock drafts are stored separately
+per signed-in user (or per local guest device), restored after an operating
+system restart, and revalidated against the server before continued use.
 
 ## Deploy to Vercel
 

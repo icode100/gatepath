@@ -61,6 +61,24 @@ app.add_middleware(
 )
 
 
+def _apply_api_privacy_headers(response: Response) -> Response:
+    """Keep every identity-bound API response out of browser and shared caches."""
+
+    response.headers["Cache-Control"] = "private, no-store"
+    vary_values = [
+        value.strip()
+        for value in response.headers.get("Vary", "").split(",")
+        if value.strip()
+    ]
+    seen = {value.casefold() for value in vary_values}
+    for required in ("Cookie", "Authorization"):
+        if required.casefold() not in seen:
+            vary_values.append(required)
+            seen.add(required.casefold())
+    response.headers["Vary"] = ", ".join(vary_values)
+    return response
+
+
 @app.exception_handler(UserStateError)
 async def handle_user_state_error(
     _: Request,
@@ -97,13 +115,14 @@ async def bind_anonymous_identity(request: Request, call_next):
         return await call_next(request)
     configuration_issues = settings.hosted_configuration_issues
     if configuration_issues:
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            headers={"Cache-Control": "no-store"},
-            content={
-                "detail": "Backend deployment configuration is incomplete",
-                "configuration_issues": configuration_issues,
-            },
+        return _apply_api_privacy_headers(
+            JSONResponse(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                content={
+                    "detail": "Backend deployment configuration is incomplete",
+                    "configuration_issues": configuration_issues,
+                },
+            )
         )
     guest_identity = verify_identity(
         request.cookies.get(settings.identity_cookie_name)
@@ -156,6 +175,7 @@ async def bind_anonymous_identity(request: Request, call_next):
         firebase_auth_verification_failure
     )
     response = await call_next(request)
+    _apply_api_privacy_headers(response)
     if new_guest_token is not None and not getattr(
         request.state, "suppress_guest_cookie", False
     ):

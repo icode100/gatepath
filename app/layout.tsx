@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { PwaProvider } from "@/components/pwa/PwaProvider";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 
@@ -42,11 +43,27 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: ["/og.png"],
     },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: "GatePath",
+    },
+    formatDetection: {
+      telephone: false,
+    },
+    icons: {
+      icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
   };
 }
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#F5F7FB" },
     { media: "(prefers-color-scheme: dark)", color: "#0B1020" },
@@ -61,7 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <PwaProvider><AuthProvider>{children}</AuthProvider></PwaProvider>
       </body>
     </html>
   );

@@ -5,8 +5,19 @@ import { AuthDialog } from "@/components/auth/AuthDialog";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GatePathLogo } from "@/components/brand/GatePathLogo";
 import { MathFormula, MathText } from "@/components/math/MathText";
+import { usePwa } from "@/components/pwa/PwaProvider";
 import { RoadmapMap } from "@/components/roadmap/RoadmapMap";
 import { trackEvent } from "@/lib/firebase/analytics";
+import {
+  activeSessionDraftOwnerKey,
+  activateSessionDraftOwner,
+  clearSessionDraft,
+  readSessionDraft,
+  sessionDraftOwnerKey,
+  writeSessionDraft,
+  type DraftQuestion,
+  type SessionDraft,
+} from "@/lib/mobile/session-draft";
 import {
   practiceQuestions,
   subjects as localSubjects,
@@ -300,6 +311,31 @@ type Screen =
   | "mock"
   | "results"
   | "progress";
+const DIRECT_LINK_SCREENS: Screen[] = [
+  "dashboard",
+  "learn",
+  "library",
+  "mock-setup",
+  "progress",
+];
+
+const isScreen = (value: unknown): value is Screen =>
+  typeof value === "string" &&
+  [
+    ...DIRECT_LINK_SCREENS,
+    "subject",
+    "notes",
+    "practice",
+    "mock",
+    "results",
+  ].includes(value as Screen);
+
+const directScreenFromSearch = (search: string): Screen => {
+  const candidate = new URLSearchParams(search).get("screen");
+  return candidate && DIRECT_LINK_SCREENS.includes(candidate as Screen)
+    ? (candidate as Screen)
+    : "dashboard";
+};
 type Theme = "light" | "dark";
 type ApiState = "checking" | "online" | "offline";
 type PracticeMode = "practice" | "sectional" | "syllabus";
@@ -421,6 +457,7 @@ type SessionLaunchPayload = {
   id?: string | number;
   expires_at?: string;
   duration_seconds?: number;
+  is_submitted?: boolean;
 };
 
 type RemoteRevisionNote = {
@@ -973,6 +1010,47 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
   });
 }
 
+const questionsForSessionDraft = (
+  questions: PracticeQuestion[],
+): DraftQuestion[] =>
+  questions.map((question) => ({
+    id: question.id,
+    subjectId: question.subjectId,
+    topicId: question.topicId,
+    type: question.type,
+    marks: question.marks,
+    prompt: question.prompt,
+    options: question.options?.map((option) => ({ ...option })),
+    source: question.source,
+    year: question.year,
+    difficulty: question.difficulty,
+  }));
+
+const questionsFromSessionDraft = (
+  questions: DraftQuestion[],
+): PracticeQuestion[] =>
+  questions.map((question) => ({
+    ...question,
+    options: question.options?.map((option) => ({ ...option })),
+    correct: [],
+    explanation:
+      "The detailed solution will be revealed when this session is submitted.",
+  }));
+
+const answersForQuestions = (
+  answers: Answers,
+  questions: PracticeQuestion[],
+): Answers => {
+  const questionIds = new Set(questions.map((question) => question.id));
+  return Object.fromEntries(
+    Object.entries(answers)
+      .filter(([questionId, answer]) =>
+        questionIds.has(questionId) && Array.isArray(answer),
+      )
+      .map(([questionId, answer]) => [questionId, answer.map(String)]),
+  );
+};
+
 function mapAttemptResult(
   payload: AttemptResultPayload,
   questions: PracticeQuestion[] = [],
@@ -1161,6 +1239,7 @@ export default function Home() {
     status: authStatus,
     isConfigured: authConfigured,
   } = useAuth();
+  const { isOnline } = usePwa();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("dashboard");
   const [theme, setTheme] = useState<Theme>("light");
@@ -1223,17 +1302,24 @@ export default function Home() {
   const [serverResult, setServerResult] = useState<ServerResult | null>(null);
   const [submitBusy, setSubmitBusy] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [draftOwnerKey, setDraftOwnerKey] = useState<string | null>(null);
+  const [draftRestoreReady, setDraftRestoreReady] = useState(false);
   const [activeTest, setActiveTest] = useState<CatalogTest>(
     LOCAL_FULL_TESTS[0],
   );
   const [runnerCatalogTest, setRunnerCatalogTest] =
     useState<CatalogTest | null>(null);
   const practiceRequestId = useRef(0);
+  const draftRecoveryRequestId = useRef(0);
   const runnerAutoSubmitAttempted = useRef(false);
   const examAutoSubmitAttempted = useRef(false);
   const submitRunnerRef = useRef<(() => Promise<void>) | null>(null);
   const submitExamRef =
     useRef<((skipConfirmation?: boolean) => Promise<void>) | null>(null);
+  const mobileMenuRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const historyReadyRef = useRef(false);
+  const skipHistorySyncRef = useRef(false);
   const selectedSubject = useMemo(
     () =>
       roadmapSubjects.find((subject) => subject.id === selectedSubjectId) ??
@@ -1347,6 +1433,333 @@ export default function Home() {
     document.documentElement.dataset.theme = theme;
     window.localStorage.setItem("gatepath-theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    const initialScreen = directScreenFromSearch(window.location.search);
+    const currentState =
+      window.history.state && typeof window.history.state === "object"
+        ? window.history.state
+        : {};
+    window.history.replaceState(
+      { ...currentState, gatepathScreen: initialScreen },
+      "",
+      window.location.href,
+    );
+    if (initialScreen !== "dashboard") {
+      skipHistorySyncRef.current = true;
+      setScreen(initialScreen);
+    }
+    historyReadyRef.current = true;
+
+    const handlePopState = (event: PopStateEvent) => {
+      const stateScreen = (event.state as { gatepathScreen?: unknown } | null)
+        ?.gatepathScreen;
+      const target = isScreen(stateScreen)
+        ? stateScreen
+        : directScreenFromSearch(window.location.search);
+      setScreen(target);
+      setMobileNavOpen(false);
+      window.scrollTo({ top: 0, behavior: "auto" });
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  useEffect(() => {
+    if (!historyReadyRef.current) return;
+    if (skipHistorySyncRef.current) {
+      skipHistorySyncRef.current = false;
+      return;
+    }
+    const currentScreen = (
+      window.history.state as { gatepathScreen?: unknown } | null
+    )?.gatepathScreen;
+    if (currentScreen === screen) return;
+
+    const url = new URL(window.location.href);
+    if (DIRECT_LINK_SCREENS.includes(screen)) {
+      if (screen === "dashboard") url.searchParams.delete("screen");
+      else url.searchParams.set("screen", screen);
+    } else {
+      url.searchParams.delete("screen");
+    }
+    window.history.pushState(
+      { ...(window.history.state ?? {}), gatepathScreen: screen },
+      "",
+      `${url.pathname}${url.search}${url.hash}`,
+    );
+  }, [screen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen || !window.matchMedia("(max-width: 960px)").matches) {
+      return;
+    }
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const sidebar = sidebarRef.current;
+    const focusable = Array.from(
+      sidebar?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
+    );
+    window.requestAnimationFrame(() => focusable[0]?.focus());
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileNavOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      (previousFocus ?? mobileMenuRef.current)?.focus();
+    };
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (authStatus === "loading") return;
+    if (authStatus === "authenticated" && !user?.uid) return;
+
+    const ownerKey =
+      authStatus === "unavailable"
+        ? activeSessionDraftOwnerKey() ?? sessionDraftOwnerKey(null)
+        : sessionDraftOwnerKey(user?.uid);
+    if (!ownerKey) {
+      setDraftRestoreReady(true);
+      return;
+    }
+
+    activateSessionDraftOwner(ownerKey);
+    setDraftOwnerKey(ownerKey);
+    setDraftRestoreReady(false);
+    const draft = readSessionDraft(ownerKey);
+    if (!draft) {
+      setDraftRestoreReady(true);
+      return;
+    }
+
+    let active = true;
+    const recoveryRequestId = ++draftRecoveryRequestId.current;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 6000);
+
+    const applyDraft = (
+      questions: PracticeQuestion[],
+      deadlineMs: number | null,
+      revalidated: boolean,
+    ) => {
+      if (
+        !active ||
+        recoveryRequestId !== draftRecoveryRequestId.current ||
+        !questions.length
+      ) return;
+      const answers = answersForQuestions(draft.answers, questions);
+      const index = Math.min(
+        questions.length - 1,
+        Math.max(0, draft.currentIndex),
+      );
+      const canRunTimer =
+        deadlineMs != null && Date.now() < deadlineMs - AUTO_SUBMIT_LEAD_MS;
+
+      setSelectedSubjectId(draft.selectedSubjectId);
+      setSelectedTopicId(draft.selectedTopicId);
+      setSessionId(draft.sessionId);
+      setIsLoadingQuestions(false);
+      setLaunchError(
+        revalidated
+          ? "Your unfinished session was restored on this device."
+          : "Your unfinished session was restored offline. Reconnect before submitting so the server can verify it.",
+      );
+      setApiState(revalidated && navigator.onLine ? "online" : "offline");
+
+      if (draft.kind === "mock") {
+        if (!draft.test || draft.test.kind !== "full") {
+          clearSessionDraft(ownerKey);
+          return;
+        }
+        setActiveTest(draft.test);
+        setRunnerCatalogTest(null);
+        setExamQuestions(questions);
+        setExamAnswers(answers);
+        setExamIndex(index);
+        setReviewed(
+          new Set(
+            draft.reviewedQuestionIds.filter((questionId) =>
+              questions.some((question) => question.id === questionId),
+            ),
+          ),
+        );
+        setExamDeadlineMs(deadlineMs);
+        setExamSeconds(
+          deadlineMs == null
+            ? draft.test.durationSeconds
+            : secondsUntilDeadline(deadlineMs),
+        );
+        setExamRunning(canRunTimer);
+        setServerResult(null);
+        examAutoSubmitAttempted.current = false;
+        setScreen("mock");
+        return;
+      }
+
+      setRunnerQuestions(questions);
+      setRunnerCatalogTest(
+        draft.test?.kind === "course" ? draft.test : null,
+      );
+      setPracticeMode(draft.practiceMode ?? "practice");
+      setPracticeTopicId(draft.practiceTopicId ?? null);
+      setPracticeAnswers(answers);
+      setCheckedQuestions(new Set());
+      setQuestionIndex(index);
+      setRunnerSummary(null);
+      setRunnerSubmitted(false);
+      setRunnerDeadlineMs(deadlineMs);
+      setRunnerSeconds(
+        deadlineMs == null ? 0 : secondsUntilDeadline(deadlineMs),
+      );
+      setRunnerTimerRunning(canRunTimer);
+      runnerAutoSubmitAttempted.current = false;
+      setScreen("practice");
+    };
+
+    const restore = async () => {
+      let questions = questionsFromSessionDraft(draft.questions);
+      let deadlineMs = draft.deadlineMs;
+      let revalidated = false;
+
+      if (draft.sessionId && navigator.onLine) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/sessions/${encodeURIComponent(draft.sessionId)}`,
+            {
+              credentials: "include",
+              cache: "no-store",
+              signal: controller.signal,
+            },
+          );
+          if (!response.ok) {
+            if (response.status >= 400 && response.status < 500) {
+              clearSessionDraft(ownerKey);
+              return;
+            }
+            throw new Error("Session recovery service unavailable");
+          }
+          const payload = (await response.json()) as SessionLaunchPayload;
+          if (payload.is_submitted) {
+            clearSessionDraft(ownerKey);
+            return;
+          }
+          const canonicalQuestions = mapServerQuestions(payload);
+          if (!canonicalQuestions.length) {
+            throw new Error("Session recovery returned no questions");
+          }
+          questions = canonicalQuestions;
+          deadlineMs = parseDeadlineMs(payload.expires_at) ?? deadlineMs;
+          revalidated = true;
+        } catch {
+          // The locally stored question shell remains usable while offline.
+          // Submission is still always an explicit request to the backend.
+        }
+      } else if (!draft.sessionId) {
+        const localQuestionsById = new Map(
+          practiceQuestions.map((question) => [question.id, question]),
+        );
+        const restoredLocalQuestions = draft.questions.flatMap((question) => {
+          const localQuestion = localQuestionsById.get(question.id);
+          return localQuestion ? [localQuestion] : [];
+        });
+        if (restoredLocalQuestions.length !== draft.questions.length) {
+          clearSessionDraft(ownerKey);
+          return;
+        }
+        questions = restoredLocalQuestions;
+        revalidated = true;
+      }
+
+      applyDraft(questions, deadlineMs, revalidated);
+    };
+
+    void restore().finally(() => {
+      window.clearTimeout(timeout);
+      if (active && recoveryRequestId === draftRecoveryRequestId.current) {
+        setDraftRestoreReady(true);
+      }
+    });
+    return () => {
+      active = false;
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [authStatus, user?.uid]);
+
+  useEffect(() => {
+    if (!draftRestoreReady || !draftOwnerKey) return;
+    if (screen !== "practice" && screen !== "mock") return;
+    if (screen === "practice" && (runnerSubmitted || !runnerQuestions.length)) {
+      return;
+    }
+    if (screen === "mock" && (serverResult || !examQuestions.length)) return;
+
+    const questions = screen === "mock" ? examQuestions : runnerQuestions;
+    const draft: SessionDraft = {
+      version: 1,
+      ownerKey: draftOwnerKey,
+      savedAt: Date.now(),
+      kind: screen,
+      sessionId,
+      questions: questionsForSessionDraft(questions),
+      answers: screen === "mock" ? examAnswers : practiceAnswers,
+      currentIndex: screen === "mock" ? examIndex : questionIndex,
+      reviewedQuestionIds: screen === "mock" ? Array.from(reviewed) : [],
+      deadlineMs: screen === "mock" ? examDeadlineMs : runnerDeadlineMs,
+      selectedSubjectId,
+      selectedTopicId,
+      practiceMode: screen === "practice" ? practiceMode : undefined,
+      practiceTopicId: screen === "practice" ? practiceTopicId : undefined,
+      test:
+        screen === "mock"
+          ? activeTest
+          : runnerCatalogTest ?? undefined,
+    };
+    writeSessionDraft(draft);
+  }, [
+    activeTest,
+    draftOwnerKey,
+    draftRestoreReady,
+    examAnswers,
+    examDeadlineMs,
+    examIndex,
+    examQuestions,
+    practiceAnswers,
+    practiceMode,
+    practiceTopicId,
+    questionIndex,
+    reviewed,
+    runnerCatalogTest,
+    runnerDeadlineMs,
+    runnerQuestions,
+    runnerSubmitted,
+    screen,
+    selectedSubjectId,
+    selectedTopicId,
+    serverResult,
+    sessionId,
+  ]);
+
+  useEffect(() => {
+    if (!isOnline) setApiState("offline");
+  }, [isOnline]);
 
   useEffect(() => {
     let active = true;
@@ -1573,7 +1986,38 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const discardPracticeSession = useCallback(
+    (target: Screen) => {
+      if (
+        runnerQuestions.length > 0 &&
+        !runnerSubmitted &&
+        !window.confirm(
+          "Exit and discard this in-progress session? Your saved answers on this device will be removed.",
+        )
+      ) {
+        return;
+      }
+      draftRecoveryRequestId.current += 1;
+      clearSessionDraft(draftOwnerKey ?? activeSessionDraftOwnerKey());
+      setRunnerQuestions([]);
+      setRunnerCatalogTest(null);
+      setPracticeAnswers({});
+      setCheckedQuestions(new Set());
+      setRunnerSummary(null);
+      setRunnerSubmitted(false);
+      setRunnerDeadlineMs(null);
+      setRunnerSeconds(0);
+      setRunnerTimerRunning(false);
+      setSessionId(null);
+      setLaunchError(null);
+      navigate(target);
+    },
+    [draftOwnerKey, navigate, runnerQuestions.length, runnerSubmitted],
+  );
+
   const handleProgressReset = useCallback(() => {
+    clearSessionDraft(draftOwnerKey);
+    draftRecoveryRequestId.current += 1;
     practiceRequestId.current += 1;
     runnerAutoSubmitAttempted.current = false;
     examAutoSubmitAttempted.current = false;
@@ -1602,7 +2046,7 @@ export default function Home() {
     setMobileNavOpen(false);
     setLearnerStateRefreshKey((current) => current + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  }, [draftOwnerKey]);
 
   const openSubject = (subject: Subject) => {
     void trackEvent("select_content", {
@@ -1651,6 +2095,9 @@ export default function Home() {
     subjectForRun: Subject = selectedSubject,
     topicForRun: string | null = null,
   ) => {
+    draftRecoveryRequestId.current += 1;
+    clearSessionDraft(draftOwnerKey ?? activeSessionDraftOwnerKey());
+    setDraftRestoreReady(true);
     const requestId = ++practiceRequestId.current;
     const questionCount = mode === "syllabus" ? 12 : mode === "sectional" ? 10 : 8;
     const trackPracticeStarted = () =>
@@ -1878,6 +2325,7 @@ export default function Home() {
       };
     }
 
+    clearSessionDraft(draftOwnerKey);
     setCheckedQuestions(new Set(runnerQuestions.map((question) => question.id)));
     setRunnerSubmitted(true);
     setRunnerSummary(summary);
@@ -1921,6 +2369,9 @@ export default function Home() {
       LOCAL_FULL_TESTS[0],
   ) => {
     if (!test.isAvailable) return;
+    draftRecoveryRequestId.current += 1;
+    clearSessionDraft(draftOwnerKey ?? activeSessionDraftOwnerKey());
+    setDraftRestoreReady(true);
     setActiveTest(test);
     setRunnerCatalogTest(null);
     setExamQuestions([]);
@@ -1974,6 +2425,9 @@ export default function Home() {
 
   const beginCourseTest = async (test: CatalogTest) => {
     if (!test.isAvailable || test.kind !== "course") return;
+    draftRecoveryRequestId.current += 1;
+    clearSessionDraft(draftOwnerKey ?? activeSessionDraftOwnerKey());
+    setDraftRestoreReady(true);
     const subject =
       roadmapSubjects.find((item) => item.id === test.subjectId) ??
       selectedSubject;
@@ -2117,6 +2571,7 @@ export default function Home() {
         return;
       }
     }
+    clearSessionDraft(draftOwnerKey);
     setSubmitBusy(false);
     navigate("results");
   };
@@ -3380,7 +3835,7 @@ export default function Home() {
             <>
               <h1>We could not open this set.</h1>
               <p>{launchError ?? "The question bank did not return a usable form."}</p>
-              <button className="button primary" onClick={() => navigate(returnScreen)}>
+              <button className="button primary" onClick={() => discardPracticeSession(returnScreen)}>
                 {returnLabel}
               </button>
             </>
@@ -3400,7 +3855,7 @@ export default function Home() {
     return (
       <div className="page runner-page">
         <div className="runner-topline">
-          <button className="back-link" onClick={() => navigate(returnScreen)}>← Exit {practiceMode === "syllabus" ? "quiz" : practiceMode === "sectional" ? "test" : "practice"}</button>
+          <button className="back-link" onClick={() => discardPracticeSession(returnScreen)}>← Exit {practiceMode === "syllabus" ? "quiz" : practiceMode === "sectional" ? "test" : "practice"}</button>
           <div
             className="runner-progress"
             role="progressbar"
@@ -4113,15 +4568,15 @@ export default function Home() {
 
   return (
     <div className="app-shell">
-      <button className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-expanded={mobileNavOpen} aria-controls="primary-sidebar" aria-label={`${mobileNavOpen ? "Close" : "Open"} navigation`}>{mobileNavOpen ? "×" : "≡"}</button>
-      <aside id="primary-sidebar" className={`sidebar ${mobileNavOpen ? "open" : ""}`}>
+      <button ref={mobileMenuRef} className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-expanded={mobileNavOpen} aria-controls="primary-sidebar" aria-label={`${mobileNavOpen ? "Close" : "Open"} navigation`}>{mobileNavOpen ? "×" : "≡"}</button>
+      <aside ref={sidebarRef} id="primary-sidebar" className={`sidebar ${mobileNavOpen ? "open" : ""}`}>
         <button className="brand" onClick={() => navigate("dashboard")}><GatePathLogo className="brand-mark" /><span><strong>GatePath</strong><small>2027 · CSE</small></span></button>
         <nav aria-label="Primary navigation">
-          <button className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span className="nav-icon">⌂</span><span>Roadmap</span></button>
-          <button className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span className="nav-icon">Aa</span><span>Learn</span><em>{LEARNING_TOPICS.length}</em></button>
-          <button className={activeNav === "library" ? "active" : ""} onClick={() => navigate("library")}><span className="nav-icon">▦</span><span>Test library</span><em>125</em></button>
-          <button className={activeNav === "mock-setup" ? "active" : ""} onClick={() => navigate("mock-setup")}><span className="nav-icon">◷</span><span>Full mock</span><em>65</em></button>
-          <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span className="nav-icon">↗</span><span>Progress</span></button>
+          <button aria-current={activeNav === "dashboard" ? "page" : undefined} className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span className="nav-icon">⌂</span><span>Roadmap</span></button>
+          <button aria-current={activeNav === "learn" ? "page" : undefined} className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span className="nav-icon">Aa</span><span>Learn</span><em>{LEARNING_TOPICS.length}</em></button>
+          <button aria-current={activeNav === "library" ? "page" : undefined} className={activeNav === "library" ? "active" : ""} onClick={() => navigate("library")}><span className="nav-icon">▦</span><span>Test library</span><em>125</em></button>
+          <button aria-current={activeNav === "mock-setup" ? "page" : undefined} className={activeNav === "mock-setup" ? "active" : ""} onClick={() => navigate("mock-setup")}><span className="nav-icon">◷</span><span>Full mock</span><em>65</em></button>
+          <button aria-current={activeNav === "progress" ? "page" : undefined} className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span className="nav-icon">↗</span><span>Progress</span></button>
         </nav>
         <div className="sidebar-spacer" />
         <div className="sidebar-target"><span className="target-label">Answered coverage</span><div><strong>{analytics.uniqueQuestionsAttempted.toLocaleString()}</strong><span>of {analytics.availableQuestions.toLocaleString()} questions</span></div><MiniProgress value={analytics.coverage} /><small>{analytics.coverage}% of the bank answered</small></div>
@@ -4141,14 +4596,14 @@ export default function Home() {
       </aside>
       {mobileNavOpen && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />}
       <div className="content-shell">
-        <header className="topbar"><div><span className="topbar-kicker">GATE 2027 · Computer Science</span><strong>{headerTitle}</strong></div><div className="topbar-actions"><span className={`api-status ${apiState}`}><i />{apiState === "online" ? "Synced" : apiState === "checking" ? "Connecting" : "Local mode"}</span><button className="theme-toggle" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} onClick={() => setTheme((current) => current === "light" ? "dark" : "light")}><span className={theme === "light" ? "active" : ""}>☼</span><span className={theme === "dark" ? "active" : ""}>◐</span></button></div></header>
+        <header className="topbar"><div><span className="topbar-kicker">GATE 2027 · Computer Science</span><strong>{headerTitle}</strong></div><div className="topbar-actions"><span className={`api-status ${apiState}`}><i />{!isOnline ? "Offline" : apiState === "online" ? "Synced" : apiState === "checking" ? "Connecting" : "Local mode"}</span><button className="theme-toggle" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} onClick={() => setTheme((current) => current === "light" ? "dark" : "light")}><span className={theme === "light" ? "active" : ""}>☼</span><span className={theme === "dark" ? "active" : ""}>◐</span></button></div></header>
         <main>{screen === "dashboard" && renderDashboard()}{screen === "learn" && renderLearn()}{screen === "library" && renderLibrary()}{screen === "subject" && renderSubject()}{screen === "notes" && renderNotes()}{screen === "practice" && renderPractice()}{screen === "mock-setup" && renderMockSetup()}{screen === "results" && renderResults()}{screen === "progress" && renderProgress()}</main>
         <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
-          <button className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span>⌂</span>Roadmap</button>
-          <button className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span>Aa</span>Learn</button>
-          <button className={activeNav === "library" ? "active" : ""} onClick={() => navigate("library")}><span>▦</span>Tests</button>
-          <button className={activeNav === "mock-setup" ? "active" : ""} onClick={() => navigate("mock-setup")}><span>◷</span>Mock</button>
-          <button className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span>↗</span>Progress</button>
+          <button aria-current={activeNav === "dashboard" ? "page" : undefined} className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span>⌂</span>Roadmap</button>
+          <button aria-current={activeNav === "learn" ? "page" : undefined} className={activeNav === "learn" ? "active" : ""} onClick={() => navigate("learn")}><span>Aa</span>Learn</button>
+          <button aria-current={activeNav === "library" ? "page" : undefined} className={activeNav === "library" ? "active" : ""} onClick={() => navigate("library")}><span>▦</span>Tests</button>
+          <button aria-current={activeNav === "mock-setup" ? "page" : undefined} className={activeNav === "mock-setup" ? "active" : ""} onClick={() => navigate("mock-setup")}><span>◷</span>Mock</button>
+          <button aria-current={activeNav === "progress" ? "page" : undefined} className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span>↗</span>Progress</button>
         </nav>
       </div>
       <AuthDialog

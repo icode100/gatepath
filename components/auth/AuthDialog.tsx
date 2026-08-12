@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { GatePathLogo } from "@/components/brand/GatePathLogo";
+import { MobileAppSettings } from "@/components/pwa/MobileAppSettings";
 import { friendlyAuthError, useAuth } from "./AuthProvider";
 
 type AuthDialogProps = {
@@ -315,6 +316,8 @@ export function AuthDialog({
             </p>
           </div>
         )}
+
+        <MobileAppSettings />
 
         {status !== "loading" && status !== "unavailable" && (
           <section className="auth-settings" aria-labelledby="study-data-heading">
