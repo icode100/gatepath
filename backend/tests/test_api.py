@@ -200,7 +200,10 @@ def test_submit_scores_and_updates_progress(client: TestClient) -> None:
     assert analytics_body["unattempted_topics"]
     assert {
         "accuracy_percent",
+        "attempted_coverage_percent",
+        "solved_coverage_percent",
         "coverage_percent",
+        "unique_questions_solved",
         "recency_weighted_accuracy_percent",
         "mastery_score",
         "status",
@@ -378,9 +381,27 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
             )
             return subject, topic
 
+        def operating_systems_analytics() -> tuple[dict, dict]:
+            analytics = learner.get("/api/v1/progress/analytics")
+            assert analytics.status_code == 200
+            payload = analytics.json()
+            topic = next(
+                item
+                for item in payload["topics"]
+                if item["topic_id"] == question["topic_id"]
+            )
+            return payload["overall"], topic
+
         subject, topic = operating_systems_progress()
         assert subject["solved_questions"] == 0
         assert topic["solved_questions"] == 0
+        overall, analytics_topic = operating_systems_analytics()
+        assert overall["unique_questions_attempted"] == 1
+        assert overall["unique_questions_solved"] == 0
+        assert overall["attempted_coverage_percent"] > 0
+        assert overall["solved_coverage_percent"] == 0
+        assert analytics_topic["unique_questions_attempted"] == 1
+        assert analytics_topic["unique_questions_solved"] == 0
 
         correct_session = learner.post(
             "/api/v1/practice-sessions",
@@ -401,6 +422,12 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
         subject, topic = operating_systems_progress()
         assert subject["solved_questions"] == 1
         assert topic["solved_questions"] == 1
+        overall, analytics_topic = operating_systems_analytics()
+        assert overall["unique_questions_attempted"] == 1
+        assert overall["unique_questions_solved"] == 1
+        assert analytics_topic["unique_questions_attempted"] == 1
+        assert analytics_topic["unique_questions_solved"] == 1
+        assert analytics_topic["solved_coverage_percent"] > 0
 
         later_wrong_session = learner.post(
             "/api/v1/practice-sessions",
@@ -422,6 +449,11 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
         assert subject["solved_questions"] == 1
         assert topic["solved_questions"] == 1
         assert topic["accuracy"] == 0
+        overall, analytics_topic = operating_systems_analytics()
+        assert overall["unique_questions_solved"] == 1
+        assert analytics_topic["unique_questions_solved"] == 1
+        assert analytics_topic["correct_count"] == 0
+        assert analytics_topic["accuracy_percent"] == 0
 
         repeated_correct_session = learner.post(
             "/api/v1/practice-sessions",
@@ -439,6 +471,9 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
         subject, topic = operating_systems_progress()
         assert subject["solved_questions"] == 1
         assert topic["solved_questions"] == 1
+        overall, analytics_topic = operating_systems_analytics()
+        assert overall["unique_questions_solved"] == 1
+        assert analytics_topic["unique_questions_solved"] == 1
     finally:
         learner.close()
 

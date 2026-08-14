@@ -273,26 +273,49 @@ select:focus-visible {
   text-transform: uppercase;
 }
 
-.sidebar-target > div {
+.sidebar-coverage-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.sidebar-coverage-row {
+  display: grid;
+  gap: 6px;
+}
+
+.sidebar-coverage-row + .sidebar-coverage-row {
+  padding-top: 11px;
+  border-top: 1px solid var(--line);
+}
+
+.sidebar-coverage-row > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin: 8px 0 10px;
+  gap: 8px;
 }
 
-.sidebar-target strong {
-  font-size: 17px;
+.sidebar-coverage-row > div > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 720;
 }
 
-.sidebar-target > div span,
-.sidebar-target small {
+.sidebar-coverage-row strong {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.sidebar-coverage-row strong small,
+.sidebar-coverage-row > small {
   color: var(--muted);
   font-size: 11px;
+  font-weight: 600;
 }
 
-.sidebar-target small {
-  display: block;
-  margin-top: 8px;
+.sidebar-coverage-row > small {
+  font-size: 9px;
 }
 
 .profile {
@@ -1052,6 +1075,14 @@ body:has(.auth-dialog[open]) {
   height: 100%;
   border-radius: inherit;
   background: var(--green);
+}
+
+.mini-progress.tone-attempted span {
+  background: var(--primary);
+}
+
+.mini-progress.tone-solved span {
+  background: var(--success);
 }
 
 .progress-ring {
@@ -4465,6 +4496,16 @@ body:has(.auth-dialog[open]) {
   margin: 0;
   color: var(--muted);
   font-size: 9px;
+}
+
+.progress-metrics .mini-progress {
+  width: 100%;
+  height: 6px;
+  margin-top: 10px;
+}
+
+.progress-metrics .coverage-metric-card.solved {
+  border-color: color-mix(in srgb, var(--success) 28%, var(--line));
 }
 
 .analysis-grid {

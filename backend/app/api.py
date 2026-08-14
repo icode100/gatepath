@@ -1424,13 +1424,19 @@ async def progress_analytics(
     topics: list[TopicAnalytics] = []
     for subject in subjects:
         for topic in subject.topics:
-            evidence_rows = topic_evidence[topic.id]
+            evidence_rows = [
+                evidence
+                for evidence in topic_evidence[topic.id]
+                if evidence.question_id in active_question_ids
+            ]
             answered_rows = [
                 evidence
                 for evidence in evidence_rows
-                if evidence.question_id in active_question_ids
-                and evidence.latest_answered_status is not None
+                if evidence.latest_answered_status is not None
                 and evidence.latest_answered_at is not None
+            ]
+            solved_rows = [
+                evidence for evidence in evidence_rows if evidence.correct_count > 0
             ]
             correct_count = sum(
                 evidence.latest_answered_status == ResponseStatus.CORRECT.value
@@ -1446,11 +1452,17 @@ async def progress_analytics(
             answered_count = len(answered_rows)
             available_questions = topic_question_counts.get(topic.id, 0)
             unique_questions = answered_count
+            unique_questions_solved = len(solved_rows)
             accuracy = (
                 correct_count / answered_count if answered_count else 0.0
             )
-            coverage = (
+            attempted_coverage = (
                 unique_questions / available_questions
+                if available_questions
+                else 0.0
+            )
+            solved_coverage = (
+                unique_questions_solved / available_questions
                 if available_questions
                 else 0.0
             )
@@ -1468,7 +1480,7 @@ async def progress_analytics(
                 accuracy=accuracy,
                 recency_accuracy=recency_accuracy,
                 answered_count=answered_count,
-                coverage=coverage,
+                coverage=attempted_coverage,
                 volume_target=10,
             )
             if not answered_rows:
@@ -1504,11 +1516,17 @@ async def progress_analytics(
                     ),
                     answered_count=answered_count,
                     unique_questions_attempted=unique_questions,
+                    unique_questions_solved=unique_questions_solved,
                     correct_count=correct_count,
                     incorrect_count=incorrect_count,
                     unanswered_count=unanswered_count,
                     accuracy_percent=round(accuracy * 100, 2),
-                    coverage_percent=round(coverage * 100, 2),
+                    attempted_coverage_percent=round(
+                        attempted_coverage * 100,
+                        2,
+                    ),
+                    solved_coverage_percent=round(solved_coverage * 100, 2),
+                    coverage_percent=round(attempted_coverage * 100, 2),
                     recency_weighted_accuracy_percent=round(
                         recency_accuracy * 100, 2
                     ),
@@ -1537,13 +1555,19 @@ async def progress_analytics(
         evidence.latest_answered_status == ResponseStatus.CORRECT.value
         for evidence in answered_responses
     )
+    solved_responses = sum(
+        evidence.correct_count > 0 for evidence in answered_responses
+    )
     available_questions = sum(topic_question_counts.values())
     unique_questions = len(answered_responses)
     overall_accuracy = (
         correct_responses / len(answered_responses) if answered_responses else 0.0
     )
-    overall_coverage = (
+    overall_attempted_coverage = (
         unique_questions / available_questions if available_questions else 0.0
+    )
+    overall_solved_coverage = (
+        solved_responses / available_questions if available_questions else 0.0
     )
     overall_recency = _weighted_accuracy(
         [
@@ -1559,16 +1583,19 @@ async def progress_analytics(
         attempted_responses=progress.total_responses,
         answered_responses=len(answered_responses),
         unique_questions_attempted=unique_questions,
+        unique_questions_solved=solved_responses,
         available_questions=available_questions,
         accuracy_percent=round(overall_accuracy * 100, 2),
-        coverage_percent=round(overall_coverage * 100, 2),
+        attempted_coverage_percent=round(overall_attempted_coverage * 100, 2),
+        solved_coverage_percent=round(overall_solved_coverage * 100, 2),
+        coverage_percent=round(overall_attempted_coverage * 100, 2),
         recency_weighted_accuracy_percent=round(overall_recency * 100, 2),
         mastery_score=round(
             _mastery_score(
                 accuracy=overall_accuracy,
                 recency_accuracy=overall_recency,
                 answered_count=len(answered_responses),
-                coverage=overall_coverage,
+                coverage=overall_attempted_coverage,
                 volume_target=50,
             ),
             2,

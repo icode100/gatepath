@@ -385,9 +385,11 @@ type TopicAnalytics = {
   availableQuestions: number;
   attempts: number;
   uniqueAttempted: number;
+  uniqueSolved: number;
   correct: number;
   accuracy: number;
   coverage: number;
+  solvedCoverage: number;
   mastery: number;
   status: TopicStatus;
   lastAttemptedAt?: string;
@@ -396,9 +398,11 @@ type TopicAnalytics = {
 type AnalyticsSnapshot = {
   attemptedResponses: number;
   uniqueQuestionsAttempted: number;
+  uniqueQuestionsSolved: number;
   availableQuestions: number;
   accuracy: number;
   coverage: number;
+  solvedCoverage: number;
   mastery: number;
   testsCompleted: number;
   topics: TopicAnalytics[];
@@ -503,6 +507,15 @@ const markdownListSection = (markdown: string, heading: string) =>
 
 const clampPercent = (value: number) =>
   Math.max(0, Math.min(100, Math.round(value)));
+
+const clampCoverage = (value: number) =>
+  Math.max(0, Math.min(100, Math.round(value * 100) / 100));
+
+const coveragePercent = (count: number, available: number) =>
+  available > 0 ? clampCoverage((count / available) * 100) : 0;
+
+const formatCoverage = (value: number) =>
+  value > 0 && value < 1 ? "<1%" : `${Math.round(value)}%`;
 
 const AUTO_SUBMIT_LEAD_MS = 5_000;
 
@@ -686,9 +699,11 @@ function buildLocalAnalytics(subjects: Subject[]): AnalyticsSnapshot {
         availableQuestions: topic.questions,
         attempts: 0,
         uniqueAttempted: 0,
+        uniqueSolved: 0,
         correct: 0,
         accuracy: 0,
         coverage: 0,
+        solvedCoverage: 0,
         mastery: 0,
         status: "unattempted",
       }),
@@ -709,6 +724,10 @@ function buildLocalAnalytics(subjects: Subject[]): AnalyticsSnapshot {
       (total, topic) => total + topic.uniqueAttempted,
       0,
     ),
+    uniqueQuestionsSolved: topics.reduce(
+      (total, topic) => total + topic.uniqueSolved,
+      0,
+    ),
     availableQuestions,
     accuracy: attemptedResponses
       ? clampPercent((correct / attemptedResponses) * 100)
@@ -716,6 +735,13 @@ function buildLocalAnalytics(subjects: Subject[]): AnalyticsSnapshot {
     coverage: availableQuestions
       ? clampPercent(
           (topics.reduce((total, topic) => total + topic.uniqueAttempted, 0) /
+            availableQuestions) *
+            100,
+        )
+      : 0,
+    solvedCoverage: availableQuestions
+      ? clampPercent(
+          (topics.reduce((total, topic) => total + topic.uniqueSolved, 0) /
             availableQuestions) *
             100,
         )
@@ -778,8 +804,50 @@ function mergeAnalytics(
     const accuracy = clampPercent(
       toFiniteNumber(item.accuracy_percent ?? item.accuracy, local?.accuracy),
     );
-    const coverage = clampPercent(
-      toFiniteNumber(item.coverage_percent ?? item.coverage, local?.coverage),
+    const availableQuestions = Math.max(
+      0,
+      Math.round(
+        toFiniteNumber(item.available_questions, local?.availableQuestions),
+      ),
+    );
+    const uniqueAttempted = Math.max(
+      0,
+      Math.round(
+        toFiniteNumber(
+          item.unique_questions_attempted,
+          local?.uniqueAttempted ?? attempts,
+        ),
+      ),
+    );
+    const correct = Math.max(
+      0,
+      Math.round(
+        toFiniteNumber(
+          item.correct_count,
+          Math.round((attempts * accuracy) / 100),
+        ),
+      ),
+    );
+    const uniqueSolved = Math.max(
+      0,
+      Math.round(
+        toFiniteNumber(
+          item.unique_questions_solved ?? item.solved_questions,
+          correct,
+        ),
+      ),
+    );
+    const coverage = clampCoverage(
+      toFiniteNumber(
+        item.attempted_coverage_percent ?? item.coverage_percent ?? item.coverage,
+        coveragePercent(uniqueAttempted, availableQuestions),
+      ),
+    );
+    const solvedCoverage = clampCoverage(
+      toFiniteNumber(
+        item.solved_coverage_percent,
+        coveragePercent(uniqueSolved, availableQuestions),
+      ),
     );
     const rawStatus = String(item.status ?? local?.status ?? "developing");
     const reportedStatus: TopicStatus = (
@@ -798,33 +866,14 @@ function mergeAnalytics(
       subjectName:
         subject?.shortTitle ??
         String(item.subject_name ?? item.subject_code ?? "Computer Science"),
-      availableQuestions: Math.max(
-        0,
-        Math.round(
-          toFiniteNumber(item.available_questions, local?.availableQuestions),
-        ),
-      ),
+      availableQuestions,
       attempts,
-      uniqueAttempted: Math.max(
-        0,
-        Math.round(
-          toFiniteNumber(
-            item.unique_questions_attempted,
-            local?.uniqueAttempted ?? attempts,
-          ),
-        ),
-      ),
-      correct: Math.max(
-        0,
-        Math.round(
-          toFiniteNumber(
-            item.correct_count,
-            Math.round((attempts * accuracy) / 100),
-          ),
-        ),
-      ),
+      uniqueAttempted,
+      uniqueSolved,
+      correct,
       accuracy,
       coverage,
+      solvedCoverage,
       mastery: clampPercent(
         toFiniteNumber(item.mastery_score, accuracy * 0.7 + coverage * 0.3),
       ),
@@ -845,6 +894,34 @@ function mergeAnalytics(
       (topic) => !mappedKeys.has(`${topic.subjectId}:${topic.topicId}`),
     ),
   ];
+  const availableQuestions = Math.max(
+    0,
+    Math.round(
+      toFiniteNumber(overall.available_questions, fallback.availableQuestions),
+    ),
+  );
+  const uniqueQuestionsAttempted = Math.max(
+    0,
+    Math.round(
+      toFiniteNumber(
+        overall.unique_questions_attempted,
+        fallback.uniqueQuestionsAttempted,
+      ),
+    ),
+  );
+  const topicSolvedTotal = topics.reduce(
+    (total, topic) => total + topic.uniqueSolved,
+    0,
+  );
+  const uniqueQuestionsSolved = Math.max(
+    0,
+    Math.round(
+      toFiniteNumber(
+        overall.unique_questions_solved,
+        topicSolvedTotal || fallback.uniqueQuestionsSolved,
+      ),
+    ),
+  );
   return {
     attemptedResponses: Math.max(
       0,
@@ -855,29 +932,23 @@ function mergeAnalytics(
         ),
       ),
     ),
-    uniqueQuestionsAttempted: Math.max(
-      0,
-      Math.round(
-        toFiniteNumber(
-          overall.unique_questions_attempted,
-          fallback.uniqueQuestionsAttempted,
-        ),
-      ),
-    ),
-    availableQuestions: Math.max(
-      0,
-      Math.round(
-        toFiniteNumber(
-          overall.available_questions,
-          fallback.availableQuestions,
-        ),
-      ),
-    ),
+    uniqueQuestionsAttempted,
+    uniqueQuestionsSolved,
+    availableQuestions,
     accuracy: clampPercent(
       toFiniteNumber(overall.accuracy_percent, fallback.accuracy),
     ),
-    coverage: clampPercent(
-      toFiniteNumber(overall.coverage_percent, fallback.coverage),
+    coverage: clampCoverage(
+      toFiniteNumber(
+        overall.attempted_coverage_percent ?? overall.coverage_percent,
+        coveragePercent(uniqueQuestionsAttempted, availableQuestions),
+      ),
+    ),
+    solvedCoverage: clampCoverage(
+      toFiniteNumber(
+        overall.solved_coverage_percent,
+        coveragePercent(uniqueQuestionsSolved, availableQuestions),
+      ),
     ),
     mastery: clampPercent(
       toFiniteNumber(overall.mastery_score, fallback.mastery),
@@ -1232,10 +1303,31 @@ function ProgressRing({ value, size = "large" }: { value: number; size?: "small"
   );
 }
 
-function MiniProgress({ value }: { value: number }) {
+function MiniProgress({
+  value,
+  label,
+  tone = "primary",
+}: {
+  value: number;
+  label?: string;
+  tone?: "primary" | "attempted" | "solved";
+}) {
+  const normalized = clampCoverage(value);
   return (
-    <div className="mini-progress" aria-label={`${value}% complete`}>
-      <span style={{ width: `${value}%` }} />
+    <div
+      className={`mini-progress tone-${tone}`}
+      role="progressbar"
+      aria-label={label ?? `${formatCoverage(normalized)} complete`}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={normalized}
+    >
+      <span
+        style={{
+          width: `${normalized}%`,
+          minWidth: normalized > 0 ? "3px" : undefined,
+        }}
+      />
     </div>
   );
 }
@@ -2980,7 +3072,7 @@ export default function Home() {
         <section className="pulse-strip" aria-label="Study summary">
           <div><span className="metric-icon">{analytics.testsCompleted}</span><span><strong>Tests completed</strong><small>Full and course attempts</small></span></div>
           <div><span className="metric-icon">{analytics.accuracy}%</span><span><strong>Overall accuracy</strong><small>Across answered questions</small></span></div>
-          <div><span className="metric-icon">{analytics.coverage}%</span><span><strong>Answered coverage</strong><small>{analytics.uniqueQuestionsAttempted.toLocaleString()} unique questions answered</small></span></div>
+          <div><span className="metric-icon">{formatCoverage(analytics.solvedCoverage)}</span><span><strong>Solved coverage</strong><small>{analytics.uniqueQuestionsSolved.toLocaleString()} solved · {analytics.uniqueQuestionsAttempted.toLocaleString()} attempted</small></span></div>
           <button className="strip-link" onClick={() => navigate("progress")}>View insights <span>→</span></button>
         </section>
 
@@ -4385,7 +4477,7 @@ export default function Home() {
             <div className="eyebrow">Learning signals</div>
             <h1>Know what is strong. Fix what is not.</h1>
             <p>
-              Recommendations use accuracy, attempts and answered coverage.
+              Recommendations use accuracy, attempt history and solved coverage.
               Unattempted topics appear as starting suggestions until you build
               enough evidence.
             </p>
@@ -4399,20 +4491,36 @@ export default function Home() {
         </section>
 
         <section className="progress-metrics">
-          <div>
-            <span>Questions attempted</span>
-            <strong>{analytics.uniqueQuestionsAttempted.toLocaleString()}</strong>
+          <div className="coverage-metric-card">
+            <span>Attempted coverage</span>
+            <strong>
+              {analytics.uniqueQuestionsAttempted.toLocaleString()}
+              <small> · {formatCoverage(analytics.coverage)}</small>
+            </strong>
             <p>{analytics.attemptedResponses.toLocaleString()} total responses</p>
+            <MiniProgress
+              value={analytics.coverage}
+              tone="attempted"
+              label={`${formatCoverage(analytics.coverage)} of the question bank attempted`}
+            />
           </div>
           <div>
             <span>Overall accuracy</span>
             <strong>{analytics.accuracy}%</strong>
             <p>Across answered questions</p>
           </div>
-          <div>
-            <span>Answered coverage</span>
-            <strong>{analytics.coverage}%</strong>
-            <p>{analytics.topics.length} topics measured</p>
+          <div className="coverage-metric-card solved">
+            <span>Correctly solved</span>
+            <strong>
+              {analytics.uniqueQuestionsSolved.toLocaleString()}
+              <small> · {formatCoverage(analytics.solvedCoverage)}</small>
+            </strong>
+            <p>Distinct questions correct at least once</p>
+            <MiniProgress
+              value={analytics.solvedCoverage}
+              tone="solved"
+              label={`${formatCoverage(analytics.solvedCoverage)} of the question bank correctly solved`}
+            />
           </div>
           <div>
             <span>Question bank</span>
@@ -4454,7 +4562,7 @@ export default function Home() {
                         <strong>{topic.uniqueAttempted}</strong> attempted
                       </span>
                       <span>
-                        <strong>{topic.coverage}%</strong> coverage
+                        <strong>{topic.uniqueSolved}</strong> solved
                       </span>
                     </div>
                   </div>
@@ -4503,7 +4611,7 @@ export default function Home() {
                         <strong>{topic.uniqueAttempted}</strong> attempted
                       </span>
                       <span>
-                        <strong>{topic.coverage}%</strong> coverage
+                        <strong>{topic.uniqueSolved}</strong> solved
                       </span>
                     </div>
                   </div>
@@ -4553,14 +4661,14 @@ export default function Home() {
               <div className="evidence-table-head" aria-hidden="true">
                 <span>Topic</span>
                 <span>Accuracy</span>
-                <span>Attempts</span>
-                <span>Coverage</span>
+                <span>Attempted</span>
+                <span>Solved</span>
                 <span>Status</span>
               </div>
               {filteredAnalyticsTopics.slice(0, 12).map((topic) => (
                 <button
                   key={`${topic.subjectId}-${topic.topicId}`}
-                  aria-label={`${topic.subjectCode} ${topic.topicName}: ${topic.accuracy}% accuracy, ${topic.uniqueAttempted} unique questions attempted, ${topic.coverage}% coverage, status ${topic.status.replace("_", " ")}. Start practice.`}
+                  aria-label={`${topic.subjectCode} ${topic.topicName}: ${topic.accuracy}% accuracy, ${topic.uniqueAttempted} unique questions attempted, ${topic.uniqueSolved} correctly solved, status ${topic.status.replace("_", " ")}. Start practice.`}
                   onClick={() => openAnalyticsTopic(topic, "practice")}
                 >
                   <span>
@@ -4569,7 +4677,7 @@ export default function Home() {
                   </span>
                   <b>{topic.accuracy}%</b>
                   <b>{topic.uniqueAttempted}</b>
-                  <b>{topic.coverage}%</b>
+                  <b>{topic.uniqueSolved}</b>
                   <em className={`status-${topic.status}`}>
                     {topic.status === "needs_practice"
                       ? "Needs practice"
@@ -4668,7 +4776,35 @@ export default function Home() {
           <button aria-current={activeNav === "progress" ? "page" : undefined} className={activeNav === "progress" ? "active" : ""} onClick={() => navigate("progress")}><span className="nav-icon">↗</span><span>Progress</span></button>
         </nav>
         <div className="sidebar-spacer" />
-        <div className="sidebar-target"><span className="target-label">Answered coverage</span><div><strong>{analytics.uniqueQuestionsAttempted.toLocaleString()}</strong><span>of {analytics.availableQuestions.toLocaleString()} questions</span></div><MiniProgress value={analytics.coverage} /><small>{analytics.coverage}% of the bank answered</small></div>
+        <div className="sidebar-target">
+          <span className="target-label">Question coverage</span>
+          <div className="sidebar-coverage-list">
+            <div className="sidebar-coverage-row solved">
+              <div>
+                <span>Correctly solved</span>
+                <strong>{analytics.uniqueQuestionsSolved.toLocaleString()} <small>of {analytics.availableQuestions.toLocaleString()}</small></strong>
+              </div>
+              <MiniProgress
+                value={analytics.solvedCoverage}
+                tone="solved"
+                label={`${analytics.uniqueQuestionsSolved.toLocaleString()} of ${analytics.availableQuestions.toLocaleString()} questions correctly solved`}
+              />
+              <small>{formatCoverage(analytics.solvedCoverage)} of the bank solved</small>
+            </div>
+            <div className="sidebar-coverage-row attempted">
+              <div>
+                <span>Attempted</span>
+                <strong>{analytics.uniqueQuestionsAttempted.toLocaleString()} <small>of {analytics.availableQuestions.toLocaleString()}</small></strong>
+              </div>
+              <MiniProgress
+                value={analytics.coverage}
+                tone="attempted"
+                label={`${analytics.uniqueQuestionsAttempted.toLocaleString()} of ${analytics.availableQuestions.toLocaleString()} questions attempted`}
+              />
+              <small>{formatCoverage(analytics.coverage)} of the bank attempted</small>
+            </div>
+          </div>
+        </div>
         <button
           className="profile"
           aria-haspopup="dialog"

@@ -352,8 +352,11 @@ class AnalyticsOverall(BaseModel):
     attempted_responses: int
     answered_responses: int
     unique_questions_attempted: int
+    unique_questions_solved: int
     available_questions: int
     accuracy_percent: float
+    attempted_coverage_percent: float
+    solved_coverage_percent: float
     coverage_percent: float
     recency_weighted_accuracy_percent: float
     mastery_score: float
@@ -371,10 +374,13 @@ class TopicAnalytics(BaseModel):
     attempt_count: int
     answered_count: int
     unique_questions_attempted: int
+    unique_questions_solved: int
     correct_count: int
     incorrect_count: int
     unanswered_count: int
     accuracy_percent: float
+    attempted_coverage_percent: float
+    solved_coverage_percent: float
     coverage_percent: float
     recency_weighted_accuracy_percent: float
     mastery_score: float

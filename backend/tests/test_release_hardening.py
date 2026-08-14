@@ -451,8 +451,17 @@ async def test_analytics_uses_latest_unique_answered_questions() -> None:
         assert topic_result.attempt_count == 7
         assert topic_result.answered_count == 1
         assert topic_result.unique_questions_attempted == 1
+        assert topic_result.unique_questions_solved == 1
         assert topic_result.correct_count == 1
         assert topic_result.unanswered_count == 1
+        assert topic_result.attempted_coverage_percent == round(
+            100 / topic_result.available_questions,
+            2,
+        )
+        assert topic_result.solved_coverage_percent == round(
+            100 / topic_result.available_questions,
+            2,
+        )
         assert topic_result.coverage_percent == round(
             100 / topic_result.available_questions,
             2,
@@ -460,6 +469,15 @@ async def test_analytics_uses_latest_unique_answered_questions() -> None:
         assert topic_result.status != "strong"
         assert dashboard.overall.answered_responses == 1
         assert dashboard.overall.unique_questions_attempted == 1
+        assert dashboard.overall.unique_questions_solved == 1
+        assert (
+            dashboard.overall.attempted_coverage_percent
+            == dashboard.overall.coverage_percent
+        )
+        assert (
+            dashboard.overall.solved_coverage_percent
+            == dashboard.overall.attempted_coverage_percent
+        )
         assert dashboard.overall.accuracy_percent == 100
         assert dashboard.overall.recency_weighted_accuracy_percent == 100
     await engine.dispose()

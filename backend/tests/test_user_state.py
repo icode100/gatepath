@@ -301,6 +301,44 @@ async def test_memory_progress_tracks_unique_questions_and_latest_answered_state
 
 
 @pytest.mark.asyncio
+async def test_progress_distinguishes_eight_attempted_from_one_lifetime_solved() -> None:
+    repository = MemoryUserStateRepository()
+    question_ids = tuple(range(201, 209))
+    session = _session(
+        "mixed-result",
+        "mixed-learner",
+        question_ids=question_ids,
+    )
+    responses = tuple(
+        _response(
+            question_id,
+            "correct" if index == 0 else "incorrect",
+            awarded_marks=1.0 if index == 0 else -1 / 3,
+        )
+        for index, question_id in enumerate(question_ids)
+    )
+    await repository.create_session(session)
+    await repository.submit_attempt(
+        "mixed-learner",
+        session.id,
+        _attempt(session.id, "mixed-learner", responses),
+    )
+
+    progress = await repository.get_progress("mixed-learner")
+    answered = [
+        evidence
+        for evidence in progress.evidence.values()
+        if evidence.latest_answered_status is not None
+    ]
+    solved = [evidence for evidence in answered if evidence.correct_count > 0]
+
+    assert len(answered) == 8
+    assert len(solved) == 1
+    assert progress.correct_count == 1
+    assert progress.incorrect_count == 7
+
+
+@pytest.mark.asyncio
 async def test_memory_guest_claim_merges_state_and_is_repeatable() -> None:
     repository = MemoryUserStateRepository()
     with pytest.raises(UserStateNotFound):
