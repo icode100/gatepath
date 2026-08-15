@@ -11,7 +11,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = readFileSync(resolve(ROOT, "public", "sw.js"), "utf8");
 const ORIGIN = "https://gatepath.vercel.app";
 const MANIFEST = loadTypeScriptModule("app/manifest.ts").default();
-const PRECACHE_NAME = "gatepath-pwa-precache-v3";
+const PRECACHE_NAME = "gatepath-pwa-precache-v4";
 
 const requestKey = (request) =>
   new URL(typeof request === "string" ? request : request.url, ORIGIN).href;
@@ -235,6 +235,7 @@ test("does not retain private or no-store static responses", async () => {
 test("activation removes only obsolete GatePath caches", async () => {
   const harness = createHarness();
   await harness.cacheStorage.open(PRECACHE_NAME);
+  await harness.cacheStorage.open("gatepath-pwa-precache-v3");
   await harness.cacheStorage.open("gatepath-pwa-precache-v2");
   await harness.cacheStorage.open("gatepath-pwa-precache-v1");
   await harness.cacheStorage.open("gatepath-pwa-next-static-v1");

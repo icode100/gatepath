@@ -127,7 +127,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
         shell: bash
         run: |
-          if gh release view android-preview-v5 >/dev/null 2>&1; then
+          if gh release view android-preview-v6 >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
@@ -151,16 +151,16 @@ jobs:
           test -n "$apk_path"
           cp "$apk_path" gatepath-android.apk
           sha256sum gatepath-android.apk > gatepath-android.apk.sha256
-          gh release create android-preview-v5 \
+          gh release create android-preview-v6 \
             gatepath-android.apk \
             gatepath-android.apk.sha256 \
             --target "$GITHUB_SHA" \
             --prerelease \
-            --title "GatePath Android Preview v5" \
+            --title "GatePath Android Preview v6" \
             --notes "Updated preview build for direct Android installation.
 
           This APK opens gatepath.vercel.app as a Trusted Web Activity and includes adaptive monochrome launcher artwork for supported Android 13+ launchers, including Pixel Launcher and compatible Samsung One UI versions.
 
-          Preview v5 retains the Android Browser Helper launch fix and separates the monochrome waypoint from the Route G, keeping it distinct after Pixel Launcher or compatible Samsung One UI launchers apply a themed palette.
+          Preview v6 retains the Android Browser Helper launch fix and keeps the monochrome waypoint at the exact full-colour logo position. Separate route, crossbar, and waypoint shapes create a visible transparent outline after Pixel Launcher or compatible Samsung One UI launchers apply a themed palette.
 
-          Important: uninstall preview v4 before installing v5 because these CI preview builds use different debug signing certificates. A future production-signed build may also require reinstalling. Remove an older Chrome-installed GatePath PWA first if you want to avoid duplicate launcher icons."
+          Important: uninstall preview v5 before installing v6 because these CI preview builds use different debug signing certificates. A future production-signed build may also require reinstalling. Remove an older Chrome-installed GatePath PWA first if you want to avoid duplicate launcher icons."

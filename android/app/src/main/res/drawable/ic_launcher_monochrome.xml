@@ -4,19 +4,24 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Android supplies the wallpaper-derived tint. Keep this one-color and
-         background-free so Pixel Launcher and supported One UI launchers can theme it. -->
+    <!-- Android supplies the wallpaper-derived tint. The route, G crossbar,
+         and nearby waypoint are three distinct opaque pieces so their spacing
+         survives monochrome recolouring on Pixel and One UI launchers. -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M65.34,42.14a18.56,18.56 0,1 0,5.67 13.92H55.03"
+        android:pathData="M65.34,42.14A18.56,18.56 0,1 0,65.34,68.86"
         android:strokeColor="#FF000000"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:strokeWidth="7.22" />
-    <!-- The waypoint sits inside the route opening with real transparent
-         space on every side. The launcher can recolour both shapes while the
-         dot remains distinct on Pixel Launcher and compatible One UI themes. -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M55.03,56.06H60.5"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="7.22" />
     <path
         android:fillColor="#FF000000"
-        android:pathData="M82,46.5a5,5 0,1 1,-10 0a5,5 0,1 1,10 0z" />
+        android:pathData="M75.65,56.06a4.64,4.64 0,1 1,-9.28 0a4.64,4.64 0,1 1,9.28 0z" />
 </vector>

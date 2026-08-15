@@ -203,7 +203,11 @@ test("monochrome launcher drawable is a one-color, background-free vector", () =
   assert.doesNotMatch(source, /android:tint=/i);
 
   const paths = [...source.matchAll(/<path\b[\s\S]*?\/>/g)].map((match) => match[0]);
-  assert.ok(paths.length >= 2, "the Route-G monochrome mark must retain its route and waypoint");
+  assert.equal(
+    paths.length,
+    3,
+    "the Route-G monochrome mark must contain separate arc, crossbar and waypoint paths",
+  );
   for (const path of paths) {
     assert.match(path, /android:pathData=["'][^"']+["']/);
   }
@@ -230,11 +234,15 @@ test("monochrome launcher drawable is a one-color, background-free vector", () =
     "visible monochrome paths must use exactly one RGB color",
   );
 
-  const routePath = paths.find((path) => /android:strokeColor=/.test(path));
+  const strokedPaths = paths.filter((path) => /android:strokeColor=/.test(path));
+  const arcPath = strokedPaths.find((path) => /android:pathData=["'][^"']*[aA][\d.]+,[\d.]+/.test(path));
+  const barPath = strokedPaths.find((path) => /android:pathData=["'][^"']*H[\d.]+/.test(path));
   const waypointPath = paths.find(
     (path) => /android:fillColor=["']#FF000000["']/.test(path) && !/android:strokeColor=/.test(path),
   );
-  assert.ok(routePath, "monochrome vector must contain the stroked Route-G");
+  assert.equal(strokedPaths.length, 2, "only the arc and crossbar should use strokes");
+  assert.ok(arcPath, "monochrome vector must contain the stroked Route-G arc");
+  assert.ok(barPath, "monochrome vector must contain an independent horizontal crossbar");
   assert.ok(waypointPath, "monochrome vector must contain a dedicated waypoint path");
   assert.doesNotMatch(
     source,
@@ -242,42 +250,84 @@ test("monochrome launcher drawable is a one-color, background-free vector", () =
     "the waypoint must be genuinely detached instead of simulated with a cut-out halo",
   );
 
-  const routeGeometry = routePath.match(
-    /android:pathData=["']M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+0,([\d.]+)\s+([\d.]+)H([\d.]+)["']/,
+  const arcGeometry = arcPath.match(
+    /android:pathData=["']M([\d.]+),([\d.]+)A([\d.]+),([\d.]+)\s+0,1\s+0,([\d.]+),?([\d.]+)["']/,
   );
-  const strokeWidth = Number(routePath.match(/android:strokeWidth=["']([\d.]+)["']/)?.[1]);
+  const barGeometry = barPath.match(
+    /android:pathData=["']M([\d.]+),([\d.]+)H([\d.]+)["']/,
+  );
+  const arcStrokeWidth = Number(arcPath.match(/android:strokeWidth=["']([\d.]+)["']/)?.[1]);
+  const barStrokeWidth = Number(barPath.match(/android:strokeWidth=["']([\d.]+)["']/)?.[1]);
   const waypointGeometry = waypointPath.match(
     /android:pathData=["']M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+1,-([\d.]+)\s+0/,
   );
-  assert.ok(routeGeometry, "Route-G must retain its canonical counter-clockwise circular arc");
-  assert.ok(Number.isFinite(strokeWidth), "Route-G must declare a numeric stroke width");
+  assert.ok(arcGeometry, "Route-G must retain its canonical counter-clockwise circular arc");
+  assert.ok(barGeometry, "Route-G crossbar must remain a straight horizontal segment");
+  assert.ok(Number.isFinite(arcStrokeWidth), "Route-G arc must declare a numeric stroke width");
+  assert.ok(Number.isFinite(barStrokeWidth), "Route-G crossbar must declare a numeric stroke width");
   assert.ok(waypointGeometry, "waypoint must remain a circular vector path");
+
+  const arcValues = arcGeometry.slice(1).map(Number);
+  const expectedArcValues = [65.34, 42.14, 18.56, 18.56, 65.34, 68.86];
+  for (let index = 0; index < expectedArcValues.length; index += 1) {
+    assert.ok(
+      Math.abs(arcValues[index] - expectedArcValues[index]) <= 0.1,
+      "the monochrome arc must retain the measured reference geometry",
+    );
+  }
+  assert.ok(Math.abs(arcStrokeWidth - 7.22) <= 0.1, "the arc stroke must match the Route-G weight");
+
+  const [barStartX, barCenterY, barEndX] = barGeometry.slice(1).map(Number);
+  assert.ok(
+    Math.abs(barStartX - 55.03) <= 0.1 &&
+      Math.abs(barCenterY - 56.06) <= 0.1 &&
+      Math.abs(barEndX - 60.5) <= 0.1 &&
+      Math.abs(barStrokeWidth - 7.22) <= 0.1,
+    "the independent crossbar must retain the measured pill geometry",
+  );
 
   const waypointRadius = Number(waypointGeometry[3]);
   const waypointCenterX = Number(waypointGeometry[1]) - waypointRadius;
   const waypointCenterY = Number(waypointGeometry[2]);
-  const routeEndX = Number(routeGeometry[1]) + Number(routeGeometry[4]);
-  const routeEndY = Number(routeGeometry[2]) + Number(routeGeometry[5]);
   assert.ok(
-    waypointCenterX >= routeEndX + 3 && waypointCenterY <= routeEndY - 2,
-    "the monochrome waypoint must sit above and to the right of the Route-G terminal",
+    Math.abs(waypointCenterX - 71.01) <= 0.1 &&
+      Math.abs(waypointCenterY - 56.06) <= 0.1 &&
+      Math.abs(waypointRadius - 4.64) <= 0.1,
+    "the circular waypoint must retain the full-color launcher's size and position",
   );
   assert.ok(
-    waypointRadius >= 4 && waypointRadius <= 8,
-    "the detached waypoint must remain visible without dominating the Route-G",
+    Math.abs(waypointCenterY - barCenterY) <= 0.1,
+    "the crossbar and waypoint must share the reference mark's horizontal axis",
   );
 
-  const transparentGap = Math.hypot(
-    waypointCenterX - routeEndX,
-    waypointCenterY - routeEndY,
-  ) - waypointRadius - strokeWidth / 2;
+  const leftGap = waypointCenterX - waypointRadius - (barEndX + barStrokeWidth / 2);
   assert.ok(
-    transparentGap >= 1 && transparentGap <= 12,
-    "the waypoint needs a visible but cohesive transparent gap from the Route-G terminal",
+    leftGap >= 1 && leftGap <= 5,
+    "the waypoint needs a visible but cohesive transparent gap to its left",
   );
+
+  const lowerEndpointX = arcValues[4];
+  const lowerEndpointY = arcValues[5];
+  const lowerGap = Math.hypot(
+    waypointCenterX - lowerEndpointX,
+    waypointCenterY - lowerEndpointY,
+  ) - waypointRadius - arcStrokeWidth / 2;
   assert.ok(
+    lowerGap >= 2 && lowerGap <= 10,
+    "the waypoint needs a visible transparent lower-side gap from the Route-G arc",
+  );
+
+  const halfChord = (arcValues[5] - arcValues[1]) / 2;
+  const arcCenterX = arcValues[0] - Math.sqrt(arcValues[2] ** 2 - halfChord ** 2);
+  const arcCenterY = (arcValues[1] + arcValues[5]) / 2;
+  assert.ok(
+    Math.hypot(arcCenterX - 54, arcCenterY - 54) + arcValues[2] + arcStrokeWidth / 2 <= 33 &&
+      Math.max(
+        Math.hypot(barStartX - 54, barCenterY - 54),
+        Math.hypot(barEndX - 54, barCenterY - 54),
+      ) + barStrokeWidth / 2 <= 33 &&
     Math.hypot(waypointCenterX - 54, waypointCenterY - 54) + waypointRadius <= 33,
-    "the detached waypoint must remain inside Android's 66dp adaptive-icon safe circle",
+    "all three monochrome pieces must remain inside Android's 66dp adaptive-icon safe circle",
   );
 
   const foreground = read("android", "app", "src", "main", "res", "drawable", "ic_launcher_foreground.xml");
@@ -291,10 +341,10 @@ test("monochrome launcher drawable is a one-color, background-free vector", () =
     "M75.65,56.06a4.64,4.64 0,1 1,-9.28 0a4.64,4.64 0,1 1,9.28 0z",
     "the full-color launcher waypoint must not change with the monochrome redesign",
   );
-  assert.notEqual(
+  assert.equal(
     monochromeWaypointData,
     coloredWaypointData,
-    "the monochrome waypoint must use its distinct detached upper-right geometry",
+    "the monochrome waypoint must align exactly with the full-color launcher waypoint",
   );
 });
 

@@ -376,52 +376,99 @@ test("monochrome icon is a single-color alpha glyph inside the safe circle", () 
   assert.equal(colors.size, 1, "monochrome glyph must contain exactly one RGB color");
 });
 
-test("monochrome Route-G has a visible detached waypoint at the upper-right", () => {
+test("monochrome Route-G keeps its arc, crossbar and waypoint visibly separate", () => {
   const icon = manifest.icons.find((candidate) => candidate.purpose === "monochrome");
+  const maskableIcon = manifest.icons.find((candidate) => candidate.purpose === "maskable");
   assert.ok(icon);
+  assert.ok(maskableIcon);
   const image = decodeRgbaPng(localPath(icon.src));
+  const maskable = decodeRgbaPng(localPath(maskableIcon.src));
 
   const meaningful = alphaComponents(image)
     .filter(({ size }) => size > image.width * image.height * 0.001)
     .sort((left, right) => right.size - left.size);
   assert.equal(
     meaningful.length,
-    2,
-    "the themed mark must keep its waypoint separate from the Route-G alpha",
+    3,
+    "the themed mark must expose three opaque pieces: arc, horizontal crossbar and waypoint",
   );
-  const [route, waypoint] = meaningful;
-  assert.ok(route.size > waypoint.size * 4, "the route must remain the dominant artwork");
+  const [arc, ...details] = meaningful;
+  const [bar, waypoint] = details.sort(
+    (left, right) => (left.minX + left.maxX) - (right.minX + right.maxX),
+  );
+  assert.ok(arc.size > waypoint.size * 2, "the main arc must remain the dominant artwork");
 
   const waypointWidth = waypoint.maxX - waypoint.minX + 1;
   const waypointHeight = waypoint.maxY - waypoint.minY + 1;
+  const barWidth = bar.maxX - bar.minX + 1;
+  const barHeight = bar.maxY - bar.minY + 1;
   assert.ok(
     Math.abs(waypointWidth - waypointHeight) <= image.width * 0.015,
     "the detached waypoint must remain recognizably circular",
   );
   assert.ok(
-    waypointWidth >= image.width * 0.07 && waypointWidth <= image.width * 0.18,
+    waypointWidth >= image.width * 0.07 && waypointWidth <= image.width * 0.12,
     "the detached waypoint must remain large enough to survive launcher masking without dominating the G",
   );
-
-  const monoCenterX = (waypoint.minX + waypoint.maxX) / 2;
-  const monoCenterY = (waypoint.minY + waypoint.maxY) / 2;
-  const routeCenterX = (route.minX + route.maxX) / 2;
-  const routeCenterY = (route.minY + route.maxY) / 2;
   assert.ok(
-    monoCenterX > routeCenterX + image.width * 0.16 &&
-      monoCenterY < routeCenterY - image.height * 0.02,
-    "the waypoint must sit above and to the right of the Route-G body",
-  );
-  assert.ok(
-    monoCenterX / image.width >= 0.68 && monoCenterX / image.width <= 0.84 &&
-      monoCenterY / image.height >= 0.34 && monoCenterY / image.height <= 0.52,
-    "the detached waypoint must stay in the launcher's upper-right safe-zone quadrant",
+    barWidth >= barHeight * 1.8 && barWidth <= barHeight * 2.8,
+    "the independent crossbar must remain a compact horizontal pill",
   );
 
-  const gap = transparentGapBetween(image, route, waypoint);
+  const waypointCenterX = (waypoint.minX + waypoint.maxX) / 2;
+  const waypointCenterY = (waypoint.minY + waypoint.maxY) / 2;
+  const barCenterX = (bar.minX + bar.maxX) / 2;
+  const barCenterY = (bar.minY + bar.maxY) / 2;
   assert.ok(
-    gap >= image.width * 0.01 && gap <= image.width * 0.09,
-    "the waypoint needs a visible but cohesive transparent gap from the Route-G",
+    Math.abs(waypointCenterY - barCenterY) <= image.height * 0.015,
+    "the waypoint and crossbar must share the reference mark's horizontal axis",
+  );
+  assert.ok(
+    barCenterX / image.width >= 0.54 && barCenterX / image.width <= 0.60 &&
+      barCenterY / image.height >= 0.50 && barCenterY / image.height <= 0.58,
+    "the crossbar must stay inside the G and aligned with its waypoint",
+  );
+
+  const orangePixels = visiblePixels(maskable, (rgba) =>
+    rgba[3] > 200 && colorDistance(rgba, [0xd9, 0x6a, 0x42]) <= 12,
+  );
+  assert.ok(orangePixels.length > 0, "maskable icon is missing its canonical orange waypoint");
+  const coloredMinX = Math.min(...orangePixels.map(({ x }) => x));
+  const coloredMaxX = Math.max(...orangePixels.map(({ x }) => x));
+  const coloredMinY = Math.min(...orangePixels.map(({ y }) => y));
+  const coloredMaxY = Math.max(...orangePixels.map(({ y }) => y));
+  const coloredCenterX = (coloredMinX + coloredMaxX) / 2;
+  const coloredCenterY = (coloredMinY + coloredMaxY) / 2;
+  const coloredDiameter = ((coloredMaxX - coloredMinX + 1) + (coloredMaxY - coloredMinY + 1)) / 2;
+  assert.ok(
+    Math.abs(waypointCenterX / image.width - coloredCenterX / maskable.width) <= 0.01 &&
+      Math.abs(waypointCenterY / image.height - coloredCenterY / maskable.height) <= 0.01 &&
+      Math.abs(waypointWidth / image.width - coloredDiameter / maskable.width) <= 0.015,
+    "the monochrome waypoint must align with the full-color maskable waypoint",
+  );
+
+  const leftGap = waypoint.minX - bar.maxX - 1;
+  assert.ok(
+    leftGap >= image.width * 0.015 && leftGap <= image.width * 0.07,
+    "the waypoint needs a visible but cohesive transparent gap to its left",
+  );
+
+  const arcBelowWaypoint = arc.members
+    .map((index) => ({ x: index % image.width, y: Math.floor(index / image.width) }))
+    .filter(({ x, y }) =>
+      x >= waypoint.minX - image.width * 0.03 &&
+      x <= waypoint.maxX + image.width * 0.03 &&
+      y > waypoint.maxY,
+    );
+  assert.ok(arcBelowWaypoint.length > 0, "the lower Route-G endpoint must remain below the waypoint");
+  const lowerGap = Math.min(...arcBelowWaypoint.map(({ y }) => y)) - waypoint.maxY - 1;
+  assert.ok(
+    lowerGap >= image.height * 0.02 && lowerGap <= image.height * 0.15,
+    "the waypoint needs a visible transparent gap above the lower Route-G endpoint",
+  );
+  assert.ok(
+    transparentGapBetween(image, arc, waypoint) >= image.width * 0.02,
+    "the waypoint and main arc must remain genuinely disconnected after antialiasing",
   );
 });
 
