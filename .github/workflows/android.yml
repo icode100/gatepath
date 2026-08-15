@@ -78,7 +78,14 @@ jobs:
               tail -n 120 android/android-build.log
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
-            reason="$(grep -E 'What went wrong|A failure occurred|Could not|error:|requires libraries and applications' android/android-build.log | tail -n 8 | tr '\n' ';' | head -c 1500)"
+            reason="$(awk '
+              /\* What went wrong:/ { capture = 1; next }
+              /\* Try:/ { capture = 0 }
+              capture && NF { print }
+            ' android/android-build.log | head -n 24 | tr '\n' ';' | head -c 3000)"
+            if [[ -z "$reason" ]]; then
+              reason="$(tail -n 60 android/android-build.log | tr '\n' ';' | head -c 3000)"
+            fi
             reason="${reason//'%'/'%25'}"
             echo "::error title=Android Gradle build failed::${reason:-See the Android build diagnostics in the workflow summary.}"
           fi
