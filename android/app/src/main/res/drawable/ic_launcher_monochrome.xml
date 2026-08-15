@@ -6,21 +6,17 @@
     android:viewportHeight="108">
     <!-- Android supplies the wallpaper-derived tint. Keep this one-color and
          background-free so Pixel Launcher and supported One UI launchers can theme it. -->
-    <group>
-        <!-- An even-odd clip cuts a background-coloured outline around the
-             canonical waypoint without introducing a second themed colour. -->
-        <clip-path
-            android:fillType="evenOdd"
-            android:pathData="M0,0H108V108H0Z M78.01,56.06a7,7 0,1 1,-14,0a7,7 0,1 1,14,0z" />
-        <path
-            android:fillColor="#00000000"
-            android:pathData="M65.34,42.14a18.56,18.56 0,1 0,5.67 13.92H55.03"
-            android:strokeColor="#FF000000"
-            android:strokeLineCap="round"
-            android:strokeLineJoin="round"
-            android:strokeWidth="7.22" />
-    </group>
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M65.34,42.14a18.56,18.56 0,1 0,5.67 13.92H55.03"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="7.22" />
+    <!-- The waypoint sits inside the route opening with real transparent
+         space on every side. The launcher can recolour both shapes while the
+         dot remains distinct on Pixel Launcher and compatible One UI themes. -->
     <path
         android:fillColor="#FF000000"
-        android:pathData="M75.65,56.06a4.64,4.64 0,1 1,-9.28 0a4.64,4.64 0,1 1,9.28 0z" />
+        android:pathData="M82,46.5a5,5 0,1 1,-10 0a5,5 0,1 1,10 0z" />
 </vector>

@@ -75,35 +75,29 @@ def render_monochrome_icon(size: int) -> Image.Image:
         canvas * (1 - inset),
         canvas * (1 - inset),
     )
-    draw.arc(box, start=45, end=325, fill=MONOCHROME, width=width)
+    # Keep the route and its inward terminal as one continuous G-shaped mark.
+    # The small opening in the upper-right is reserved for the waypoint, which
+    # mirrors the detached-dot treatment used by Android themed icons.
+    draw.arc(box, start=8, end=325, fill=MONOCHROME, width=width)
     center_y = canvas * 0.54
     rounded_line(
         draw,
-        [(canvas * 0.51, center_y), (canvas * 0.76, center_y)],
+        [(canvas * 0.51, center_y), (canvas * 0.79, center_y)],
         width,
         MONOCHROME,
     )
     # The themed layer must stay one colour because Android/launchers supply
-    # its tint. Cut a thin transparent halo around the waypoint instead of
-    # moving it away from the canonical maskable-icon position.
-    waypoint_radius = canvas * 0.047
-    waypoint_halo_radius = canvas * 0.058
-    waypoint_x = canvas * 0.76
-    draw.ellipse(
-        (
-            waypoint_x - waypoint_halo_radius,
-            center_y - waypoint_halo_radius,
-            waypoint_x + waypoint_halo_radius,
-            center_y + waypoint_halo_radius,
-        ),
-        fill=(0, 0, 0, 0),
-    )
+    # its tint. A real transparent gap keeps the waypoint legible at launcher
+    # sizes without relying on a background-coloured halo.
+    waypoint_radius = canvas * 0.05
+    waypoint_x = canvas * 0.77
+    waypoint_y = canvas * 0.43
     draw.ellipse(
         (
             waypoint_x - waypoint_radius,
-            center_y - waypoint_radius,
+            waypoint_y - waypoint_radius,
             waypoint_x + waypoint_radius,
-            center_y + waypoint_radius,
+            waypoint_y + waypoint_radius,
         ),
         fill=MONOCHROME,
     )

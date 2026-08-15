@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
@@ -138,13 +139,6 @@ function colorDistance(pixel, expected) {
   );
 }
 
-function pixelAt(image, normalizedX, normalizedY) {
-  const x = Math.min(image.width - 1, Math.max(0, Math.round(normalizedX * (image.width - 1))));
-  const y = Math.min(image.height - 1, Math.max(0, Math.round(normalizedY * (image.height - 1))));
-  const offset = (y * image.width + x) * 4;
-  return image.pixels.subarray(offset, offset + 4);
-}
-
 function alphaComponents(image, minimumAlpha = 64) {
   const pixelCount = image.width * image.height;
   const visited = new Uint8Array(pixelCount);
@@ -162,10 +156,12 @@ function alphaComponents(image, minimumAlpha = 64) {
     let maxX = -1;
     let minY = image.height;
     let maxY = -1;
+    const members = [];
 
     while (head < tail) {
       const index = queue[head];
       head += 1;
+      members.push(index);
       size += 1;
       const x = index % image.width;
       const y = Math.floor(index / image.width);
@@ -192,10 +188,58 @@ function alphaComponents(image, minimumAlpha = 64) {
       }
     }
 
-    components.push({ size, minX, maxX, minY, maxY });
+    components.push({ size, minX, maxX, minY, maxY, members });
   }
 
   return components;
+}
+
+function transparentGapBetween(image, left, right) {
+  const pixelCount = image.width * image.height;
+  const distances = new Int32Array(pixelCount);
+  distances.fill(-1);
+  const target = new Uint8Array(pixelCount);
+  for (const index of right.members) target[index] = 1;
+
+  const queue = new Int32Array(pixelCount);
+  let head = 0;
+  let tail = 0;
+  for (const index of left.members) {
+    distances[index] = 0;
+    queue[tail] = index;
+    tail += 1;
+  }
+
+  while (head < tail) {
+    const index = queue[head];
+    head += 1;
+    const x = index % image.width;
+    const y = Math.floor(index / image.width);
+    for (let offsetY = -1; offsetY <= 1; offsetY += 1) {
+      for (let offsetX = -1; offsetX <= 1; offsetX += 1) {
+        if (offsetX === 0 && offsetY === 0) continue;
+        const neighborX = x + offsetX;
+        const neighborY = y + offsetY;
+        if (
+          neighborX < 0 || neighborX >= image.width ||
+          neighborY < 0 || neighborY >= image.height
+        ) continue;
+        const neighbor = neighborY * image.width + neighborX;
+        if (distances[neighbor] !== -1) continue;
+        const distance = distances[index] + 1;
+        if (target[neighbor]) return Math.max(0, distance - 1);
+        distances[neighbor] = distance;
+        queue[tail] = neighbor;
+        tail += 1;
+      }
+    }
+  }
+
+  return Number.POSITIVE_INFINITY;
+}
+
+function sha256(path) {
+  return createHash("sha256").update(readFileSync(path)).digest("hex");
 }
 
 function importedComponentSource(entrySource, componentName) {
@@ -300,6 +344,23 @@ test("colored launcher artwork retains the orange GatePath waypoint", () => {
   }
 });
 
+test("monochrome generation leaves every colored launcher asset unchanged", () => {
+  const expectedHashes = new Map([
+    ["icons/icon-192.png", "b81ec350c62760f272e4dde79a03f5258f0a849212467550356d97368796561a"],
+    ["icons/icon-512.png", "1913183a8bda063fef0f291b92ce56b8c71e3c06e491e23a53d1862203a40cb7"],
+    ["icons/icon-maskable-512.png", "e9b32ff07c384b8373b1301e3a1cb44592c18b1c3cb7b49a68ac0d8540a0e685"],
+    ["apple-touch-icon.png", "c4d5279d59405b491b07657e9650cef82dcc692adcd13caba224fa99dc78f551"],
+  ]);
+
+  for (const [relativePath, expectedHash] of expectedHashes) {
+    assert.equal(
+      sha256(resolve(ROOT, "public", relativePath)),
+      expectedHash,
+      `${relativePath} changed while redesigning only the monochrome launcher`,
+    );
+  }
+});
+
 test("monochrome icon is a single-color alpha glyph inside the safe circle", () => {
   const icon = manifest.icons.find((candidate) => candidate.purpose === "monochrome");
   assert.ok(icon);
@@ -315,53 +376,52 @@ test("monochrome icon is a single-color alpha glyph inside the safe circle", () 
   assert.equal(colors.size, 1, "monochrome glyph must contain exactly one RGB color");
 });
 
-test("monochrome Route-G aligns its waypoint and preserves a visible themeable outline", () => {
+test("monochrome Route-G has a visible detached waypoint at the upper-right", () => {
   const icon = manifest.icons.find((candidate) => candidate.purpose === "monochrome");
-  const maskableIcon = manifest.icons.find((candidate) => candidate.purpose === "maskable");
   assert.ok(icon);
-  assert.ok(maskableIcon);
   const image = decodeRgbaPng(localPath(icon.src));
-  const maskable = decodeRgbaPng(localPath(maskableIcon.src));
 
   const meaningful = alphaComponents(image)
     .filter(({ size }) => size > image.width * image.height * 0.001)
     .sort((left, right) => right.size - left.size);
-  assert.ok(
-    meaningful.length >= 2,
+  assert.equal(
+    meaningful.length,
+    2,
     "the themed mark must keep its waypoint separate from the Route-G alpha",
   );
-  const waypoint = meaningful.reduce((rightmost, component) =>
-    component.minX > rightmost.minX ? component : rightmost,
-  );
-  const routeComponents = meaningful.filter((component) => component !== waypoint);
-  const routeSize = routeComponents.reduce((total, component) => total + component.size, 0);
-  assert.ok(routeSize > waypoint.size * 4, "the route must remain the dominant artwork");
+  const [route, waypoint] = meaningful;
+  assert.ok(route.size > waypoint.size * 4, "the route must remain the dominant artwork");
+
   const waypointWidth = waypoint.maxX - waypoint.minX + 1;
   const waypointHeight = waypoint.maxY - waypoint.minY + 1;
   assert.ok(
     Math.abs(waypointWidth - waypointHeight) <= image.width * 0.015,
-    "the outlined waypoint must remain recognizably circular",
+    "the detached waypoint must remain recognizably circular",
+  );
+  assert.ok(
+    waypointWidth >= image.width * 0.07 && waypointWidth <= image.width * 0.18,
+    "the detached waypoint must remain large enough to survive launcher masking without dominating the G",
   );
 
-  const orangePixels = visiblePixels(maskable, (rgba) =>
-    rgba[3] > 200 && colorDistance(rgba, [0xd9, 0x6a, 0x42]) <= 12,
-  );
-  assert.ok(orangePixels.length > 0, "maskable icon is missing its canonical orange waypoint");
-  const coloredCenterX = (Math.min(...orangePixels.map(({ x }) => x)) + Math.max(...orangePixels.map(({ x }) => x))) / 2;
-  const coloredCenterY = (Math.min(...orangePixels.map(({ y }) => y)) + Math.max(...orangePixels.map(({ y }) => y))) / 2;
   const monoCenterX = (waypoint.minX + waypoint.maxX) / 2;
   const monoCenterY = (waypoint.minY + waypoint.maxY) / 2;
+  const routeCenterX = (route.minX + route.maxX) / 2;
+  const routeCenterY = (route.minY + route.maxY) / 2;
   assert.ok(
-    Math.abs(monoCenterX / image.width - coloredCenterX / maskable.width) <= 0.01 &&
-      Math.abs(monoCenterY / image.height - coloredCenterY / maskable.height) <= 0.01,
-    "monochrome waypoint must stay aligned with the full-color maskable icon",
+    monoCenterX > routeCenterX + image.width * 0.16 &&
+      monoCenterY < routeCenterY - image.height * 0.02,
+    "the waypoint must sit above and to the right of the Route-G body",
+  );
+  assert.ok(
+    monoCenterX / image.width >= 0.68 && monoCenterX / image.width <= 0.84 &&
+      monoCenterY / image.height >= 0.34 && monoCenterY / image.height <= 0.52,
+    "the detached waypoint must stay in the launcher's upper-right safe-zone quadrant",
   );
 
-  assert.ok(pixelAt(image, 0.76, 0.54)[3] >= 220, "waypoint center must remain opaque");
-  assert.ok(pixelAt(image, 0.68, 0.54)[3] >= 220, "route terminal must remain opaque");
+  const gap = transparentGapBetween(image, route, waypoint);
   assert.ok(
-    pixelAt(image, 0.7075, 0.54)[3] <= 32,
-    "a thin transparent outline must prevent the route from bleeding through the waypoint",
+    gap >= image.width * 0.01 && gap <= image.width * 0.09,
+    "the waypoint needs a visible but cohesive transparent gap from the Route-G",
   );
 });
 

@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/firebase/analytics";
 import { usePwa } from "./PwaProvider";
 
 const ANDROID_PREVIEW_URL =
-  "https://github.com/icode100/gatepath/releases/download/android-preview-v4/gatepath-android.apk";
+  "https://github.com/icode100/gatepath/releases/download/android-preview-v5/gatepath-android.apk";
 
 export function MobileAppSettings() {
   const { installState, isOnline, updateAvailable, install, applyUpdate } = usePwa();
@@ -79,7 +79,7 @@ export function MobileAppSettings() {
           aria-describedby="android-preview-description"
           onClick={() => {
             void trackEvent("android_app_download", {
-              build: "preview_v4_debug_signed",
+              build: "preview_v5_debug_signed",
               source: "account_settings",
             });
           }}
@@ -88,8 +88,8 @@ export function MobileAppSettings() {
           <span aria-hidden="true">↓</span>
         </a>
         <p id="android-preview-description">
-          Preview v4 · Debug-signed. Uninstall preview v3 first. The waypoint
-          stays aligned and outlined on compatible Android 13+ themed launchers.
+          Preview v5 · Debug-signed. Uninstall preview v4 first. The detached
+          waypoint stays visible on compatible Android 13+ themed launchers.
         </p>
       </div>
     </section>

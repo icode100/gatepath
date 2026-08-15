@@ -14,7 +14,7 @@ const WORKFLOW = readFileSync(
   "utf8",
 );
 
-const RELEASE_TAG = "android-preview-v4";
+const RELEASE_TAG = "android-preview-v5";
 const RELEASE_ASSET = "gatepath-android.apk";
 const RELEASE_CHECKSUM = `${RELEASE_ASSET}.sha256`;
 const RELEASE_URL =
@@ -62,11 +62,11 @@ test("Android preview download is an accessible link with disclosure and analyti
   const source = normalized(COMPONENT);
   assert.match(
     source,
-    /<p id=["']android-preview-description["']> Preview v4 · Debug-signed\. Uninstall preview v3 first\. The waypoint stays aligned and outlined on compatible Android 13\+ themed launchers\. <\/p>/,
+    /<p id=["']android-preview-description["']> Preview v5 · Debug-signed\. Uninstall preview v4 first\. The detached waypoint stays visible on compatible Android 13\+ themed launchers\. <\/p>/,
   );
   assert.match(
     anchor,
-    /trackEvent\(["']android_app_download["'],\s*\{\s*build:\s*["']preview_v4_debug_signed["'],\s*source:\s*["']account_settings["'],?\s*\}\)/,
+    /trackEvent\(["']android_app_download["'],\s*\{\s*build:\s*["']preview_v5_debug_signed["'],\s*source:\s*["']account_settings["'],?\s*\}\)/,
   );
 });
 
