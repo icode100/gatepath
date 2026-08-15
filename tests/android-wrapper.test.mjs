@@ -11,8 +11,8 @@ const HOST = "gatepath.vercel.app";
 const DEFAULT_URL = `https://${HOST}/`;
 const ASSETLINKS_PLACEHOLDER =
   "REPLACE_WITH_THE_APP_SIGNING_CERTIFICATE_SHA256_FINGERPRINT";
-const GRADLE_89_BIN_SHA256 =
-  "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab";
+const GRADLE_8111_BIN_SHA256 =
+  "f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6";
 
 function read(...segments) {
   return readFileSync(resolve(ROOT, ...segments), "utf8");
@@ -85,6 +85,9 @@ test("Android wrapper pins the GatePath application ID and production origin", (
 
   assert.match(appGradle, new RegExp(`\\bnamespace\\s+["']${PACKAGE_ID.replaceAll(".", "\\.")}["']`));
   assert.match(appGradle, new RegExp(`\\bapplicationId\\s+["']${PACKAGE_ID.replaceAll(".", "\\.")}["']`));
+  assert.match(appGradle, /\bcompileSdk\s+36\b/);
+  assert.match(appGradle, /\btargetSdk\s+36\b/);
+  assert.match(read("android", "build.gradle"), /version\s+["']8\.10\.1["']/);
   assert.equal(resourceString(strings, "default_url"), DEFAULT_URL);
   assert.equal(
     resourceString(strings, "web_manifest_url"),
@@ -193,9 +196,9 @@ test("Gradle wrapper is complete and pins a checksum-verified distribution", () 
 
   assert.equal(
     properties.distributionUrl,
-    "https\\://services.gradle.org/distributions/gradle-8.9-bin.zip",
+    "https\\://services.gradle.org/distributions/gradle-8.11.1-bin.zip",
   );
-  assert.equal(properties.distributionSha256Sum, GRADLE_89_BIN_SHA256);
+  assert.equal(properties.distributionSha256Sum, GRADLE_8111_BIN_SHA256);
   assert.equal(properties.validateDistributionUrl, "true");
   assert.ok(Number(properties.networkTimeout) >= 10_000, "wrapper network timeout is unexpectedly short");
   assert.ok(existsSync(wrapperJar), "missing Gradle wrapper JAR");

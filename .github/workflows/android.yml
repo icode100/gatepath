@@ -25,13 +25,13 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -43,25 +43,59 @@ jobs:
         run: npm run test:android
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
+      - name: Install Android SDK 36
+        run: |
+          "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" \
+            "platforms;android-36" \
+            "build-tools;35.0.0"
+
       - name: Set up Gradle cache
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Make Gradle wrapper executable
         run: chmod +x android/gradlew
 
       - name: Lint and compile debug APK
         working-directory: android
-        run: ./gradlew --no-daemon lintDebug assembleDebug
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon lintDebug assembleDebug --stacktrace 2>&1 | tee android-build.log
+
+      - name: Publish Gradle diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          if [[ -f android/android-build.log ]]; then
+            {
+              echo "## Android build diagnostics"
+              echo '```text'
+              tail -n 120 android/android-build.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            reason="$(grep -E 'What went wrong|A failure occurred|Could not|error:|requires libraries and applications' android/android-build.log | tail -n 8 | tr '\n' ';' | head -c 1500)"
+            reason="${reason//'%'/'%25'}"
+            echo "::error title=Android Gradle build failed::${reason:-See the Android build diagnostics in the workflow summary.}"
+          fi
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gatepath-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload Gradle diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gatepath-android-build-log
+          path: android/android-build.log
+          if-no-files-found: ignore
           retention-days: 7

@@ -31,7 +31,7 @@ the launcher will show two GatePath entries and the WebAPK copy may remain unthe
 ## Prerequisites
 
 - Android Studio with JDK 17 selected for Gradle.
-- Android SDK Platform 35 and its build tools.
+- Android SDK Platform 36 and Build Tools 35.0.0 or newer.
 - An Android 13+ phone or emulator for themed-icon verification.
 - Chrome (or another browser with Trusted Web Activity support).
 
@@ -113,4 +113,3 @@ fingerprint against the certificate on the installed APK or the Play App Signing
 - The web app manifest remains available at
   `https://gatepath.vercel.app/manifest.webmanifest`; native launcher layers in this
   directory are intentionally the source of truth for Android icon theming.
-

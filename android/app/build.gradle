@@ -4,12 +4,14 @@ plugins {
 
 android {
     namespace "com.icode100.gatepath"
-    compileSdk 35
+    // Android Browser Helper 2.7.x depends on AndroidX artifacts whose AAR
+    // metadata requires API 36 and Android Gradle Plugin 8.9.1 or newer.
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.icode100.gatepath"
         minSdk 23
-        targetSdk 35
+        targetSdk 36
         versionCode 1
         versionName "1.0.0"
     }
@@ -25,4 +27,3 @@ android {
 dependencies {
     implementation "com.google.androidbrowserhelper:androidbrowserhelper:2.7.2"
 }
-
