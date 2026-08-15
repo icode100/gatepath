@@ -10,8 +10,8 @@
     "build": "node node_modules/next/dist/bin/next build",
     "start": "node node_modules/next/dist/bin/next start --hostname 0.0.0.0",
     "test": "npm run typecheck && npm run test:unit",
-    "test:unit": "node --test tests/daily-focus.test.mjs tests/math-renderer.test.mjs tests/service-worker.test.mjs",
-    "test:pwa": "node --test tests/service-worker.test.mjs",
+    "test:unit": "node --test tests/daily-focus.test.mjs tests/math-renderer.test.mjs tests/pwa-assets.test.mjs tests/service-worker.test.mjs tests/theme-palette.test.mjs",
+    "test:pwa": "node --test tests/pwa-assets.test.mjs tests/service-worker.test.mjs tests/theme-palette.test.mjs",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {

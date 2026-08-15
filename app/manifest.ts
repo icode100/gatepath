@@ -12,8 +12,8 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     display_override: ["standalone"],
     orientation: "any",
-    background_color: "#F5F7FB",
-    theme_color: "#4056D6",
+    background_color: "#F7F7F7",
+    theme_color: "#151515",
     categories: ["education", "productivity"],
     lang: "en-IN",
     icons: [
@@ -39,6 +39,12 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
+      },
+      {
+        src: "/icons/icon-monochrome-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "monochrome",
       },
     ],
     shortcuts: [

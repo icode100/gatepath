@@ -5,9 +5,12 @@ import test from "node:test";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 
+import { loadTypeScriptModule } from "./load-typescript-module.mjs";
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = readFileSync(resolve(ROOT, "public", "sw.js"), "utf8");
 const ORIGIN = "https://gatepath.vercel.app";
+const MANIFEST = loadTypeScriptModule("app/manifest.ts").default();
 
 const requestKey = (request) =>
   new URL(typeof request === "string" ? request : request.url, ORIGIN).href;
@@ -121,6 +124,26 @@ function dispatchFetch(harness, request) {
   });
   return responsePromise;
 }
+
+test("installation precaches every manifest icon and the offline shell", async () => {
+  const harness = createHarness();
+  let installation;
+  harness.listeners.get("install")({
+    waitUntil(promise) {
+      installation = promise;
+    },
+  });
+  assert.ok(installation, "service worker install handler must schedule precaching");
+  await installation;
+
+  const precache = harness.stores.get("gatepath-pwa-precache-v1");
+  assert.ok(precache, "installation must open the GatePath precache");
+  for (const icon of MANIFEST.icons ?? []) {
+    assert.ok(await precache.match(icon.src), `${icon.src} is missing from the precache`);
+  }
+  assert.ok(await precache.match("/offline.html"));
+  assert.ok(await precache.match("/apple-touch-icon.png"));
+});
 
 test("strictly bypasses API, auth, mutation, cross-origin and RSC requests", () => {
   const harness = createHarness();

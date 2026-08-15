@@ -8,9 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "public"
 ICONS = PUBLIC / "icons"
 
-PRIMARY = "#4056D6"
-ROUTE = "#F8FAFF"
-WAYPOINT = "#F5A65B"
+PRIMARY = "#151515"
+ROUTE = "#FAFAFA"
+WAYPOINT = "#D96A42"
+MONOCHROME = "#000000"
 
 
 def rounded_line(draw: ImageDraw.ImageDraw, points, width: int, fill: str) -> None:
@@ -59,6 +60,43 @@ def render_icon(size: int, maskable: bool = False) -> Image.Image:
     return image.resize((size, size), Image.Resampling.LANCZOS)
 
 
+def render_monochrome_icon(size: int) -> Image.Image:
+    """Render an alpha-only launcher glyph for supporting themed-icon hosts."""
+
+    scale = 4
+    canvas = size * scale
+    image = Image.new("RGBA", (canvas, canvas), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    inset = 0.20
+    width = max(8, round(canvas * 0.09))
+    box = (
+        canvas * inset,
+        canvas * inset,
+        canvas * (1 - inset),
+        canvas * (1 - inset),
+    )
+    draw.arc(box, start=45, end=325, fill=MONOCHROME, width=width)
+    center_y = canvas * 0.54
+    rounded_line(
+        draw,
+        [(canvas * 0.51, center_y), (canvas * 0.76, center_y)],
+        width,
+        MONOCHROME,
+    )
+    waypoint_radius = canvas * 0.047
+    waypoint_x = canvas * 0.76
+    draw.ellipse(
+        (
+            waypoint_x - waypoint_radius,
+            center_y - waypoint_radius,
+            waypoint_x + waypoint_radius,
+            center_y + waypoint_radius,
+        ),
+        fill=MONOCHROME,
+    )
+    return image.resize((size, size), Image.Resampling.LANCZOS)
+
+
 def main() -> None:
     ICONS.mkdir(parents=True, exist_ok=True)
     outputs = [
@@ -70,6 +108,13 @@ def main() -> None:
     for path, size, maskable in outputs:
         render_icon(size, maskable).save(path, format="PNG", optimize=True)
         print(f"generated {path.relative_to(ROOT)} ({size}x{size})")
+    monochrome_path = ICONS / "icon-monochrome-512.png"
+    render_monochrome_icon(512).save(
+        monochrome_path,
+        format="PNG",
+        optimize=True,
+    )
+    print(f"generated {monochrome_path.relative_to(ROOT)} (512x512)")
 
 
 if __name__ == "__main__":

@@ -3,18 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <meta name="theme-color" content="#0b1020" />
+    <meta name="theme-color" content="#f7f7f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)" />
     <title>GatePath · Offline</title>
     <style>
-      :root { color-scheme: light dark; font-family: Inter, "Segoe UI", sans-serif; }
+      :root {
+        color-scheme: light;
+        font-family: Inter, "Segoe UI", sans-serif;
+        --canvas:#f7f7f7;
+        --surface:#fff;
+        --line:#e5e5e5;
+        --ink:#171717;
+        --muted:#666;
+        --primary:#242424;
+        --on-primary:#fff;
+        --accent:#b94f31;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+          --canvas:#080808;
+          --surface:#111;
+          --line:#292929;
+          --ink:#f5f5f5;
+          --muted:#a3a3a3;
+          --primary:#f0f0f0;
+          --on-primary:#111;
+          --accent:#f29a70;
+        }
+      }
       * { box-sizing: border-box; }
-      body { display:grid; min-height:100svh; margin:0; padding:24px; place-items:center; color:#f5f7ff; background:#0b1020; }
-      main { width:min(100%,430px); padding:32px; border:1px solid #27334b; border-radius:24px; background:#131c31; box-shadow:0 24px 70px #0006; }
+      body { display:grid; min-height:100svh; margin:0; padding:24px; place-items:center; color:var(--ink); background:var(--canvas); }
+      main { width:min(100%,430px); padding:32px; border:1px solid var(--line); border-radius:24px; background:var(--surface); box-shadow:0 24px 70px #0002; }
       img { width:54px; height:54px; }
-      span { display:block; margin-top:26px; color:#91a2ff; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+      span { display:block; margin-top:26px; color:var(--accent); font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
       h1 { margin:7px 0 12px; font-family:Georgia,serif; font-size:38px; font-weight:500; line-height:1.05; }
-      p { margin:0; color:#9aa6bc; line-height:1.65; }
-      a { display:grid; width:100%; min-height:48px; margin-top:26px; border-radius:12px; place-items:center; color:white; background:#4056d6; font-size:14px; font-weight:700; text-decoration:none; }
+      p { margin:0; color:var(--muted); line-height:1.65; }
+      a { display:grid; width:100%; min-height:48px; margin-top:26px; border-radius:12px; place-items:center; color:var(--on-primary); background:var(--primary); font-size:14px; font-weight:700; text-decoration:none; }
     </style>
   </head>
   <body>
