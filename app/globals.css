@@ -1419,10 +1419,10 @@ body:has(.auth-dialog[open]) {
   border: 1px solid var(--line);
   border-radius: 22px;
   background:
-    radial-gradient(circle, color-mix(in srgb, var(--muted-2) 26%, transparent) 1px, transparent 1px),
+    radial-gradient(circle, color-mix(in srgb, var(--muted-2) 16%, transparent) 1px, transparent 1px),
     linear-gradient(155deg, color-mix(in srgb, var(--primary-pale) 42%, var(--surface)) 0%, var(--surface) 46%);
   background-position: 0 0, 0 0;
-  background-size: 22px 22px, auto;
+  background-size: 28px 28px, auto;
   box-shadow: var(--shadow-sm);
 }
 
@@ -1526,6 +1526,9 @@ body:has(.auth-dialog[open]) {
 .roadmap-graph-note strong { color: var(--ink-soft); }
 
 .roadmap-graph-canvas {
+  --roadmap-edge: color-mix(in srgb, var(--ink-soft) 58%, var(--line-strong));
+  --roadmap-edge-active: color-mix(in srgb, var(--primary) 78%, var(--ink-soft));
+  --roadmap-edge-complete: color-mix(in srgb, var(--success) 88%, var(--ink-soft));
   position: relative;
   min-width: 0;
   padding: 4px 3px 8px;
@@ -1543,26 +1546,31 @@ body:has(.auth-dialog[open]) {
 
 .roadmap-connector {
   fill: none;
-  stroke: color-mix(in srgb, var(--line-strong) 88%, transparent);
+  stroke: var(--roadmap-edge);
   stroke-linecap: round;
-  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-width: 2.35;
 }
 
 .roadmap-connector.active {
-  stroke: color-mix(in srgb, var(--primary) 72%, var(--line-strong));
-  stroke-width: 2;
+  stroke: var(--roadmap-edge-active);
+  stroke-width: 2.8;
 }
 
 .roadmap-connector.complete {
-  stroke: var(--success);
-  stroke-width: 2;
+  stroke: var(--roadmap-edge-complete);
+  stroke-width: 2.8;
 }
+
+.roadmap-arrow.ready { fill: var(--roadmap-edge); }
+.roadmap-arrow.active { fill: var(--roadmap-edge-active); }
+.roadmap-arrow.complete { fill: var(--roadmap-edge-complete); }
 
 .roadmap-levels {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 38px;
+  gap: 42px;
 }
 
 .roadmap-level {
@@ -1628,7 +1636,7 @@ body:has(.auth-dialog[open]) {
   position: relative;
   display: grid;
   width: 100%;
-  min-height: 144px;
+  min-height: 138px;
   grid-template-rows: auto 1fr auto auto;
   justify-items: start;
   padding: 13px;
@@ -1637,7 +1645,7 @@ body:has(.auth-dialog[open]) {
   color: var(--ink);
   background: var(--surface);
   text-align: left;
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.045);
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -5858,9 +5866,9 @@ body:has(.auth-dialog[open]) {
     top: 47px;
     bottom: 42px;
     left: 17px;
-    width: 2px;
+    width: 3px;
     border-radius: 999px;
-    background: linear-gradient(var(--primary), var(--line-strong) 72%, var(--accent));
+    background: linear-gradient(var(--roadmap-edge-active), var(--roadmap-edge) 72%, var(--roadmap-edge-complete));
     content: "";
   }
   .roadmap-levels { gap: 27px; }
@@ -5887,21 +5895,21 @@ body:has(.auth-dialog[open]) {
     top: 30px;
     right: 100%;
     width: 25px;
-    height: 1px;
-    background: var(--line-strong);
+    height: 2px;
+    background: var(--roadmap-edge);
     content: "";
   }
   .roadmap-level-nodes > li::after,
   .roadmap-summit::after {
     position: absolute;
     top: 25px;
-    right: calc(100% + 24px);
-    width: 10px;
-    height: 10px;
+    right: calc(100% + 18px);
+    width: 11px;
+    height: 11px;
     border: 3px solid var(--surface);
     border-radius: 50%;
-    background: var(--line-strong);
-    box-shadow: 0 0 0 1px var(--line-strong);
+    background: var(--roadmap-edge);
+    box-shadow: 0 0 0 2px var(--roadmap-edge);
     content: "";
   }
   .route-node { min-height: 116px; padding: 15px; }
@@ -5913,7 +5921,7 @@ body:has(.auth-dialog[open]) {
     margin: 31px 0 0 42px;
   }
   .roadmap-summit::before { top: 35px; }
-  .roadmap-summit::after { top: 30px; background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .roadmap-summit::after { top: 30px; background: var(--roadmap-edge-complete); box-shadow: 0 0 0 2px var(--roadmap-edge-complete); }
   .subject-hero { grid-template-columns: 69px 1fr; gap: 17px; padding: 25px 21px; }
   .subject-monogram { width: 68px; height: 68px; border-radius: 19px 19px 19px 5px; font-size: 21px; }
   .subject-intro h1 { font-size: 31px; }

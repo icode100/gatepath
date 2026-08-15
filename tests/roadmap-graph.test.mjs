@@ -304,6 +304,16 @@ test("component source keeps connectors decorative and cleans up layout observer
   assert.match(COMPONENT_SOURCE, /focusable="false"/);
   assert.match(COMPONENT_SOURCE, /pointer-events:\s*none|roadmap-connectors/);
   assert.match(COMPONENT_SOURCE, /new ResizeObserver\(scheduleMeasurement\)/);
+  assert.match(
+    COMPONENT_SOURCE,
+    /useLayoutEffect\(\(\) =>/,
+    "connector geometry must be measured after roadmap refs are committed",
+  );
+  assert.match(
+    COMPONENT_SOURCE,
+    /querySelector<HTMLButtonElement>[\s\S]*?data-code/,
+    "connector measurement must survive callback-ref timing during hydration",
+  );
   assert.match(COMPONENT_SOURCE, /resizeObserver\.disconnect\(\)/);
   assert.match(COMPONENT_SOURCE, /window\.removeEventListener\("resize", scheduleMeasurement\)/);
   assert.match(COMPONENT_SOURCE, /Every course remains available/);

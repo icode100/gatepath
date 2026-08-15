@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type { Subject } from "@/app/data";
 import {
@@ -82,7 +82,7 @@ export function RoadmapMap({ subjects, onOpenMock, onOpenSubject }: RoadmapMapPr
     return configured;
   }, [graph.nodes]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     let animationFrame = 0;
@@ -94,14 +94,50 @@ export function RoadmapMap({ subjects, onOpenMock, onOpenSubject }: RoadmapMapPr
         if (!active || !canvasRef.current) return;
         const canvasBounds = canvasRef.current.getBoundingClientRect();
         const paths = graph.edges.flatMap((edge) => {
-          const fromElement = nodeRefs.current.get(edge.from);
-          const toElement = nodeRefs.current.get(edge.to);
+          const fromElement =
+            nodeRefs.current.get(edge.from) ??
+            canvasRef.current?.querySelector<HTMLButtonElement>(
+              `[data-code="${edge.from}"]`,
+            );
+          const toElement =
+            nodeRefs.current.get(edge.to) ??
+            canvasRef.current?.querySelector<HTMLButtonElement>(
+              `[data-code="${edge.to}"]`,
+            );
           if (!fromElement || !toElement) return [];
           const from = fromElement.getBoundingClientRect();
           const to = toElement.getBoundingClientRect();
-          const startX = from.left + from.width / 2 - canvasBounds.left;
+          const outgoingEdges = graph.edges.filter(
+            (candidate) => candidate.from === edge.from,
+          );
+          const incomingEdges = graph.edges.filter(
+            (candidate) => candidate.to === edge.to,
+          );
+          const outgoingIndex = outgoingEdges.findIndex(
+            (candidate) => candidate.to === edge.to,
+          );
+          const incomingIndex = incomingEdges.findIndex(
+            (candidate) => candidate.from === edge.from,
+          );
+          const anchorX = (
+            bounds: DOMRect,
+            index: number,
+            count: number,
+            maximumGap = 42,
+          ) => {
+            const center = bounds.left + bounds.width / 2 - canvasBounds.left;
+            if (count <= 1) return center;
+            const gap = Math.min(maximumGap, bounds.width / (count + 1));
+            return center + (index - (count - 1) / 2) * gap;
+          };
+          const startX = anchorX(from, outgoingIndex, outgoingEdges.length);
           const startY = from.bottom - canvasBounds.top;
-          const endX = to.left + to.width / 2 - canvasBounds.left;
+          const endX = anchorX(
+            to,
+            incomingIndex,
+            incomingEdges.length,
+            edge.to === ROADMAP_EXAM_CODE ? 62 : 42,
+          );
           const endY = to.top - canvasBounds.top;
           const fromSubject = subjectByCode.get(edge.from);
           const toSubject = subjectByCode.get(edge.to);
@@ -119,9 +155,16 @@ export function RoadmapMap({ subjects, onOpenMock, onOpenSubject }: RoadmapMapPr
             const enterY = Math.max(endY - 38, leaveY);
             d = `M ${startX} ${startY} C ${startX} ${leaveY} ${railX} ${leaveY} ${railX} ${leaveY} L ${railX} ${enterY} C ${railX} ${endY - 12} ${endX} ${endY - 18} ${endX} ${endY}`;
           } else {
-            const verticalDistance = Math.max(40, endY - startY);
-            const bend = Math.max(24, Math.min(72, verticalDistance * 0.36));
-            d = `M ${startX} ${startY} C ${startX} ${startY + bend} ${endX} ${endY - bend} ${endX} ${endY}`;
+            const horizontalDistance = Math.abs(endX - startX);
+            if (horizontalDistance < 3) {
+              d = `M ${startX} ${startY} L ${endX} ${endY}`;
+            } else {
+              const direction = endX > startX ? 1 : -1;
+              const channelOffset = Math.max(0, incomingIndex) * 8;
+              const channelY = Math.max(startY + 22, endY - 28 - channelOffset);
+              const corner = Math.min(10, horizontalDistance / 3);
+              d = `M ${startX} ${startY} L ${startX} ${channelY - corner} Q ${startX} ${channelY} ${startX + direction * corner} ${channelY} L ${endX - direction * corner} ${channelY} Q ${endX} ${channelY} ${endX} ${channelY + corner} L ${endX} ${endY}`;
+            }
           }
           return [{ id: `${edge.from}-${edge.to}`, d, status }];
         });
@@ -136,7 +179,9 @@ export function RoadmapMap({ subjects, onOpenMock, onOpenSubject }: RoadmapMapPr
     scheduleMeasurement();
     const resizeObserver = new ResizeObserver(scheduleMeasurement);
     resizeObserver.observe(canvas);
-    nodeRefs.current.forEach((node) => resizeObserver.observe(node));
+    canvas
+      .querySelectorAll<HTMLButtonElement>("[data-code]")
+      .forEach((node) => resizeObserver.observe(node));
     window.addEventListener("resize", scheduleMeasurement);
     void document.fonts?.ready.then(scheduleMeasurement);
     return () => {
@@ -196,24 +241,30 @@ export function RoadmapMap({ subjects, onOpenMock, onOpenSubject }: RoadmapMapPr
               viewBox={`0 0 ${connectorGeometry.width} ${connectorGeometry.height}`}
             >
               <defs>
-                <marker
-                  id="roadmap-arrow"
-                  markerHeight="7"
-                  markerUnits="strokeWidth"
-                  markerWidth="7"
-                  orient="auto"
-                  refX="6"
-                  refY="3.5"
-                >
-                  <path d="M 0 0 L 7 3.5 L 0 7 z" fill="context-stroke" />
-                </marker>
+                {(["ready", "active", "complete"] as const).map((status) => (
+                  <marker
+                    id={`roadmap-arrow-${status}`}
+                    key={status}
+                    markerHeight="9"
+                    markerUnits="userSpaceOnUse"
+                    markerWidth="9"
+                    orient="auto"
+                    refX="8"
+                    refY="4.5"
+                  >
+                    <path
+                      className={`roadmap-arrow ${status}`}
+                      d="M 0 0 L 9 4.5 L 0 9 z"
+                    />
+                  </marker>
+                ))}
               </defs>
               {connectorGeometry.paths.map((path) => (
                 <path
                   className={`roadmap-connector ${path.status}`}
                   d={path.d}
                   key={path.id}
-                  markerEnd="url(#roadmap-arrow)"
+                  markerEnd={`url(#roadmap-arrow-${path.status})`}
                   vectorEffect="non-scaling-stroke"
                 />
               ))}
