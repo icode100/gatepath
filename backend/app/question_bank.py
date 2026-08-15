@@ -4,7 +4,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -813,7 +813,14 @@ async def import_question_bank(
         # unique audit row so startup is idempotent from this state onward.
         for field, value in import_values.items():
             setattr(existing_import, field, value)
-        existing_import.imported_at = utc_now()
+        refreshed_at = utc_now()
+        if latest_import is not None and latest_import.imported_at is not None:
+            latest_imported_at = latest_import.imported_at
+            if latest_imported_at.tzinfo is None:
+                latest_imported_at = latest_imported_at.replace(tzinfo=UTC)
+            if refreshed_at <= latest_imported_at:
+                refreshed_at = latest_imported_at + timedelta(microseconds=1)
+        existing_import.imported_at = refreshed_at
     await session.commit()
     return ImportResult(
         bank_version=document.bank_version,

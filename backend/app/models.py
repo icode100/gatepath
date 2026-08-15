@@ -163,6 +163,18 @@ class Question(Base):
     source_year: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
     source_paper: Mapped[str | None] = mapped_column(String(120), nullable=True)
     source_question_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Canonical paper/item identity for the audited PYQ archive.  Legacy papers
+    # use labels such as ``2.25`` and ``24-b`` which cannot be represented by
+    # ``source_question_number`` alone.
+    source_paper_id: Mapped[str | None] = mapped_column(
+        String(96),
+        ForeignKey("pyq_source_papers.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    source_item_label: Mapped[str | None] = mapped_column(
+        String(48), nullable=True
+    )
     source_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     answer_key_url: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -242,6 +254,161 @@ class QuestionBankImport(Base):
     inserted_count: Mapped[int] = mapped_column(Integer)
     updated_count: Mapped[int] = mapped_column(Integer)
     unchanged_count: Mapped[int] = mapped_column(Integer)
+    retired_count: Mapped[int] = mapped_column(Integer, default=0)
+    imported_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now
+    )
+
+
+class PyqSourcePaper(Base):
+    """One canonical GATE paper/session and its verified source artifacts."""
+
+    __tablename__ = "pyq_source_papers"
+    __table_args__ = (
+        UniqueConstraint(
+            "exam_code",
+            "paper_code",
+            "year",
+            "session_label",
+            name="uq_pyq_source_paper_session",
+        ),
+        Index("ix_pyq_source_papers_year_session", "year", "session_label"),
+    )
+
+    id: Mapped[str] = mapped_column(String(96), primary_key=True)
+    exam_code: Mapped[str] = mapped_column(String(24), default="GATE")
+    paper_code: Mapped[str] = mapped_column(String(24), default="CS")
+    year: Mapped[int] = mapped_column(Integer, index=True)
+    session_label: Mapped[str] = mapped_column(String(80), default="main")
+    display_name: Mapped[str] = mapped_column(String(180))
+    expected_item_count: Mapped[int] = mapped_column(Integer)
+    source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    answer_key_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_pdf_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    answer_key_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    source_status: Mapped[str] = mapped_column(
+        String(32), default="review_required", index=True
+    )
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+    source_questions: Mapped[list[PyqSourceQuestion]] = relationship(
+        back_populates="source_paper",
+        cascade="all, delete-orphan",
+        order_by="PyqSourceQuestion.ordinal",
+    )
+
+
+class PyqSourceQuestion(Base):
+    """Audited source record, including non-gradable and legacy questions."""
+
+    __tablename__ = "pyq_source_questions"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_paper_id",
+            "item_label",
+            name="uq_pyq_source_question_label",
+        ),
+        UniqueConstraint(
+            "source_paper_id",
+            "ordinal",
+            name="uq_pyq_source_question_ordinal",
+        ),
+        Index(
+            "ix_pyq_source_questions_verification",
+            "transcription_status",
+            "answer_status",
+            "classification_status",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    source_paper_id: Mapped[str] = mapped_column(
+        String(96),
+        ForeignKey("pyq_source_papers.id", ondelete="CASCADE"),
+        index=True,
+    )
+    item_label: Mapped[str] = mapped_column(String(48))
+    ordinal: Mapped[int] = mapped_column(Integer)
+    parent_item_label: Mapped[str | None] = mapped_column(String(48), nullable=True)
+    source_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    marks: Mapped[float | None] = mapped_column(Float, nullable=True)
+    item_type: Mapped[str] = mapped_column(String(24), default="unknown", index=True)
+    question_md: Mapped[str | None] = mapped_column(Text, nullable=True)
+    options: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    accepted_answers: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    solution_md: Mapped[str | None] = mapped_column(Text, nullable=True)
+    subject_code: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    topic_slug: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    syllabus_status: Mapped[str] = mapped_column(
+        String(32), default="review_required", index=True
+    )
+    transcription_status: Mapped[str] = mapped_column(
+        String(32), default="missing", index=True
+    )
+    answer_status: Mapped[str] = mapped_column(
+        String(32), default="unresolved", index=True
+    )
+    classification_status: Mapped[str] = mapped_column(
+        String(32), default="review_required", index=True
+    )
+    practice_eligible: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="false", index=True
+    )
+    review_flags: Mapped[list[str]] = mapped_column(JSON, default=list)
+    assets: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    source_references: Mapped[list[dict[str, str]]] = mapped_column(
+        JSON, default=list
+    )
+    extraction_method: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    extraction_confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
+    content_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    materialized_question_id: Mapped[int | None] = mapped_column(
+        ForeignKey("questions.id", ondelete="SET NULL"),
+        nullable=True,
+        unique=True,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+    source_paper: Mapped[PyqSourcePaper] = relationship(
+        back_populates="source_questions"
+    )
+
+
+class PyqArchiveImport(Base):
+    """Immutable audit row for an applied paper-scoped archive artifact."""
+
+    __tablename__ = "pyq_archive_imports"
+    __table_args__ = (
+        UniqueConstraint(
+            "artifact_version",
+            "checksum",
+            name="uq_pyq_archive_version_checksum",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    schema_version: Mapped[str] = mapped_column(String(32))
+    artifact_version: Mapped[str] = mapped_column(String(96), index=True)
+    checksum: Mapped[str] = mapped_column(String(64), index=True)
+    source_path: Mapped[str] = mapped_column(Text)
+    paper_count: Mapped[int] = mapped_column(Integer)
+    item_count: Mapped[int] = mapped_column(Integer)
+    inserted_count: Mapped[int] = mapped_column(Integer)
+    updated_count: Mapped[int] = mapped_column(Integer)
+    unchanged_count: Mapped[int] = mapped_column(Integer)
+    materialized_count: Mapped[int] = mapped_column(Integer, default=0)
     retired_count: Mapped[int] = mapped_column(Integer, default=0)
     imported_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now

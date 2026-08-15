@@ -103,6 +103,8 @@ def _question_public(question: Question) -> QuestionPublic:
         source_year=question.source_year,
         source_paper=question.source_paper,
         source_question_number=question.source_question_number,
+        source_paper_id=question.source_paper_id,
+        source_item_label=question.source_item_label,
         source_page=question.source_page,
         source_url=question.source_url,
         answer_key_url=question.answer_key_url,

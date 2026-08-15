@@ -133,6 +133,14 @@ def _add_local_upgrade_columns(connection: Connection) -> None:
             connection.exec_driver_sql(
                 "ALTER TABLE questions ADD COLUMN extraction_confidence FLOAT"
             )
+        if "source_paper_id" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN source_paper_id VARCHAR(96)"
+            )
+        if "source_item_label" not in question_columns:
+            connection.exec_driver_sql(
+                "ALTER TABLE questions ADD COLUMN source_item_label VARCHAR(48)"
+            )
         question_indexes = {
             index["name"]
             for index in inspect(connection).get_indexes("questions")
@@ -152,6 +160,11 @@ def _add_local_upgrade_columns(connection: Connection) -> None:
             connection.exec_driver_sql(
                 "CREATE INDEX ix_questions_is_active "
                 "ON questions (is_active)"
+            )
+        if "ix_questions_source_paper_id" not in question_indexes:
+            connection.exec_driver_sql(
+                "CREATE INDEX ix_questions_source_paper_id "
+                "ON questions (source_paper_id)"
             )
 
     if "practice_sessions" in table_names:

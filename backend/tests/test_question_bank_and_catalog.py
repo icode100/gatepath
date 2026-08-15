@@ -60,7 +60,12 @@ async def test_local_auto_create_adds_columns_to_an_existing_database() -> None:
             )
 
         question_columns, session_columns = await connection.run_sync(schema)
-        assert {"external_id", "bank_version"}.issubset(question_columns)
+        assert {
+            "external_id",
+            "bank_version",
+            "source_paper_id",
+            "source_item_label",
+        }.issubset(question_columns)
         assert "catalog_id" in session_columns
     await engine.dispose()
 

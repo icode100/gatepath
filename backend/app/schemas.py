@@ -127,6 +127,8 @@ class QuestionPublic(ApiModel):
     source_year: int | None
     source_paper: str | None
     source_question_number: int | None
+    source_paper_id: str | None
+    source_item_label: str | None
     source_page: int | None
     source_url: str | None
     answer_key_url: str | None

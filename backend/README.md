@@ -245,6 +245,35 @@ python scripts/import_questions.py data/question_import_template.json --dry-run
 python scripts/import_questions.py path\to\verified_questions.json
 ```
 
+### Paper-scoped legacy PYQ archive
+
+Papers before the modern 65-question format contain hierarchical labels such
+as `2.25`, descriptive subparts such as `24-b`, and questions that are no
+longer in the GATE 2027 syllabus. They are ingested through the separate,
+audited archive instead of being forced into the auto-scored question schema.
+Every declared paper must contain exactly its expected number of contiguous
+source items. Missing transcriptions remain explicit archive rows; they are
+never silently omitted.
+
+The archive importer is read-only by default. It rejects a reused artifact
+version with a different checksum, scopes every update to the papers declared
+by the artifact, and verifies that the active original-question count is
+unchanged. Only `mcq`, `msq`, and `nat` rows with verified transcription,
+answer, syllabus classification, solution, and no review flags can be
+materialized for quizzes.
+
+```powershell
+# Validate source-slot completeness and preview eligible quiz rows.
+python scripts/import_pyq_archive.py data/pyq_archive.json --materialize
+
+# Production apply over DATABASE_URL_UNPOOLED after reviewing the dry run.
+python scripts/import_pyq_archive.py data/pyq_archive.json `
+  --apply --materialize --expected-active-originals 2290
+```
+
+The relational archive stores text and provenance only. Diagram crops are
+versioned static assets referenced by checksum; database blobs are not used.
+
 ## Test catalog rules
 
 - Full forms: 25 deterministic forms, each containing 5 one-mark and 5 two-mark GA questions, 5 one-mark and 4 two-mark Engineering Mathematics questions, and 20 one-mark and 26 two-mark core CS questions. Every form is exactly 65 questions, 100 marks and 180 minutes, split as 15 GA + 13 EM + 72 core CS marks.
