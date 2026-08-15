@@ -22,6 +22,16 @@
 .DS_Store
 *.pem
 
+# Android local state, signing material and generated packages
+/android/.gradle/
+/android/**/build/
+/android/local.properties
+key.properties
+*.jks
+*.keystore
+*.apk
+*.aab
+
 # debug
 npm-debug.log*
 yarn-debug.log*

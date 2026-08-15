@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Android supplies the wallpaper-derived tint. Keep this one-color and
+         background-free so Pixel Launcher and supported One UI launchers can theme it. -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M65.34,42.14a18.56,18.56 0,1 0,5.67 13.92H55.03"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="7.22" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M75.65,56.06a4.64,4.64 0,1 1,-9.28 0a4.64,4.64 0,1 1,9.28 0z" />
+</vector>
+

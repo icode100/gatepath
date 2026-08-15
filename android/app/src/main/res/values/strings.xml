@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GatePath</string>
+    <string name="default_url" translatable="false">https://gatepath.vercel.app/</string>
+    <string name="web_manifest_url" translatable="false">https://gatepath.vercel.app/manifest.webmanifest</string>
+    <string name="provider_authority" translatable="false">com.icode100.gatepath.fileprovider</string>
+    <string name="asset_statements" translatable="false">[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"web","site":"https://gatepath.vercel.app"}}]</string>
+</resources>
+

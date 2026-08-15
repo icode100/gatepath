@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="launcher_background">#151515</color>
+    <color name="launcher_foreground">#FAFAFA</color>
+    <color name="launcher_waypoint">#D96A42</color>
+    <color name="status_bar_color">#151515</color>
+    <color name="status_bar_color_dark">#090909</color>
+    <color name="navigation_bar_color">#151515</color>
+    <color name="navigation_bar_color_dark">#090909</color>
+</resources>
+

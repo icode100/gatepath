@@ -1,0 +1,16 @@
+.gradle/
+.idea/
+local.properties
+*.iml
+**/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Signing keys and generated release artifacts must never be committed.
+*.jks
+*.keystore
+keystore.properties
+app-release-*.apk
+app-release-*.aab
+
