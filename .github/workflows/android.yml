@@ -106,3 +106,55 @@ jobs:
           path: android/android-build.log
           if-no-files-found: ignore
           retention-days: 7
+
+  publish-preview:
+    name: Publish immutable Android preview
+    needs: validate-and-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check whether the preview already exists
+        id: preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          if gh release view android-preview-v1 >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download the compiled APK
+        if: steps.preview.outputs.exists != 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: gatepath-debug-apk
+          path: preview-apk
+
+      - name: Publish the preview APK
+        if: steps.preview.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          apk_path="$(find preview-apk -type f -name '*.apk' -print -quit)"
+          test -n "$apk_path"
+          cp "$apk_path" gatepath-android.apk
+          sha256sum gatepath-android.apk > gatepath-android.apk.sha256
+          gh release create android-preview-v1 \
+            gatepath-android.apk \
+            gatepath-android.apk.sha256 \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "GatePath Android Preview v1" \
+            --notes "Preview build for direct Android installation.
+
+          This APK opens gatepath.vercel.app as a Trusted Web Activity and includes adaptive monochrome launcher artwork for supported Android 13+ launchers, including Pixel Launcher and compatible Samsung One UI versions.
+
+          Important: this first preview is debug-signed. Android may require uninstalling it before a future production-signed build can be installed. Remove an older Chrome-installed GatePath PWA first if you want to avoid duplicate launcher icons."
