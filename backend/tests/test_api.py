@@ -82,6 +82,152 @@ def test_question_answers_are_not_exposed(client: TestClient) -> None:
     assert "explanation" not in body["items"][0]
 
 
+def test_question_bank_has_stable_fifty_item_pagination(client: TestClient) -> None:
+    first = client.get("/api/v1/questions")
+    assert first.status_code == 200, first.text
+    first_body = first.json()
+    assert first_body["limit"] == 50
+    assert first_body["offset"] == 0
+    assert first_body["total"] > 50
+    assert len(first_body["items"]) == 50
+
+    second = client.get(
+        "/api/v1/questions",
+        params={"limit": 50, "offset": 50},
+    )
+    repeated_first = client.get(
+        "/api/v1/questions",
+        params={"limit": 50, "offset": 0},
+    )
+    assert second.status_code == 200, second.text
+    assert repeated_first.status_code == 200, repeated_first.text
+    second_body = second.json()
+    first_ids = [item["id"] for item in first_body["items"]]
+    second_ids = [item["id"] for item in second_body["items"]]
+    assert first_ids == [item["id"] for item in repeated_first.json()["items"]]
+    assert first_ids == sorted(first_ids)
+    assert second_ids == sorted(second_ids)
+    assert set(first_ids).isdisjoint(second_ids)
+    assert second_body["total"] == first_body["total"]
+    assert second_body["limit"] == 50
+    assert second_body["offset"] == 50
+
+    beyond_end = client.get(
+        "/api/v1/questions",
+        params={"limit": 50, "offset": first_body["total"]},
+    )
+    assert beyond_end.status_code == 200, beyond_end.text
+    assert beyond_end.json()["items"] == []
+    assert beyond_end.json()["total"] == first_body["total"]
+
+
+def test_question_bank_filters_and_search_paginate_without_gaps(
+    client: TestClient,
+) -> None:
+    subject = client.get("/api/v1/subjects/computer-networks")
+    assert subject.status_code == 200, subject.text
+    transport = next(
+        topic
+        for topic in subject.json()["topics"]
+        if topic["slug"] == "transport-layer"
+    )
+    pool_response = client.get(
+        "/api/v1/questions",
+        params={
+            "subject_slug": "computer-networks",
+            "topic_id": transport["id"],
+            "limit": 100,
+        },
+    )
+    assert pool_response.status_code == 200, pool_response.text
+    pool = pool_response.json()["items"]
+    assert len(pool) > 8
+
+    # Pick the largest real type/source group in this topic.  This keeps the
+    # assertion stable if the bundled bank grows while exercising every filter
+    # used by the question-bank UI plus both provenance aliases.
+    groups: dict[tuple[str, str, str], list[dict[str, object]]] = {}
+    for question in pool:
+        key = (
+            question["question_type"],
+            question["source"],
+            question["source_kind"],
+        )
+        groups.setdefault(key, []).append(question)
+    (question_type, source, source_kind), expected = max(
+        groups.items(), key=lambda item: len(item[1])
+    )
+    params: dict[str, object] = {
+        "subject_slug": "computer-networks",
+        "topic_id": transport["id"],
+        "question_type": question_type,
+        "source": source,
+        "source_kind": source_kind,
+        "limit": 2,
+    }
+    collected: list[int] = []
+    for offset in range(0, len(expected), 2):
+        page = client.get(
+            "/api/v1/questions",
+            params={**params, "offset": offset},
+        )
+        assert page.status_code == 200, page.text
+        body = page.json()
+        assert body["total"] == len(expected)
+        assert body["offset"] == offset
+        collected.extend(item["id"] for item in body["items"])
+        assert all(item["subject_slug"] == "computer-networks" for item in body["items"])
+        assert all(item["topic_id"] == transport["id"] for item in body["items"])
+        assert all(item["question_type"] == question_type for item in body["items"])
+        assert all(item["source"] == source for item in body["items"])
+        assert all(item["source_kind"] == source_kind for item in body["items"])
+
+    expected_ids = [question["id"] for question in expected]
+    assert collected == expected_ids
+    assert len(collected) == len(set(collected))
+
+    searched = client.get(
+        "/api/v1/questions",
+        params={"search": "tHe", "limit": 7},
+    )
+    assert searched.status_code == 200, searched.text
+    searched_body = searched.json()
+    assert searched_body["total"] > len(searched_body["items"])
+    assert len(searched_body["items"]) == 7
+    assert all(
+        "the" in " ".join(
+            str(item.get(field) or "")
+            for field in (
+                "text",
+                "source_paper",
+                "exam_session",
+                "source_url",
+            )
+        ).casefold()
+        for item in searched_body["items"]
+    )
+    searched_next = client.get(
+        "/api/v1/questions",
+        params={"search": "tHe", "limit": 7, "offset": 7},
+    )
+    assert searched_next.status_code == 200, searched_next.text
+    assert searched_next.json()["total"] == searched_body["total"]
+    assert {
+        item["id"] for item in searched_body["items"]
+    }.isdisjoint(item["id"] for item in searched_next.json()["items"])
+
+
+def test_question_bank_pagination_bounds_are_validated(client: TestClient) -> None:
+    for params in (
+        {"limit": 0},
+        {"limit": 101},
+        {"offset": -1},
+        {"search": "x" * 201},
+    ):
+        response = client.get("/api/v1/questions", params=params)
+        assert response.status_code == 422, (params, response.text)
+
+
 def test_full_mock_is_65_questions_100_marks_and_three_hours(client: TestClient) -> None:
     response = client.post(
         "/api/v1/tests",

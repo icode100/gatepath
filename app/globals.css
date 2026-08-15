@@ -5353,6 +5353,32 @@ body:has(.auth-dialog[open]) {
   background: var(--surface-strong);
 }
 
+.bank-results-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 7px 13px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+}
+
+.bank-results-summary span:last-child {
+  white-space: nowrap;
+}
+
+.bank-notice {
+  margin: 0 7px 12px;
+  padding: 11px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  color: var(--muted);
+  background: var(--surface-soft);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .bank-list {
   display: grid;
 }
@@ -5434,6 +5460,64 @@ body:has(.auth-dialog[open]) {
 .bank-empty span {
   margin-top: 5px;
   font-size: 11px;
+}
+
+.bank-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 21px 7px 2px;
+  border-top: 1px solid var(--line);
+}
+
+.bank-pagination button {
+  display: inline-flex;
+  min-width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  color: var(--ink-soft);
+  background: var(--surface);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.bank-pagination button:hover:not(:disabled) {
+  border-color: var(--ink-soft);
+  color: var(--ink);
+  background: var(--surface-strong);
+}
+
+.bank-pagination button[aria-current="page"] {
+  border-color: var(--ink);
+  color: var(--canvas);
+  background: var(--ink);
+}
+
+.bank-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.bank-page-numbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.bank-page-numbers > span {
+  display: grid;
+  width: 20px;
+  place-items: center;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
 }
 
 .mock-hero-actions {
@@ -6054,8 +6138,12 @@ body:has(.auth-dialog[open]) {
   .catalog-card { min-height: 330px; }
   .topic-coverage-line { grid-template-columns: 1fr; gap: 7px; }
   .bank-filters { grid-template-columns: 1fr; }
+  .bank-results-summary { align-items: flex-start; flex-direction: column; gap: 5px; }
   .bank-list > article { grid-template-columns: 34px 1fr; }
   .bank-list > article > .button { grid-column: 2; justify-self: start; }
+  .bank-pagination { flex-wrap: wrap; justify-content: center; }
+  .bank-page-numbers { order: 3; width: 100%; }
+  .bank-page-direction { flex: 1; }
   .strength-card,
   .topic-evidence-card { padding: 21px; }
   .insight-topic-list article { grid-template-columns: 34px 1fr; padding: 12px 0; }

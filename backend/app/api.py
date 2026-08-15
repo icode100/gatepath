@@ -8,7 +8,7 @@ from types import SimpleNamespace
 from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -499,7 +499,8 @@ async def list_questions(
     year: int | None = Query(default=None, ge=1987, le=2100),
     question_type: QuestionType | None = None,
     difficulty: Difficulty | None = None,
-    limit: int = Query(default=20, ge=1, le=100),
+    search: str | None = Query(default=None, max_length=200),
+    limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
 ) -> QuestionListResponse:
@@ -521,6 +522,25 @@ async def list_questions(
         conditions.append(Question.question_type == question_type)
     if difficulty is not None:
         conditions.append(Question.difficulty == difficulty)
+    if search is not None and (search_term := search.strip()):
+        # Treat user-entered LIKE metacharacters literally.  ``ilike`` compiles
+        # to a portable case-insensitive predicate for both SQLite (tests/local)
+        # and PostgreSQL (production).
+        escaped_search = (
+            search_term.replace("\\", "\\\\")
+            .replace("%", "\\%")
+            .replace("_", "\\_")
+        )
+        search_pattern = f"%{escaped_search}%"
+        conditions.append(
+            or_(
+                Question.text.ilike(search_pattern, escape="\\"),
+                Question.source_paper.ilike(search_pattern, escape="\\"),
+                Question.exam_session.ilike(search_pattern, escape="\\"),
+                Question.external_id.ilike(search_pattern, escape="\\"),
+                Question.source_url.ilike(search_pattern, escape="\\"),
+            )
+        )
 
     total = await db.scalar(select(func.count(Question.id)).where(*conditions)) or 0
     questions = (

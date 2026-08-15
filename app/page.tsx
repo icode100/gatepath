@@ -15,6 +15,12 @@ import {
   selectDailyFocus,
 } from "@/lib/daily-focus";
 import {
+  clampPaginationPage,
+  paginationItems,
+  paginationPageCount,
+  QUESTION_BANK_PAGE_SIZE,
+} from "@/lib/pagination";
+import {
   activeSessionDraftOwnerKey,
   activateSessionDraftOwner,
   clearSessionDraft,
@@ -1374,7 +1380,9 @@ export default function Home() {
   const [bankQuestions, setBankQuestions] =
     useState<PracticeQuestion[] | null>(null);
   const [bankTotal, setBankTotal] = useState(practiceQuestions.length);
+  const [bankPage, setBankPage] = useState(1);
   const [bankLoading, setBankLoading] = useState(false);
+  const [bankError, setBankError] = useState<string | null>(null);
   const [revisionNote, setRevisionNote] =
     useState<RemoteRevisionNote | null>(null);
   const [noteLoading, setNoteLoading] = useState(false);
@@ -1413,6 +1421,7 @@ export default function Home() {
   const [runnerCatalogTest, setRunnerCatalogTest] =
     useState<CatalogTest | null>(null);
   const practiceRequestId = useRef(0);
+  const bankRequestId = useRef(0);
   const draftRecoveryRequestId = useRef(0);
   const runnerAutoSubmitAttempted = useRef(false);
   const examAutoSubmitAttempted = useRef(false);
@@ -1980,11 +1989,16 @@ export default function Home() {
 
   useEffect(() => {
     if (screen !== "library" || libraryTab !== "bank") return;
+    const requestId = ++bankRequestId.current;
     const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 8000);
     const selectedBankTopic = bankTopics.find(
       (topic) => topic.id === bankTopicId,
     );
-    const params = new URLSearchParams({ limit: "100" });
+    const params = new URLSearchParams({
+      limit: String(QUESTION_BANK_PAGE_SIZE),
+      offset: String((bankPage - 1) * QUESTION_BANK_PAGE_SIZE),
+    });
     if (bankSubjectId !== "all") {
       params.set("subject_slug", apiSubjectSlug(bankSubjectId));
     }
@@ -1994,9 +2008,15 @@ export default function Home() {
     if (bankType !== "all") {
       params.set("question_type", bankType.toLowerCase());
     }
+    const search = bankQuery.trim();
+    if (search) params.set("search", search);
+
     setBankLoading(true);
+    setBankError(null);
+    setBankQuestions([]);
     fetch(`${API_BASE}/questions?${params.toString()}`, {
       credentials: "include",
+      cache: "no-store",
       signal: controller.signal,
     })
       .then((response) => {
@@ -2004,27 +2024,47 @@ export default function Home() {
         return response.json();
       })
       .then((payload) => {
-        setBankQuestions(mapServerQuestions(payload));
-        setBankTotal(
-          Math.max(
-            0,
-            Math.round(
-              toFiniteNumber(
-                (payload as { total?: unknown }).total,
-                mapServerQuestions(payload).length,
-              ),
+        if (requestId !== bankRequestId.current) return;
+        const questions = mapServerQuestions(payload);
+        const total = Math.max(
+          0,
+          Math.round(
+            toFiniteNumber(
+              (payload as { total?: unknown }).total,
+              questions.length,
             ),
           ),
         );
+        const pageCount = paginationPageCount(total, QUESTION_BANK_PAGE_SIZE);
+        const safePage = clampPaginationPage(bankPage, pageCount);
+
+        setBankTotal(total);
+        if (safePage !== bankPage) {
+          setBankPage(safePage);
+          return;
+        }
+        setBankQuestions(questions);
         setApiState("online");
       })
       .catch(() => {
+        if (requestId !== bankRequestId.current) return;
         setBankQuestions(null);
-        setBankTotal(practiceQuestions.length);
+        setBankError(
+          "The live question bank could not be loaded. Showing the built-in sample instead.",
+        );
       })
-      .finally(() => setBankLoading(false));
-    return () => controller.abort();
+      .finally(() => {
+        window.clearTimeout(timeout);
+        if (requestId === bankRequestId.current) setBankLoading(false);
+      });
+    return () => {
+      if (requestId === bankRequestId.current) bankRequestId.current += 1;
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
   }, [
+    bankPage,
+    bankQuery,
     bankSubjectId,
     bankTopicId,
     bankTopics,
@@ -2747,32 +2787,77 @@ export default function Home() {
     };
   }, [examAnswers, examQuestions]);
   const result = serverResult ?? localResult;
-  const visibleBankQuestions = useMemo(() => {
-    const source = bankQuestions ?? practiceQuestions;
+  const localMatchingBankQuestions = useMemo(() => {
     const query = bankQuery.trim().toLowerCase();
-    return source
-      .filter((question) => {
-        const matchesSubject =
-          bankSubjectId === "all" ||
-          question.subjectId === bankSubjectId ||
-          question.subjectId === apiSubjectSlug(bankSubjectId);
-        const matchesTopic =
-          bankTopicId === "all" || question.topicId === bankTopicId;
-        const matchesType = bankType === "all" || question.type === bankType;
-        const matchesQuery =
-          !query ||
-          question.prompt.toLowerCase().includes(query) ||
-          (question.source ?? "").toLowerCase().includes(query);
-        return matchesSubject && matchesTopic && matchesType && matchesQuery;
-      })
-      .slice(0, 30);
+    return practiceQuestions.filter((question) => {
+      const matchesSubject =
+        bankSubjectId === "all" ||
+        question.subjectId === bankSubjectId ||
+        question.subjectId === apiSubjectSlug(bankSubjectId);
+      const matchesTopic =
+        bankTopicId === "all" || question.topicId === bankTopicId;
+      const matchesType = bankType === "all" || question.type === bankType;
+      const matchesQuery =
+        !query ||
+        question.prompt.toLowerCase().includes(query) ||
+        (question.source ?? "").toLowerCase().includes(query);
+      return matchesSubject && matchesTopic && matchesType && matchesQuery;
+    });
   }, [
-    bankQuestions,
     bankQuery,
     bankSubjectId,
     bankTopicId,
     bankType,
   ]);
+  const effectiveBankTotal =
+    bankQuestions === null ? localMatchingBankQuestions.length : bankTotal;
+  const bankPageCount = paginationPageCount(
+    effectiveBankTotal,
+    QUESTION_BANK_PAGE_SIZE,
+  );
+  const bankOffset = (bankPage - 1) * QUESTION_BANK_PAGE_SIZE;
+  const visibleBankQuestions = useMemo(
+    () =>
+      bankQuestions ??
+      localMatchingBankQuestions.slice(
+        bankOffset,
+        bankOffset + QUESTION_BANK_PAGE_SIZE,
+      ),
+    [bankOffset, bankQuestions, localMatchingBankQuestions],
+  );
+  const bankPaginationItems = useMemo(
+    () => paginationItems(bankPage, bankPageCount),
+    [bankPage, bankPageCount],
+  );
+  const bankRangeStart = effectiveBankTotal === 0 ? 0 : bankOffset + 1;
+  const bankRangeEnd = Math.min(
+    bankOffset + visibleBankQuestions.length,
+    effectiveBankTotal,
+  );
+
+  useEffect(() => {
+    const safePage = clampPaginationPage(bankPage, bankPageCount);
+    if (safePage !== bankPage) setBankPage(safePage);
+  }, [bankPage, bankPageCount]);
+  const changeBankPage = useCallback(
+    (requestedPage: number) => {
+      const nextPage = clampPaginationPage(requestedPage, bankPageCount);
+      if (nextPage === bankPage) return;
+      setBankPage(nextPage);
+      window.requestAnimationFrame(() => {
+        const heading = document.querySelector(
+          "#library-panel-bank .library-panel-heading",
+        );
+        heading?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+          block: "start",
+        });
+      });
+    },
+    [bankPage, bankPageCount],
+  );
   const strongTopics = useMemo(
     () =>
       analytics.topics
@@ -3417,7 +3502,7 @@ export default function Home() {
               <span className="series-note">
                 {bankLoading
                   ? "Loading…"
-                  : `${bankTotal.toLocaleString()} matching questions`}
+                  : `${effectiveBankTotal.toLocaleString()} matching questions`}
               </span>
             </div>
             <div className="bank-filters">
@@ -3428,6 +3513,7 @@ export default function Home() {
                   onChange={(event) => {
                     setBankSubjectId(event.target.value);
                     setBankTopicId("all");
+                    setBankPage(1);
                   }}
                 >
                   <option value="all">All courses</option>
@@ -3443,7 +3529,10 @@ export default function Home() {
                 <select
                   value={bankTopicId}
                   disabled={bankSubjectId === "all"}
-                  onChange={(event) => setBankTopicId(event.target.value)}
+                  onChange={(event) => {
+                    setBankTopicId(event.target.value);
+                    setBankPage(1);
+                  }}
                 >
                   <option value="all">All topics</option>
                   {bankTopics.map((topic) => (
@@ -3457,9 +3546,10 @@ export default function Home() {
                 <span>Question type</span>
                 <select
                   value={bankType}
-                  onChange={(event) =>
-                    setBankType(event.target.value as "all" | QuestionType)
-                  }
+                  onChange={(event) => {
+                    setBankType(event.target.value as "all" | QuestionType);
+                    setBankPage(1);
+                  }}
                 >
                   <option value="all">MCQ, MSQ and NAT</option>
                   <option value="MCQ">MCQ</option>
@@ -3468,16 +3558,37 @@ export default function Home() {
                 </select>
               </label>
               <label className="bank-search">
-                <span>Search this page</span>
+                <span>Search all matches</span>
                 <input
                   type="search"
                   value={bankQuery}
-                  onChange={(event) => setBankQuery(event.target.value)}
+                  maxLength={200}
+                  onChange={(event) => {
+                    setBankQuery(event.target.value);
+                    setBankPage(1);
+                  }}
                   placeholder="e.g. pipeline, cache, trees"
                 />
               </label>
             </div>
-            <div className="bank-list" aria-live="polite">
+            <div className="bank-results-summary" aria-live="polite">
+              <span>
+                {bankLoading
+                  ? "Loading matching questions…"
+                  : `Showing ${bankRangeStart.toLocaleString()}–${bankRangeEnd.toLocaleString()} of ${effectiveBankTotal.toLocaleString()}`}
+              </span>
+              <span>{QUESTION_BANK_PAGE_SIZE} questions per page</span>
+            </div>
+            {bankError && (
+              <div className="bank-notice" role="alert">
+                {bankError}
+              </div>
+            )}
+            <div
+              className="bank-list"
+              aria-busy={bankLoading}
+              aria-live="polite"
+            >
               {visibleBankQuestions.map((question, index) => {
                 const subject =
                   localSubjectFromSlug(question.subjectId) ?? selectedSubject;
@@ -3488,7 +3599,7 @@ export default function Home() {
                 return (
                   <article key={question.id}>
                     <span className="bank-index">
-                      {String(index + 1).padStart(2, "0")}
+                      {String(bankOffset + index + 1).padStart(2, "0")}
                     </span>
                     <div className="bank-question-copy">
                       <div>
@@ -3529,6 +3640,47 @@ export default function Home() {
                 </div>
               )}
             </div>
+            {!bankLoading && effectiveBankTotal > QUESTION_BANK_PAGE_SIZE && (
+              <nav className="bank-pagination" aria-label="Question bank pages">
+                <button
+                  type="button"
+                  className="bank-page-direction"
+                  disabled={bankPage === 1}
+                  onClick={() => changeBankPage(bankPage - 1)}
+                  aria-label="Go to previous question page"
+                >
+                  <span aria-hidden="true">←</span> Previous
+                </button>
+                <div className="bank-page-numbers">
+                  {bankPaginationItems.map((item) =>
+                    typeof item === "number" ? (
+                      <button
+                        type="button"
+                        key={item}
+                        aria-label={`Go to question page ${item}`}
+                        aria-current={item === bankPage ? "page" : undefined}
+                        onClick={() => changeBankPage(item)}
+                      >
+                        {item}
+                      </button>
+                    ) : (
+                      <span key={item} aria-hidden="true">
+                        …
+                      </span>
+                    ),
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className="bank-page-direction"
+                  disabled={bankPage === bankPageCount}
+                  onClick={() => changeBankPage(bankPage + 1)}
+                  aria-label="Go to next question page"
+                >
+                  Next <span aria-hidden="true">→</span>
+                </button>
+              </nav>
+            )}
           </section>
         )}
       </div>

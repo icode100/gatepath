@@ -105,7 +105,7 @@ All application endpoints use `/api/v1`.
 - `GET /roadmap` — ordered, clickable subject/topic tree; completion counts unique active questions solved correctly at least once, so skipped/wrong/repeated responses cannot inflate it.
 - `GET /subjects` and `GET /subjects/{id-or-slug}` — curriculum and topic details.
 - `GET /topics/{id}` and `GET /topics/{id}/notes` — topic metadata and Markdown revision content.
-- `GET /questions` — filters: `subject_id`, `subject_slug`, `topic_id`, `source_kind`, `year`, `question_type`, `difficulty`, `limit`, `offset`.
+- `GET /questions` — filters: `subject_id`, `subject_slug`, `topic_id`, `source`, `source_kind`, `year`, `question_type`, `difficulty`, and case-insensitive `search`; paginated with `limit` (default 50, maximum 100) and `offset`.
 - `POST /practice-sessions` — creates an untimed filtered practice set.
 - `GET /tests/catalog` — lists 125 stable forms: 25 full mocks and 100 course tests. Optional filters are `mode` and `subject_slug`.
 - `POST /tests/{catalog_id}/sessions` — starts an immutable session snapshot for a catalog form.
