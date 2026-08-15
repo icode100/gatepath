@@ -237,22 +237,41 @@ test("monochrome launcher drawable is a one-color, background-free vector", () =
   assert.ok(routePath, "monochrome vector must contain the stroked Route-G");
   assert.ok(waypointPath, "monochrome vector must contain a dedicated waypoint path");
 
-  const routeGeometry = routePath.match(
-    /android:pathData=["']M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+0,([\d.]+)\s+([\d.]+)H([\d.]+)["']/,
+  const clipPath = source.match(/<clip-path\b[\s\S]*?\/>/)?.[0];
+  assert.ok(clipPath, "monochrome route must be clipped around its waypoint");
+  assert.match(clipPath, /android:fillType=["']evenOdd["']/);
+  const haloGeometry = clipPath.match(
+    /M0,0H108V108H0Z\s+M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+1,-([\d.]+),?0/,
   );
-  const strokeWidth = Number(routePath.match(/android:strokeWidth=["']([\d.]+)["']/)?.[1]);
   const waypointGeometry = waypointPath.match(
     /android:pathData=["']M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+1,-([\d.]+)\s+0/,
   );
-  assert.ok(routeGeometry, "Route-G must retain its canonical counter-clockwise circular arc");
-  assert.ok(Number.isFinite(strokeWidth), "Route-G must declare a numeric stroke width");
+  assert.ok(haloGeometry, "waypoint outline must remain a circular even-odd clip");
   assert.ok(waypointGeometry, "waypoint must remain a circular vector path");
 
-  const routeArcRightEdge = Number(routeGeometry[1]) + Number(routeGeometry[4]) + strokeWidth / 2;
-  const waypointLeftEdge = Number(waypointGeometry[1]) - Number(waypointGeometry[4]);
+  const haloRadius = Number(haloGeometry[3]);
+  const haloCenterX = Number(haloGeometry[1]) - haloRadius;
+  const haloCenterY = Number(haloGeometry[2]);
+  const waypointRadius = Number(waypointGeometry[3]);
+  const waypointCenterX = Number(waypointGeometry[1]) - waypointRadius;
+  const waypointCenterY = Number(waypointGeometry[2]);
+  assert.ok(Math.abs(haloCenterX - waypointCenterX) < 0.01);
+  assert.ok(Math.abs(haloCenterY - waypointCenterY) < 0.01);
   assert.ok(
-    waypointLeftEdge - routeArcRightEdge >= 1,
-    "the monochrome waypoint needs a positive transparent gap from the Route-G stroke",
+    haloRadius - waypointRadius >= 1 && haloRadius - waypointRadius <= 3,
+    "the monochrome waypoint needs a thin visible negative-space outline",
+  );
+
+  const foreground = read("android", "app", "src", "main", "res", "drawable", "ic_launcher_foreground.xml");
+  const coloredWaypointData = foreground.match(
+    /android:fillColor=["']@color\/launcher_waypoint["']\s+android:pathData=["']([^"']+)["']/,
+  )?.[1];
+  const monochromeWaypointData = waypointPath.match(/android:pathData=["']([^"']+)["']/)?.[1];
+  assert.ok(coloredWaypointData, "full-color launcher must retain its waypoint geometry");
+  assert.equal(
+    monochromeWaypointData,
+    coloredWaypointData,
+    "monochrome and full-color launchers must align the waypoint exactly",
   );
 });
 

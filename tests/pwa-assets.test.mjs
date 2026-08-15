@@ -138,6 +138,13 @@ function colorDistance(pixel, expected) {
   );
 }
 
+function pixelAt(image, normalizedX, normalizedY) {
+  const x = Math.min(image.width - 1, Math.max(0, Math.round(normalizedX * (image.width - 1))));
+  const y = Math.min(image.height - 1, Math.max(0, Math.round(normalizedY * (image.height - 1))));
+  const offset = (y * image.width + x) * 4;
+  return image.pixels.subarray(offset, offset + 4);
+}
+
 function alphaComponents(image, minimumAlpha = 64) {
   const pixelCount = image.width * image.height;
   const visited = new Uint8Array(pixelCount);
@@ -308,10 +315,13 @@ test("monochrome icon is a single-color alpha glyph inside the safe circle", () 
   assert.equal(colors.size, 1, "monochrome glyph must contain exactly one RGB color");
 });
 
-test("monochrome Route-G keeps its waypoint visibly separate while remaining themeable", () => {
+test("monochrome Route-G aligns its waypoint and preserves a visible themeable outline", () => {
   const icon = manifest.icons.find((candidate) => candidate.purpose === "monochrome");
+  const maskableIcon = manifest.icons.find((candidate) => candidate.purpose === "maskable");
   assert.ok(icon);
+  assert.ok(maskableIcon);
   const image = decodeRgbaPng(localPath(icon.src));
+  const maskable = decodeRgbaPng(localPath(maskableIcon.src));
 
   const meaningful = alphaComponents(image)
     .filter(({ size }) => size > image.width * image.height * 0.001)
@@ -324,19 +334,34 @@ test("monochrome Route-G keeps its waypoint visibly separate while remaining the
     component.minX > rightmost.minX ? component : rightmost,
   );
   const routeComponents = meaningful.filter((component) => component !== waypoint);
-  const routeRightEdge = Math.max(...routeComponents.map(({ maxX }) => maxX));
   const routeSize = routeComponents.reduce((total, component) => total + component.size, 0);
   assert.ok(routeSize > waypoint.size * 4, "the route must remain the dominant artwork");
-  assert.ok(waypoint.minX / image.width > 0.72, "the waypoint must stay at the right terminal");
-  assert.ok(
-    waypoint.minX - routeRightEdge >= image.width * 0.01,
-    "the rightmost waypoint needs a visible transparent gap from every route component",
-  );
   const waypointWidth = waypoint.maxX - waypoint.minX + 1;
   const waypointHeight = waypoint.maxY - waypoint.minY + 1;
   assert.ok(
     Math.abs(waypointWidth - waypointHeight) <= image.width * 0.015,
-    "the detached waypoint must remain recognizably circular",
+    "the outlined waypoint must remain recognizably circular",
+  );
+
+  const orangePixels = visiblePixels(maskable, (rgba) =>
+    rgba[3] > 200 && colorDistance(rgba, [0xd9, 0x6a, 0x42]) <= 12,
+  );
+  assert.ok(orangePixels.length > 0, "maskable icon is missing its canonical orange waypoint");
+  const coloredCenterX = (Math.min(...orangePixels.map(({ x }) => x)) + Math.max(...orangePixels.map(({ x }) => x))) / 2;
+  const coloredCenterY = (Math.min(...orangePixels.map(({ y }) => y)) + Math.max(...orangePixels.map(({ y }) => y))) / 2;
+  const monoCenterX = (waypoint.minX + waypoint.maxX) / 2;
+  const monoCenterY = (waypoint.minY + waypoint.maxY) / 2;
+  assert.ok(
+    Math.abs(monoCenterX / image.width - coloredCenterX / maskable.width) <= 0.01 &&
+      Math.abs(monoCenterY / image.height - coloredCenterY / maskable.height) <= 0.01,
+    "monochrome waypoint must stay aligned with the full-color maskable icon",
+  );
+
+  assert.ok(pixelAt(image, 0.76, 0.54)[3] >= 220, "waypoint center must remain opaque");
+  assert.ok(pixelAt(image, 0.68, 0.54)[3] >= 220, "route terminal must remain opaque");
+  assert.ok(
+    pixelAt(image, 0.7075, 0.54)[3] <= 32,
+    "a thin transparent outline must prevent the route from bleeding through the waypoint",
   );
 });
 

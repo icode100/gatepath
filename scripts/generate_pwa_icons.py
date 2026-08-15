@@ -79,15 +79,25 @@ def render_monochrome_icon(size: int) -> Image.Image:
     center_y = canvas * 0.54
     rounded_line(
         draw,
-        [(canvas * 0.51, center_y), (canvas * 0.70, center_y)],
+        [(canvas * 0.51, center_y), (canvas * 0.76, center_y)],
         width,
         MONOCHROME,
     )
     # The themed layer must stay one colour because Android/launchers supply
-    # its tint. Keep the destination waypoint detached instead, so it remains
-    # recognizable after Pixel or One UI applies any wallpaper palette.
-    waypoint_radius = canvas * 0.04
-    waypoint_x = canvas * 0.80
+    # its tint. Cut a thin transparent halo around the waypoint instead of
+    # moving it away from the canonical maskable-icon position.
+    waypoint_radius = canvas * 0.047
+    waypoint_halo_radius = canvas * 0.058
+    waypoint_x = canvas * 0.76
+    draw.ellipse(
+        (
+            waypoint_x - waypoint_halo_radius,
+            center_y - waypoint_halo_radius,
+            waypoint_x + waypoint_halo_radius,
+            center_y + waypoint_halo_radius,
+        ),
+        fill=(0, 0, 0, 0),
+    )
     draw.ellipse(
         (
             waypoint_x - waypoint_radius,
