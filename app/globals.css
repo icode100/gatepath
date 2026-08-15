@@ -532,16 +532,10 @@ body:has(.auth-dialog[open]) {
   background: var(--surface-soft);
 }
 
-.auth-google > span {
-  display: grid;
-  width: 25px;
-  height: 25px;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  color: #4285f4;
-  background: #fff;
-  font-weight: 850;
+.auth-google-logo {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
 }
 
 .auth-divider {

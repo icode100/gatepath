@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/firebase/analytics";
 import { usePwa } from "./PwaProvider";
 
 const ANDROID_PREVIEW_URL =
-  "https://github.com/icode100/gatepath/releases/download/android-preview-v2/gatepath-android.apk";
+  "https://github.com/icode100/gatepath/releases/download/android-preview-v3/gatepath-android.apk";
 
 export function MobileAppSettings() {
   const { installState, isOnline, updateAvailable, install, applyUpdate } = usePwa();
@@ -79,7 +79,7 @@ export function MobileAppSettings() {
           aria-describedby="android-preview-description"
           onClick={() => {
             void trackEvent("android_app_download", {
-              build: "preview_v2_debug_signed",
+              build: "preview_v3_debug_signed",
               source: "account_settings",
             });
           }}
@@ -88,8 +88,8 @@ export function MobileAppSettings() {
           <span aria-hidden="true">↓</span>
         </a>
         <p id="android-preview-description">
-          Preview v2 · Debug-signed. Uninstall preview v1 first. Themed icons are
-          supported on compatible Android 13+ launchers.
+          Preview v3 · Debug-signed. Uninstall preview v2 first. Its detached
+          waypoint stays visible with compatible Android 13+ themed launchers.
         </p>
       </div>
     </section>

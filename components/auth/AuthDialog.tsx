@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { GatePathLogo } from "@/components/brand/GatePathLogo";
+import { GoogleLogo } from "@/components/brand/GoogleLogo";
 import { MobileAppSettings } from "@/components/pwa/MobileAppSettings";
 import { friendlyAuthError, useAuth } from "./AuthProvider";
 
@@ -241,7 +242,7 @@ export function AuthDialog({
               disabled={busy || identityChangeBlocked}
               onClick={() => void run(signInWithGoogle)}
             >
-              <span>G</span>
+              <GoogleLogo className="auth-google-logo" />
               {busy ? "Connecting…" : "Continue with Google"}
             </button>
 

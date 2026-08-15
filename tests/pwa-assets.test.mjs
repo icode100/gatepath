@@ -130,6 +130,84 @@ function visiblePixels(image, isVisible) {
   return visible;
 }
 
+function colorDistance(pixel, expected) {
+  return Math.max(
+    Math.abs(pixel[0] - expected[0]),
+    Math.abs(pixel[1] - expected[1]),
+    Math.abs(pixel[2] - expected[2]),
+  );
+}
+
+function alphaComponents(image, minimumAlpha = 64) {
+  const pixelCount = image.width * image.height;
+  const visited = new Uint8Array(pixelCount);
+  const queue = new Int32Array(pixelCount);
+  const components = [];
+
+  for (let seed = 0; seed < pixelCount; seed += 1) {
+    if (visited[seed] || image.pixels[seed * 4 + 3] < minimumAlpha) continue;
+    visited[seed] = 1;
+    let head = 0;
+    let tail = 1;
+    queue[0] = seed;
+    let size = 0;
+    let minX = image.width;
+    let maxX = -1;
+    let minY = image.height;
+    let maxY = -1;
+
+    while (head < tail) {
+      const index = queue[head];
+      head += 1;
+      size += 1;
+      const x = index % image.width;
+      const y = Math.floor(index / image.width);
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y);
+
+      for (let offsetY = -1; offsetY <= 1; offsetY += 1) {
+        for (let offsetX = -1; offsetX <= 1; offsetX += 1) {
+          if (offsetX === 0 && offsetY === 0) continue;
+          const neighborX = x + offsetX;
+          const neighborY = y + offsetY;
+          if (
+            neighborX < 0 || neighborX >= image.width ||
+            neighborY < 0 || neighborY >= image.height
+          ) continue;
+          const neighbor = neighborY * image.width + neighborX;
+          if (visited[neighbor] || image.pixels[neighbor * 4 + 3] < minimumAlpha) continue;
+          visited[neighbor] = 1;
+          queue[tail] = neighbor;
+          tail += 1;
+        }
+      }
+    }
+
+    components.push({ size, minX, maxX, minY, maxY });
+  }
+
+  return components;
+}
+
+function importedComponentSource(entrySource, componentName) {
+  const importPattern = new RegExp(
+    `import\\s+(?:\\{[^}]*\\b${componentName}\\b[^}]*\\}|${componentName})\\s+from\\s+["']([^"']+)["']`,
+  );
+  const match = entrySource.match(importPattern);
+  assert.ok(match, `${componentName} must be imported by AuthDialog`);
+  const specifier = match[1];
+  const base = specifier.startsWith("@/")
+    ? resolve(ROOT, specifier.slice(2))
+    : resolve(ROOT, "components", "auth", specifier);
+  for (const suffix of ["", ".tsx", ".ts"]) {
+    const path = `${base}${suffix}`;
+    if (existsSync(path)) return readFileSync(path, "utf8");
+  }
+  assert.fail(`could not resolve ${componentName} from ${specifier}`);
+}
+
 function maximumNormalizedRadius(pixels, width, height) {
   return Math.max(
     ...pixels.map(({ x, y }) =>
@@ -192,6 +270,29 @@ test("maskable artwork remains inside the guaranteed central safe circle", () =>
   );
 });
 
+test("colored launcher artwork retains the orange GatePath waypoint", () => {
+  const coloredIcons = (manifest.icons ?? []).filter(
+    (icon) => icon.type === "image/png" && icon.purpose !== "monochrome",
+  );
+  assert.ok(coloredIcons.length >= 3, "expected standard and maskable colored launchers");
+
+  const waypoint = [0xd9, 0x6a, 0x42];
+  for (const icon of coloredIcons) {
+    const image = decodeRgbaPng(localPath(icon.src));
+    const brandedPixels = visiblePixels(image, (rgba) =>
+      rgba[3] > 200 && colorDistance(rgba, waypoint) <= 12,
+    );
+    assert.ok(
+      brandedPixels.length > image.width * image.height * 0.002,
+      `${icon.src} lost the orange GatePath waypoint`,
+    );
+    assert.ok(
+      brandedPixels.some(({ x, y }) => x / image.width > 0.68 && y / image.height > 0.45),
+      `${icon.src} waypoint is no longer at the Route-G terminal`,
+    );
+  }
+});
+
 test("monochrome icon is a single-color alpha glyph inside the safe circle", () => {
   const icon = manifest.icons.find((candidate) => candidate.purpose === "monochrome");
   assert.ok(icon);
@@ -205,4 +306,66 @@ test("monochrome icon is a single-color alpha glyph inside the safe circle", () 
   );
   const colors = new Set(visible.map(({ rgba }) => `${rgba[0]},${rgba[1]},${rgba[2]}`));
   assert.equal(colors.size, 1, "monochrome glyph must contain exactly one RGB color");
+});
+
+test("monochrome Route-G keeps its waypoint visibly separate while remaining themeable", () => {
+  const icon = manifest.icons.find((candidate) => candidate.purpose === "monochrome");
+  assert.ok(icon);
+  const image = decodeRgbaPng(localPath(icon.src));
+
+  const meaningful = alphaComponents(image)
+    .filter(({ size }) => size > image.width * image.height * 0.001)
+    .sort((left, right) => right.size - left.size);
+  assert.ok(
+    meaningful.length >= 2,
+    "the themed mark must keep its waypoint separate from the Route-G alpha",
+  );
+  const waypoint = meaningful.reduce((rightmost, component) =>
+    component.minX > rightmost.minX ? component : rightmost,
+  );
+  const routeComponents = meaningful.filter((component) => component !== waypoint);
+  const routeRightEdge = Math.max(...routeComponents.map(({ maxX }) => maxX));
+  const routeSize = routeComponents.reduce((total, component) => total + component.size, 0);
+  assert.ok(routeSize > waypoint.size * 4, "the route must remain the dominant artwork");
+  assert.ok(waypoint.minX / image.width > 0.72, "the waypoint must stay at the right terminal");
+  assert.ok(
+    waypoint.minX - routeRightEdge >= image.width * 0.01,
+    "the rightmost waypoint needs a visible transparent gap from every route component",
+  );
+  const waypointWidth = waypoint.maxX - waypoint.minX + 1;
+  const waypointHeight = waypoint.maxY - waypoint.minY + 1;
+  assert.ok(
+    Math.abs(waypointWidth - waypointHeight) <= image.width * 0.015,
+    "the detached waypoint must remain recognizably circular",
+  );
+});
+
+test("Google sign-in uses the accessible official four-color G instead of a text initial", () => {
+  const authDialog = readFileSync(resolve(ROOT, "components", "auth", "AuthDialog.tsx"), "utf8");
+  const button = authDialog.match(
+    /<button\b[^>]*className=["']auth-google["'][\s\S]*?<\/button>/,
+  )?.[0];
+  assert.ok(button, "missing Google sign-in button");
+  assert.doesNotMatch(button, />\s*G\s*</, "Google sign-in must not use a plain text G");
+
+  const componentName = button.match(/<(Google[A-Za-z0-9_]*)\b/)?.[1];
+  const logoSource = /<svg\b/.test(button)
+    ? button
+    : componentName
+      ? importedComponentSource(authDialog, componentName)
+      : "";
+  assert.ok(logoSource, "Google sign-in must render an SVG Google G");
+  assert.match(logoSource, /<svg\b/);
+  assert.match(logoSource, /aria-hidden=["']true["']/, "button text should name the decorative Google G");
+  assert.ok(
+    [...logoSource.matchAll(/<path\b/g)].length >= 4,
+    "official Google G artwork must retain its four vector segments",
+  );
+  for (const color of ["4285f4", "34a853", "fbbc05", "ea4335"]) {
+    assert.match(
+      logoSource.toLowerCase(),
+      new RegExp(`#${color}\\b`),
+      `official Google G is missing #${color.toUpperCase()}`,
+    );
+  }
 });

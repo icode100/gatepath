@@ -229,6 +229,31 @@ test("monochrome launcher drawable is a one-color, background-free vector", () =
     1,
     "visible monochrome paths must use exactly one RGB color",
   );
+
+  const routePath = paths.find((path) => /android:strokeColor=/.test(path));
+  const waypointPath = paths.find(
+    (path) => /android:fillColor=["']#FF000000["']/.test(path) && !/android:strokeColor=/.test(path),
+  );
+  assert.ok(routePath, "monochrome vector must contain the stroked Route-G");
+  assert.ok(waypointPath, "monochrome vector must contain a dedicated waypoint path");
+
+  const routeGeometry = routePath.match(
+    /android:pathData=["']M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+0,([\d.]+)\s+([\d.]+)H([\d.]+)["']/,
+  );
+  const strokeWidth = Number(routePath.match(/android:strokeWidth=["']([\d.]+)["']/)?.[1]);
+  const waypointGeometry = waypointPath.match(
+    /android:pathData=["']M([\d.]+),([\d.]+)a([\d.]+),\3\s+0,1\s+1,-([\d.]+)\s+0/,
+  );
+  assert.ok(routeGeometry, "Route-G must retain its canonical counter-clockwise circular arc");
+  assert.ok(Number.isFinite(strokeWidth), "Route-G must declare a numeric stroke width");
+  assert.ok(waypointGeometry, "waypoint must remain a circular vector path");
+
+  const routeArcRightEdge = Number(routeGeometry[1]) + Number(routeGeometry[4]) + strokeWidth / 2;
+  const waypointLeftEdge = Number(waypointGeometry[1]) - Number(waypointGeometry[4]);
+  assert.ok(
+    waypointLeftEdge - routeArcRightEdge >= 1,
+    "the monochrome waypoint needs a positive transparent gap from the Route-G stroke",
+  );
 });
 
 test("Digital Asset Links template is pinned to GatePath and cannot masquerade as production", () => {
