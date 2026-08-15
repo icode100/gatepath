@@ -5,13 +5,17 @@ on:
   push:
     paths:
       - "android/**"
+      - "components/pwa/MobileAppSettings.tsx"
       - "tests/android-wrapper.test.mjs"
+      - "tests/apk-download.test.mjs"
       - "package.json"
       - ".github/workflows/android.yml"
   pull_request:
     paths:
       - "android/**"
+      - "components/pwa/MobileAppSettings.tsx"
       - "tests/android-wrapper.test.mjs"
+      - "tests/apk-download.test.mjs"
       - "package.json"
       - ".github/workflows/android.yml"
 

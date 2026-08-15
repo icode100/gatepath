@@ -4,6 +4,9 @@ import { useState } from "react";
 import { trackEvent } from "@/lib/firebase/analytics";
 import { usePwa } from "./PwaProvider";
 
+const ANDROID_PREVIEW_URL =
+  "https://github.com/icode100/gatepath/releases/download/android-preview-v1/gatepath-android.apk";
+
 export function MobileAppSettings() {
   const { installState, isOnline, updateAvailable, install, applyUpdate } = usePwa();
   const [busy, setBusy] = useState(false);
@@ -68,6 +71,27 @@ export function MobileAppSettings() {
           Use your browser’s “Install app” or “Add to Home Screen” menu when available.
         </p>
       )}
+
+      <div className="mobile-apk-download">
+        <a
+          className="button primary full"
+          href={ANDROID_PREVIEW_URL}
+          aria-describedby="android-preview-description"
+          onClick={() => {
+            void trackEvent("android_app_download", {
+              build: "preview_debug_signed",
+              source: "account_settings",
+            });
+          }}
+        >
+          Download Android preview (.apk)
+          <span aria-hidden="true">↓</span>
+        </a>
+        <p id="android-preview-description">
+          Preview build · Debug-signed. Themed icons are supported on compatible
+          Android 13+ launchers.
+        </p>
+      </div>
     </section>
   );
 }

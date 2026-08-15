@@ -866,6 +866,23 @@ body:has(.auth-dialog[open]) {
   text-align: center;
 }
 
+.mobile-apk-download {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.mobile-apk-download p {
+  text-align: center;
+}
+
+.mobile-apk-download .button {
+  text-decoration: none;
+}
+
 .content-shell {
   min-height: 100vh;
   min-height: 100dvh;
