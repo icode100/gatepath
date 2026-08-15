@@ -127,7 +127,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
         shell: bash
         run: |
-          if gh release view android-preview-v1 >/dev/null 2>&1; then
+          if gh release view android-preview-v2 >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
@@ -151,14 +151,16 @@ jobs:
           test -n "$apk_path"
           cp "$apk_path" gatepath-android.apk
           sha256sum gatepath-android.apk > gatepath-android.apk.sha256
-          gh release create android-preview-v1 \
+          gh release create android-preview-v2 \
             gatepath-android.apk \
             gatepath-android.apk.sha256 \
             --target "$GITHUB_SHA" \
             --prerelease \
-            --title "GatePath Android Preview v1" \
-            --notes "Preview build for direct Android installation.
+            --title "GatePath Android Preview v2" \
+            --notes "Corrected preview build for direct Android installation.
 
           This APK opens gatepath.vercel.app as a Trusted Web Activity and includes adaptive monochrome launcher artwork for supported Android 13+ launchers, including Pixel Launcher and compatible Samsung One UI versions.
 
-          Important: this first preview is debug-signed. Android may require uninstalling it before a future production-signed build can be installed. Remove an older Chrome-installed GatePath PWA first if you want to avoid duplicate launcher icons."
+          Preview v2 fixes the Android Browser Helper launch crash in preview v1 by declaring its required manage-data and focus components.
+
+          Important: uninstall preview v1 before installing v2 because these CI preview builds use different debug signing certificates. A future production-signed build may also require reinstalling. Remove an older Chrome-installed GatePath PWA first if you want to avoid duplicate launcher icons."

@@ -14,7 +14,7 @@ const WORKFLOW = readFileSync(
   "utf8",
 );
 
-const RELEASE_TAG = "android-preview-v1";
+const RELEASE_TAG = "android-preview-v2";
 const RELEASE_ASSET = "gatepath-android.apk";
 const RELEASE_CHECKSUM = `${RELEASE_ASSET}.sha256`;
 const RELEASE_URL =
@@ -62,11 +62,11 @@ test("Android preview download is an accessible link with disclosure and analyti
   const source = normalized(COMPONENT);
   assert.match(
     source,
-    /<p id=["']android-preview-description["']> Preview build · Debug-signed\. Themed icons are supported on compatible Android 13\+ launchers\. <\/p>/,
+    /<p id=["']android-preview-description["']> Preview v2 · Debug-signed\. Uninstall preview v1 first\. Themed icons are supported on compatible Android 13\+ launchers\. <\/p>/,
   );
   assert.match(
     anchor,
-    /trackEvent\(["']android_app_download["'],\s*\{\s*build:\s*["']preview_debug_signed["'],\s*source:\s*["']account_settings["'],?\s*\}\)/,
+    /trackEvent\(["']android_app_download["'],\s*\{\s*build:\s*["']preview_v2_debug_signed["'],\s*source:\s*["']account_settings["'],?\s*\}\)/,
   );
 });
 

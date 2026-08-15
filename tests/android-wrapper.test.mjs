@@ -122,6 +122,55 @@ test("Android manifest references the normal and round adaptive launcher icons",
   assert.match(applicationTag, /android:roundIcon=["']@mipmap\/ic_launcher_round["']/);
 });
 
+test("Android Browser Helper launch components are declared safely", () => {
+  const manifest = read("android", "app", "src", "main", "AndroidManifest.xml");
+  const applicationTag = manifest.match(/<application\b[\s\S]*?>/)?.[0];
+  assert.ok(applicationTag, "AndroidManifest.xml must contain an application element");
+  assert.match(
+    manifest,
+    /<uses-permission\b[^>]*android:name=["']android\.permission\.REORDER_TASKS["'][^>]*\/>/,
+  );
+  assert.match(
+    applicationTag,
+    /android:manageSpaceActivity=["']com\.google\.androidbrowserhelper\.trusted\.ManageDataLauncherActivity["']/,
+  );
+
+  const launcher = manifest.match(
+    /<activity\b[^>]*android:name=["']com\.google\.androidbrowserhelper\.trusted\.LauncherActivity["'][\s\S]*?<\/activity>/,
+  )?.[0];
+  assert.ok(launcher, "missing Android Browser Helper launcher activity");
+  assert.match(
+    launcher.match(/<activity\b[^>]*>/)?.[0] ?? "",
+    /android:alwaysRetainTaskState=["']true["']/,
+  );
+  assert.doesNotMatch(
+    launcher.match(/<activity\b[^>]*>/)?.[0] ?? "",
+    /android:launchMode=["']singleTask["']/,
+    "LauncherActivity explicitly warns that singleTask clobbers the browser activity",
+  );
+
+  const focus = manifest.match(
+    /<activity\b[^>]*android:name=["']com\.google\.androidbrowserhelper\.trusted\.FocusActivity["'][^>]*\/>/,
+  )?.[0];
+  assert.ok(focus, "missing Android Browser Helper focus activity");
+  assert.match(focus, /android:exported=["']true["']/);
+
+  const manageData = manifest.match(
+    /<activity\b[^>]*android:name=["']com\.google\.androidbrowserhelper\.trusted\.ManageDataLauncherActivity["'][\s\S]*?<\/activity>/,
+  )?.[0];
+  assert.ok(
+    manageData,
+    "LauncherActivity configures ManageDataLauncherActivity during every modern Android launch",
+  );
+  assert.match(manageData.match(/<activity\b[^>]*>/)?.[0] ?? "", /android:enabled=["']true["']/);
+  assert.match(manageData, /android:name=["']android\.intent\.action\.APPLICATION_PREFERENCES["']/);
+  assert.match(manageData, /android:name=["']android\.intent\.category\.DEFAULT["']/);
+  assert.match(
+    manageData,
+    /android:name=["']android\.support\.customtabs\.trusted\.MANAGE_SPACE_URL["'][\s\S]*?android:value=["']@string\/default_url["']/,
+  );
+});
+
 test("API 27 navigation-bar attributes stay out of the API 23 base theme", () => {
   const baseTheme = androidResource("values", "styles.xml");
   const api27Theme = androidResource("values-v27", "styles.xml");
