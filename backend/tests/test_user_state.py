@@ -644,6 +644,64 @@ def test_api_uses_user_state_repository_for_sessions_attempts_and_progress(
         app.dependency_overrides.pop(get_user_state_repository, None)
 
 
+def test_api_rotates_mastered_batch_with_firestore_repository_contract(
+    client: TestClient,
+) -> None:
+    repository = MemoryUserStateRepository()
+    app.dependency_overrides[get_user_state_repository] = lambda: repository
+    request = {
+        "subject_slug": "computer-networks",
+        "count": 4,
+        "seed": 2718,
+    }
+    try:
+        first_response = client.post("/api/v1/practice-sessions", json=request)
+        assert first_response.status_code == 201, first_response.text
+        first = first_response.json()
+        first_ids = [question["id"] for question in first["questions"]]
+        reveal_response = client.post(
+            "/api/v1/attempts",
+            json={"session_id": first["id"], "answers": []},
+        )
+        assert reveal_response.status_code == 201, reveal_response.text
+
+        answer_key: dict[int, object] = {}
+        for result in reveal_response.json()["results"]:
+            answer: object = result["correct_answer"]
+            if isinstance(answer, dict):
+                if "min" in answer and "max" in answer:
+                    answer = (float(answer["min"]) + float(answer["max"])) / 2
+                else:
+                    answer = answer.get("value")
+            answer_key[result["question_id"]] = answer
+
+        repeat_response = client.post("/api/v1/practice-sessions", json=request)
+        assert repeat_response.status_code == 201, repeat_response.text
+        repeat = repeat_response.json()
+        assert [question["id"] for question in repeat["questions"]] == first_ids
+        mastered_response = client.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": repeat["id"],
+                "answers": [
+                    {"question_id": question_id, "answer": answer_key[question_id]}
+                    for question_id in first_ids
+                ],
+            },
+        )
+        assert mastered_response.status_code == 201, mastered_response.text
+        assert mastered_response.json()["correct_count"] == len(first_ids)
+
+        advanced_response = client.post("/api/v1/practice-sessions", json=request)
+        assert advanced_response.status_code == 201, advanced_response.text
+        advanced_ids = [
+            question["id"] for question in advanced_response.json()["questions"]
+        ]
+        assert set(first_ids).isdisjoint(advanced_ids)
+    finally:
+        app.dependency_overrides.pop(get_user_state_repository, None)
+
+
 def _enable_valid_firestore_configuration(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

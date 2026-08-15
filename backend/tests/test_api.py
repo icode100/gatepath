@@ -1,11 +1,57 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
 from app import api as api_module
 from app.main import app
+
+
+def _submission_answer(correct_answer: object) -> object:
+    """Choose a concrete accepted NAT value when the key stores a range."""
+
+    if isinstance(correct_answer, dict):
+        if "min" in correct_answer and "max" in correct_answer:
+            return (float(correct_answer["min"]) + float(correct_answer["max"])) / 2
+        return correct_answer.get("value")
+    return correct_answer
+
+
+def test_practice_batch_selector_advances_only_after_complete_mastery() -> None:
+    questions = [SimpleNamespace(id=question_id) for question_id in range(1, 24)]
+    first = api_module._select_practice_batch(
+        questions,
+        count=8,
+        seed=2027,
+        solved_ids=set(),
+    )
+    first_ids = {question.id for question in first}
+
+    partial = api_module._select_practice_batch(
+        questions,
+        count=8,
+        seed=2027,
+        solved_ids={question.id for question in first[:-1]},
+    )
+    assert [question.id for question in partial] == [question.id for question in first]
+
+    second = api_module._select_practice_batch(
+        questions,
+        count=8,
+        seed=2027,
+        solved_ids=first_ids,
+    )
+    assert first_ids.isdisjoint(question.id for question in second)
+
+    revision = api_module._select_practice_batch(
+        questions,
+        count=8,
+        seed=2027,
+        solved_ids={question.id for question in questions},
+    )
+    assert [question.id for question in revision] == [question.id for question in first]
 
 
 def test_health_and_seeded_curriculum(client: TestClient) -> None:
@@ -139,6 +185,88 @@ def test_official_pyq_provenance(client: TestClient) -> None:
     assert question_12["source_paper"] == "GATE 2024 CS1 (Session 5)"
     assert question_12["source_url"].endswith("CS124S5.pdf")
     assert question_12["answer_key_url"].endswith("CS1FinalAnswerKey.pdf")
+
+
+def test_topic_practice_repeats_partial_batch_then_serves_new_questions() -> None:
+    """The API uses the same mastery progression for every subject/topic pool."""
+
+    learner = TestClient(app)
+    try:
+        subject_response = learner.get("/api/v1/subjects/computer-networks")
+        assert subject_response.status_code == 200
+        transport = next(
+            topic
+            for topic in subject_response.json()["topics"]
+            if topic["slug"] == "transport-layer"
+        )
+        assert transport["question_count"] >= 16
+        request = {
+            "subject_slug": "computer-networks",
+            "topic_id": transport["id"],
+            "count": 8,
+            "seed": 2027,
+        }
+
+        first_response = learner.post("/api/v1/practice-sessions", json=request)
+        assert first_response.status_code == 201, first_response.text
+        first = first_response.json()
+        first_ids = [question["id"] for question in first["questions"]]
+
+        answer_key_response = learner.post(
+            "/api/v1/attempts",
+            json={"session_id": first["id"], "answers": []},
+        )
+        assert answer_key_response.status_code == 201, answer_key_response.text
+        answer_key = {
+            result["question_id"]: _submission_answer(result["correct_answer"])
+            for result in answer_key_response.json()["results"]
+        }
+
+        partial_response = learner.post("/api/v1/practice-sessions", json=request)
+        assert partial_response.status_code == 201, partial_response.text
+        partial = partial_response.json()
+        assert [question["id"] for question in partial["questions"]] == first_ids
+        partial_attempt = learner.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": partial["id"],
+                "answers": [
+                    {"question_id": question_id, "answer": answer_key[question_id]}
+                    for question_id in first_ids[:-1]
+                ],
+            },
+        )
+        assert partial_attempt.status_code == 201, partial_attempt.text
+        assert partial_attempt.json()["correct_count"] == 7
+
+        retry_response = learner.post("/api/v1/practice-sessions", json=request)
+        assert retry_response.status_code == 201, retry_response.text
+        retry = retry_response.json()
+        assert [question["id"] for question in retry["questions"]] == first_ids
+        final_question_id = first_ids[-1]
+        final_attempt = learner.post(
+            "/api/v1/attempts",
+            json={
+                "session_id": retry["id"],
+                "answers": [
+                    {
+                        "question_id": final_question_id,
+                        "answer": answer_key[final_question_id],
+                    }
+                ],
+            },
+        )
+        assert final_attempt.status_code == 201, final_attempt.text
+        assert final_attempt.json()["correct_count"] == 1
+
+        next_response = learner.post("/api/v1/practice-sessions", json=request)
+        assert next_response.status_code == 201, next_response.text
+        next_batch = next_response.json()
+        next_ids = [question["id"] for question in next_batch["questions"]]
+        assert len(next_ids) == 8
+        assert set(first_ids).isdisjoint(next_ids)
+    finally:
+        learner.close()
 
 
 def test_submit_scores_and_updates_progress(client: TestClient) -> None:
@@ -408,6 +536,19 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
             json=session_payload,
         ).json()
         assert correct_session["questions"][0]["id"] == question["id"]
+        # These concurrent sessions freeze the same unmastered one-question
+        # batch, allowing the evidence regression below to prove that a later
+        # miss never erases lifetime mastery.
+        later_wrong_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        repeated_correct_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        assert later_wrong_session["questions"][0]["id"] == question["id"]
+        assert repeated_correct_session["questions"][0]["id"] == question["id"]
         correct = learner.post(
             "/api/v1/attempts",
             json={
@@ -429,11 +570,7 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
         assert analytics_topic["unique_questions_solved"] == 1
         assert analytics_topic["solved_coverage_percent"] > 0
 
-        later_wrong_session = learner.post(
-            "/api/v1/practice-sessions",
-            json=session_payload,
-        ).json()
-        learner.post(
+        later_wrong = learner.post(
             "/api/v1/attempts",
             json={
                 "session_id": later_wrong_session["id"],
@@ -445,21 +582,20 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
                 ],
             },
         )
+        assert later_wrong.status_code == 201
+        assert later_wrong.json()["incorrect_count"] == 1
         subject, topic = operating_systems_progress()
         assert subject["solved_questions"] == 1
         assert topic["solved_questions"] == 1
         assert topic["accuracy"] == 0
         overall, analytics_topic = operating_systems_analytics()
+        assert overall["unique_questions_attempted"] == 1
         assert overall["unique_questions_solved"] == 1
         assert analytics_topic["unique_questions_solved"] == 1
         assert analytics_topic["correct_count"] == 0
         assert analytics_topic["accuracy_percent"] == 0
 
-        repeated_correct_session = learner.post(
-            "/api/v1/practice-sessions",
-            json=session_payload,
-        ).json()
-        learner.post(
+        repeated_correct = learner.post(
             "/api/v1/attempts",
             json={
                 "session_id": repeated_correct_session["id"],
@@ -468,12 +604,19 @@ def test_roadmap_completion_counts_each_correctly_solved_question_once() -> None
                 ],
             },
         )
+        assert repeated_correct.status_code == 201
         subject, topic = operating_systems_progress()
         assert subject["solved_questions"] == 1
         assert topic["solved_questions"] == 1
         overall, analytics_topic = operating_systems_analytics()
         assert overall["unique_questions_solved"] == 1
         assert analytics_topic["unique_questions_solved"] == 1
+
+        advanced_session = learner.post(
+            "/api/v1/practice-sessions",
+            json=session_payload,
+        ).json()
+        assert advanced_session["questions"][0]["id"] != question["id"]
     finally:
         learner.close()
 

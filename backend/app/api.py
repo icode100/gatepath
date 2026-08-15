@@ -180,6 +180,81 @@ async def _load_questions(db: AsyncSession, question_ids: list[int]) -> list[Que
     return [by_id[item] for item in question_ids if item in by_id]
 
 
+async def _correctly_solved_question_ids(
+    db: AsyncSession,
+    user_state: UserStateRepository | None,
+    *,
+    user_key: str,
+    candidate_ids: set[int],
+) -> set[int]:
+    """Return candidate questions the learner has answered correctly at least once.
+
+    Correctly solved evidence is monotonic: a later miss does not make a mastered
+    question unsolved. Firestore already maintains this projection, while the
+    legacy Postgres path can answer the same question with a small distinct query.
+    """
+
+    if not candidate_ids:
+        return set()
+    if user_state is not None:
+        try:
+            progress = await user_state.get_progress(user_key)
+        except (
+            UserStateNotFound,
+            UserStateAlreadySubmitted,
+            UserStatePayloadTooLarge,
+            UserStateUnavailable,
+        ) as exc:
+            _raise_user_state_http(exc)
+        return {
+            question_id
+            for question_id in candidate_ids
+            if (
+                (evidence := progress.evidence.get(question_id)) is not None
+                and evidence.correct_count > 0
+            )
+        }
+
+    solved_ids = (
+        await db.scalars(
+            select(AttemptResponse.question_id)
+            .join(Attempt, Attempt.id == AttemptResponse.attempt_id)
+            .where(
+                Attempt.user_key == user_key,
+                AttemptResponse.question_id.in_(candidate_ids),
+                AttemptResponse.status == ResponseStatus.CORRECT,
+            )
+            .distinct()
+        )
+    ).all()
+    return set(solved_ids)
+
+
+def _select_practice_batch(
+    questions: list[Question],
+    *,
+    count: int,
+    seed: int,
+    solved_ids: set[int],
+) -> list[Question]:
+    """Select the learner's first not-yet-mastered stable practice batch.
+
+    The seeded order partitions every filtered subject/topic pool into stable
+    batches. A partially mastered batch is therefore returned unchanged on the
+    next launch. Only after every question in it has been answered correctly at
+    least once does selection advance to the next batch. Once the complete pool
+    is mastered, the first batch becomes a deterministic revision set.
+    """
+
+    ordered = list(questions)
+    random.Random(seed).shuffle(ordered)
+    for offset in range(0, len(ordered), count):
+        batch = ordered[offset : offset + count]
+        if any(question.id not in solved_ids for question in batch):
+            return batch
+    return ordered[:count]
+
+
 async def _session_read(
     db: AsyncSession,
     session: PracticeSession | StudySession,
@@ -555,9 +630,18 @@ async def create_practice_session(
     ).all()
     if not questions:
         raise HTTPException(status_code=404, detail="No questions match these filters")
-    rng = random.Random(payload.seed)
-    rng.shuffle(questions)
-    selected = list(questions[: payload.count])
+    solved_ids = await _correctly_solved_question_ids(
+        db,
+        user_state,
+        user_key=user_key,
+        candidate_ids={question.id for question in questions},
+    )
+    selected = _select_practice_batch(
+        list(questions),
+        count=payload.count,
+        seed=payload.seed,
+        solved_ids=solved_ids,
+    )
 
     session = await _persist_session(
         db,
