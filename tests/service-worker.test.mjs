@@ -11,6 +11,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = readFileSync(resolve(ROOT, "public", "sw.js"), "utf8");
 const ORIGIN = "https://gatepath.vercel.app";
 const MANIFEST = loadTypeScriptModule("app/manifest.ts").default();
+const PRECACHE_NAME = "gatepath-pwa-precache-v2";
 
 const requestKey = (request) =>
   new URL(typeof request === "string" ? request : request.url, ORIGIN).href;
@@ -136,7 +137,7 @@ test("installation precaches every manifest icon and the offline shell", async (
   assert.ok(installation, "service worker install handler must schedule precaching");
   await installation;
 
-  const precache = harness.stores.get("gatepath-pwa-precache-v1");
+  const precache = harness.stores.get(PRECACHE_NAME);
   assert.ok(precache, "installation must open the GatePath precache");
   for (const icon of MANIFEST.icons ?? []) {
     assert.ok(await precache.match(icon.src), `${icon.src} is missing from the precache`);
@@ -233,6 +234,7 @@ test("does not retain private or no-store static responses", async () => {
 
 test("activation removes only obsolete GatePath caches", async () => {
   const harness = createHarness();
+  await harness.cacheStorage.open(PRECACHE_NAME);
   await harness.cacheStorage.open("gatepath-pwa-precache-v1");
   await harness.cacheStorage.open("gatepath-pwa-next-static-v1");
   await harness.cacheStorage.open("gatepath-pwa-static-v0");
@@ -249,7 +251,7 @@ test("activation removes only obsolete GatePath caches", async () => {
   assert.deepEqual(
     new Set(await harness.cacheStorage.keys()),
     new Set([
-      "gatepath-pwa-precache-v1",
+      PRECACHE_NAME,
       "gatepath-pwa-next-static-v1",
       "firebase-unrelated-cache",
     ]),
@@ -259,7 +261,7 @@ test("activation removes only obsolete GatePath caches", async () => {
 
 test("offline navigations use only the generic precached fallback", async () => {
   const harness = createHarness();
-  const precache = await harness.cacheStorage.open("gatepath-pwa-precache-v1");
+  const precache = await harness.cacheStorage.open(PRECACHE_NAME);
   await precache.put(
     "/offline.html",
     new Response("GatePath is offline", {

@@ -118,14 +118,20 @@ test("large focus and mock panels inherit neutral theme surfaces", () => {
   }
 });
 
-test("manifest, viewport and offline shell use the neutral theme foundations", () => {
+test("manifest, prepaint shell and offline shell use the neutral theme foundations", () => {
   assert.equal(manifest.background_color.toLowerCase(), light.canvas);
   assert.ok(channelSpread(manifest.theme_color) <= 4, "manifest theme color must remain neutral");
 
-  const viewportSource = LAYOUT.slice(LAYOUT.indexOf("export const viewport"));
-  const viewportColors = [...viewportSource.matchAll(/\bcolor\s*:\s*["'](#[\da-f]{6})["']/gi)]
+  const shellColors = [...LAYOUT.matchAll(/["'](#[\da-f]{6})["']/gi)]
     .map((match) => match[1].toLowerCase());
-  assert.deepEqual(viewportColors.slice(0, 2), [light.canvas, dark.canvas]);
+  assert.ok(shellColors.includes(light.canvas), "prepaint shell is missing the light canvas color");
+  assert.ok(shellColors.includes(dark.canvas), "prepaint shell is missing the dark canvas color");
+  assert.match(LAYOUT, /data-gatepath-theme-color/);
+  assert.match(OFFLINE, /localStorage\.getItem\(["']gatepath-theme["']\)/);
+  assert.match(OFFLINE, /prefers-color-scheme:\s*dark/);
+  assert.match(OFFLINE, /dataset\.theme\s*=\s*resolved/);
+  assert.match(OFFLINE, /dataset\.themePreference\s*=\s*preference/);
+  assert.match(OFFLINE, /:root\[data-theme=["']dark["']\]/);
   assert.match(
     OFFLINE.toLowerCase(),
     new RegExp(`--canvas\\s*:\\s*${dark.canvas.replace("#", "\\#")}`),

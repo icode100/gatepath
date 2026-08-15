@@ -7,6 +7,7 @@ import { GatePathLogo } from "@/components/brand/GatePathLogo";
 import { MathFormula, MathText } from "@/components/math/MathText";
 import { usePwa } from "@/components/pwa/PwaProvider";
 import { RoadmapMap } from "@/components/roadmap/RoadmapMap";
+import { ThemeSelector } from "@/components/theme/ThemeSelector";
 import { trackEvent } from "@/lib/firebase/analytics";
 import {
   istDayNumber,
@@ -347,7 +348,6 @@ const directScreenFromSearch = (search: string): Screen => {
     ? (candidate as Screen)
     : "dashboard";
 };
-type Theme = "light" | "dark";
 type ApiState = "checking" | "online" | "offline";
 type PracticeMode = "practice" | "sectional" | "syllabus";
 type Answers = Record<string, string[]>;
@@ -1345,7 +1345,6 @@ export default function Home() {
   const { isOnline } = usePwa();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("dashboard");
-  const [theme, setTheme] = useState<Theme>("light");
   const [apiState, setApiState] = useState<ApiState>("checking");
   const [roadmapSubjects, setRoadmapSubjects] = useState(
     EMPTY_ROADMAP_SUBJECTS,
@@ -1563,19 +1562,6 @@ export default function Home() {
     () => bankSubject?.topics ?? [],
     [bankSubject],
   );
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("gatepath-theme") as Theme | null;
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-    setTheme(saved === "dark" || saved === "light" ? saved : preferred);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem("gatepath-theme", theme);
-  }, [theme]);
 
   useEffect(() => {
     const initialScreen = directScreenFromSearch(window.location.search);
@@ -4821,7 +4807,7 @@ export default function Home() {
       </aside>
       {mobileNavOpen && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />}
       <div className="content-shell">
-        <header className="topbar"><div><span className="topbar-kicker">GATE 2027 · Computer Science</span><strong>{headerTitle}</strong></div><div className="topbar-actions"><span className={`api-status ${apiState}`}><i />{!isOnline ? "Offline" : apiState === "online" ? "Synced" : apiState === "checking" ? "Connecting" : "Local mode"}</span><button className="theme-toggle" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} onClick={() => setTheme((current) => current === "light" ? "dark" : "light")}><span className={theme === "light" ? "active" : ""}>☼</span><span className={theme === "dark" ? "active" : ""}>◐</span></button></div></header>
+        <header className="topbar"><div><span className="topbar-kicker">GATE 2027 · Computer Science</span><strong>{headerTitle}</strong></div><div className="topbar-actions"><span className={`api-status ${apiState}`}><i />{!isOnline ? "Offline" : apiState === "online" ? "Synced" : apiState === "checking" ? "Connecting" : "Local mode"}</span><ThemeSelector /></div></header>
         <main>{screen === "dashboard" && renderDashboard()}{screen === "learn" && renderLearn()}{screen === "library" && renderLibrary()}{screen === "subject" && renderSubject()}{screen === "notes" && renderNotes()}{screen === "practice" && renderPractice()}{screen === "mock-setup" && renderMockSetup()}{screen === "results" && renderResults()}{screen === "progress" && renderProgress()}</main>
         <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
           <button aria-current={activeNav === "dashboard" ? "page" : undefined} className={activeNav === "dashboard" ? "active" : ""} onClick={() => navigate("dashboard")}><span>⌂</span>Roadmap</button>

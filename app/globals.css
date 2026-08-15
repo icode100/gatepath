@@ -961,10 +961,9 @@ body:has(.auth-dialog[open]) {
   50% { opacity: 0.35; }
 }
 
-.theme-toggle {
-  display: flex;
-  min-height: 44px;
-  align-items: center;
+.theme-selector {
+  display: grid;
+  grid-auto-flow: column;
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--line);
@@ -972,19 +971,55 @@ body:has(.auth-dialog[open]) {
   background: var(--surface);
 }
 
-.theme-toggle span {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
+.theme-selector button {
+  display: flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 10px;
   border-radius: 50%;
   color: var(--muted);
+  background: transparent;
   font-size: 14px;
 }
 
-.theme-toggle span.active {
-  color: var(--surface);
+.theme-selector button[aria-pressed="true"] {
+  color: var(--on-primary);
   background: var(--ink);
+}
+
+.theme-selector button:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.theme-selector-compact button {
+  width: 44px;
+  padding: 0;
+}
+
+.theme-selector-settings {
+  width: 100%;
+  grid-auto-flow: initial;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 4px;
+  border-radius: 13px;
+  background: var(--surface-soft);
+}
+
+.theme-selector-settings button {
+  border-radius: 9px;
+  font-size: 15px;
+}
+
+.theme-selector-settings button strong {
+  font-size: 11px;
+}
+
+.theme-settings {
+  scroll-margin-top: 12px;
 }
 
 .page {
@@ -6062,6 +6097,11 @@ body:has(.auth-dialog[open]) {
   }
   .mobile-bottom-nav button span { font-size: 17px; }
   .mobile-bottom-nav button.active { color: var(--green); background: var(--green-pale); }
+}
+
+@media (max-width: 360px) {
+  .topbar-actions { gap: 9px; }
+  .api-status { gap: 0; font-size: 0; }
 }
 
 @media (max-width: 430px) {

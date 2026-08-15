@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { GatePathLogo } from "@/components/brand/GatePathLogo";
 import { GoogleLogo } from "@/components/brand/GoogleLogo";
 import { MobileAppSettings } from "@/components/pwa/MobileAppSettings";
+import { ThemeSelector } from "@/components/theme/ThemeSelector";
 import { friendlyAuthError, useAuth } from "./AuthProvider";
 
 type AuthDialogProps = {
@@ -317,6 +318,18 @@ export function AuthDialog({
             </p>
           </div>
         )}
+
+        <section className="auth-settings theme-settings" aria-labelledby="appearance-heading">
+          <div>
+            <span className="eyebrow">Settings · Appearance</span>
+            <strong id="appearance-heading">Choose your theme</strong>
+            <p>
+              System follows your phone or computer automatically, including
+              changes made while GatePath is open.
+            </p>
+          </div>
+          <ThemeSelector variant="settings" />
+        </section>
 
         <MobileAppSettings />
 

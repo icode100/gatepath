@@ -10,9 +10,9 @@
     "build": "node node_modules/next/dist/bin/next build",
     "start": "node node_modules/next/dist/bin/next start --hostname 0.0.0.0",
     "test": "npm run typecheck && npm run test:unit",
-    "test:unit": "node --test tests/android-wrapper.test.mjs tests/apk-download.test.mjs tests/daily-focus.test.mjs tests/math-renderer.test.mjs tests/pwa-assets.test.mjs tests/roadmap-graph.test.mjs tests/service-worker.test.mjs tests/theme-palette.test.mjs",
+    "test:unit": "node --test tests/android-wrapper.test.mjs tests/apk-download.test.mjs tests/daily-focus.test.mjs tests/math-renderer.test.mjs tests/pwa-assets.test.mjs tests/roadmap-graph.test.mjs tests/service-worker.test.mjs tests/theme-palette.test.mjs tests/theme-preference.test.mjs",
     "test:android": "node --test tests/android-wrapper.test.mjs tests/apk-download.test.mjs",
-    "test:pwa": "node --test tests/pwa-assets.test.mjs tests/service-worker.test.mjs tests/theme-palette.test.mjs",
+    "test:pwa": "node --test tests/pwa-assets.test.mjs tests/service-worker.test.mjs tests/theme-palette.test.mjs tests/theme-preference.test.mjs",
     "test:roadmap": "node --test tests/roadmap-graph.test.mjs",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
