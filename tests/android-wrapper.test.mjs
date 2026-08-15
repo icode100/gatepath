@@ -122,6 +122,14 @@ test("Android manifest references the normal and round adaptive launcher icons",
   assert.match(applicationTag, /android:roundIcon=["']@mipmap\/ic_launcher_round["']/);
 });
 
+test("API 27 navigation-bar attributes stay out of the API 23 base theme", () => {
+  const baseTheme = androidResource("values", "styles.xml");
+  const api27Theme = androidResource("values-v27", "styles.xml");
+
+  assert.doesNotMatch(baseTheme, /android:windowLightNavigationBar/);
+  assert.match(api27Theme, /android:windowLightNavigationBar/);
+});
+
 test("normal and round launchers use adaptive v26 layers and v33 monochrome overrides", () => {
   for (const iconName of ["ic_launcher.xml", "ic_launcher_round.xml"]) {
     assertAdaptiveIcon(androidResource("mipmap-anydpi-v26", iconName), {
