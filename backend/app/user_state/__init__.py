@@ -14,6 +14,7 @@ from app.user_state.domain import (
     apply_attempt_to_projection,
     empty_progress_projection,
     merge_progress_projections,
+    mark_archive_practiced,
     rebuild_progress_projection,
 )
 from app.user_state.firestore import FirestoreUserStateRepository
@@ -49,6 +50,7 @@ __all__ = [
     "empty_progress_projection",
     "get_user_state_repository",
     "merge_progress_projections",
+    "mark_archive_practiced",
     "rebuild_progress_projection",
     "require_user_state_repository",
     "reset_user_state_repository_cache",

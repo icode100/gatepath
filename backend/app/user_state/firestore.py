@@ -22,6 +22,7 @@ from app.user_state.domain import (
     StudySession,
     apply_attempt_to_projection,
     empty_progress_projection,
+    mark_archive_practiced,
     merge_progress_projections,
 )
 from app.user_state.repository import (
@@ -339,6 +340,54 @@ class FirestoreUserStateRepository:
             if progress.user_key != user_key:
                 raise UserStateNotFound("Progress not found")
             return progress
+        except UserStateError:
+            raise
+        except Exception as exc:
+            raise UserStateUnavailable("Progress storage is unavailable") from exc
+
+    async def record_archive_practice(
+        self,
+        user_key: str,
+        archive_question_id: int,
+    ) -> ProgressProjection:
+        user_key = _validate_document_id(user_key, "Progress")
+        try:
+            client = await self._get_client()
+            progress_ref = client.collection(self._progress_name).document(user_key)
+            claim_ref = (
+                client.collection(self._claims_name).document(user_key)
+                if user_key.startswith("anon-")
+                else None
+            )
+            reset_ref = client.collection(self._resets_name).document(user_key)
+            transactional = import_module(
+                "google.cloud.firestore_v1"
+            ).async_transactional
+
+            @transactional
+            async def record_in_transaction(transaction: Any) -> ProgressProjection:
+                reset_snapshot = await reset_ref.get(transaction=transaction)
+                claim_snapshot = (
+                    await claim_ref.get(transaction=transaction)
+                    if claim_ref is not None
+                    else None
+                )
+                progress_snapshot = await progress_ref.get(transaction=transaction)
+                if reset_snapshot.exists:
+                    raise UserStateUnavailable("Progress reset is in progress")
+                if claim_snapshot is not None and claim_snapshot.exists:
+                    raise UserStateNotFound("User state is no longer available")
+                if progress_snapshot.exists:
+                    progress = progress_from_document(progress_snapshot.to_dict())
+                    if progress.user_key != user_key:
+                        raise UserStateNotFound("Progress not found")
+                else:
+                    progress = empty_progress_projection(user_key)
+                updated = mark_archive_practiced(progress, archive_question_id)
+                transaction.set(progress_ref, progress_to_document(updated))
+                return updated
+
+            return await record_in_transaction(client.transaction())
         except UserStateError:
             raise
         except Exception as exc:

@@ -196,6 +196,30 @@ async def test_memory_reset_is_idempotent_and_owner_scoped() -> None:
 
 
 @pytest.mark.asyncio
+async def test_archive_practice_is_ungraded_idempotent_claimed_and_reset() -> None:
+    repository = MemoryUserStateRepository()
+
+    first = await repository.record_archive_practice("anon-archive", 101)
+    duplicate = await repository.record_archive_practice("anon-archive", 101)
+    target = await repository.record_archive_practice("member-archive", 202)
+
+    assert first.archive_practiced_ids == duplicate.archive_practiced_ids == (101,)
+    assert first.total_attempts == first.total_responses == 0
+    assert target.archive_practiced_ids == (202,)
+
+    await repository.claim_guest_state("anon-archive", "member-archive")
+    merged = await repository.get_progress("member-archive")
+    assert merged.archive_practiced_ids == (101, 202)
+    assert merged.total_attempts == merged.total_responses == 0
+
+    reset = await repository.reset_progress("member-archive")
+    assert reset.progress_deleted is True
+    assert (
+        await repository.get_progress("member-archive")
+    ).archive_practiced_ids == ()
+
+
+@pytest.mark.asyncio
 async def test_memory_reset_allows_fresh_post_reset_submission() -> None:
     repository = MemoryUserStateRepository()
     stale_session = _session("reset-stale-session", "reset-learner")

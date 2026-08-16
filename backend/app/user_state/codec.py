@@ -271,6 +271,7 @@ def progress_to_document(progress: ProgressProjection) -> dict[str, Any]:
             }
             for key, value in progress.evidence.items()
         },
+        "archive_practiced_ids": list(progress.archive_practiced_ids),
         "updated_at": as_utc(progress.updated_at) if progress.updated_at else None,
     }
     ensure_document_size(document, "Progress projection")
@@ -341,4 +342,13 @@ def progress_from_document(document: Mapping[str, Any]) -> ProgressProjection:
         recent_attempts=recent,
         evidence=evidence,
         updated_at=_datetime(document.get("updated_at"), optional=True),
+        archive_practiced_ids=tuple(
+            sorted(
+                {
+                    int(question_id)
+                    for question_id in document.get("archive_practiced_ids", [])
+                    if int(question_id) > 0
+                }
+            )
+        ),
     )

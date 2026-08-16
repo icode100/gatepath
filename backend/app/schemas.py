@@ -206,6 +206,12 @@ class PyqArchiveListResponse(BaseModel):
     offset: int
 
 
+class PyqArchiveProgressResponse(BaseModel):
+    practiced_count: int
+    total: int
+    coverage_percent: float
+
+
 class PracticeSessionCreate(BaseModel):
     subject_id: int | None = None
     subject_slug: str | None = None

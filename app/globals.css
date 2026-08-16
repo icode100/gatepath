@@ -5404,6 +5404,46 @@ body:has(.auth-dialog[open]) {
   white-space: nowrap;
 }
 
+.archive-progress-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 0.8fr) auto;
+  align-items: center;
+  gap: 16px;
+  margin: 0 7px 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.archive-progress-card > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.archive-progress-card span,
+.archive-progress-card small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.archive-progress-card > div:first-child > span {
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.archive-progress-card > div:first-child > strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.archive-progress-card > strong {
+  color: var(--green);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+}
+
 .bank-filters select,
 .bank-filters input {
   width: 100%;
@@ -6240,6 +6280,8 @@ body:has(.auth-dialog[open]) {
   .catalog-card { min-height: 330px; }
   .topic-coverage-line { grid-template-columns: 1fr; gap: 7px; }
   .bank-filters { grid-template-columns: 1fr; }
+  .archive-progress-card { grid-template-columns: 1fr; gap: 9px; }
+  .archive-progress-card > strong { justify-self: start; }
   .bank-results-summary { align-items: flex-start; flex-direction: column; gap: 5px; }
   .bank-list > article { grid-template-columns: 34px 1fr; }
   .bank-list > article > .button { grid-column: 2; justify-self: start; }

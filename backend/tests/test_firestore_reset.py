@@ -95,6 +95,11 @@ class _Transaction:
             None,
         )
 
+    def set(self, reference: _Document, data: dict[str, Any]) -> None:
+        self._client.data.setdefault(reference._collection_name, {})[
+            reference.id
+        ] = copy.deepcopy(data)
+
 
 class _Batch:
     def __init__(self, client: _Client) -> None:
@@ -138,6 +143,30 @@ def direct_transactional(monkeypatch: pytest.MonkeyPatch) -> None:
         "import_module",
         lambda _: SimpleNamespace(async_transactional=lambda function: function),
     )
+
+
+@pytest.mark.asyncio
+async def test_firestore_records_archive_practice_once_without_scored_attempt(
+    direct_transactional: None,
+) -> None:
+    del direct_transactional
+    client = _Client()
+    prefix = "archive_progress_test"
+    owner = "fb-v1-archive-owner"
+    repository = FirestoreUserStateRepository(
+        client=client,
+        collection_prefix=prefix,
+    )
+
+    first = await repository.record_archive_practice(owner, 101)
+    duplicate = await repository.record_archive_practice(owner, 101)
+    second = await repository.record_archive_practice(owner, 202)
+
+    assert first.archive_practiced_ids == duplicate.archive_practiced_ids == (101,)
+    assert second.archive_practiced_ids == (101, 202)
+    assert second.total_attempts == second.total_responses == 0
+    stored = client.data[f"{prefix}_progress"][owner]
+    assert stored["archive_practiced_ids"] == [101, 202]
 
 
 @pytest.mark.asyncio

@@ -99,3 +99,14 @@ test("PYQ archive has independent 50-item filtering and pagination", () => {
   assert.match(PAGE, /Archive practice is ungraded/);
   assert.match(PAGE, /never enter(?:s)? (?:full or course )?tests/i);
 });
+
+test("PYQ archive records ungraded synced coverage", () => {
+  assert.match(PAGE, /fetchJson\("\/pyq-archive\/progress"/);
+  assert.match(
+    PAGE,
+    /fetch\(`\$\{API_BASE\}\/pyq-archive\/\$\{archiveQuestion\.id\}\/practice`/,
+  );
+  assert.match(PAGE, /Archive coverage/);
+  assert.match(PAGE, /Archive practised/);
+  assert.match(PAGE, /archive-only records never enter tests or scored progress/);
+});

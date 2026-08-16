@@ -16,6 +16,7 @@ from app.user_state.domain import (
     StudySession,
     apply_attempt_to_projection,
     empty_progress_projection,
+    mark_archive_practiced,
     merge_progress_projections,
 )
 from app.user_state.repository import (
@@ -151,6 +152,22 @@ class MemoryUserStateRepository:
                 empty_progress_projection(user_key),
             )
             return self._copy(progress)
+
+    async def record_archive_practice(
+        self,
+        user_key: str,
+        archive_question_id: int,
+    ) -> ProgressProjection:
+        async with self._lock:
+            if user_key in self._claims:
+                raise UserStateNotFound("User state is no longer available")
+            updated = mark_archive_practiced(
+                self._progress.get(user_key, empty_progress_projection(user_key)),
+                archive_question_id,
+            )
+            progress_to_document(updated)
+            self._progress[user_key] = self._copy(updated)
+            return self._copy(updated)
 
     async def reset_progress(self, user_key: str) -> UserStateResetSummary:
         async with self._lock:

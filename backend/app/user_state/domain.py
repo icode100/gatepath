@@ -115,6 +115,7 @@ class ProgressProjection:
     recent_attempts: tuple[RecentAttemptProjection, ...]
     evidence: dict[int, QuestionEvidence]
     updated_at: datetime | None
+    archive_practiced_ids: tuple[int, ...] = ()
 
 
 def empty_progress_projection(user_key: str) -> ProgressProjection:
@@ -132,6 +133,30 @@ def empty_progress_projection(user_key: str) -> ProgressProjection:
         recent_attempts=(),
         evidence={},
         updated_at=None,
+        archive_practiced_ids=(),
+    )
+
+
+def mark_archive_practiced(
+    projection: ProgressProjection,
+    archive_question_id: int,
+    practiced_at: datetime | None = None,
+) -> ProgressProjection:
+    """Record one ungraded archive question without affecting scored evidence."""
+
+    if archive_question_id <= 0:
+        raise ValueError("Archive question id must be positive")
+    practiced_ids = tuple(
+        sorted({*projection.archive_practiced_ids, archive_question_id})
+    )
+    timestamp = as_utc(practiced_at or datetime.now(UTC))
+    updated_at = projection.updated_at
+    if updated_at is None or timestamp >= as_utc(updated_at):
+        updated_at = timestamp
+    return replace(
+        projection,
+        archive_practiced_ids=practiced_ids,
+        updated_at=updated_at,
     )
 
 
@@ -256,6 +281,7 @@ def apply_attempt_to_projection(
         recent_attempts=recent,
         evidence=evidence,
         updated_at=updated_at,
+        archive_practiced_ids=projection.archive_practiced_ids,
     )
 
 
@@ -413,4 +439,10 @@ def merge_progress_projections(
         recent_attempts=recent,
         evidence=evidence,
         updated_at=max(timestamps) if timestamps else None,
+        archive_practiced_ids=tuple(
+            sorted(
+                set(target.archive_practiced_ids)
+                | set(guest.archive_practiced_ids)
+            )
+        ),
     )

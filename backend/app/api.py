@@ -45,6 +45,7 @@ from app.schemas import (
     ProgressResetRequest,
     ProgressResetResult,
     PyqArchiveListResponse,
+    PyqArchiveProgressResponse,
     PyqArchiveQuestionPublic,
     QuestionListResponse,
     QuestionBankImportSummary,
@@ -1018,6 +1019,79 @@ async def list_pyq_archive(
         limit=limit,
         offset=offset,
     )
+
+
+def _archive_progress_response(
+    practiced_ids: tuple[int, ...],
+    total: int,
+) -> PyqArchiveProgressResponse:
+    practiced_count = min(len(set(practiced_ids)), total)
+    coverage = practiced_count / total * 100 if total else 0.0
+    return PyqArchiveProgressResponse(
+        practiced_count=practiced_count,
+        total=total,
+        coverage_percent=round(coverage, 2),
+    )
+
+
+@router.get(
+    "/pyq-archive/progress",
+    response_model=PyqArchiveProgressResponse,
+    tags=["Question Bank"],
+)
+async def pyq_archive_progress(
+    user_key: str = Depends(current_user_key),
+    db: AsyncSession = Depends(get_db),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
+) -> PyqArchiveProgressResponse:
+    """Return ungraded Archive practice coverage for the current learner."""
+
+    total = int(await db.scalar(select(func.count(PyqSourceQuestion.id))) or 0)
+    progress = await _progress_for_user(db, user_state, user_key)
+    return _archive_progress_response(progress.archive_practiced_ids, total)
+
+
+@router.post(
+    "/pyq-archive/{archive_question_id}/practice",
+    response_model=PyqArchiveProgressResponse,
+    tags=["Question Bank"],
+)
+async def record_pyq_archive_practice(
+    archive_question_id: int,
+    user_key: str = Depends(current_user_key),
+    db: AsyncSession = Depends(get_db),
+    user_state: UserStateRepository | None = Depends(get_user_state_repository),
+) -> PyqArchiveProgressResponse:
+    """Count an opened Archive item once without creating a scored attempt."""
+
+    if archive_question_id <= 0:
+        raise HTTPException(status_code=404, detail="Archived question not found")
+    exists = await db.scalar(
+        select(PyqSourceQuestion.id).where(
+            PyqSourceQuestion.id == archive_question_id
+        )
+    )
+    if exists is None:
+        raise HTTPException(status_code=404, detail="Archived question not found")
+    if user_state is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Archive progress storage is temporarily unavailable",
+        )
+    try:
+        progress = await user_state.record_archive_practice(
+            user_key,
+            archive_question_id,
+        )
+    except (
+        UserStateNotFound,
+        UserStateAlreadySubmitted,
+        UserStatePayloadTooLarge,
+        UserStateUnavailable,
+    ) as exc:
+        _raise_user_state_http(exc)
+    total = int(await db.scalar(select(func.count(PyqSourceQuestion.id))) or 0)
+    return _archive_progress_response(progress.archive_practiced_ids, total)
 
 
 @router.get(

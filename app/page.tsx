@@ -420,6 +420,12 @@ type ArchiveQuestion = {
   runtimeQuestionId?: number;
 };
 
+type ArchiveProgressSnapshot = {
+  practicedCount: number;
+  total: number;
+  coverage: number;
+};
+
 type TopicAnalytics = {
   topicId: string;
   topicName: string;
@@ -1196,6 +1202,31 @@ function mapArchiveQuestions(payload: unknown): ArchiveQuestion[] {
   });
 }
 
+function mapArchiveProgress(payload: unknown): ArchiveProgressSnapshot {
+  const source =
+    payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>)
+      : {};
+  const total = Math.max(0, Math.round(toFiniteNumber(source.total, 2873)));
+  const practicedCount = Math.min(
+    total,
+    Math.max(
+      0,
+      Math.round(toFiniteNumber(source.practiced_count, 0)),
+    ),
+  );
+  return {
+    practicedCount,
+    total,
+    coverage: clampCoverage(
+      toFiniteNumber(
+        source.coverage_percent,
+        coveragePercent(practicedCount, total),
+      ),
+    ),
+  };
+}
+
 const questionsForSessionDraft = (
   questions: PracticeQuestion[],
 ): DraftQuestion[] =>
@@ -1496,6 +1527,12 @@ export default function Home() {
   const [archiveQuery, setArchiveQuery] = useState("");
   const [archiveQuestions, setArchiveQuestions] = useState<ArchiveQuestion[]>([]);
   const [archiveTotal, setArchiveTotal] = useState(0);
+  const [archiveProgress, setArchiveProgress] =
+    useState<ArchiveProgressSnapshot>({
+      practicedCount: 0,
+      total: 2873,
+      coverage: 0,
+    });
   const [archivePage, setArchivePage] = useState(1);
   const [archiveLoading, setArchiveLoading] = useState(false);
   const [archiveError, setArchiveError] = useState<string | null>(null);
@@ -2038,9 +2075,11 @@ export default function Home() {
     };
 
     const loadLearnerState = async () => {
-      const [roadmapResult, analyticsResult] = await Promise.allSettled([
+      const [roadmapResult, analyticsResult, archiveProgressResult] =
+        await Promise.allSettled([
         fetchJson("/roadmap", "Roadmap unavailable"),
         fetchJson("/progress/analytics", "Analytics unavailable"),
+        fetchJson("/pyq-archive/progress", "Archive progress unavailable"),
       ]);
       if (!active) return;
 
@@ -2058,9 +2097,14 @@ export default function Home() {
         setAnalyticsSource("local");
       }
 
+      if (archiveProgressResult.status === "fulfilled") {
+        setArchiveProgress(mapArchiveProgress(archiveProgressResult.value));
+      }
+
       setApiState(
         roadmapResult.status === "fulfilled" ||
-          analyticsResult.status === "fulfilled"
+          analyticsResult.status === "fulfilled" ||
+          archiveProgressResult.status === "fulfilled"
           ? "online"
           : "offline",
       );
@@ -2572,6 +2616,17 @@ export default function Home() {
   };
 
   const startArchivePractice = (archiveQuestion: ArchiveQuestion) => {
+    void fetch(`${API_BASE}/pyq-archive/${archiveQuestion.id}/practice`, {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Archive progress unavailable");
+        return response.json();
+      })
+      .then((payload) => setArchiveProgress(mapArchiveProgress(payload)))
+      .catch(() => undefined);
     draftRecoveryRequestId.current += 1;
     clearSessionDraft(draftOwnerKey ?? activeSessionDraftOwnerKey());
     setDraftRestoreReady(true);
@@ -4096,8 +4151,25 @@ export default function Home() {
               <strong>Archive practice is ungraded.</strong>
               <span>
                 Verified questions also appear in the scored Question bank;
-                archive-only records never enter tests or progress.
+                archive-only records never enter tests or scored progress.
               </span>
+            </div>
+            <div className="archive-progress-card">
+              <div>
+                <span>Archive coverage</span>
+                <strong>
+                  {archiveProgress.practicedCount.toLocaleString()} of{" "}
+                  {archiveProgress.total.toLocaleString()} practised
+                </strong>
+                <small>
+                  Opening an archived question for practice counts it once.
+                </small>
+              </div>
+              <MiniProgress
+                value={archiveProgress.coverage}
+                label={`${archiveProgress.practicedCount.toLocaleString()} of ${archiveProgress.total.toLocaleString()} archived questions practised`}
+              />
+              <strong>{formatCoverage(archiveProgress.coverage)}</strong>
             </div>
             <div className="bank-results-summary" aria-live="polite">
               <span>
@@ -5538,6 +5610,17 @@ export default function Home() {
                 label={`${analytics.uniqueQuestionsAttempted.toLocaleString()} of ${analytics.availableQuestions.toLocaleString()} questions attempted`}
               />
               <small>{formatCoverage(analytics.coverage)} of the bank attempted</small>
+            </div>
+            <div className="sidebar-coverage-row archive">
+              <div>
+                <span>Archive practised</span>
+                <strong>{archiveProgress.practicedCount.toLocaleString()} <small>of {archiveProgress.total.toLocaleString()}</small></strong>
+              </div>
+              <MiniProgress
+                value={archiveProgress.coverage}
+                label={`${archiveProgress.practicedCount.toLocaleString()} of ${archiveProgress.total.toLocaleString()} archived questions practised`}
+              />
+              <small>{formatCoverage(archiveProgress.coverage)} of the archive practised</small>
             </div>
           </div>
         </div>

@@ -60,6 +60,12 @@ class UserStateRepository(Protocol):
 
     async def get_progress(self, user_key: str) -> ProgressProjection: ...
 
+    async def record_archive_practice(
+        self,
+        user_key: str,
+        archive_question_id: int,
+    ) -> ProgressProjection: ...
+
     async def reset_progress(self, user_key: str) -> UserStateResetSummary: ...
 
     async def claim_guest_state(

@@ -4,9 +4,14 @@ import pytest
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
-from app.api import list_pyq_archive
+from app.api import (
+    list_pyq_archive,
+    pyq_archive_progress,
+    record_pyq_archive_practice,
+)
 from app.database import Base
 from app.models import PyqSourcePaper, PyqSourceQuestion
+from app.user_state.memory import MemoryUserStateRepository
 
 
 @pytest.mark.asyncio
@@ -134,5 +139,31 @@ async def test_archive_listing_filters_paginates_and_never_exposes_answers() -> 
         assert first_page.total == second_page.total == 2
         assert first_page.items[0].year == 2024
         assert second_page.items[0].year == 2023
+
+        user_state = MemoryUserStateRepository()
+        initial_progress = await pyq_archive_progress(
+            user_key="archive-learner",
+            db=session,
+            user_state=user_state,
+        )
+        assert initial_progress.practiced_count == 0
+        assert initial_progress.total == 2
+        assert initial_progress.coverage_percent == 0
+
+        recorded = await record_pyq_archive_practice(
+            first_page.items[0].id,
+            user_key="archive-learner",
+            db=session,
+            user_state=user_state,
+        )
+        duplicate = await record_pyq_archive_practice(
+            first_page.items[0].id,
+            user_key="archive-learner",
+            db=session,
+            user_state=user_state,
+        )
+        assert recorded.practiced_count == duplicate.practiced_count == 1
+        assert recorded.total == 2
+        assert recorded.coverage_percent == 50
 
     await engine.dispose()
