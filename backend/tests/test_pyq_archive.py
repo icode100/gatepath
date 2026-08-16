@@ -1000,6 +1000,18 @@ def test_visibility_plan_checksum_is_stable_across_line_endings() -> None:
     assert hashlib.sha256(tampered).hexdigest() != expected
 
 
+def test_portable_text_checksum_accepts_only_line_ending_changes() -> None:
+    crlf = b'{\r\n  "value": "same"\r\n}\r\n'
+    lf = crlf.replace(b"\r\n", b"\n")
+    expected = hashlib.sha256(crlf).hexdigest()
+
+    assert expected in pyq_archive_module._portable_text_sha256s(crlf)
+    assert expected in pyq_archive_module._portable_text_sha256s(lf)
+    assert expected not in pyq_archive_module._portable_text_sha256s(
+        lf.replace(b"same", b"changed")
+    )
+
+
 @pytest.mark.parametrize("binding_name", ["source_archive", "promotion_artifact"])
 def test_visibility_plan_rejects_tampered_source_or_promoted_artifact(
     tmp_path: Path,

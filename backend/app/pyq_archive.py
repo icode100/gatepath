@@ -445,14 +445,30 @@ def _legacy_candidate_fingerprint(
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _portable_text_sha256s(raw: bytes) -> set[str]:
+    """Return hashes for byte-identical text modulo checkout line endings."""
+
+    lf = raw.replace(b"\r\n", b"\n")
+    crlf = lf.replace(b"\n", b"\r\n")
+    return {
+        hashlib.sha256(candidate).hexdigest()
+        for candidate in (raw, lf, crlf)
+    }
+
+
 def _validate_collision_evidence_binding(path: str, expected_sha256: str) -> None:
     source_path = BACKEND_ROOT / path
     if not source_path.is_file():
         raise PyqArchiveValidationError(
             f"Legacy collision evidence source is missing: {path}"
         )
-    actual_sha256 = hashlib.sha256(source_path.read_bytes()).hexdigest()
-    if actual_sha256 != expected_sha256:
+    raw = source_path.read_bytes()
+    actual_sha256s = (
+        _portable_text_sha256s(raw)
+        if source_path.suffix.lower() in {".json", ".py"}
+        else {hashlib.sha256(raw).hexdigest()}
+    )
+    if expected_sha256 not in actual_sha256s:
         raise PyqArchiveValidationError(
             f"Legacy collision evidence source checksum drifted: {path}"
         )
@@ -637,15 +653,12 @@ def _load_pyq_visibility_plan() -> _PyqVisibilityPlan:
         raise PyqArchiveValidationError(
             "PYQ visibility plan is unavailable"
         ) from exc
-    # The reviewed plan was produced on Windows and is pinned to its CRLF
-    # representation. Git checks text files out with LF on Linux, including
-    # the production migration runner. Canonicalize line endings to CRLF so
-    # the same reviewed JSON bytes retain one security identity on both
-    # platforms; escaped JSON newlines are unaffected.
-    canonical_raw = raw.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
-    plan_sha256 = hashlib.sha256(canonical_raw).hexdigest()
-    if plan_sha256 != PYQ_VISIBILITY_PLAN_SHA256:
+    # The reviewed plan was produced on Windows, while production checks it
+    # out on Linux. Accept only byte-identical text modulo CRLF/LF checkout
+    # conversion and preserve the single reviewed checksum in audit records.
+    if PYQ_VISIBILITY_PLAN_SHA256 not in _portable_text_sha256s(raw):
         raise PyqArchiveValidationError("PYQ visibility plan checksum mismatch")
+    plan_sha256 = PYQ_VISIBILITY_PLAN_SHA256
     try:
         payload = json.loads(raw)
     except json.JSONDecodeError as exc:
