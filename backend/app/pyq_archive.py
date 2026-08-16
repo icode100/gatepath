@@ -368,6 +368,14 @@ def _canonical_json_sha256(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _portable_correct_answer(value: Any) -> Any:
+    """Normalize JSON number representation without changing answer meaning."""
+
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
+
+
 def _legacy_candidate_payload(
     question: Question,
     *,
@@ -416,7 +424,11 @@ def _legacy_candidate_payload(
         "difficulty": _enum_value(question.difficulty),
         "text": question.text,
         "options": question.options,
-        "correct_answer": question.correct_answer,
+        # SQLite's JSON decoder preserves ``42`` as int while PostgreSQL JSONB
+        # can return the same stored NAT answer as ``42.0``.  Their accepted
+        # answer semantics are identical; normalize only that integral numeric
+        # representation so the reviewed fingerprint remains portable.
+        "correct_answer": _portable_correct_answer(question.correct_answer),
         "numerical_tolerance": question.numerical_tolerance,
         "marks": question.marks,
         "explanation": question.explanation,

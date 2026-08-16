@@ -1012,6 +1012,50 @@ def test_portable_text_checksum_accepts_only_line_ending_changes() -> None:
     )
 
 
+def test_legacy_fingerprint_normalizes_integral_nat_json_numbers() -> None:
+    def question(answer: int | float) -> Question:
+        return Question(
+            external_id="portable-nat-answer",
+            bank_version="portable-v1",
+            is_active=True,
+            subject_id=1,
+            topic_id=1,
+            source=QuestionSource.PREVIOUS_YEAR,
+            year=2020,
+            exam_session="CS",
+            source_kind=QuestionSource.PREVIOUS_YEAR,
+            source_year=2020,
+            source_paper="CS-2020",
+            source_question_number=1,
+            source_page=1,
+            source_url="https://example.test/cs-2020.pdf",
+            answer_key_url="https://example.test/cs-2020-key.pdf",
+            extraction_method="verified",
+            extraction_confidence=1.0,
+            question_type=QuestionType.NAT,
+            difficulty=Difficulty.MEDIUM,
+            text="Enter the numerical answer.",
+            options=[],
+            correct_answer=answer,
+            numerical_tolerance=0.01,
+            marks=1,
+            explanation="Verified explanation.",
+            tags=["official-pyq"],
+            assets=[],
+        )
+
+    fingerprint_args = {
+        "subject_codes_by_id": {1: "CN"},
+        "topic_slugs_by_id": {1: "transport-layer"},
+    }
+    assert _legacy_candidate_fingerprint(
+        question(42), **fingerprint_args
+    ) == _legacy_candidate_fingerprint(question(42.0), **fingerprint_args)
+    assert _legacy_candidate_fingerprint(
+        question(42), **fingerprint_args
+    ) != _legacy_candidate_fingerprint(question(42.5), **fingerprint_args)
+
+
 @pytest.mark.parametrize("binding_name", ["source_archive", "promotion_artifact"])
 def test_visibility_plan_rejects_tampered_source_or_promoted_artifact(
     tmp_path: Path,
