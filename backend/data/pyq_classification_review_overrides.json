@@ -1,0 +1,3323 @@
+{
+  "schema_version": "1.0-staging-pyq-classification-review-overrides",
+  "source_role": "staging_only_authoritative_classification_review_evidence",
+  "database_writes_performed": false,
+  "production_import_authorized": false,
+  "automatic_promotion_allowed": false,
+  "practice_eligible_count": 0,
+  "base_review_identity": {
+    "expected_count": 82,
+    "classification_projection_sha256": "2272fa88fab1a2e27a9230426a96a600faf7acbc091fe9ac7bdd3a609402c96e",
+    "review_key_sha256": "ae8ea59f11a39238c0cc140f34394a039882ae1de6019b9c56cb96859b0853c5"
+  },
+  "input_bindings": {
+    "base_parent_policy": {
+      "path": "backend/data/pyq_slot_classification_overrides.json",
+      "sha256": "08d17a64c2a0849bc4e836aa08cc1a21ee776b1cd5371b83b41c6b1140072bf1",
+      "bytes": 384234
+    },
+    "canonical_archive": {
+      "path": "tmp/pyq/build/canonical_pyq_archive.json",
+      "sha256": "f2f5ab9f4edea7300da909ee0509f871ac4ac52b717fc8dd2e91c67efdc6aafd",
+      "bytes": 4272081
+    },
+    "classification_review_2015_ocr": {
+      "path": "tmp/pyq/build/classification_review_2015_page_ocr.json",
+      "sha256": "80b8c51df778374faa54c0d16223010da76077c08c47aec524f77db6ce7acfa3",
+      "bytes": 602264,
+      "embedded_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e"
+    },
+    "classification_review_base": {
+      "path": "backend/data/pyq_classification_review_base.json",
+      "sha256": "e1bf4a7650570fed5889013c0b7a657eac3d29bcfe7ccf58836432b9489055ae",
+      "bytes": 1068017,
+      "embedded_artifact_sha256": "928bceb94a4e265e957ae0e59de660f4efacb8d39611414a2ff2dedf102fa5b6"
+    },
+    "classification_review_evidence": {
+      "path": "tmp/pyq/build/classification_review_evidence.json",
+      "sha256": "6a8c16276769382a5c676fdb793854ededf5340dad43ac4f19cc65c105e4a517",
+      "bytes": 615208
+    },
+    "content_verification_ledger": {
+      "path": "tmp/pyq/build/verified_pyq_content.json",
+      "sha256": "374def40cb0f3c9d8acc9f9c669535a4390e58351bdc6c9dfad980588d674bc9",
+      "bytes": 4767079,
+      "embedded_artifact_sha256": "245311a192e8f2b2ebf22a0dc0778d86270cb9485b620ba379c86c9d9c5deba6"
+    },
+    "legacy_child_policy": {
+      "path": "backend/data/pyq_legacy_child_classifications.json",
+      "sha256": "cb938ed7d0ed5a0fe15d437ba8026e7cfbaed300092d60fc5ae2fa9b7c8488a2",
+      "bytes": 292968
+    },
+    "legacy_subpart_audit": {
+      "path": "backend/data/legacy_pyq_subparts_1996_2002.json",
+      "sha256": "1b5195376aec4ceed709bce13c98d0b6507cb1474ce6173f4e8c7243240205e6",
+      "bytes": 1315577,
+      "embedded_artifact_sha256": "7a2efbeabf379d6cdca63012da0d566ba30dcfdc71343fbc8b2a4be5d45da63a"
+    },
+    "ocr_cache_gate-cs-2017-session-1": {
+      "path": "tmp/pyq/ocr-text/CS1-2017.json",
+      "sha256": "83febba05c26b1a8a1a1ec4288bc2302ef15ffc0039f9c888c516ca31a1d6399",
+      "bytes": 26518
+    },
+    "ocr_cache_gate-cs-2017-session-2": {
+      "path": "tmp/pyq/ocr-text/CS2-2017.json",
+      "sha256": "3f2456aed8de5759f31d974bb04afa3026ec97bbd7b66b6f1366ea6215ead618",
+      "bytes": 23988
+    },
+    "ocr_cache_gate-cs-2019": {
+      "path": "tmp/pyq/ocr-text/CS-2019.json",
+      "sha256": "99e7164ee312fd71917b12d65cffbd674a065713da8be59cd5a0560238e27583",
+      "bytes": 24183
+    },
+    "ocr_cache_gate-cs-2020": {
+      "path": "tmp/pyq/ocr-text/CS-2020.json",
+      "sha256": "21bfbbc0f137cc4c850f156c9ed2d4001f3922d057563cbc93a056094d036fd3",
+      "bytes": 22320
+    },
+    "original_locator_ocr": {
+      "path": "tmp/pyq/build/original_pdf_locator_ocr_candidates.json",
+      "sha256": "5c6e1b12f346970ef0ea79c9d12a930fc6d5136a7477281649e88b672fd052e5",
+      "bytes": 544133,
+      "embedded_artifact_sha256": "3a235d9b88bbba68931f00cdf89c898f52ec311a5549bdfdd551c765eb13172f"
+    },
+    "original_pdf_provenance": {
+      "path": "tmp/pyq/build/original_pdf_provenance.json",
+      "sha256": "d62b00bfaa3cce0bf8e97ebdb8648c80418eb1e1e753572ed86db42da580c482",
+      "bytes": 3712972,
+      "embedded_artifact_sha256": "004b55da685834de424835117896e92b0486371e2977ba6f1758d1a5d184f063"
+    },
+    "topic_inventory": {
+      "path": "backend/data/question_bank_manifest.json",
+      "sha256": "678c92c8ae9395f3c9d72f1088177cacfdef76773c30224975644bee184d764f",
+      "bytes": 7240
+    }
+  },
+  "policy": {
+    "allowed_decisions": [
+      "map",
+      "out_of_syllabus",
+      "review"
+    ],
+    "map_requires_single_inventory_course_topic": true,
+    "out_of_syllabus_requires_original_evidence": true,
+    "compound_or_insufficient_evidence_remains_review": true,
+    "third_party_content_is_not_evidence": true,
+    "base_policy_is_comparison_only": true,
+    "expanded_children_require_explicit_child_identity": true
+  },
+  "counts": {
+    "total": 82,
+    "by_decision": {
+      "map": 38,
+      "out_of_syllabus": 29,
+      "review": 15
+    },
+    "by_evidence_kind": {
+      "checksum_bound_original_page_text_review": 2,
+      "checksum_bound_original_pdf_page_ocr_index": 40,
+      "checksum_bound_original_pdf_page_rapidocr": 27,
+      "checksum_bound_original_pdf_page_rapidocr_cache": 6,
+      "checksum_bound_original_text_block": 7
+    }
+  },
+  "decisions": [
+    {
+      "source_paper_id": "gate-cs-1996",
+      "canonical_parent_ordinal": 22,
+      "item_label": "1.22",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "COA",
+      "topic": "machine-instructions-and-addressing-modes",
+      "reason_code": "explicit_machine_instruction_timing",
+      "reason": "The original question explicitly asks about execution cycles of the 8085 RET machine instruction.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d822fe657bc148f9422096b3f1bba3f6b813242759ef937b47f173f8494565c4",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "2eebe026833b15f6ac60ac8013f706c5360894e093044a165c0f11161846dde1",
+        "rendered_page_sha256": "3a4bcc7822a09b3dc7d789cc2451c06aae65ee5636d0ad759773015946b212f6",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "1.22.",
+        "excerpt": "1.22.Number of machine cycles required for RET instruction in 8085 microprocessor is (a) 1 (b)2 (c) 3 (d)5 1.23. Both's algorithmforinteger multiplicationgives worst performance whenthe multiplier pattern is (a) 101010....1010 (b) 100000 ....0001 (c) 111111 ....1111 (d) 011111 ....1110 Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus.Percentile, All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "e4bf2e118f8ee044a4b72184d09c497da887371120d6b32d2f6bfe86f36a0d8f",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 22,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "3d2bf327d7b77fe355393158551e56a00e2ad263a130bd54fbf3493682b0154e"
+    },
+    {
+      "source_paper_id": "gate-cs-1996",
+      "canonical_parent_ordinal": 30,
+      "item_label": "2.5",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "numerical_root_finding_not_in_current_syllabus",
+      "reason": "Newton-Raphson root-finding is numerical analysis and is not listed in the GATE CSE 2027 syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d822fe657bc148f9422096b3f1bba3f6b813242759ef937b47f173f8494565c4",
+        "source_pages": [
+          6
+        ],
+        "page_ocr_text_sha256": "252cd9f88229dc1b3cdbe220e76c6d0d474c7905a7c99f91785396d3de206f6c",
+        "rendered_page_sha256": "38b4efb9db82e845ebd64286d0368a33e51099784cedc95d17e6cfbd73ef1faa",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2.5.",
+        "excerpt": "2.5. Newton-Raphson iteration formula for finding 3√c, where c > 0 is, 2x3 + 3√∈ 2x3 -3√c (a)Xn+1 (b)Xn+1= ATEForum 3x 2x2+C 2x3 -c (c)Xn+1 (d) ×n+1= 3x cosθ -sinθ 2.6. The matrices a and commute undermultiplication sinθ COSθ 0 b (a) if a = b or θ = nπ, is an integer (b) always (c) never (d) if a cos θ≠b sin θ 2.7. The probability that top and bottom cards of a randomly shuffled deck are both acesin 4 4 4 4 3 4 4 (a) 52 52 52 51 2.8. If L1 and L2 are context free languages and R a regular set, one of the languages below is not necessarily a contextfree language.which one? (a) L1, L2 (b) L1 L2 (c) L1R (d) L1 U L2 Join All India Mock GATE Classroom Test Series -2oo7 conducted by GATE Forum in over 25 cities all over India.Question Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile, All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "9a39784fa6c4895e6be30f0e1ca84e29505e3c7b20c9b954da65995d0a177dd3",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 30,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "82c109857b00e80774c287ec8320d663ffe9e7e79b1c1b8e43f14425a72823ed"
+    },
+    {
+      "source_paper_id": "gate-cs-1997",
+      "canonical_parent_ordinal": 5,
+      "item_label": "1.5",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_algorithm_paradigms",
+      "reason": "The exact question spans greedy, depth-first search, dynamic programming, and divide-and-conquer; no single canonical topic is faithful.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "79bdc48e08ed52027863babcb0b7a5246de6877d56c213e436b1236b749f6cb0",
+        "source_pages": [
+          1,
+          2
+        ],
+        "text_block_sha256": "08e7b4bf7a547541acc8989652c7e1d4ed6f27fc4aa0af88f226ca5e61eb7ec9",
+        "excerpt": "1.5 The correct matching for the following pairs is\n(A) All pairs shortest paths (1) Greedy\n(B) Quick Sort (2) Depth-First search\n(C) Minimum weight spanning tree (3) Dynamic Programming\n(D) Connected Components (4) Divide and Conquer\n(a) A – 2 B – 4 C – 1 D - 3 (b) A – 3 B – 4 C – 1 D - 2\n(c) A – 3 B – 4 C – 2 D - 1 (d) A – 4 B – 1 C – 2 D - 3\nJoin All India Mock GATE Classroom Test Series - 2007 conducted by GATE Forum in over 25 cities all over India. Question\nPapers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile, All India Rank,\ninteraction with IISc alumni in our online discussion forums, and more. For more details,\nvisit\nwww.gateforum.com\nThink GATE Think GATE Forum\nGATE CS - 1997 www.gateforum.com\nJoin discussion of this test paper at http://forum.gatementor.com",
+        "excerpt_sha256": "08e7b4bf7a547541acc8989652c7e1d4ed6f27fc4aa0af88f226ca5e61eb7ec9",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 5,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "ALG",
+        "topic": "algorithm-design-techniques",
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "f4c212d7ff0adb40227065154594443e328c1cf37ed4210d0b2899844bb4ccd2"
+    },
+    {
+      "source_paper_id": "gate-cs-1997",
+      "canonical_parent_ordinal": 52,
+      "item_label": "8",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "PDS",
+      "topic": "linked-lists",
+      "reason_code": "explicit_linked_list_pointer_program",
+      "reason": "The original Pascal record and pointer procedure operates on a linked list.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "79bdc48e08ed52027863babcb0b7a5246de6877d56c213e436b1236b749f6cb0",
+        "source_pages": [
+          10
+        ],
+        "page_ocr_text_sha256": "a7b5a2bc61051bf70ff328e2256cd30593c4ef35a77fdcdd30a425f6dbf201b8",
+        "rendered_page_sha256": "f4a5936e0260717888686735f0698352d8cb8acffc44a9137d9b176b18574b07",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "8.",
+        "excerpt": "8. Let L = {ai, a2, ..., an) n≥0 be a list whose Pascal representation is type list = record next:↑ list; val : integer end The following function returns a list in which a2;and a2i-1,1<i< are 2 number and the contentof theboxinyour answer sheet. 1. function change (p: ↑ list): ↑ list; 2. var q.t :↑ list; 3. begin 4. if p = nil then change : = p 5. else if p ↑ next = nil then change : 6. else begin 7. q:p↑ next; 8. :=q; t:q ↑ next; 10. =p; 11. :=change(t) 12.end 13. end Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile, All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "8c32b3b8ab6cc1167b885e797a90ae020cbd15c0c0bd1f337a6916c1b0b5e9bf",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 53,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "a3bbd1d0a82d920e4043ab3ba22b80df7854862c7ce1bd7c0ea0379b0d8a5bee"
+    },
+    {
+      "source_paper_id": "gate-cs-1998",
+      "canonical_parent_ordinal": 45,
+      "item_label": "2.10",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "COA",
+      "topic": "machine-instructions-and-addressing-modes",
+      "reason_code": "explicit_processor_address_space",
+      "reason": "The original question asks for the address space of the 8086 processor.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "cb26e3cfac16abffdc554998c872572e6c3eeb94e9f8886aeb124cda1ccf9266",
+        "source_pages": [
+          8
+        ],
+        "page_ocr_text_sha256": "b7b7efb9ead26d270a8a65564cb11b9cc984ccdcf24d69c329c5c25fc04fb633",
+        "rendered_page_sha256": "98afdcc9cd10e6f59a414e8a0c254480cc84a37d09f708301eab079a20a8a8de",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2.10.",
+        "excerpt": "2.10. The address space of 8086 CPU is (a) one Megabyte (b) 256 Kilobytes (c)1 K Megabytes (d) 64 Kilobytes 2.11.A complete n-ary tree is one inwhich every node has O or n sons.If x is the number of internal nodes of a complete n-ary tree, the number of leaves in it is given by (a) x(n-1) +1 (b) xn -1 (c) xn + 1 (d)x(n+1) 2.12.What value would the following function return for the input x = 95? Function fun (x:integer):integer; Begin If x > 100 then fun :x-10 Else fun : fun(fun (x + 11)) u (a) 89 (b) 90 (c)91 (d) 92 2.13. What is the result of the following program? program side-effect (input, output); var x, result: integer: fucntion f (var x:integer):integer; begin x:x+1;f:=x; end begin x:=5 result:=f(x)*f(x) writeln(result) end (a) 5 (b) 25 (c)36 (d) 42 2.14.Let A be a two-dimensional array declared asfollows: A: array [1 ....10] [1 .... 15] of integer; Assumingthateachintegertakesonememorylocationsthearrayisstoredin row-majororderandthefirstelementofthearrayisstored atlocation1oo,what is the address of the element A[i][j]? (a)15i+j+ 84 (b)15j+i+ 84 (c)10i+j+89 (d) 10j+i+ 89 Join All India Mock GATE Classroom Test Series -20o7 conducted by GATE Forum in over 25 cities all over India.Question Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus.Percentile,All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "96d52f9d973f69c39e728aba79028e483c5678ad99d0be9f7777138bdcded57e",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 45,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "b7f913977542d46c8cd8272ecf9a7a8eb27d307bf9bd873e3b3e0db1345812df"
+    },
+    {
+      "source_paper_id": "gate-cs-1999",
+      "canonical_parent_ordinal": 9,
+      "item_label": "1.9",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_os_abstractions",
+      "reason": "The question deliberately matches threads, virtual address spaces, file systems, and signals to different hardware resources.",
+      "evidence": {
+        "kind": "checksum_bound_original_page_text_review",
+        "source_pdf_sha256": "4bab39aadb12277a49acc9ad6ea561370da6a0ebf3f23b97cb5c2079c30d856b",
+        "source_pages": [
+          2
+        ],
+        "text_block_sha256": "5b3c1f90496a6aee2c5680dedd75a45dffef9580d4985856729ce524ba9fc2e3",
+        "excerpt": "1.9 Listed below are some operating system abstractions (in the left column) and the\nhardware components (in the right column)?\n(A) Thread 1. Interrupt\n(B) Virtual address space 2. Memory\n(C) File system 3. CPU\n(D) Signal 4. Disk\n(a) (A) – 2 (B) – 4 (C) – 3 (D) - 1 (b) (A) – 1 (B) – 2 (C) – 3 (D) – 4\n(c) (A) – 3 (B) – 2 (C) – 4 (D) - 1 (d) (A) – 4 (B) – 1 (C) – 2 (D) – 3",
+        "excerpt_sha256": "5b3c1f90496a6aee2c5680dedd75a45dffef9580d4985856729ce524ba9fc2e3",
+        "rendered_page_evidence": [
+          {
+            "page": 2,
+            "sha256": "3702a0ceae39f7f9d001bd8bd52b14c31cbdac26c88ad945ce473145b20ae581",
+            "format": "pgm",
+            "dpi": 144,
+            "color_mode": "gray"
+          }
+        ],
+        "question_boundary_status": "rendered_page_review_required"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 9,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "OS",
+        "topic": "interrupts",
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "6d22ec9abf264e63723b9594d3e88e8b33368d3ef78c3d1ad54bab54e44415d3"
+    },
+    {
+      "source_paper_id": "gate-cs-1999",
+      "canonical_parent_ordinal": 23,
+      "item_label": "1.23",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "numerical_root_finding_not_in_current_syllabus",
+      "reason": "Newton-Raphson convergence conditions are numerical analysis outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "4bab39aadb12277a49acc9ad6ea561370da6a0ebf3f23b97cb5c2079c30d856b",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "09477716a8447e05248745c41444350c0794215fb9c7df76c5f35f021df1136d",
+        "rendered_page_sha256": "d30e5e1d31df99f13fa4f04ca8909d79f56e759d21425275a15f81d48d229873",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "1.23.",
+        "excerpt": "1.23. The Newton-Raphson method is to be used to find theroot of the equationf(x)=0 where x。is the initial approximation and f'is the derivative of f. The method converges (a) always (b) only if f is a polynomial (c) only if f(x。)<0 (d)None of the above 1.24.Let R = (a,b,C,d,e, f) be a relation scheme with the following dependencies c→f,e → a,ec → d.a →b.Which of the following is akey for R? (a) CD (b)EC (c) AE (d) AC 1.25 Whichofthefollowingiscorrect? (a)B-trees are for storing data on disk and B+ trees are for main memory. (b) Range queries are faster on B* trees. (c)B-trees are for primary indexes and B* trees are for secondary indexes. (d)TheheightofaB*treeisindependentof thenumberofrecords. Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile, All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "e453630ec726a8853789e9ad1b94f17124826f665bac301aaf3facc25bb68885",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 23,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "691fe041d84dce95e2eb7b4ceb7a5d377d592a34c9e84ee2da5381d4dc4352bd"
+    },
+    {
+      "source_paper_id": "gate-cs-1999",
+      "canonical_parent_ordinal": 38,
+      "item_label": "2.13",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CD",
+      "topic": "runtime-environments",
+      "reason_code": "explicit_dynamic_scoping",
+      "reason": "The program outcome depends explicitly on dynamic scoping in the run-time environment.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "4bab39aadb12277a49acc9ad6ea561370da6a0ebf3f23b97cb5c2079c30d856b",
+        "source_pages": [
+          7
+        ],
+        "page_ocr_text_sha256": "cd5ff51bc99fdbd76dcc236e031ba3e0962d15d8832ae1e4c50dba476701725c",
+        "rendered_page_sha256": "9d4623eb2410a128a9a9b2b88ef705f1601c98f5ee9f64c99565edc0bad03fa0",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2.13.",
+        "excerpt": "2.13.Consider the following program in a language that has dynamic scooping: var x: real; procedure show: begin print(x);end; procedure small; var x:real; begin x: = 0.125; show; end; begin x:=0.25; show; small end. Then the outputof theprogram is: (a) 0.125 0.125 (b) 0.25 0.25 (c)0.25 0.125 (d) 0.125 0.25 2.14.The number of tokens in the Fortran statement D0 10 I = 1.25 is (a) 3 (b) 4 (c) 5 (d)None of the above Join All India Mock GATE Classroom Test Series -20o7 conducted by GATE Forum in over 25 cities all over India.Question Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile,All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "1a6840fad01d8ab36cdfb5de21c14cd13eb6b909a8cfe20ff0a379f79b8ba1e4",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 38,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "21c70758a9730c5f278a7f9c476e1ef02e2976984574a29c9937ab2f51e51a69"
+    },
+    {
+      "source_paper_id": "gate-cs-1999",
+      "canonical_parent_ordinal": 39,
+      "item_label": "2.14",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CD",
+      "topic": "lexical-analysis",
+      "reason_code": "explicit_token_count",
+      "reason": "The question asks for the number of lexical tokens in a Fortran statement.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "4bab39aadb12277a49acc9ad6ea561370da6a0ebf3f23b97cb5c2079c30d856b",
+        "source_pages": [
+          7
+        ],
+        "page_ocr_text_sha256": "cd5ff51bc99fdbd76dcc236e031ba3e0962d15d8832ae1e4c50dba476701725c",
+        "rendered_page_sha256": "9d4623eb2410a128a9a9b2b88ef705f1601c98f5ee9f64c99565edc0bad03fa0",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2.14.",
+        "excerpt": "2.14.The number of tokens in the Fortran statement D0 10 I = 1.25 is (a) 3 (b) 4 (c) 5 (d)None of the above Join All India Mock GATE Classroom Test Series -20o7 conducted by GATE Forum in over 25 cities all over India.Question Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile,All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "4dc52299f685af2cb83aa59078f937c416ff7857bbb277d7812a5d866c235684",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 39,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "c7c236c8f6fee19726b7444beffb6a15c3019211bf85cb7f4145253c36abcc7c"
+    },
+    {
+      "source_paper_id": "gate-cs-2000",
+      "canonical_parent_ordinal": 27,
+      "item_label": "2.4",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "polynomial_interpolation_not_in_current_syllabus",
+      "reason": "Minimum-degree polynomial interpolation is not listed in the current Engineering Mathematics syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "a2b1415201e747945ef255327b916750c0883197fca03016732067133c4bff98",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "88e795568f2557df7f8710f76fdaed7998fe6749047c4475b6da887cf9dafa6b",
+        "rendered_page_sha256": "133cd14d62d9b6d61f133ff471e6647a0f68a29d14c3922476edd3b91a63a5cc",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2.4.",
+        "excerpt": "2.4. A polynomial p(x) satisfies the following: p(1)=p(3)=p(5)=1 p(2) =p(4) =-1 The minimum degree of such a polynomial is (a) 1 (b) 2 (c)3 (d) 4 Join All India Mock GATE Classroom Test Series -2oo7 conducted by GATE Forum in over 25 cities all over India.Question Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus.Percentile, All India Rank, interaction with IISc alumni in our online discussion forums, and more. For more details, visit www.gateforum.com Think GATE Think GATE Forum",
+        "excerpt_sha256": "1d205e9606d5f6738af844b2394bed229de3ae76f107b8b3e96d63cd98dedda9",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 27,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "EM",
+        "topic": "polynomials",
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "d970354662253fabfbc3ad40fa6c6bf14d7bc76e201bb62f0baf5197b203d07f"
+    },
+    {
+      "source_paper_id": "gate-cs-2000",
+      "canonical_parent_ordinal": 36,
+      "item_label": "2.13",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "graphics_frame_buffer_not_in_current_syllabus",
+      "reason": "Graphics display modes and frame-buffer colour capacity are outside the current GATE CSE syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "a2b1415201e747945ef255327b916750c0883197fca03016732067133c4bff98",
+        "source_pages": [
+          7
+        ],
+        "page_ocr_text_sha256": "e445da1213fe950feb337cc037353abf313ecb8768b85d103921f79ed5b41d67",
+        "rendered_page_sha256": "9dbd7fc03f87a0cc3221d68ce2544e1519e36ce92a8cbe40895e090a2eda6712",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2.13.",
+        "excerpt": "2.13.A graphics card has on board memory of 1 MB.Which of the following modes can thecardnotsupport? (a)1600× 400 resolution with 256 colours on a17 inch monitor (b)1600× 400 resolution with 16 million colours on a 14 inch monitor (c)800× 400resolution with 16 million colours on a 17inch monitor (d)800× 800 resolution with 256 colours on a 14 inch monitor 2.14. Consider the values of A = 2.0 × 1030, B = -2.0 × 1030, C = 1.0, and the sequence X:=A+ B Y:=A+C X: =X+ C Y:=Y+ B Executedonacomputerwherefloatingpointnumbers arerepresentedwith32 bits. The values for X and Y will be (a) X = 1.0, Y = 1.0 (b)X= 1.0, Y = 0.0 (c) X = 0.0,Y = 1.0 (d) x=0.0, Y=0.0 Papers including section tests and full tests are designed by IISc alumni according to the latest syllabus. Percentile, All India Rank, interaction with IISc alumni in our online discussion forums,and more.For more details, visit www.gateforum.com ThinkGATEThinkGATEForum",
+        "excerpt_sha256": "d8fa129efa03c64bd65aad0011b1e352802207bb4b93cbd0910a822a3b8272ec",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 36,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "objective_answer_not_verified",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "78643526dcb6bd07d4c3d91d3ea30fc44b9ac5eebd10a29b40c5441b2bd2eb3b"
+    },
+    {
+      "source_paper_id": "gate-cs-2005",
+      "canonical_parent_ordinal": 3,
+      "item_label": "3",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "original_locator_conflict",
+      "reason": "The canonical locator lands inside another question's code/options and does not isolate question 3 safely.",
+      "evidence": {
+        "kind": "checksum_bound_original_page_text_review",
+        "source_pdf_sha256": "4444090943ce9093ca672ddc0aa981bf3fb09559ba0bd1bc7c1588a82d199724",
+        "source_pages": [
+          9
+        ],
+        "text_block_sha256": "3a7cc6b76e6c8975b13681e89abea6c8afd54428c89d3c6e8fadd31f3ba3d7cc",
+        "excerpt": "3. iot lemp = • s: n•~•nor)' is ne@lig ible, \\\"1••t L< the.\n( n) 1nd!n:otnddn..,.•in~ m inimum pediJimnnoe gai n of opernting\n(b) Lnd\"\"ed &ddrcl<slng U1e device under i ntermp[ mode over\noper.Uing it under program. controllcxl\n( o) Autoi ncroment mode?\na, (l,o). {2b). (3,a ) 3 . 15\nb. ( l.o ). (l.c) . (3. b) b. 2S\nc. ( I , h) , (2,e). (3, :.) c. ;;s\nd. (Laj. (2,b~ (3.o) d. 45\n01. C'<>nstder a dirw1 mopped C{ocJ1e of sozc Y.! 70, CO!uidcr \" Ji~k driw with lho fo U owi~g\nKl! with blook ~ize. 32 b)~es. 11•• CI'U sp<-'<lifientions!\nge nerates 32 bit Mddre>.'!l.:s. The number uf 16 surfaces. 512 irnokl;F$urt'r\"\"', S 12\nbit;, •tocdctl f(l[ cnolto indeltins nud 1110 secto111 tnJCI:. 1 Kll1~cu!or '\"ullion sp<led\nnumber ofwg bill urc N$p¢clivety: 3000 1p111. Tho; disk is opcrmed in uyck\na. 10. 17 s tcnlin g model 1vbcnlby whcno \\'e r o n~> ol\nb. 111.22 hyte Word i'l ready it is •ent to memory:\n~imilnrly, for \\\\riling, the: dis k interiilce\no. 15. 17 n::~ds :1 4 \"ytc: 1\\'Qrd l'j\"m the: memO!') m\n•L 5. 17 each DMA oyd.:. M~n1ory cyuk lime il-10\n68. A 5 ~lllge pipe line<! C\"'l'U \"\"\" l~e followina nsc:c. The n1aximum ~olag~ Q[ Lime\nsequence of st~,ges : tlwl lhc CPt; gel.§ 'biO<Jked <lt!ring Dl\\lll\\\nJF • U18LnJOi iiM1 fetch 'lrom lll.~h'U<lti<MI operaTi on is :\nnunn-ory .. 10\n1\nRD • lnslructioo dc:eo<l~ nnd rogisler rt:atl h . :!5\nLX • E.-.wule: AL U oper•tion for data and o. 40\natldn:ss computation. d. SQ\nl\\ lA - Dnu1 memory nC<:ess - for write 7L ~~ 1ppo•e n processes. 1• , - P •• s ha re m\nao.:.:.s. lht: regisr er rl:lld at RD stage ls identica l resnu1-.::e \"\"'\"'· which can be\n~~bed. restrvcxl :md rdea~etl 011c at a thu e. 11••\n\\Vl3 · Regi•ter write lmok. utll,'<iru um re<ourw ro<jUu'etUent of pro<.'CS>\nCo Mider th e fo ll owing li.:<:JUill= of P, i.. • 1 11i11:r<: I, 0. Wbiul\\ OJUl of the\nio.s tru ct:ioll5: following is n Jmffioicnt condit ion for\nl 1: L R(), Joc:l; ROoo M(locl) en•uing thnl dendlook does not occur'/\nt,: kRO , RO : ROooRO+RO tl. \"'l .. '1 < IIJ\n1s:S IU.RO; l\\looR2 - RO b . 'tL & < m\nLolo uoh s ta ge lltko: ouc olook uyul.:. '\nWhat t~ the number or clo\"k ~yc lcs I'Mken o. L ,., ,,, <( rll'+ n)\nto u<n'np lete the alxwe ~e<1ucn~e of •\niruU'Uelillttli $ turtin~ trow th e fetcl! of 11 d. L ',< (lll'n)\na. 8 •••\nb. 1() 72. Conside r the fo Uo\\\\ ing, CC!dc frngmto.~l:\nu. l l 1t ((- 1) - 01 ( .. .. s, ~t·M . W\\a• . • · M tt l\nd. 15 ...._ ( ... e;-1; pd.m;fl•W . W \\JI\"• • • .. ,, )\n69. i\\ dwi\"\" 11ith dttrn tnm•fcr rhl~ LO KB ' \"\"\"' Ll:l u.v be: the \\laluc:s pnnttd by tho pur~::~~t\nill C<)lln<-clcxl ro :t (' PU. D~l:t i ~ tran.•ferrccl process. nnd x.y be th e values printed ·by\nbyle-wiJe . 1.4 1he int.,pl overhead be -1 tl1e child pltl<luss. Which o ne of Lbu\nv-~ec 'ln e byte tmf1Sfer lime lletween the followmg is. TRU r;·1",
+        "excerpt_sha256": "3a7cc6b76e6c8975b13681e89abea6c8afd54428c89d3c6e8fadd31f3ba3d7cc",
+        "rendered_page_evidence": [
+          {
+            "page": 9,
+            "sha256": "0232716d51eb9c7010994e036310701ed5e7bc03baac7189d02b898add08dae3",
+            "format": "pgm",
+            "dpi": 144,
+            "color_mode": "gray"
+          }
+        ],
+        "question_boundary_status": "rendered_page_review_required"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 3,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "20f691d46f7521951d3444a1d7450d9c9106582aaab751738f508f691cedd7f5"
+    },
+    {
+      "source_paper_id": "gate-cs-2005",
+      "canonical_parent_ordinal": 4,
+      "item_label": "4",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "original_locator_conflict",
+      "reason": "The canonical locator page starts at question 5 and does not contain an unambiguous question-4 block.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "4444090943ce9093ca672ddc0aa981bf3fb09559ba0bd1bc7c1588a82d199724",
+        "source_pages": [
+          1
+        ],
+        "page_ocr_text_sha256": "ac06163b824f5a4602f67261a4748e7c49ed580ff9dcdfdc52904596f1b5866e",
+        "rendered_page_sha256": "9f868fc8f3ec710f04b61e57a8e086ebbd99a8e343c72be9bed24608c6b92508",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "full_page_locator_conflict_review_only",
+        "excerpt": "GATE-2005 1of12 COMPUTERSCIENCE&ENGINEERING ONE MARKSQUESTIONS(1-30) 5. Aprogram Preadsin500 integers in the range[o.too|representing the scoresof 500 students.It then prints the frequency What doesthe following C-statement ofeachscoreabove5oWhatwouldbethe declare? best way for P to store the frequencies? int(f)(int·) a.An array of50numbers aA function that takes an integer pointer bAnarrayof 100numbers as argument and retums aninteger c.An array of5o0 numbers b Afunction that takesan integer as d.A dynamically allocated array of550 numbers Apointer to a function that takes an Anundirected graph G has n nodes.Its integer pointer as argument andreturns adjacency matrix is given by an n xn an integer squarematrix whose (i) diagonal elements dA function ihat takes an integer pointer are O's,and(in)non-dingonal elements are as argument and returns a function I's.WhichoneofthefollowingisTRUE? pointer Graph Chas no minimum spanning AnAbstractData Type(ADT)is tree (MST) asame as an abstract class b. Graph G has aunique MSTof cost n-1 ba data type that cannot be instantiated C Graph G hasmultple distnct MSTs. ca data type for which onlyihe each ofcostn-1 operations defined on it can be used. P Graph G has multiple spanning trees of butnone else different cosis dall of the above The time complexity of computing the A common property of logicprogramming transitiveclosure ofabinaryrelation ona languages andfunctional languages is: sel ofnelementsisknown lo be aboth are procedural languages a.O(n) b.O(nlogn) b.both are based on X-calculus c.0(n) c.both are declarative (uop dboth use Hom-clauses Which one of the following are essential 8. Let A.Band Cbenon-empty sets nnd let features of an object-oriented X=(A-B)-CandY=(A-C)-(B-C) programming language? Which one of the followingisTR",
+        "excerpt_sha256": "455d760aa151472230cf70dd0a5d495bf71df8e0017cee88b1b3c12ac1e5e460",
+        "question_boundary_status": "page_level_locator_conflict"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 4,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "5694a18033877c79121280b975f41ba0ce6c67a466865585c10c128c701ebbbd"
+    },
+    {
+      "source_paper_id": "gate-cs-2005",
+      "canonical_parent_ordinal": 58,
+      "item_label": "58",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "ALG",
+      "topic": "complexity-analysis",
+      "reason_code": "explicit_p_np_completeness",
+      "reason": "The original question compares P/NP-completeness of two independent-set decision problems.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "4444090943ce9093ca672ddc0aa981bf3fb09559ba0bd1bc7c1588a82d199724",
+        "source_pages": [
+          7
+        ],
+        "page_ocr_text_sha256": "a8f785d0a1c9c86269ca51e22aa7db4767709a3af3244e45de4332dde2d28d39",
+        "rendered_page_sha256": "b3b09b3c9a4c8eacee011f5548888661f885b816da83483d814d64c0dffc1496",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "58 ",
+        "excerpt": "58 Consider the following two problems on \"abb') undirected graphs: d (we[ab)|w doesnot contain*aaas aGiven G(V.E).does Ghave an asubstring) independent set of sizeV|-4? 54 Let N and N,denote the classesof B:GivenG(VE).doesGhavean languages accepted by non-deterministic independent set of size 5? finiteautomataand non-deterministic push-downautomata.respectively.Let D Whichone of thefollowingisTRUE? and D,denote the classes of languages aαisinPandβisNP-complete acceptedbydeterministicfinite automata b.uisNP-complete and βisinP and deterministic push-down automata respectively Whichoneof the followingis Bothα and β are NP-complete TRUE? dBoth t and β are in P aDcNandD,CN 59. Consider the grammar b.DNundD-N, E→E-n|Exn|n D=NandD-N For a sentence nnxn,the handles in he dD=NrandDcN right-sentential form of thereductionare 55 Consider thelanguages a n,E+nandE+nxn L{aben.m>OandL-fa2b” b.n.E+nandE+Exn +nm>OWhich one of the following cn.n+nandn-nxn statements isFALSE? dn.E+nandExn LLis a context-free language 60. Consider the grammar: b.LULisacontext-free language S-(S)a .Land Lare context-free languages Let the number of states in SLR(I).LR(1) dLLis acontext sensitive language and LALR(l)parsers for thegrammar be 56 Let L;be a recursive language.and let L ,nand n respectively The following be a recursivelyehumerable but not relationship holdsgood recursive language.Which one of the an<n<n following is TRUE? bn-n<n a.isrecursive and is recursvely C. nnn enumerable dni=n-= b Zis recursive and is l0u 61. Consider line number 3of the following recursively enumerable C-program. LandL,arerecursively enumerable Intmlo0 1 Lis fecursively enumerable and Lis tro(1=0.1,I+), recursive",
+        "excerpt_sha256": "c354952858ca6b0aafb0b971ac4e708bb0a687bf8ef6db72901ec8aeea2b9087",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 58,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "14a6b7e158867f8068577ec5bdfeafdd6ce1215e94945fbd2c611c140dd0f093"
+    },
+    {
+      "source_paper_id": "gate-cs-2007",
+      "canonical_parent_ordinal": 4,
+      "item_label": "4",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "EM",
+      "topic": "discrete-mathematics",
+      "reason_code": "explicit_planar_graph",
+      "reason": "The original question asks about a minimum-edge non-planar graph.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f3df0aaaf8a898ecd17380984636780d16d897a8d630463fdaab7f1d7187e463",
+        "source_pages": [
+          2
+        ],
+        "page_ocr_text_sha256": "d369c2aa5cb63fc1c45607ecc9a08dd71b25f01887237a06d0d314d5cd7a0947",
+        "rendered_page_sha256": "95f5031d344f52726930922a00406b29ae589d4cd1fcfa9353b5693e7a58bffc",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "4 ",
+        "excerpt": "4 Let G be the non-planar graph with theminimum possible number of edges.Then G has (A)9 edges and 5vertices (B)9edges and 6vertices (C)10 edges and 5vertices (D)10edges and 6vertices",
+        "excerpt_sha256": "ffc44621127d4c02e97f7fa9ea58a9a2dad18270c708702bd4a95d47b6736419",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 4,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "f6574d13e754fc2c4e88694cb59da635412b91dc2ddc8157da76da1c11357e0c"
+    },
+    {
+      "source_paper_id": "gate-cs-2007",
+      "canonical_parent_ordinal": 19,
+      "item_label": "19",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "data-link-layer",
+      "reason_code": "explicit_ethernet_encoding",
+      "reason": "The original question asks about Manchester encoding in Ethernet.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f3df0aaaf8a898ecd17380984636780d16d897a8d630463fdaab7f1d7187e463",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "c284b555d17e5048e2b96b5bc005deece95677d82a723a4f544ddec055d6d1d3",
+        "rendered_page_sha256": "f9786834854f13ef07359d830ab1f79c4fe7c34e913d8232aa375fdff2c76f0d",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "19 ",
+        "excerpt": "19 In Ethernet when Manchester encoding is used,the bit rate is: (A) Half the baud rate. (B) Twice the baud rate. (C) Same as the baud rate. (D) None of the above.",
+        "excerpt_sha256": "e70694b01772f34fbc582935a223e77a3467541e97c3e33012494a7cf5519f66",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 19,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "2013e7bd2c182f0d1dee54ffabbb659421d9d258c6fad3d41284539c70e1021d"
+    },
+    {
+      "source_paper_id": "gate-cs-2007",
+      "canonical_parent_ordinal": 28,
+      "item_label": "28",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "numerical_root_finding_not_in_current_syllabus",
+      "reason": "The original question is a Newton-Raphson numerical-method iteration.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f3df0aaaf8a898ecd17380984636780d16d897a8d630463fdaab7f1d7187e463",
+        "source_pages": [
+          6
+        ],
+        "page_ocr_text_sha256": "0dc749652407e25953f901f05028c28df0306a12c6d9ddd422c8dd2d5ce6b4da",
+        "rendered_page_sha256": "933392c656fabbb71e039c754660ee8872d11659e831ea6ad0c53fc69acc6796",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "28 ",
+        "excerpt": "28 xn 9 Consider the series x+ ,x。=0.5 obtained from the Newton-Raphson 8xn method. The series converges to (C)1.6 (D) 1.4 (A)1.5 (B)√2",
+        "excerpt_sha256": "7bc1d85669fb5ddf75b43f98fd461311defe3d4aedb31959fd33821680937436",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 28,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "e10008c61439817bda0d8fb246e43c2060af354f13b863bad68f0d1439fb2d86"
+    },
+    {
+      "source_paper_id": "gate-cs-2007",
+      "canonical_parent_ordinal": 66,
+      "item_label": "66",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "data-link-layer",
+      "reason_code": "explicit_token_ring",
+      "reason": "The original question asks about bit delay in a token-ring LAN.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f3df0aaaf8a898ecd17380984636780d16d897a8d630463fdaab7f1d7187e463",
+        "source_pages": [
+          16
+        ],
+        "page_ocr_text_sha256": "d74c56a0c1eb22b332c324d2dafc76ade0cd7f4fdb91ab68deed225aa727e4ef",
+        "rendered_page_sha256": "1ef88753de39dfe2213ae08ec652feb1bc0b804e7826d18a289ef53a07619fa9",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "66 ",
+        "excerpt": "66 In a token ring network the transmission speed is 10 bps and the propagation speed is 200metres/μus.The 1-bit delay in this network is equivalent to: (A) 500 metres of cable. (B)200 metres of cable. (C) 20 metres of cable. (D)50 metres of cable.",
+        "excerpt_sha256": "9b864fe1454fcf22da3c113f9cf8ea6804daf6ca512a1b3039edd57e2c9e1aca",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 66,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "5c0a2c13cac3add75d20e73cadccd317fe480358179a64c9fa93ac47d500c709"
+    },
+    {
+      "source_paper_id": "gate-cs-2007",
+      "canonical_parent_ordinal": 70,
+      "item_label": "70",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "layering-and-switching",
+      "reason_code": "explicit_protocol_layer_matching",
+      "reason": "The question explicitly matches SMTP, BGP, TCP, and PPP to protocol layers.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f3df0aaaf8a898ecd17380984636780d16d897a8d630463fdaab7f1d7187e463",
+        "source_pages": [
+          17
+        ],
+        "page_ocr_text_sha256": "f88c0a6e48c377d219f4805eaa7de75de720cad6f7aef1f74274a012d8032b4d",
+        "rendered_page_sha256": "685b777feb1a56a2848522e3dc33658309ee242327bb54d25f14e51482f7b005",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "70 ",
+        "excerpt": "70 Match the following: P.SMTP 1.Application layer Q.BGP 2.Transport layer R.TCP 3.Data link layer S.PPP 4.Network layer 5.Physical layer (A)P-2,Q-1,R-3,S-5 (B)P-1,Q-4,R-2,S-3 (C)P-1,Q-4,R-2,S-5 (D)P-2,Q-4,R-1,S-3 CS-17/24",
+        "excerpt_sha256": "0de6de4166b38af98f73d1299d2e9f554c72deaa06f705b51b7a2a27d5c1955e",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 70,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CN",
+        "topic": "network-protocols",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "6b2b66be9ce7be0877013f83830df075d9d1917f5af32487a28fbc93446f3251"
+    },
+    {
+      "source_paper_id": "gate-cs-2008",
+      "canonical_parent_ordinal": 21,
+      "item_label": "21",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "numerical_quadrature_not_in_current_syllabus",
+      "reason": "Trapezoidal-rule error sizing is numerical analysis outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f01fcd02a9a5544d1f89959eca288fe967bb537ed00513b46e5fe8f9f97f7202",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "735c075e6cc23665890f99ca0fade6192854c0ae77a27433c3afd94cfddc49e2",
+        "rendered_page_sha256": "84518615929789bc291a79bac63e43b9e2a252fc37e406cc40e849710486776e",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "21 ",
+        "excerpt": "21 to",
+        "excerpt_sha256": "90c7e3128ce302b59424a3d8e1550662fead37d361f35d5e7509c44a39142189",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 21,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "efcb2d035a551ef29859ab085422c505bdea3798b5e31693d43eef10b6950163"
+    },
+    {
+      "source_paper_id": "gate-cs-2008",
+      "canonical_parent_ordinal": 22,
+      "item_label": "22",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "numerical_root_finding_not_in_current_syllabus",
+      "reason": "The Newton-Raphson iteration is numerical analysis outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f01fcd02a9a5544d1f89959eca288fe967bb537ed00513b46e5fe8f9f97f7202",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "735c075e6cc23665890f99ca0fade6192854c0ae77a27433c3afd94cfddc49e2",
+        "rendered_page_sha256": "84518615929789bc291a79bac63e43b9e2a252fc37e406cc40e849710486776e",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "22 ",
+        "excerpt": "22 The Newton-Raphson iteration x+1 R can be used to compute the (A) square of R (B)reciprocal of R (C)squarerootof R(D)logarithm of R",
+        "excerpt_sha256": "fb70de86d7b7a416edad54c0f96bdee05d2c2c89db91e0624b3f4750f4c45fc2",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 22,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "b81e93d8308eae5aa78fbe80ac628882412e04ab02765c8f2d3b11b91a3ab4f4"
+    },
+    {
+      "source_paper_id": "gate-cs-2008",
+      "canonical_parent_ordinal": 24,
+      "item_label": "24",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "formula_ocr_and_syllabus_boundary",
+      "reason": "The summation limits/formula are not preserved clearly enough in page OCR, and generic summation has no unique current topic.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f01fcd02a9a5544d1f89959eca288fe967bb537ed00513b46e5fe8f9f97f7202",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "735c075e6cc23665890f99ca0fade6192854c0ae77a27433c3afd94cfddc49e2",
+        "rendered_page_sha256": "84518615929789bc291a79bac63e43b9e2a252fc37e406cc40e849710486776e",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "24 ",
+        "excerpt": "24 LetP= i and Q=i,where k is a positive integer.Then 1Sis2k 1sis2k iodd ieen (A)P=Q-k (B)P=Q+k (C)P=Q (D)P=Q+2k",
+        "excerpt_sha256": "0ea0148a26f0130261d4a2227c832edfde0975b7a37d7a4934187704060175a1",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 24,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "EM",
+        "topic": "summation",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "df61517d3314f186b50f272de0f0abb41cb7f07aae3ce63283ed51e5c064d268"
+    },
+    {
+      "source_paper_id": "gate-cs-2008",
+      "canonical_parent_ordinal": 44,
+      "item_label": "44",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "ALG",
+      "topic": "complexity-analysis",
+      "reason_code": "explicit_subset_sum_complexity",
+      "reason": "The original question asks about pseudo-polynomial subset-sum complexity and NP hardness.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "f01fcd02a9a5544d1f89959eca288fe967bb537ed00513b46e5fe8f9f97f7202",
+        "source_pages": [
+          8
+        ],
+        "page_ocr_text_sha256": "47c00ac4d97ceabc8c69e5f46fb41e04650812349d59d0529e13dac8dff36faa",
+        "rendered_page_sha256": "bee9843e8030616c3eb23f4f290289c761e66d25a807a5807d0179926b082c49",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "44",
+        "excerpt": "44The subset-sum problem is defined as follows: Given a set Sof npositive integers and a positive integerW,determinewhether there isa subset of Swhose elements sum to W. An algorithmQsolves thisproblem in O(nW) time.Which of the following statements is false? (A) Q solves the subset-sum problem in polynomial time when the input is encoded inunary (B)Q solves the subset-sum problem in polynomial time when the input is encoded in binary (C)The subset sum problem belongs to the class NP (D)The subset sum problem isNP-hard",
+        "excerpt_sha256": "c5793f38da4ef6fe786eba2079a8c3f30adcc95cdb24a3dc8ba5da701949ff61",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 44,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "a0e09f0d82f004845ad6db61723d72f40e29bfba7c309f9a60b503ab9eab3f0e"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 14,
+      "item_label": "14",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "ALG",
+      "topic": "complexity-analysis",
+      "reason_code": "explicit_np_classification",
+      "reason": "The original question explicitly reasons about membership in NP and NP-completeness.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          3
+        ],
+        "page_ocr_text_sha256": "4830750e2e0791f5ed492363d073506e7dd41b98b6c15de31843b83cad308cb6",
+        "rendered_page_sha256": "c575482ab96ace10010724d627f67ad3c5b7246d664318bdb349b787a872d346",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "14",
+        "excerpt": "14LetπAbe a problem that belongs to theclassNP.Thenwhich oneof thefollowing isTRUE? (A)There isno polynomial time algorithm for πA. (B) If πA can be solved deterministically in polynomial time,then P=NP. (C)IfπA is NP-hard,then it isNP-complete. (D)πA may be undecidable.",
+        "excerpt_sha256": "37a6cfc3508aa3071bd4923891131cc90b568d21b744c7a4001278357a5f3fd5",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 14,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "62cef5bc71c5e275c099cb9696345af98499bf87562905b27d9d0002cdccaed7"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 17,
+      "item_label": "17",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_compiler_phases",
+      "reason": "The question spans lexical analysis, syntax analysis, code generation, and code optimization.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          3
+        ],
+        "page_ocr_text_sha256": "4830750e2e0791f5ed492363d073506e7dd41b98b6c15de31843b83cad308cb6",
+        "rendered_page_sha256": "c575482ab96ace10010724d627f67ad3c5b7246d664318bdb349b787a872d346",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "17 ",
+        "excerpt": "17 Match all items in Group 1 with correct optionsfrom thosegiven in Group 2. Group1 Group2 P.Regular expression 1.Syntax analysis Q.Pushdown automata 2.Code generation R.Dataflow analysis 3.Lexical analysis S.Register allocation 4.CodeOptimization (A)P-4,Q-1,R-2,S-3 (B)P-3,Q-1,R-4,S-2 (C)P-3,Q-4,R-1,S-2 (D)P-2,Q-1,R-4,S-3 CS 3/16",
+        "excerpt_sha256": "f3606ebc47ea6991dd1e0548953ad3d1fada288845e76e2c1e0cceb893c703b7",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 17,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "compilation-phases",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "604e2d85901b3ac3b1306733a2a4f9a9f064923d6c4f4ceda6f04473bb44acd0"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 19,
+      "item_label": "19",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "Software-module coupling categories are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "3965b3605e8a6f9d757daad5f01799338efd18caf635958c12909763391546a3",
+        "rendered_page_sha256": "29559667c33e1df2d4574b457d96c889fe69f7856aacd65e450cdc8fe917d8b8",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "19 ",
+        "excerpt": "19 The couplingbetween different modules of a software is categorized as follows: I. Content coupling I1.Common coupling III. Control coupling IV. Stamp coupling V.Data coupling Coupling between modules can be ranked in the order of strongest (least desirable) to weakest (most desirable) as follows: (A)I-II-III-IV-V (B)V-IV-III-II-I (C)I-III-V-II-IV (D)IV-II-V-III-I",
+        "excerpt_sha256": "cf9c82c4cce0905f14034b3d45503e72ed00b0e617b3d8621a63fc485caa8fab",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 19,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "9121adaac44ee04f6184928ebc6b950c034b75f824aeda69a97ed221713480e4"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 20,
+      "item_label": "20",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "web_markup_not_in_current_syllabus",
+      "reason": "HTML table layout is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "3965b3605e8a6f9d757daad5f01799338efd18caf635958c12909763391546a3",
+        "rendered_page_sha256": "29559667c33e1df2d4574b457d96c889fe69f7856aacd65e450cdc8fe917d8b8",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "20",
+        "excerpt": "2009 CS",
+        "excerpt_sha256": "f275b07d43a55d8b5d0c4ff05c1106a43917b9d15aacdd2ac7adf2f3fcd9c987",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 20,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "ae9529aefe38d8ff5422f3f9b9e49782998921b048d04479549df03bf1580067"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 46,
+      "item_label": "46",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "cryptography_not_in_current_syllabus",
+      "reason": "RSA cryptosystem equations are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          10
+        ],
+        "page_ocr_text_sha256": "138185c6e02bc6270402521750d7c8eeaa6d45ad9fec2b3d8802003a269b8990",
+        "rendered_page_sha256": "085e82323b0f03c7e29d77a1c91e0d08bbb643cd632260c530c5bf9e2c0e7ee7",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "46 ",
+        "excerpt": "46 In the RSA public key cryptosystem,the private and public keys are (e,n) and (d,n) respectively, where n=p*q and p and q are large primes.Besides,n is public and p and q are private.Let M be an integer such that 0<M<n andp(n)=(p-1)(q-1).Nowconsider thefollowingequations. I.M'=Mmodn M=(M’)dmod n I1.ed=1modn III.ed=1modΦ(n) IV.M'=MmodΦ(n) M=(M’)mod(n) Which of the above equations correctly represent RSA cryptosystem? (A)Iand II (B)IandIIIII (C)IIandIV (D) III and IV CS 10/16",
+        "excerpt_sha256": "135ff6068154a906af0fd643fd547a9356cabd03df0df776eafe657110ce5d47",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 46,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "d26f8734b6e4fd023a9dfe58ff3e046c399d9b4c61538852aa3a29447001ee97"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 49,
+      "item_label": "49",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "Data-flow-diagram rules are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "201d8c1516398a94829d223ef501e72eade34ddf839c5a41d069d598d7254af2",
+        "rendered_page_sha256": "288b7a379049aceadcdf5de5c2855a20027fe2a539ace06fde9169135776e6f1",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "49",
+        "excerpt": "49Which of the following statements are TRUE? I. The context diagram should depict the system as a single bubble. II. External entitiesshouldbe identifiedclearly atall levelsofDFDs. III. Control information shouldnotberepresented in a DFD. IV. A data storecanbe connectedeitherto another datastore or to an externalentity. (A)II andIII (B)I,II and IV (C)IandIII (D) I,IIand II",
+        "excerpt_sha256": "c566a8101384baee8c7c2867b3b23f13de2c58a4fcdec066de4b2b1bb3afa6a8",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 49,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "9796df6e9a16ab148d4d9bec463dfbfd7647812707c82a0f3ebffb3bb718f29a"
+    },
+    {
+      "source_paper_id": "gate-cs-2009",
+      "canonical_parent_ordinal": 50,
+      "item_label": "50",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_testing_not_in_current_syllabus",
+      "reason": "Cyclomatic-complexity testing criteria are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "201d8c1516398a94829d223ef501e72eade34ddf839c5a41d069d598d7254af2",
+        "rendered_page_sha256": "288b7a379049aceadcdf5de5c2855a20027fe2a539ace06fde9169135776e6f1",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "50 ",
+        "excerpt": "50 Consider thefollowing statementsabout the cyclomaticcomplexity of the control flow graph ofa program module.Which of these are TRUE? Thecyclomaticcomplexityof amoduleis equal to themaximumnumberoflinearlyindependent circuits in the graph. III. The cyclomatic complexityof a module is thenumber of decisions in themoduleplus one,wherea decision is effectively any conditional statement in themodule. III.The cyclomatic complexitycan also be used as a number of linearly independentpaths that should be tested during path coverage testing. (A)IandII (B)IIandII (C)IandIII (D)I,II and III Common Data Questions CommonData forQuestions51 and52: A hard diskhas63sectorspertrack,10platters eachwith2recordingsurfaces and1000cylinders.The address of a sector is given as a triple(c,h,s),where c is the cylinder number,h is the surface number and s is the sectornumber.Thus,the 0sector is addressed as0,0,0),the1 sector as0,0,1,and soon.",
+        "excerpt_sha256": "f2efdc61c6e73c581244e0460a9b97d17b741eb181ceb61f7ac0a8205638eb3d",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 50,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "a880c79ed4af526114259b2a75e2e96fa30fd09919ac22154beabbd9526ec505"
+    },
+    {
+      "source_paper_id": "gate-cs-2010",
+      "canonical_parent_ordinal": 2,
+      "item_label": "2",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "numerical_root_finding_not_in_current_syllabus",
+      "reason": "The original question is a Newton-Raphson numerical-method iteration.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+        "source_pages": [
+          2
+        ],
+        "page_ocr_text_sha256": "a79ef122b1cafec34f029e97e20edab598e67f888f62bf5ab1067ae3a8395321",
+        "rendered_page_sha256": "5a3f067d53c373276a6e472ead4915250a3f8e92495c3cd07e70025e1ed5c459",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2",
+        "excerpt": "2010 CS",
+        "excerpt_sha256": "200816df8b6fee2aeb0d8fde342b561792b7aa7980e7670b689730598b81fd89",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 2,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "a44548cf30b712917e666528c78265c622ead21806a04542bcdd2fbf6cfe2205"
+    },
+    {
+      "source_paper_id": "gate-cs-2010",
+      "canonical_parent_ordinal": 15,
+      "item_label": "15",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "ipv4-addressing-and-forwarding",
+      "reason_code": "explicit_ipv4_ttl",
+      "reason": "The question explicitly asks why the IPv4 Time-to-Live header field is needed.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "d8438901fe8e9933c12d1b024df5b2a2864729b67d7e1acd45462e16f7b9d4e7",
+        "rendered_page_sha256": "7f6ee54838f3330d52874173d053dde1364d67b2ccb903f27eba30d49b3461dd",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "15 ",
+        "excerpt": "15 One of the lheader fields in an iP datagram is the Time-to-Live (TTL) field. Which of the following stalementsbestexplainsthencedforihisficld? (A) It can be used to prioritize packels. (B) It can be used to reduce delays. (C) It can be used to optimizc throughput. (D) It can be used to prevent packet looping.",
+        "excerpt_sha256": "5623152f5ed6c95ad7413584faf409d20c9561be0e62a9c24f39435f462e54cb",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 15,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "0c4e53efe96615ed9e0f0b0514bde7b0e06773e3147de825da96011b31574db0"
+    },
+    {
+      "source_paper_id": "gate-cs-2010",
+      "canonical_parent_ordinal": 16,
+      "item_label": "16",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "application-layer",
+      "reason_code": "explicit_client_server_application",
+      "reason": "The question asks which named Internet service is not a client-server application.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "d8438901fe8e9933c12d1b024df5b2a2864729b67d7e1acd45462e16f7b9d4e7",
+        "rendered_page_sha256": "7f6ee54838f3330d52874173d053dde1364d67b2ccb903f27eba30d49b3461dd",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "16 ",
+        "excerpt": "16 Which one of the follou ing is nol a clienl-server application? (A) Internet chat (B)Wch browsing (C)E-mail Su(T)",
+        "excerpt_sha256": "bea7a014f308e838e5c1ead7f25e3569fc13afc48abb02dc686b3c886242d0a7",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 16,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "eecf209aeb73b579df6765b0dbc1c5931e8fc58378004bb2769ad6c6fc94790b"
+    },
+    {
+      "source_paper_id": "gate-cs-2010",
+      "canonical_parent_ordinal": 21,
+      "item_label": "21",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_testing_not_in_current_syllabus",
+      "reason": "Cyclomatic complexity of integrated software modules is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "d6d0713be272aeb2fcf394eab9932cab6c5677de29997088df853998622c46d6",
+        "rendered_page_sha256": "79f68dfea829d8e00c226f75dc6f4008f443c49ba019ece975bfe7f8efbf12ad",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "21 ",
+        "excerpt": "21 The cyclomaic complexity of cach f the uodules A und B shown below is I0. What is the cyclomatic complexity of the sequential integration show on he right hand side? (A) 19 (B)21 (C) 20 (D) 10",
+        "excerpt_sha256": "afe383138e4a80c68f5477e4388f2abed055915462f59f8f50025b65fa3d1353",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 21,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "1b406ac81a79e74b9489c50152495008e899c1d1c610ba8b93cf47d773320c5e"
+    },
+    {
+      "source_paper_id": "gate-cs-2010",
+      "canonical_parent_ordinal": 22,
+      "item_label": "22",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "Software-life-cycle activity matching is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "d6d0713be272aeb2fcf394eab9932cab6c5677de29997088df853998622c46d6",
+        "rendered_page_sha256": "79f68dfea829d8e00c226f75dc6f4008f443c49ba019ece975bfe7f8efbf12ad",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "22 ",
+        "excerpt": "22 What is the appropriate pairing of ilems in the 1wo columns listing various activitics cncountered in a software life cycle? P. Requirements Capture 1. Module Development and lnlegration Q.Design 2. Domain Analysis R. Implementation 3. Structural and Behavioral Modeling S.Maintenance 4. Perforrmance Tuning . (A) P-3 Q-2 R4 S.1 (B) P-2 Q-3 R-1 S-4 (()P-3 Q-2 R-1 S-4(D)P-2 Q-3R-4 S-1",
+        "excerpt_sha256": "589cfd5f6510fe419d264b36f6629b959054044ba4d6ad14eb332a102ce0350b",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 22,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "94b657348ba9bcb2506687f4fb68c9a8fd2ad6d49154f863a0547d010b4b8d66"
+    },
+    {
+      "source_paper_id": "gate-cs-2010",
+      "canonical_parent_ordinal": 44,
+      "item_label": "44",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_testing_not_in_current_syllabus",
+      "reason": "Statement-coverage test-suite selection is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "0e59df5703a9edf1117a45c18577b1f2b5174a8594a3882f37339429c3913884",
+        "rendered_page_sha256": "d40a93dc278476632d1ab176f0debba084b6f35f56337d3fabe9056d7123caef",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "44 ",
+        "excerpt": "44 4Thefollowingprogramistobekesled for statemenl coverage: begin if (a == b) (Sl; exit;} else if {c == d){S2;} else (s3; exit;) S4; end The test cases T1. T2. T3 and T4 given below are cxpressed in terms of the properties satisfied by the values ofvariables a,b,c and d. The exact valucs are nol given. Tl:a,b.c and d are all equa] T2:a,b,c and d are all distinct T3:a = b and c != d T4:a!=bandc=d Which of the test suites given below ensures coverage of staleinents S1, S2, S3 and S4? (A) T1.T2, T3 (B) T2. T4 (C) T3, T4 (D) T1, T2, T4",
+        "excerpt_sha256": "ed742dd15cd471c98f855f521f9fd0a38ce8fb97566e318d8a68f7ecef446b19",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 44,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "4be38d2d6267381045167f36bf1cb1d4de0d7b604d456d92d27f45444bb9b3b6"
+    },
+    {
+      "source_paper_id": "gate-cs-2011",
+      "canonical_parent_ordinal": 2,
+      "item_label": "2",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "layering-and-switching",
+      "reason_code": "explicit_layer_visibility",
+      "reason": "The question is explicitly about which headers and traffic properties are visible through protocol layer 4.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+        "source_pages": [
+          2
+        ],
+        "page_ocr_text_sha256": "d72c9e8a5d93fa180dbbecde7cb7e8c0d8b1ae849a5c84e2ec88bd6bd47f18ff",
+        "rendered_page_sha256": "2f9cc39ad684cf9d083c5f521fd444bb976cd7663c9e04a42115ea4eead641dc",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "2",
+        "excerpt": "2011 CS",
+        "excerpt_sha256": "326e277fc2ea0d36cb4797879ad5987b892e5beab945060cd6ee6b203ed1ae09",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 2,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "3a32c5d0b46c3a0e793ef6859d7279a3c1da93e59dec1e3cb782b5a109df88c0"
+    },
+    {
+      "source_paper_id": "gate-cs-2011",
+      "canonical_parent_ordinal": 5,
+      "item_label": "5",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "Software development and five-year maintenance cost estimation are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+        "source_pages": [
+          2
+        ],
+        "page_ocr_text_sha256": "d72c9e8a5d93fa180dbbecde7cb7e8c0d8b1ae849a5c84e2ec88bd6bd47f18ff",
+        "rendered_page_sha256": "2f9cc39ad684cf9d083c5f521fd444bb976cd7663c9e04a42115ea4eead641dc",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "5",
+        "excerpt": "5:0OAM",
+        "excerpt_sha256": "3994916e8905ca3218ce94c1c6f09fb8adbab8cbf91dfc6c7ab6d5c8f427c83f",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 5,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "885138db3bc9cd32f9f4b17d1ffa2f33e996938becc12eb2082e3a52b48fd65b"
+    },
+    {
+      "source_paper_id": "gate-cs-2011",
+      "canonical_parent_ordinal": 7,
+      "item_label": "7",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "Basic COCOMO effort estimation is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+        "source_pages": [
+          3
+        ],
+        "page_ocr_text_sha256": "cb945ceb0e646ed62f0543e2589e9f355d086f77756a083b520db810f8530ad9",
+        "rendered_page_sha256": "68918f2f3186767cd23bee829e313cb2a4e0395f7959ea3f0b9a3682298ca119",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "7 ",
+        "excerpt": "7 A company needs to develop digital signal processing software for one of its newest inventions.The software is expected to have 4oooo lines of code.The company needs to determine the effort in person-months needed to develop this software using the basic COCOMO model. The multiplicative factor for this model is given as 2.8 for the software development on embedded systems,while the exponentiation factor is given as 1.20.What is the estimated effort in person-months? (A) 234.25 (B) 932.50 (C) 287.80 (D) 122.40",
+        "excerpt_sha256": "48099faeb8eb28f36f12317f13ba4dd16784823fd3e023b1214db4265426c735",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 7,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "0280505876fea44850a66f76f9f0450cbf74c5c3168d1807b2663b7b6cde79d0"
+    },
+    {
+      "source_paper_id": "gate-cs-2011",
+      "canonical_parent_ordinal": 9,
+      "item_label": "9",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "web_markup_not_in_current_syllabus",
+      "reason": "HTML page actions are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+        "source_pages": [
+          3
+        ],
+        "page_ocr_text_sha256": "cb945ceb0e646ed62f0543e2589e9f355d086f77756a083b520db810f8530ad9",
+        "rendered_page_sha256": "68918f2f3186767cd23bee829e313cb2a4e0395f7959ea3f0b9a3682298ca119",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "9",
+        "excerpt": "932.50 (C) 287.80 (D) 122.40",
+        "excerpt_sha256": "40965062ccaa49ddde4b07d78a16d3767c12588f298cef7f1ae7721eff2bb04b",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 9,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "7da3bf3098634375eef7ccc99a30b33653c0875834860874c5e25edfbe1cc2e6"
+    },
+    {
+      "source_paper_id": "gate-cs-2011",
+      "canonical_parent_ordinal": 10,
+      "item_label": "10",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "SRS document contents are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+        "source_pages": [
+          3
+        ],
+        "page_ocr_text_sha256": "cb945ceb0e646ed62f0543e2589e9f355d086f77756a083b520db810f8530ad9",
+        "rendered_page_sha256": "68918f2f3186767cd23bee829e313cb2a4e0395f7959ea3f0b9a3682298ca119",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "10 ",
+        "excerpt": "10 Which one of the following is NOT desired in a good Software Requirement Specifications (SRS) document? (A) Functional Requirements (B)Non-FunctionalRequirements (C) Goals of Implementation (D) AlgorithmsforSoftware Implementation",
+        "excerpt_sha256": "239bb93e6ddac66deecf338a11f51e84aca75d1dcaaaa32ce3da7687d5b7b3f6",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 10,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "43d57ca5edf5b82f72bdb9b9991ac6f149a61ec4048ef896f1f6d37a05af3ea0"
+    },
+    {
+      "source_paper_id": "gate-cs-2011",
+      "canonical_parent_ordinal": 47,
+      "item_label": "47",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_testing_not_in_current_syllabus",
+      "reason": "Black-box test-case design for a software routine is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+        "source_pages": [
+          13
+        ],
+        "page_ocr_text_sha256": "9da8ef89561dfb11936f67e8ab75b13c89732fd2312b8b8b065681e71a33da03",
+        "rendered_page_sha256": "0638a2e98fb27500ec1111813688b289b2861109ffe7e0700b84281739699e90",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "47 ",
+        "excerpt": "47 Thefollowingisthecommentwrittenfora Cfunction. /*Thisfunctioncomputes'therootsof aquadraticequation a.x^2 + b.x + c = 0.The function stores two real roots in*root1and*root2andreturns the status of validity ofroots.It handles four different kinds of cases. (i) when coefficient a is zero irrespective of discriminant (ii) When discriminant is positive (iii) when discriminant is zero (iv) When discriminant is negative. Only in case (ii) and (iii),the stored roots are valid. Otherwise Ois stored in the roots.The function returns 0whenthe roots are validand-1otherwise. The function also ensures rootl >= root2. int get_QuadRoots(float a, float b,float c, float *rootl,float *root2); * A software testengineeris assigned thejobof doingblackboxtesting.He comes upwith the followingtest cases,many of which are redundant. Test InputSet ExpectedOutputSet Case a b C rootl root2 Return Value T1 0.0 0.0 7.0 0.0 0.0 -1 T2 0.0 1.0 3.0 0.0 0.0 -1 T3 1.0 2.0 1.0 -1.0 -1.0 0 T4 4.0 -12.0 9.0 1.5 1.5 0 T5 1.0 -2.0 3.0 3.0 -1.0 0 T6 1.0 1.0 4.0 0.0 0.0 -1 Which oneof thefollowingoptionsprovide thesetof non-redundant testsusingequivalenceclass (A)T1, T2, T3, T6 (B) T1, T3, T4,T5 (C) T2, T4, T5, T6 (D) T2,T3,T4,T5 CS-A 13/20",
+        "excerpt_sha256": "0414df4105aec0c9388c6416e65614fb2618c5ff748af347d57d0d4d3e3e091d",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 47,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "74da6936d51f14498edc5ded88f9955709e1215a51af4823f162c980f4231099"
+    },
+    {
+      "source_paper_id": "gate-cs-2014-session-1",
+      "canonical_parent_ordinal": 47,
+      "item_label": "CS-37",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "DL",
+      "topic": "number-representation-and-arithmetic",
+      "reason_code": "binary_weight_encoding",
+      "reason": "The 1,2,4,8,16 coin counts encode the excess weight as a binary number.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_ocr_index",
+        "source_pdf_sha256": "ffff763b2bde2242dfb7bac952947e2fee791ce99c23642907e76cd6b22641c9",
+        "source_pages": [
+          16
+        ],
+        "page_ocr_text_sha256": "3b4e0226245e68eca5faaea44e12d0cf409701a4abdbf7369fdb08c79deef069",
+        "rendered_page_sha256": "1d33e4e9a4975489a9b9372864ed80b1ebcafa250459c8b372122973c9a36c74",
+        "ocr_confidence": null,
+        "ocr_artifact_sha256": null,
+        "locator": "Q.37",
+        "excerpt": "Q.37 There are 5 bags labeled 1 to 5. All the coins in a given bag have the same weight. Some bags labels of the bags having 11 gm coins is CS 9/14",
+        "excerpt_sha256": "25b72b9ef379c555190a08a7389f815576322ff916028daa68072b411bb50ec8",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 47,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "ALG",
+        "topic": "algorithm-design",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "3a5bcc02bf0afa75f6605b2ee7d921a50396acc836a10b2b4723c1f92ef1bd94"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 11,
+      "item_label": "CS-1",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "EM",
+      "topic": "discrete-mathematics",
+      "reason_code": "explicit_function_composition",
+      "reason": "The original question compares compositions of two explicitly defined functions.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          6
+        ],
+        "page_ocr_text_sha256": "7e1626b1ab740fea4ac5e1ab449e151c865a5fde7e44e99746ae608328a18366",
+        "rendered_page_sha256": "c20fc1ebc661624ae6e68f22efee76a240e53d4a29630e1132f00c6a65950e76",
+        "ocr_confidence": 0.9571577655169916,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Q.11",
+        "excerpt": "Q.11to",
+        "excerpt_sha256": "3fd443adff638802acea3be05a0439bdbc06ed7cdfa778685d7c94228a783414",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 11,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "6bc07a00e5c9180d9d3cd06484c0bd281ce9c1049a6aa5b046ea3f3a5e207662"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 16,
+      "item_label": "CS-6",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_testing_not_in_current_syllabus",
+      "reason": "Software testing methods and test levels are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          8
+        ],
+        "page_ocr_text_sha256": "901113b00639f0f33bd6789b8ce5f289f8f74a27dece21c9152e52fadac684ea",
+        "rendered_page_sha256": "0b5612815e2e36be76ced773a0be405b140a2d02fee3c58fa3ab6450f964c18e",
+        "ocr_confidence": 0.9384225407271325,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number :16",
+        "excerpt": "Question Number :16 Question Type : MCQ Match the following: (P) Condition coverage Black-box testing (Q) Equivalence class partitioning ( System testing (R) Volume testing (ii) White-box testing (S) Alpha testing (iv) Performance testing (A) P-ii, Q-iii, R-i, S-iv (B) P-iii, Q-iv, R-ii, S-i (C) P-ili, Q-i, R-iv, S-ii (D) P-iii,Q-i,R-ii, S-iv Options : 1. ∞ A 2.B 3. Vc 4.D",
+        "excerpt_sha256": "c52e6632c7c420402794b948ba9fe0cda383adb2bca0f24687f484bc99bfc8b8",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 16,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "ALG",
+        "topic": "algorithm-design-techniques",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "6c1ccf168081d3fda3a601a9318b6aff340f2a9bfbaa38b706531f6d32d9e264"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 21,
+      "item_label": "CS-11",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "DL",
+      "topic": "sequential-circuits",
+      "reason_code": "explicit_johnson_counter",
+      "reason": "The question asks for the state sequence of a four-bit Johnson counter.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          9
+        ],
+        "page_ocr_text_sha256": "3127cd8306ec2bbe5f8c38595ff4bfd8d53469309cab2f6adac65bc1d4f719f3",
+        "rendered_page_sha256": "fce05d68243e0f97b7a2628152b4996904750afe33afa30220797318d6d21734",
+        "ocr_confidence": 0.9228077938514828,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 21",
+        "excerpt": "Question Number : 21 Question Type : MCQ Consider a 4-bit Johnson counter with an initialvalue of oooo.The counting sequence of this counter is (A)0,1,3,7,15,14,12,8,0 (B)0,1,3,5,7,9,11,13,15,0 (C)0,2,4,6,8,10,12,14,0 (D)0,8,12,14,15,7,3,1,0 Options : 1. ∞ A 2.∞B 3. × C 4.",
+        "excerpt_sha256": "69629051627bf8d67ae249761dd043400bd22300a8547f37af817959430803f1",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 21,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "bcb99439e135f9ecf001bf2e76d92d05c4f423993ce50def3440e33d993d44bb"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 22,
+      "item_label": "CS-12",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "COA",
+      "topic": "machine-instructions-and-addressing-modes",
+      "reason_code": "explicit_three_address_instruction",
+      "reason": "The question asks what each address field in a three-address instruction can specify.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          9
+        ],
+        "page_ocr_text_sha256": "3127cd8306ec2bbe5f8c38595ff4bfd8d53469309cab2f6adac65bc1d4f719f3",
+        "rendered_page_sha256": "fce05d68243e0f97b7a2628152b4996904750afe33afa30220797318d6d21734",
+        "ocr_confidence": 0.9228077938514828,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 22",
+        "excerpt": "Question Number : 22 Question Type : MCQ For computers based on three-address instruction formats, each address field can be used to specify which of the following: (S1) A memory operand (S2) A processorregister (S3) An implied accumulator register (A)EitherS1orS2 (B)Either S2or S3 (C) Only S2 and S3 (D) All of S1,S2 and S3",
+        "excerpt_sha256": "ec9ea35e3c0f096d0c551fb73ac614279f70b63c5ef6cef9c0bb31145cb3b1bc",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 22,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "d17be01a87b8ea3ab7b0010a2ce50463cbd76571b8591f1a6c5668a25c8a2e69"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 23,
+      "item_label": "CS-13",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "transport-layer",
+      "reason_code": "explicit_tcp_connection",
+      "reason": "All statements concern sequence numbers, retransmission timeout, and advertised window in TCP.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          10
+        ],
+        "page_ocr_text_sha256": "d61fa336dcb4e905f6fe517cfe981de43ca4d923172459b0c3f9dca56fb03960",
+        "rendered_page_sha256": "645c03a7c5edc0bbfbe8b80b781a3c5649b97a9fa435e2a973018a5bfd0b9daf",
+        "ocr_confidence": 0.9458785056018284,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "QuestionNumber:23",
+        "excerpt": "QuestionNumber:23QuestionType:MCQ Supposetwohosts use a TCPconnection totransfer alargefile.Which of thefollowingstatements is/areFALSEwithrespecttotheTCPconnection? I. Ifthesequencenumberofasegmentism,then thesequencenumberofthesubsequent segmentisalwaysm+1. Ⅱ. If the estimated round trip time at any given point of time is t sec, the value of the retransmissiontimeoutis alwayssettogreaterthanorequal totsec. The size of the advertised window never changes during the course of the TCP connection. IV. Thenumberofunacknowledgedbytesatthesenderisalwayslessthanorequaltothe advertisedwindow. (A) ⅢI only (B)I and II only (C) I and IV only (D) II and IV only Options : 1. ∞A 2.B 3. ×C 4. D",
+        "excerpt_sha256": "aa78d9f62a5c05f8f6d21b77b6e1f7527f9e42aa12da49162a4a7859c6724099",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 23,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "237cf884a289a81d4ba170defad7a5c67ef9cd818b67f4c15175cc77966f0f03"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 24,
+      "item_label": "CS-14",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "cryptography_not_in_current_syllabus",
+      "reason": "Symmetric-key confidentiality key counts are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          10
+        ],
+        "page_ocr_text_sha256": "d61fa336dcb4e905f6fe517cfe981de43ca4d923172459b0c3f9dca56fb03960",
+        "rendered_page_sha256": "645c03a7c5edc0bbfbe8b80b781a3c5649b97a9fa435e2a973018a5bfd0b9daf",
+        "ocr_confidence": 0.9458785056018284,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 24",
+        "excerpt": "Question Number : 24 Question Type : MCQ Suppose that everyonein a groupof N peoplewants to communicatesecretlywith theN-1 others using symmetric key cryptographic system. The communication between any two persons should not be decodable by the others in the group. The number of keys required in the system as a whole tosatisfy the confidentiality requirement is (A) 2N (B) N(N-1) (C) N(N-1)/2 (D) (N-1)2 Options : 1. ∞ A 2.B 3. Vc 4.D",
+        "excerpt_sha256": "12b66b5c8b8e6aa86a99c3be77bf779c09b0cfc10d660d415d3e28a15fda3351",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 24,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "696f5a5be0358b363413ce6566cfaeb6764c89096a5e9eac3a2319aa16388f4a"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 25,
+      "item_label": "CS-15",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "web_markup_not_in_current_syllabus",
+      "reason": "XML and HTML specification details are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          10
+        ],
+        "page_ocr_text_sha256": "d61fa336dcb4e905f6fe517cfe981de43ca4d923172459b0c3f9dca56fb03960",
+        "rendered_page_sha256": "645c03a7c5edc0bbfbe8b80b781a3c5649b97a9fa435e2a973018a5bfd0b9daf",
+        "ocr_confidence": 0.9458785056018284,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 25",
+        "excerpt": "Question Number : 25 Question Type : MCQ Whichof thefollowingstatements is/areFALSE? I. XML overcomes the limitations in HTML to support a structured way of organizing content. Ⅱ. XMLspecificationisnotcasesensitivewhileHTMLspecificationiscasesensitive. III XML supports user defined tags while HTML uses pre-defined tags. IV. XML tags need not be closed while HTML tags must be closed. (A) Ⅱ only (B) I only (C) II and IV only (D) III and IV only Options : 1.∞A",
+        "excerpt_sha256": "35471c751c5f82d29e86bc244231c799752bbc8efb4392aaa38afb4c329c5609",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 25,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "2c036020c2880a161d0d722bd19bc9bb150df07996b7de43274b148bae84e447"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 26,
+      "item_label": "CS-16",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "ipv4-addressing-and-forwarding",
+      "reason_code": "explicit_ip_header",
+      "reason": "The question asks which IPv4 header field a router does not modify.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "09b6cb13a846aee159c73eb7e858457b62ef75d35a75af460214900b383ed545",
+        "rendered_page_sha256": "2110e9414bca69f5f4ab184d86712e3af10f742105ed542a984e2e194a5826a8",
+        "ocr_confidence": 0.948540270336788,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 26",
+        "excerpt": "Question Number : 26 Question Type : MCQ Which one of the followingfields of an IP header is NOT modified by a typical IP router? (A) Checksum (B) Source address (C) Time to Live (TTL) (D) Length Options : 1. ∞ A 2.B 3. C 4.D",
+        "excerpt_sha256": "a9a77340b6c7e947f231a15c7155e01512dbc51456b5341c44b4104ce81c30dc",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 26,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "57b94a6fa4aebf1bff2c44f29939e14fb81fb966fabb10e3ae3ed640c69639eb"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 27,
+      "item_label": "CS-17",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "application-layer",
+      "reason_code": "explicit_application_protocol_connections",
+      "reason": "The question compares TCP connection use by HTTP, FTP, TELNET, and SMTP.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "09b6cb13a846aee159c73eb7e858457b62ef75d35a75af460214900b383ed545",
+        "rendered_page_sha256": "2110e9414bca69f5f4ab184d86712e3af10f742105ed542a984e2e194a5826a8",
+        "ocr_confidence": 0.948540270336788,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "QuestionNumber:27",
+        "excerpt": "QuestionNumber:27QuestionType:MCQ In one of the pairs of protocols given below, both the protocols can use multiple TCP connections between thesameclientand theserver.Which oneis that? (A) HTTP, FTP (B) HTTP, TELNET (C) FTP, SMTP (D) HTTP, SMTP Options : 1.√A 2.B 3. ∞C 4.D",
+        "excerpt_sha256": "c77afff2402defda75ab1e9bed46a3cf126e87719e4526af8014842e0db63c25",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 27,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "be167d2bc71f9182bb5eee9f8ecffb2b611e7bfb0b4fa8aee2267034b0719f40"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 28,
+      "item_label": "CS-18",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "TOC",
+      "topic": "pumping-lemmas-and-language-properties",
+      "reason_code": "explicit_language_closure_properties",
+      "reason": "The question asks closure/decidability properties of context-free and recursively enumerable languages.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "09b6cb13a846aee159c73eb7e858457b62ef75d35a75af460214900b383ed545",
+        "rendered_page_sha256": "2110e9414bca69f5f4ab184d86712e3af10f742105ed542a984e2e194a5826a8",
+        "ocr_confidence": 0.948540270336788,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "QuestionNumber:28",
+        "excerpt": "QuestionNumber:28QuestionType:MCQ For any twolanguagesL andL such thatLis context-free and Lisrecursively enumerable but notrecursive,which of thefollowingis/arenecessarilytrue? I. L (complement of L) is recursive II. L2 (complement of L) is recursive IIL. L is context-free IV. LU Lisrecursivelyenumerable (A) I only (B) III only (C) II and IV only (D) I and IV only Options : 1. ∞ A 2. B 3. C",
+        "excerpt_sha256": "24e241421bba22888e524779ce9bdf99a8eff0ede756ddc62a227ce1e2bfba33",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 28,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "edba9908b5a7d05e05503ad9900b4d73aa1e7d420fa94d451e12709ce97644b7"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 29,
+      "item_label": "CS-19",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "OS",
+      "topic": "memory-and-virtual-memory",
+      "reason_code": "explicit_page_table_size",
+      "reason": "The question computes page-table size from logical address and page-size parameters.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          11
+        ],
+        "page_ocr_text_sha256": "09b6cb13a846aee159c73eb7e858457b62ef75d35a75af460214900b383ed545",
+        "rendered_page_sha256": "2110e9414bca69f5f4ab184d86712e3af10f742105ed542a984e2e194a5826a8",
+        "ocr_confidence": 0.948540270336788,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 29",
+        "excerpt": "Question Number : 29 Question Type :NAT Consider a system with byte-addressable memory, 32-bit logical addresses, 4 kilobyte page size and page table entries of 4 bytes each. The size of the page table in the system in megabytes is",
+        "excerpt_sha256": "8e3f81d5381d66adeab95049cc1a290cda9d1f4835faae1074ca492b4de717f7",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 29,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "156e1329c9ee65b5e910c7e21307344da77cc21d66a8445549525fe74699e376"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 31,
+      "item_label": "CS-21",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "DBMS",
+      "topic": "sql",
+      "reason_code": "explicit_sql_select_semantics",
+      "reason": "The question explicitly compares SQL SELECT with relational algebra operations.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          12
+        ],
+        "page_ocr_text_sha256": "c2406602c4211f44ddf49120f33eab25c4829bcb432372d8a6c1bb1ce5ca4d62",
+        "rendered_page_sha256": "e84128bf0f5f0eef24886586b7197f753bf3907046ccceb42fe8a5235f3f6062",
+        "ocr_confidence": 0.9333115330153435,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 31",
+        "excerpt": "Question Number : 31 Question Type : MCQ SELECToperationinSQLisequivalentto (A)theselectionoperationinrelational algebra (B)theselection operation inrelational algebra,except thatSELECT inSQLretains duplicates (C)theprojectionoperationinrelationalalgebra (D) the projection operation in relational algebra,except that SELECT inSQLretains duplicates Options : 1. ∞ A 2.∞B 3. ×C",
+        "excerpt_sha256": "ffb3e9f8a27696e164042ec5b04c4d0d2acbb79fe9531256d05214b912c82bf4",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 31,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "8822ac29f7e14a262e62548ae93e92c6c69121fcb628f424386bbf695bf15323"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 36,
+      "item_label": "CS-26",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CN",
+      "topic": "data-link-layer",
+      "reason_code": "explicit_stop_and_wait",
+      "reason": "The question computes the minimum frame size for stop-and-wait link utilization.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          14
+        ],
+        "page_ocr_text_sha256": "224dbf425cc508d3ede8c49edcce7a07d4efe6acfa1e18e4e05e7930396cc174",
+        "rendered_page_sha256": "ef3e5291c4a40c8b63aaf85616a697ee7b0fbaa755628145b5bf4f76dc0334b3",
+        "ocr_confidence": 0.9671195504427106,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number:36",
+        "excerpt": "Question Number:36 Question Type :NAT Suppose that thestop-and-waitprotocol is usedon alinkwith abitrateof64kilobitspersecond and 20 milliseconds propagation delay. Assume that the transmission time for the acknowledgement and the processing time at nodes arenegligible.Then theminimumframe size in bytestoachievealinkutilizationofatleast5o%is Correct Answer: 160",
+        "excerpt_sha256": "9b1e8c99cb0ed134ea8e9dcbd695104595cc10be98e6233b4d497ca9c1b9e373",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 36,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "EM",
+        "topic": "summation",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "f18ac8d25002a0196421e2d7e97147ec9838fdd81984f16d35804375798e13b9"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-1",
+      "canonical_parent_ordinal": 52,
+      "item_label": "CS-42",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "OS",
+      "topic": "cpu-and-i-o-scheduling",
+      "reason_code": "explicit_periodic_priority_scheduling",
+      "reason": "The question schedules periodic tasks by inverse-period priority on a uniprocessor.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          20
+        ],
+        "page_ocr_text_sha256": "dea2fc7febe5001ed4e809b5d050af715728c2d1702c2153da153eedf464f093",
+        "rendered_page_sha256": "c13d2055197fc2a8e77762852d6bb760db076df0d0067b51abe7cbd079c502bb",
+        "ocr_confidence": 0.9615558645184566,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "continuation_page_prefix",
+        "excerpt": "Considera uniprocessor systemexecutingthreetasksT,T2and T3,each ofwhichis composed of aninfinitesequence of jobs（orinstances)whicharriveperiodicallyatintervalsof 3,7and 20 milliseconds, respectively. The priority of each task is the inverse of its period, and the available tasks are scheduled in order of priority, with the highest priority task scheduled first. Each instance of T,T2 and T3 requires an execution time of 1, 2 and 4 milliseconds,respectively.Given that all tasks initially arrive at the beginning of the 1\"t millisecond and task preemptions are allowed, the firstinstanceof Tcompletesitsexecution at theend of milliseconds. CorrectAnswer: 12 ",
+        "excerpt_sha256": "468455543dbfcfab54148701fbe6d11890f90df5f5bc484059aeff5f506df06a",
+        "question_boundary_status": "continuation_page_item_bounded"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 52,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "28afb32f1084cd175b510728681ff42108ec80056af6dca7017028d22c75f339"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 12,
+      "item_label": "CS-2",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "EM",
+      "topic": "discrete-mathematics",
+      "reason_code": "explicit_power_set",
+      "reason": "The question asks for the cardinality of a finite set's power set.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          31
+        ],
+        "page_ocr_text_sha256": "8c1ea19503db3a3c1b0b0cd434a4c5eefd3e3f0f508c68e162daec42752a591a",
+        "rendered_page_sha256": "dc67cf104f8d822ba3d226e040983986f1c42d4c96ae000f9dda883576f37345",
+        "ocr_confidence": 0.9464319444004718,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 12",
+        "excerpt": "Question Number : 12 Question Type : NAT The cardinality of thepower set of{0, 1, 2, ..,10}is CorrectAnswer: 2048",
+        "excerpt_sha256": "ddea65ee37d343eb5174a2cafe561bc34de73aaa0113b5e3649706a69f2f46a7",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 12,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "1669e657bec0cf62ceee1208de6e4a9f67f4ed54d3fabf92968967c97ddd2b8f"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 14,
+      "item_label": "CS-4",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "EM",
+      "topic": "discrete-mathematics",
+      "reason_code": "finite_divisor_count",
+      "reason": "Counting the divisors of 2100 is a finite combinatorial counting problem.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          31
+        ],
+        "page_ocr_text_sha256": "8c1ea19503db3a3c1b0b0cd434a4c5eefd3e3f0f508c68e162daec42752a591a",
+        "rendered_page_sha256": "dc67cf104f8d822ba3d226e040983986f1c42d4c96ae000f9dda883576f37345",
+        "ocr_confidence": 0.9464319444004718,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number:14",
+        "excerpt": "Question Number:14QuestionType:NAT Thenumberofdivisorsof2100is Correct Answer : 36",
+        "excerpt_sha256": "ae527f549f79b33f82c0096c38583cc996d8856467b0a443d1ed2a808e762c03",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 14,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "628c27ed785c7ba407b768254662dff0e31a30744a983f91bf7398b368e91c88"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 22,
+      "item_label": "CS-12",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "PDS",
+      "topic": "heaps",
+      "reason_code": "explicit_heap_construction_bound",
+      "reason": "The question asks for a lower bound to convert a complete binary tree with heap subtrees into a heap.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          33
+        ],
+        "page_ocr_text_sha256": "3f26871f7e877c7f04f2ae37400472643af5839caad6285083fdc0e4f805a21f",
+        "rendered_page_sha256": "22efaba5dc9cce61ff2b3367f5694fd1f71f7df391ed9aee05db3a7df74388aa",
+        "ocr_confidence": 0.9338706088247786,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 22",
+        "excerpt": "Question Number : 22 Question Type : MCQ Consider a complete binary tree where the left and the right subtrees of the root are max-heaps.The lower bound for thenumber of operationsto convert the tree to a heapis (A) Ω(logn) (B)Ω(n) (C) Ω(nlogn) (zu)u (a) Options : 1.√A 2.B 3. C 4.′D",
+        "excerpt_sha256": "2b01cb364db4b2cb5ee22ffba59cf21e31849b5b2c0204bf31ae706bb57b756c",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 22,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "0ac992dd6511462e97859066027702a6140c5ef7214f6564d06c293f6119640e"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 23,
+      "item_label": "CS-13",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "PDS",
+      "topic": "trees-and-binary-search-trees",
+      "reason_code": "explicit_binary_tree_degree_identity",
+      "reason": "The question relates the leaf count to nodes having two children in a binary tree.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          34
+        ],
+        "page_ocr_text_sha256": "eebeff4763344efad16adb1d000ff32b62071ca29b3373444ac78e17929590d2",
+        "rendered_page_sha256": "a77523b3d88c4ecec9fd12b8a391f7fa960ac5a0264d239f7a9fa8b1bdf6f70e",
+        "ocr_confidence": 0.9528918246779344,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 23",
+        "excerpt": "Question Number : 23 Question Type : NAT AbinarytreeThas20leaves.ThenumberofnodesinThavingtwochildren is Correct Answer : 19",
+        "excerpt_sha256": "a73a4c6626aca2c736e8f2d0486c950ada1c90a7e0429f82d4c9a6c6d6eabe1a",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 23,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "96150b51e580c446107ff73aedd312fc232c0577d3b895f36943be8b505a08f2"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 29,
+      "item_label": "CS-19",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "software_engineering_not_in_current_syllabus",
+      "reason": "The original question asks for the basic COCOMO equations.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          36
+        ],
+        "page_ocr_text_sha256": "93024703d2c3bf33d1fddbf9c9cc19c1fa020097c6b0574a50da0e15bceb6b3e",
+        "rendered_page_sha256": "44398e88afee18540e7f664361e1bfa1f2a392b8222417dad80184f73d359219",
+        "ocr_confidence": 0.9296056418000119,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "QuestionNumber:29",
+        "excerpt": "QuestionNumber:29QuestionType:MCQ Consider thebasicCOCOMOmodelwhereE is theeffortappliedinperson-months,Dis the developmenttimeinchronologicalmonths,KLoCistheestimatednumberofdeliveredlinesof code (in thousands) and a,,bp,C,,d, have their usual meanings. The basic COCOMO equations areoftheform (A) E=a(KLOC)exp(bp),D=cb(E)exp（db) (B) D =a(KLOC)exp(bb),E =c(D)exp(d) （C)E=aexp(bb),D=cb（KLOC)exp（db) (D) E=aexp(d),D=c(KLOC)exp(bb) Options : 1.√A 2.∞B 3. ×C 4.D",
+        "excerpt_sha256": "551a24e1a2867657c6aa85b31d5bdf19fa20cdc6db0274b9e358094a79adb988",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 29,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "compilation-phases",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "0ae1e16beea19a4d5e79da12a46bc0aa7afb02191664cb11268a43849b3e2fe3"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 46,
+      "item_label": "CS-36",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "TOC",
+      "topic": "pumping-lemmas-and-language-properties",
+      "reason_code": "explicit_regular_language_classification",
+      "reason": "The question asks which of several formally defined languages are regular.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          42
+        ],
+        "page_ocr_text_sha256": "17b43c6fb4ca3a43d969ad9da465c029bb0bae0179fff133cee378cacc42c65d",
+        "rendered_page_sha256": "89124e65b114700d6196d6ada75da49b33a56a5d249ff850e4a82fffda43cd21",
+        "ocr_confidence": 0.9425051246042151,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "continuation_page_prefix",
+        "excerpt": "Which of thefollowing languagesis/are regular? L1: {wxw|w, x e {a, b} and |w, x|> 0}, wis the reverse of string w R R L2: {a\"b\" |m ≠n and m, n≥0} Ls: {db 1p, g, r≥0} (A) L and L; only (B) L2only (C) L and L, only (D) L only Options : 1.√A 2.∞B 3. C 4.D ",
+        "excerpt_sha256": "9fb457ee3782c293a433ef9edd723e4b9ea4b99aa767c9a61149cc5f00fa0df1",
+        "question_boundary_status": "continuation_page_item_bounded"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 46,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "ALG",
+        "topic": "algorithm-design-techniques",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "564c867956171dfd9e595e6596a0bc8816056576dcae135cf6861c5b2c68b88d"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 49,
+      "item_label": "CS-39",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "ALG",
+      "topic": "divide-and-conquer",
+      "reason_code": "explicit_partition_selection_recursion",
+      "reason": "The question completes recursive kth-smallest selection using a partition operation.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          44
+        ],
+        "page_ocr_text_sha256": "a5248590a6fdde28119ef1b0b668b6a9acf38881c8ea4e25e88e8b6acc18791e",
+        "rendered_page_sha256": "3a555719d3c62c9f490c7b7acf4b8c44b02592a9ea1eae634c2d3b15a6b3730e",
+        "ocr_confidence": 0.9441775221146016,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "continuation_page_prefix",
+        "excerpt": "Suppose you are provided with the following function declaration in the C programming language. int partition(int a[l,int n); Thefunctiontreatsthefirstelementofa[]asapivot,andrearranges theairaysothatallelements less than or equal to the pivot is in theleft part of the array,and all elementsgreater than the pivot is in the right part.In addition,it moves the pivot so that the pivot is the last element of theleft part. The return value is the number of elements in theleft part. The following partially given function in the C programming language is used to find the kth smallestelementin an arraya[]of sizenusingthepartitionfunction.We assumek≤n. int kth smallest(int a[],int n, int k) int left end = partition(a,n); if（leftend+1==k）{ return a[left end]; if（leftend+1>k）{ return kth smallest( }else{ return kth smallest( The missing argument lists are respectively (A)(a,left_end,k) and (a+left_end+l，n-left_end-1，k-left_end-1) (B)（a,left end,k)and (a,n-left end-l，k-left end-l) (C) (a+left_end+l, n-left_end-1,k-left_end-1) and (a, left_end, k) (D) (a, n-left_end-1，k-left_end-1) and (a,left_end,k) Options : 1.√A 2.B 3. × C 4.D ",
+        "excerpt_sha256": "8ea6b1720c1db25a847319ceb00a052a4f8c70d9534eaa69b7a7434ceb48dd95",
+        "question_boundary_status": "continuation_page_item_bounded"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 49,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "88c9bc7f97ba3cdf1ccca60d16c34d336a296c8f4e3fa21b2af5ffe1f554c732"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-2",
+      "canonical_parent_ordinal": 53,
+      "item_label": "CS-43",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "COA",
+      "topic": "instruction-pipelining",
+      "reason_code": "explicit_pipeline_hazards_and_forwarding",
+      "reason": "The question computes cycles for dependent instructions in a four-stage pipeline with operand forwarding.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          47
+        ],
+        "page_ocr_text_sha256": "c0d269e837cc21d67986b351fd0d3bf22955539422a9ebccb96dc2cbbcb5e53f",
+        "rendered_page_sha256": "78f3cf52c6f840dcea22484266b20dd8498a42fedd610d30d8cef2ae61bf0584",
+        "ocr_confidence": 0.9668903624985771,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "continuation_page_prefix",
+        "excerpt": "Considerthesequenceofmachineinstructionsgivenbelow： MUL R5,R0, R1 DIV R6,R2,R3 ADD R7, R5, R6 SUB R8,R7, R4 In the above sequence,R0 toR8 aregeneralpurposeregisters.In theinstructions shown,the first register stores the result of the operation performed on the second and the third registers.This sequence ofinstructions is tobe executed in apipelined instruction processor with thefollowing4 stages: (1) Instruction Fetch and Decode (IF), (2) Operand Fetch (OF), (3) Perform Operation (PO) and (4) Write back the result (WB). The IF, OF and WB stages take 1 clock cycle each for any instruction.ThePOstagetakes1clockcycleforADDorSUBinstruction,3clockcyclesforMUL instructionand 5 clock cycles for DIVinstruction.The pipelined processor uses operand forwarding from the POstage to the OF stage. The number of clock cycles taken for the execution of the abovesequenceofinstructionsis CorrectAnswer: 13 ",
+        "excerpt_sha256": "7425152a2e3676ef4854af33d94ae9ccefe053c341f52171532d9f584db91a1d",
+        "question_boundary_status": "continuation_page_item_bounded"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 53,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "6bed41f55d838436dfb65606d5a09b2c8e1f8e7246112540bcc052de036a5215"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-3",
+      "canonical_parent_ordinal": 18,
+      "item_label": "CS-8",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "web_markup_not_in_current_syllabus",
+      "reason": "HTML base URLs and relative links are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          59
+        ],
+        "page_ocr_text_sha256": "ed0f2ebca42ef55088a6351faf351a73972a4267dc49acd7c1e1a1f115799d7e",
+        "rendered_page_sha256": "398577c75137b402772882b8d5818613cc47ef836ca8038a7c386acaa84f7048",
+        "ocr_confidence": 0.9615800675324511,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 18",
+        "excerpt": "Question Number : 18 Question Type : MCQ a web server, ten WebPagesare storedwiththeURLsoftheform http://www.yourname.com/var.html;where,varisadifferentnumberfrom1to10foreach Webpage.Suppose,the client stores the Webpage withvar =1 (sayW1) in local machine,edits and thentests.RestoftheWebPagesremainsonthewebserver.W1 containsseveralrelativeURLs oftheform“var.htmlreferring to theotherWebPages.Whichoneof thefollowing statements needs tobeadded inW1,so that all therelativeURLsinW1refer tothe appropriateWebPageson thewebserver? (B)<base href: *http://www.yourname.com/> (C)<ahref:\"http://www.yourname.com/\"> Options : 1.∞A 2.B 3. ×C 4.D",
+        "excerpt_sha256": "67f8ce55cb8a3ba3835bb83da36adbd81bbaea775c87afdc767661e0cb60c2c9",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 18,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "3ee1dca4b68acb341d178b5c254756625a1c6ef348beadd38151e5f7e8e5a2ef"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-3",
+      "canonical_parent_ordinal": 21,
+      "item_label": "CS-11",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "PDS",
+      "topic": "trees-and-binary-search-trees",
+      "reason_code": "explicit_binary_tree_degree_identity",
+      "reason": "The question relates leaf nodes to nodes having exactly two children in a binary tree.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          60
+        ],
+        "page_ocr_text_sha256": "5078e63d628663cbebbf1c0698abb13c277ebcfbb71f967246cd87cbfbb22609",
+        "rendered_page_sha256": "c160149398bf49b37e2238cb7ec1507c6949c250d710339d68d6e1e1e9e092e3",
+        "ocr_confidence": 0.9261974915016477,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 21",
+        "excerpt": "Question Number : 21 Question Type : NAT Consider a binary tree T that has 200 leaf nodes.Then, the number of nodes in T that have exactly two children are Correct Answer: 199",
+        "excerpt_sha256": "2e197aa5ae8b9f44eeb192c5217e11be3f6e43ff374693a4cd04d1f98c474801",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 21,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "2b357c1910afdce1bcb5af97397d8c41d0160c5df90a9e22a74bf170836cf2f8"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-3",
+      "canonical_parent_ordinal": 31,
+      "item_label": "CS-21",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "OS",
+      "topic": "concurrency-and-synchronization",
+      "reason_code": "explicit_critical_section_protocol",
+      "reason": "The question evaluates mutual exclusion and deadlock properties of a two-process critical-section protocol.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          64
+        ],
+        "page_ocr_text_sha256": "ca8a5d54d98fae5dd3ab2374e1bed2320d47072d6673017457657a0be520be06",
+        "rendered_page_sha256": "96ab5be62dcffa11e313b684cadec79a01cb05fd8ad8d32a8bc50e24248625a7",
+        "ocr_confidence": 0.9364845834897936,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "continuation_page_prefix",
+        "excerpt": "Twoprocesses X and Yneed to access a critical section.Consider the following synchronization constructusedbyboththeprocesses Process X Process Y /*other code for process X*/ /*other code for process Y*/ while(true) while(true) 1 varP = true; varQ =true; while(varQ ==true) while(varP == true) { { /* Critical Section /* Critical Section varP = false; varQ = false; othercodefor processX*/ other code for process Y */ Here,varPandvarQaresharedvariablesandboth areinitializedtofalse.Whichone ofthe following statements is true? (A) The proposed solution prevents deadlock but failstoguarantee mutual exclusion (B) The proposed solution guarantees mutual exclusion but fails toprevent deadlock (C)Theproposedsolutionguaranteesmutualexclusion andprevents deadlock (D) The proposed solution fails toprevent deadlock and fails to guaranteemutual exclusion Options : 1.√A 2.B 3. C 4.∞D ",
+        "excerpt_sha256": "32bbb4c8761efcb21e1d930fcfa14bd9f5c0aba87c27bded41d87f409e3c55f2",
+        "question_boundary_status": "continuation_page_item_bounded"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 31,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "e9fe9117eac5844c1e90fcab50c23b130a0f91ed194d2c0c79751b81382ffc69"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-3",
+      "canonical_parent_ordinal": 60,
+      "item_label": "CS-50",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "EM",
+      "topic": "discrete-mathematics",
+      "reason_code": "explicit_relation_properties",
+      "reason": "The question asks whether a relation on ordered pairs is reflexive and symmetric.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          77
+        ],
+        "page_ocr_text_sha256": "e538e1fa1ca1e32475f20ee7475923f7f12ea6225836534ac5e0285987e0a5a3",
+        "rendered_page_sha256": "b50707cc738e1bf1852e21fdb95cdac99df95431a458278b9233364b0be3a5f4",
+        "ocr_confidence": 0.9577391536220478,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "Question Number : 60",
+        "excerpt": "Question Number : 60 Question Type : MCQ Let R be a relation on the set of ordered pairs of positive integers such that (p,q),(r,s)) e R if and onlyifp-s=q-r.WhichoneofthefollowingistrueaboutR? (A)Bothreflexiveand symmetric (B)Reflexivebutnotsymmetric (C)Notreflexivebutsymmetric (D)Neitherreflexivenorsymmetric Options : 1. ∞ A 2.B 3. Vc 4.D",
+        "excerpt_sha256": "f47acb6360dc4217bd24e8f4d1c458ee62d5bfaa0a18b7aef97b0a3c74902d12",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 60,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "a89c52fe2d90798b719dc2755514b7dbc0a57ce2b1d03ed62c3ae2cf770a9252"
+    },
+    {
+      "source_paper_id": "gate-cs-2015-session-3",
+      "canonical_parent_ordinal": 65,
+      "item_label": "CS-55",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "map",
+      "course": "CD",
+      "topic": "parsing",
+      "reason_code": "explicit_ll_lr_parsing",
+      "reason": "The question asks whether LL(1) and LR(1) parsers can parse strings from a given grammar.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr",
+        "source_pdf_sha256": "1e282618680e247cba75fb368db530ea03560341e463b0a77098d60316e9bfc8",
+        "source_pages": [
+          79
+        ],
+        "page_ocr_text_sha256": "f8a8206c2330107439b47e4a139eb288d4e89dde599af403614fb96620f009aa",
+        "rendered_page_sha256": "ba8a18a661ac4820d0b3df266d1face7215c11966001bb5a329147007326c079",
+        "ocr_confidence": 0.9499013947480869,
+        "ocr_artifact_sha256": "0c4f260beb4939898ba363de390b68365ea9650d6129d7927ef123c29a48d95e",
+        "locator": "continuation_page_prefix",
+        "excerpt": "ConsiderthefollowinggrammarG S → FIH F → p C H → d |c where S,F, and H are non-terminal symbols, p, d, and c are terminal symbols. Which of the followingstatement(s)is/are correct? (A) Only S1 (B) Only S2 (C)BothS1and S2 (D)NeitherS1norS2 Options : 1. ∞ A 2.B 3.C",
+        "excerpt_sha256": "d700dcd8b24f0e04ae6f291b6d2b3067eebab0b4ba5b2648b35b4e0737dc0c36",
+        "question_boundary_status": "continuation_page_item_bounded"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 65,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "82b45cbc1826e8b88a0a09ed3addab29312311a6cff86864c4faa665b3bbd157"
+    },
+    {
+      "source_paper_id": "gate-cs-2016-session-2",
+      "canonical_parent_ordinal": 29,
+      "item_label": "CS-19",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_compiler_phases",
+      "reason": "The exact question spans lexical analysis, parsing, semantic analysis, and runtime environments.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "979f307a3cebf1abf5fe8938e93d81a434ccb82bc9e34879d2b508b4e2addef2",
+        "source_pages": [
+          30
+        ],
+        "text_block_sha256": "a72266c388d9d00ff4cca7f1a7859b8e5aef1735af3ed215cb79285a2f002df5",
+        "excerpt": "Q.19 Match the following:\n(P) Lexical analysis (i) Leftmost derivation\n(Q) Top down parsing (ii) Type checking\n(R) Semantic analysis (iii) Regular expressions\n(S) Runtime environments (iv) Activation records\n(A) P↔ i, Q↔ ii, R↔ iv, S↔ iii\n(B) P↔ iii, Q↔ i, R↔ ii, S↔ iv\n(C) P↔ ii, Q↔ iii, R↔ i, S↔ iv\n(D) P↔ iv, Q↔ i, R↔ ii, S↔ iii",
+        "excerpt_sha256": "a72266c388d9d00ff4cca7f1a7859b8e5aef1735af3ed215cb79285a2f002df5",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 29,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "compilation-phases",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "3a5caa1294caecca788151e180b0fb8277c71ef99acb09e12b6fa89395d98b24"
+    },
+    {
+      "source_paper_id": "gate-cs-2017-session-1",
+      "canonical_parent_ordinal": 15,
+      "item_label": "CS-5",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_algorithm_paradigms",
+      "reason": "The original question jointly maps Kruskal, Quicksort, and Floyd-Warshall across three design paradigms.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr_cache",
+        "source_pdf_sha256": "2bc19c0f56a0ab791c33579e056c5aa233a6ff6878da779b4d551063fbc9db29",
+        "source_pages": [
+          4
+        ],
+        "page_ocr_text_sha256": "e1228c11cc56939418860adc9a0380e76a2127c362005c0466aefe62b18cdce8",
+        "rendered_page_sha256": "fd9c5d090d49955a49b6b36683882da6686fe6a4c61c17d49ec6998be99f74d1",
+        "ocr_confidence": 0.9173,
+        "ocr_artifact_sha256": null,
+        "locator": "Question Number : 5",
+        "excerpt": "Question Number : 5 Correct : 1 Wrong : -0.33 Considerthefollowingtable: Algorithms Design Paradigms (P)Kruskal G)Divideand Conquer (Q)Quicksort (ii) Greedy (R)Floyd-Warshall i) Dynamic Programming Match thealgorithmsto thedesignparadigms theyarebased on. (A)(P)→(ii). (Q)→().(R)→() (B) (P)→(ii). (Q)→(i). (R)→(ii) (C) (P)(i). (Q)→. (R)→(iii) (D) (P)(i).(Q→(i).(R)→(iii)",
+        "excerpt_sha256": "be63aeca0729ad875b379803123c0bafd014fed0fbe25174071ac4f3182829d0",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 15,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "ALG",
+        "topic": "algorithm-design-techniques",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "d82de24881428bcda6705772a8aa95e9fda0fb8f8c379d81ef1c7f95788e33e9"
+    },
+    {
+      "source_paper_id": "gate-cs-2017-session-1",
+      "canonical_parent_ordinal": 25,
+      "item_label": "CS-15",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "cryptography_not_in_current_syllabus",
+      "reason": "Digital signatures and birthday attacks are outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr_cache",
+        "source_pdf_sha256": "2bc19c0f56a0ab791c33579e056c5aa233a6ff6878da779b4d551063fbc9db29",
+        "source_pages": [
+          9
+        ],
+        "page_ocr_text_sha256": "f79938a8d3cf07e02222791b9aaf16954005bac43e5aaf459a86d5593d0aea44",
+        "rendered_page_sha256": "54d5a4cbeeb8b50ca287173675be923427f0fa48635f9a1bae82156aa56ebad1",
+        "ocr_confidence": 0.9106,
+        "ocr_artifact_sha256": null,
+        "locator": "Question Number : 15",
+        "excerpt": "Question Number : 15 Correct : 1 Wrong : -0.33 A sender S sends a message m to receiver R.which is digitally signed by Swith itsprivate key.In thisscenario.one ormoreof thefollowingsecurityviolationscan takeplace. (I) Scan launch a birthday attack to replace m with a fraudulentmessage. (II) A third party attacker can launch a birthday attack to replace m with a fraudulent message. (IIl) Rcan launch a birthday attack toreplace m with a fraudulent message. Which of the following are possible securityviolations? (A) (I and (II only (B) (I) only (C) (II) only (D) (II) and (III) only",
+        "excerpt_sha256": "304ce85703e3b5a80202ff363868a91cac5d5a70f952f99bb1b30162a538cfc8",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 25,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "8c2727107953c207b68b55394d7b32fc9a6e31816a28754310e8af770cd8ab50"
+    },
+    {
+      "source_paper_id": "gate-cs-2017-session-1",
+      "canonical_parent_ordinal": 54,
+      "item_label": "CS-44",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "cryptography_not_in_current_syllabus",
+      "reason": "RSA public/private key computation is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr_cache",
+        "source_pdf_sha256": "2bc19c0f56a0ab791c33579e056c5aa233a6ff6878da779b4d551063fbc9db29",
+        "source_pages": [
+          20
+        ],
+        "page_ocr_text_sha256": "50e54198fc07c94cba67efb68e8c5146e8da411abfb4623fae79c6df7d68bc36",
+        "rendered_page_sha256": "a12e3b8825162d8d3c8315fd930f16309a8b3d7cad0264e7d491dc522ff40c0e",
+        "ocr_confidence": 0.9414,
+        "ocr_artifact_sha256": null,
+        "locator": "Question Number : 44",
+        "excerpt": "Question Number : 44 Correct : 2 Wrong : 0 InaRSA cryptosystem.a participant A uses twoprime numbers p=13and q =17 to generate her publicandprivatekeys.If thepublickeyofAis35.then theprivatekey ofAis UPI",
+        "excerpt_sha256": "af13c48beecc9c99d6ed2505c211b7ce52c84d29cc85c3621263e33431d13dc1",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 54,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required",
+          "question_text_missing"
+        ]
+      },
+      "decision_evidence_sha256": "f1a99343df875f61f591de164d0da7f66510cf4bf529e1db7f41056f6634832c"
+    },
+    {
+      "source_paper_id": "gate-cs-2017-session-2",
+      "canonical_parent_ordinal": 15,
+      "item_label": "CS-5",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_compiler_phases",
+      "reason": "The question matches syntax trees, character streams, intermediate representations, and token streams to different compiler phases.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr_cache",
+        "source_pdf_sha256": "d9d7df696d326acc8344e94e3a9577cf792ca120579eb5dc5e7e337124a7c390",
+        "source_pages": [
+          3
+        ],
+        "page_ocr_text_sha256": "6e323d26f2263bda67f39909ec1d574207cef3f92961afa5a396a43f9e6bcde5",
+        "rendered_page_sha256": "8e121bf04978b1f8039d2381cec0b56c170974a13860df945aa0362336c8f6b7",
+        "ocr_confidence": 0.9359,
+        "ocr_artifact_sha256": null,
+        "locator": "Question Number : 5",
+        "excerpt": "Question Number : 5 Correct : 1 Wrong : -0.33 Match the following according to input (from the left column) to the compilerphase （in the right column)thatprocessesit: (P)Syntax tree (i) Code generator (Q) Characterstream (inSyntaxanalyzer (R)Intermediaterepresentation （iii)Semanticanalyzer (S)Token stream (iv)Lexical analyzer (A) P→(i). Q→(ii). R→(iv).S→(i) BANK.COM (B)P→(i).Q→(i).R→(ii）.S(iv) (C）P→（i).Q→（iv).R(①)S→(ii) (D) P→(i).Q→(iv).R→(ii).S→(iii)",
+        "excerpt_sha256": "c92a7a55d8482ff149ba448e55673db62a5585a66c60743c6f1674b60a043ed3",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 15,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "intermediate-code-generation",
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "099a77c279b5121deedc5cc3d18b6313fa3552b751d44f94e89fa22dafe8727b"
+    },
+    {
+      "source_paper_id": "gate-cs-2018",
+      "canonical_parent_ordinal": 18,
+      "item_label": "CS-8",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_compiler_phases",
+      "reason": "The exact question spans lexical/syntax rules, type checking, intermediate representations, and runtime stacks.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "971ed8ef730e66e382b416a77e8b5123e8345fa27ab53c3371122077e9c49926",
+        "source_pages": [
+          5,
+          6
+        ],
+        "text_block_sha256": "97ec5efbb14ae58185eca5bf6c96672b5931c3c24cea0e0eb3d61fbd526599f7",
+        "excerpt": "Q.8 Which one of the following statements is FALSE?\n(A) Context-free grammar can be used to specify both lexical and syntax rules.\n(B) Type checking is done before parsing.\n(C) High-level language programs can be translated to different Intermediate\nRepresentations.\n(D) Arguments to a function can be passed using the program stack.\nCS 2/20\nGATE 2018 COMPUTER SCIENCE AND INFORMATION TECHNOLOGY",
+        "excerpt_sha256": "97ec5efbb14ae58185eca5bf6c96672b5931c3c24cea0e0eb3d61fbd526599f7",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 18,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "compilation-phases",
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "4a42954b16f1d4e3d57c592140f73268ab4c7f40b36376e383ed114b2597b80a"
+    },
+    {
+      "source_paper_id": "gate-cs-2019",
+      "canonical_parent_ordinal": 64,
+      "item_label": "CS-54",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "out_of_syllabus",
+      "course": null,
+      "topic": null,
+      "reason_code": "cryptography_not_in_current_syllabus",
+      "reason": "RSA modulus factorization is outside the current syllabus.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr_cache",
+        "source_pdf_sha256": "aa80100a9136a07aaba70b48a9e86b23246e53f2f5fc80760784d8ce3b8994cd",
+        "source_pages": [
+          16
+        ],
+        "page_ocr_text_sha256": "4d9e1f3d6ec80b7afb1c4bf05d2385fb472e753fd18f8074878366e504894ef8",
+        "rendered_page_sha256": "fba762ecc5fa9a8f0d2a3ade00c63aab8b1d009dd55d4a5128c1b64fea383522",
+        "ocr_confidence": 0.9673,
+        "ocr_artifact_sha256": null,
+        "locator": "Q.54",
+        "excerpt": "Q.54 In an RSA cryptosystem, the value of the public modulus parameter n is 3007. If it is also known that Φ(n) = 2880, where ΦO denotes Euler's Totient Function, then the prime factor of n which is greater than 50 is",
+        "excerpt_sha256": "bc2c0110ac0c24ce7463545bf7c774ad71cd06032ec908e61d056106168ace6d",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 64,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": null,
+        "topic": null,
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "bba08169074e998b135db2d136f0cf4e0f5ced890a303be73e4fd998e295587c"
+    },
+    {
+      "source_paper_id": "gate-cs-2020",
+      "canonical_parent_ordinal": 19,
+      "item_label": "CS-9",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_compiler_phases",
+      "reason": "The question jointly tests symbol-table access, recursive runtime storage, and declaration-error detection phases.",
+      "evidence": {
+        "kind": "checksum_bound_original_pdf_page_rapidocr_cache",
+        "source_pdf_sha256": "f06a88c8a404a399eb2e432573ec1bb83fa3c768d2075dee190d8d666b647c38",
+        "source_pages": [
+          5
+        ],
+        "page_ocr_text_sha256": "0dfcd78b329eee3ff6e9335de9d140af80479f7ea0f36d7f073022decc974225",
+        "rendered_page_sha256": "af9793207de3672f652cbc174682b877bf1410174978e5fb0613cef31639d682",
+        "ocr_confidence": 0.947,
+        "ocr_artifact_sha256": null,
+        "locator": "Q.No.9",
+        "excerpt": "Q.No.9 Considerthefollowingstatements. I. Symbol tableisaccessedonlyduringlexical analysis andsyntaxanalysis. II. Compilersfor programminglanguages that support recursion necessarily need heap storage formemory allocation in the run-time environment. II. Errorsviolatingtheconditionanyvariablemustbedeclaredbeforeits use'aredetectedduringsyntaxanalysis. Which of the above statementsis/areTRUE? (A) Ionly (B) I and IIl only (C) II only (D) None of I, II, and III",
+        "excerpt_sha256": "37de6390d312d356f18421ca840686f43a641ec05fa054dd24353977f1948ec0",
+        "question_boundary_status": "marker_bounded_page_ocr"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 19,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "compilation-phases",
+        "review_flags": [
+          "classification_review_required",
+          "secondary_transcription_review_only"
+        ]
+      },
+      "decision_evidence_sha256": "dec02277ccedd00a73576f2499e5d482b89bc27b0489a1dc1c1002f4228a4997"
+    },
+    {
+      "source_paper_id": "gate-cs-2023",
+      "canonical_parent_ordinal": 11,
+      "item_label": "CS-1",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "broad_frontend_backend_boundary",
+      "reason": "Front-end/back-end compiler partitioning spans several canonical compiler topics and has no unique topic.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "63eac2f33d1cc545325e735a375192e9dcfd55348291978ebc06749606ed3c98",
+        "source_pages": [
+          8,
+          9
+        ],
+        "text_block_sha256": "6101f39321146572628ce5a130b59d13c2cf7d1b0c12e7976b57447b970f1069",
+        "excerpt": "Q.11 Consider the following statements regarding the front-end and back-end of a\ncompiler.\nS1: The front-end includes phases that are independent of the target hardware.\nS2: The back-end includes phases that are specific to the target hardware.\nS3: The back-end includes phases that are specific to the programming language\nused in the source code.\nIdentify the CORRECT option.\n(A) Only S1 is TRUE.\n(B) Only S1 and S2 are TRUE.\n(C) S1, S2,and S3 are all TRUE.\n(D) Only S1 and S3 are TRUE.\nCS Page 1 of 83\nGATE 2023 Computer Science and Information Technology (CS)",
+        "excerpt_sha256": "6101f39321146572628ce5a130b59d13c2cf7d1b0c12e7976b57447b970f1069",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 11,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "compilation-phases",
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "43a92f969210b35f9e37cd2070ca98a23b04d121019a97bc2b38f97c324d3485"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "canonical_parent_ordinal": 21,
+      "item_label": "CS-11",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_compiler_phases",
+      "reason": "The exact question matches lexical analysis, syntax analysis, intermediate-code generation, and optimization to outputs.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "b5012f2e7da399f4129e9ac5c1713493e3374ba9c9d30d600383dc535b3b5072",
+        "source_pages": [
+          15,
+          16
+        ],
+        "text_block_sha256": "52f38b7c39644c9bb1ab289d8c89e2439dd124d1d29495aca660fc0e42101578",
+        "excerpt": "Q.21 Consider the following two sets:\nSet X Set Y\nP. Lexical Analyzer 1. Abstract Syntax Tree\nQ. Syntax Analyzer 2. Token\nR. Intermediate Code Generator 3. Parse Tree\nS. Code Optimizer 4. Constant Folding\nWhich one of the following options is the CORRECT match from Set X to Set Y ?\n(A) P – 4; Q – 1; R – 3; S – 2\n(B) P – 2; Q – 3; R – 1; S – 4\n(C) P – 2; Q – 1; R – 3; S – 4\n(D) P – 4; Q – 3; R – 2; S – 1\nPage 15 of 40\nOrganizing Institute: IISc, Bengaluru\nComputer Science and Information Technology Set 2 (CS2)",
+        "excerpt_sha256": "52f38b7c39644c9bb1ab289d8c89e2439dd124d1d29495aca660fc0e42101578",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 21,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "intermediate-code-generation",
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "b144d1e720b8f8203be0a33672c51564cef6a336a7e2ca959ef9a028a5193cad"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "canonical_parent_ordinal": 12,
+      "item_label": "CS-2",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "symbol_table_spans_topics",
+      "reason": "The symbol-table question spans scope, data-structure implementation, parsing, and lexical-analysis lifecycle.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "81a6517cc058c3a471dce9a39a6bb2291f4fff9aa7ebebe6a5f337f61e25ee81",
+        "source_pages": [
+          12,
+          13
+        ],
+        "text_block_sha256": "a443a59c852da6a3133e739b593476057a5dc6259d6cc555dbfc64df7eca1f07",
+        "excerpt": "Q.12 Which ONE of the following statements is FALSE regarding the symbol table?\n(A) Symbol table is responsible for keeping track of the scope of variables.\n(B) Symbol table can be implemented using a binary search tree.\n(C) Symbol table is not required after the parsing phase.\n(D) Symbol table is created during the lexical analysis phase.\nOrganising Institute: IIT Roorkee Page 12 of 64\nComputer Science and Information Technology (CS1)",
+        "excerpt_sha256": "a443a59c852da6a3133e739b593476057a5dc6259d6cc555dbfc64df7eca1f07",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 12,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "CD",
+        "topic": "symbol-table",
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "70120ab3fd9296c3093f37f1ca728de99d02b0cc1b0caaff1fef62bb184bebc6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "canonical_parent_ordinal": 38,
+      "item_label": "CS-28",
+      "parent_item_label": null,
+      "child_item_label": null,
+      "decision": "review",
+      "course": null,
+      "topic": null,
+      "reason_code": "compound_data_structures",
+      "reason": "The exact meld question simultaneously compares linked lists, array heaps, and binary search trees.",
+      "evidence": {
+        "kind": "checksum_bound_original_text_block",
+        "source_pdf_sha256": "6ed18668acb46b636ca0badf132d904756e4377a9972e8484a05eaebe9f17ddd",
+        "source_pages": [
+          29,
+          30
+        ],
+        "text_block_sha256": "74aecccc15a2b7484fefcfca2f6e49dc7e1f21a605877fdfb3065929b9182945",
+        "excerpt": "Q.38 A meld operation on two instances of a data structure combines them into one single\ninstance of the same data structure. Consider the following data structures:\nP: Unsorted doubly linked list with pointers to the head node and tail node\nof the list.\nQ: Min-heap implemented using an array.\nR: Binary Search Tree.\nWhich ONE of the following options gives the worst-case time complexities for\nmeld operation on instances of size n of these data structures?\n(A) P: Θ(1), Q: Θ(n), R: Θ(n)\n(B) P: Θ(1), Q: Θ(nlog n), R: Θ(n)\n(C) P: Θ(n), Q: Θ(nlog n), R: Θ(n2)\n(D) P: Θ(1), Q: Θ(n), R: Θ(nlog n)\nOrganising Institute: IIT Roorkee Page 29 of 48\nComputer Science and Information Technology (CS2)",
+        "excerpt_sha256": "74aecccc15a2b7484fefcfca2f6e49dc7e1f21a605877fdfb3065929b9182945",
+        "rendered_page_evidence": [],
+        "question_boundary_status": "exact_text_block"
+      },
+      "prior_classification": {
+        "final_release_ordinal": 38,
+        "classification_status": "review_required",
+        "syllabus_status": "review_required",
+        "course": "PDS",
+        "topic": "linked-lists",
+        "review_flags": [
+          "classification_review_required"
+        ]
+      },
+      "decision_evidence_sha256": "6dcaa8be78e71f818188eba4d6db81230ab9a27353985863852574c07f3c6eda"
+    }
+  ],
+  "artifact_sha256": "8991cbc83aeedf18ea22d6d8c22fa66e054fb51624594b04ce02f1557493f96b"
+}

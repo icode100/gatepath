@@ -1,0 +1,1195 @@
+{
+  "schema_version": "1.0",
+  "policy_version": "gate-cs-1996-2025-v1",
+  "source": "GateOverflow locator index (classification labels only)",
+  "canonical_inventory": "question_bank_manifest.json",
+  "scope": {
+    "year_min": 1996,
+    "year_max": 2025,
+    "expected_source_record_count": 2607,
+    "expected_source_signature_count": 419
+  },
+  "decision_groups": [
+    {
+      "decision": "map",
+      "source_course": "ALG",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["asymptotic-notations", "identify-function", "recurrence-relation", "recursion", "space-complexity", "time-complexity"],
+      "canonical_course": "ALG",
+      "canonical_topic": "complexity-analysis",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name asymptotic or resource-complexity analysis concepts."
+    },
+    {
+      "decision": "map",
+      "source_course": "ALG",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["binary-search", "double-hashing", "hashing", "heap-sort", "insertion-sort", "inversion", "merge-sort", "merging", "number-of-swap", "quick-sort", "searching", "selection-sort", "sorting", "uniform-hashing"],
+      "canonical_course": "ALG",
+      "canonical_topic": "searching-sorting-and-hashing",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels explicitly name searching, sorting, or hashing techniques."
+    },
+    {
+      "decision": "map",
+      "source_course": "ALG",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["dynamic-programming", "matrix-chain-ordering"],
+      "canonical_course": "ALG",
+      "canonical_topic": "dynamic-programming",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels explicitly name dynamic programming or its matrix-chain application."
+    },
+    {
+      "decision": "map",
+      "source_course": "ALG",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["greedy-algorithms", "huffman-code"],
+      "canonical_course": "ALG",
+      "canonical_topic": "greedy-algorithms",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels explicitly name greedy methods."
+    },
+    {
+      "decision": "map",
+      "source_course": "ALG",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["bellman-ford", "dijkstras-algorithm", "directed-acyclic-graph", "graph-algorithms", "graph-search", "minimum-spanning-tree", "shortest-path", "strongly-connected-components", "topological-sort"],
+      "canonical_course": "ALG",
+      "canonical_topic": "graph-algorithms",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels explicitly name graph algorithms or graph-algorithm primitives."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "ALG",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["algorithm-design", "algorithm-design-techniques", "maximum-minimum"],
+      "reason_code": "broad_algorithm_label",
+      "reason": "The label spans multiple design paradigms and cannot determine a single syllabus topic without question-level evidence."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["lexical-analysis"],
+      "canonical_course": "CD",
+      "canonical_topic": "lexical-analysis",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source label exactly names lexical analysis."
+    },
+    {
+      "decision": "map",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["first-and-follow", "grammar", "ll-parser", "lr-parser", "operator-precedence", "parsing", "viable-prefix"],
+      "canonical_course": "CD",
+      "canonical_topic": "parsing",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name grammar analysis or parser construction."
+    },
+    {
+      "decision": "map",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["abstract-syntax-tree", "expression-evaluation", "syntax-directed-translation"],
+      "canonical_course": "CD",
+      "canonical_topic": "syntax-directed-translation",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name syntax trees, attributed evaluation, or syntax-directed translation."
+    },
+    {
+      "decision": "map",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["parameter-passing", "runtime-environment"],
+      "canonical_course": "CD",
+      "canonical_topic": "runtime-environments",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name calling conventions or compiler runtime environments."
+    },
+    {
+      "decision": "map",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["backpatching", "intermediate-code"],
+      "canonical_course": "CD",
+      "canonical_topic": "intermediate-code-generation",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name intermediate representations or backpatching."
+    },
+    {
+      "decision": "map",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["basic-blocks", "code-optimization", "directed-acyclic-graph", "live-variable-analysis", "register-allocation", "static-single-assignment"],
+      "canonical_course": "CD",
+      "canonical_topic": "code-optimization-and-data-flow-analysis",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name compiler optimization or data-flow-analysis concepts."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "CD",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["assembler", "compilation-phases", "linker", "macros", "symbol-table"],
+      "reason_code": "broad_or_current_syllabus_boundary",
+      "reason": "The label is broad, phase-spanning, or outside the current compiler topic inventory and requires item-level review."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "CD",
+      "source_course_mapping_agrees": false,
+      "source_topics": ["parameter-passing"],
+      "reason_code": "source_course_mapping_disagrees",
+      "reason": "GateOverflow chapter and tag course mappings disagree; the course/topic must be decided from the question."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["application-layer-protocols", "sockets"],
+      "canonical_course": "CN",
+      "canonical_topic": "application-layer",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name application protocols or sockets."
+    },
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["arp", "fragmentation", "ip-addressing", "ip-packet", "network-layer", "subnetting"],
+      "canonical_course": "CN",
+      "canonical_topic": "ipv4-addressing-and-forwarding",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name IPv4 addressing, packet handling, ARP, or forwarding."
+    },
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["bit-stuffing", "crc-polynomial", "csma-cd", "error-detection", "ethernet", "hamming-code", "lan-technologies", "mac-protocol", "pure-aloha", "slotted-aloha", "stop-and-wait"],
+      "canonical_course": "CN",
+      "canonical_topic": "data-link-layer",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name framing, error control, LAN, or medium-access concepts."
+    },
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["distance-vector-routing", "routing", "routing-protocols"],
+      "canonical_course": "CN",
+      "canonical_topic": "routing-algorithms",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name routing algorithms or protocols."
+    },
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["bridges", "network-switching", "osi-model"],
+      "canonical_course": "CN",
+      "canonical_topic": "layering-and-switching",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name protocol layering, bridges, or switching."
+    },
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["congestion-control", "tcp", "udp", "wrap-around-time"],
+      "canonical_course": "CN",
+      "canonical_topic": "transport-layer",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name transport protocols, congestion control, or transport sequence space."
+    },
+    {
+      "decision": "map",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["channel-utilization", "network-flow", "token-bucket"],
+      "canonical_course": "CN",
+      "canonical_topic": "network-performance",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name utilization, traffic shaping, or network performance."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "CN",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["communication", "network-protocols", "probability", "sliding-window"],
+      "reason_code": "layer_ambiguous_network_label",
+      "reason": "The label can apply to multiple network layers or is too broad to select one syllabus topic without the question."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["addressing-modes", "cisc-risc-architecture", "instruction-execution", "instruction-format", "instruction-set-architecture", "machine-instruction"],
+      "canonical_course": "COA",
+      "canonical_topic": "machine-instructions-and-addressing-modes",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name instruction sets, formats, execution, or addressing modes."
+    },
+    {
+      "decision": "map",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["data-path", "microprogramming"],
+      "canonical_course": "COA",
+      "canonical_topic": "alu-datapath-and-control",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name datapath or control-unit design."
+    },
+    {
+      "decision": "map",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["data-dependency", "pipelining", "speedup", "stall"],
+      "canonical_course": "COA",
+      "canonical_topic": "instruction-pipelining",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name pipelining, dependencies, stalls, or pipeline speedup."
+    },
+    {
+      "decision": "map",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["average-memory-access-time", "cache-memory", "conflict-misses", "direct-mapping", "dram", "memory-interfacing", "virtual-memory"],
+      "canonical_course": "COA",
+      "canonical_topic": "memory-hierarchy",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name cache, main memory, memory interfacing, or virtual memory hierarchy."
+    },
+    {
+      "decision": "map",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["io-handling"],
+      "canonical_course": "COA",
+      "canonical_topic": "i-o-interface",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The agreeing COA label names processor I/O interfacing."
+    },
+    {
+      "decision": "map",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["dma", "interrupts"],
+      "canonical_course": "COA",
+      "canonical_topic": "interrupts-and-dma",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name interrupts or direct memory access."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "COA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["runtime-environment"],
+      "reason_code": "broad_runtime_label",
+      "reason": "Runtime environment can refer to registers, stacks, calls, or control and needs question-level evidence."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "COA",
+      "source_course_mapping_agrees": false,
+      "source_topics": ["io-handling"],
+      "reason_code": "source_course_mapping_disagrees",
+      "reason": "GateOverflow chapter and tag course mappings disagree; the course/topic must be decided from the question."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["b-tree", "indexing"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "file-organization-and-indexing",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name database indexes or B-trees."
+    },
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["database-normalization", "functional-dependency"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "normal-forms",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name functional dependencies or normalization."
+    },
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["er-diagram"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "er-model",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source label names ER modeling."
+    },
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["candidate-key", "joins", "natural-join", "query", "relational-algebra", "relational-calculus", "relational-model", "safe-query", "tuple-relational-calculus"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "relational-model",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name relations, keys, relational query formalisms, or joins."
+    },
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["referential-integrity"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "integrity-constraints",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source label names a database integrity constraint."
+    },
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["sql"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "sql",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source label exactly names SQL."
+    },
+    {
+      "decision": "map",
+      "source_course": "DBMS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["conflict-serializable", "timestamp-ordering", "transaction-and-concurrency", "two-phase-locking-protocol"],
+      "canonical_course": "DBMS",
+      "canonical_topic": "transactions-and-concurrency-control",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name transactions, schedules, locking, or timestamp ordering."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "DL",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["boolean-algebra", "canonical-normal-form", "conjunctive-normal-form", "dual-function", "functional-completeness", "k-map", "min-no-gates", "min-products-of-sum-form", "min-sum-of-products-form", "prime-implicants"],
+      "canonical_course": "DL",
+      "canonical_topic": "boolean-algebra",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name Boolean algebra, canonical forms, or minimization."
+    },
+    {
+      "decision": "map",
+      "source_course": "DL",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["combinational-circuit", "decoder", "multiplexer", "rom", "static-hazard"],
+      "canonical_course": "DL",
+      "canonical_topic": "combinational-circuits",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels explicitly name combinational components or hazards."
+    },
+    {
+      "decision": "map",
+      "source_course": "DL",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["digital-counter", "finite-state-machines", "flip-flop", "ripple-counter-operation", "synchronous-asynchronous-circuits"],
+      "canonical_course": "DL",
+      "canonical_topic": "sequential-circuits",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name state, flip-flop, counter, or sequential-circuit concepts."
+    },
+    {
+      "decision": "map",
+      "source_course": "DL",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["adder", "array-multiplier", "binary-codes", "booths-algorithm", "carry-generator", "fixed-point-representation", "floating-point-representation", "ieee-representation", "little-endian-big-endian", "number-representation"],
+      "canonical_course": "DL",
+      "canonical_topic": "number-representation-and-arithmetic",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name representation or binary arithmetic."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "DL",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["circuit-output", "digital-circuits", "memory-interfacing"],
+      "reason_code": "combinational_or_sequential_ambiguous",
+      "reason": "The label alone does not distinguish combinational, sequential, arithmetic, or memory behavior."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "EM",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["determinant", "eigen-value", "lu-decomposition", "matrix", "rank-of-matrix", "system-of-equations", "vector-space"],
+      "canonical_course": "EM",
+      "canonical_topic": "linear-algebra",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name matrix or vector-space concepts."
+    },
+    {
+      "decision": "map",
+      "source_course": "EM",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["continuity", "definite-integral", "differentiation", "integration", "limits", "maxima-minima"],
+      "canonical_course": "EM",
+      "canonical_topic": "calculus",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name single-variable calculus concepts."
+    },
+    {
+      "decision": "map",
+      "source_course": "EM",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["bayes-theorem", "binomial-distribution", "conditional-probability", "continuous-distribution", "expectation", "independent-events", "normal-distribution", "poisson-distribution", "probability", "probability-density-function", "probability-distribution", "random-variable", "statistics", "uniform-distribution"],
+      "canonical_course": "EM",
+      "canonical_topic": "probability-and-statistics",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name probability, random variables, distributions, or statistics."
+    },
+    {
+      "decision": "map",
+      "source_course": "EM",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["balls-in-bins", "binary-operation", "combinatory", "countable-uncountable-set", "counting", "degree-of-graph", "first-order-logic", "functions", "generating-functions", "graph-coloring", "graph-connectivity", "graph-isomorphism", "graph-matching", "graph-planarity", "group-theory", "lattice", "logical-reasoning", "mathematical-induction", "modular-arithmetic", "partial-order", "pigeonhole-principle", "propositional-logic", "recurrence-relation", "relations", "set-theory"],
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name logic, sets, relations, combinatorics, algebraic structures, recurrence, or graph theory."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "EM",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["identify-function", "polynomials", "summation"],
+      "reason_code": "broad_mathematics_label",
+      "reason": "The label can belong to multiple mathematics syllabus areas and needs question-level evidence."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "GA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["antonyms", "articles", "comparative-forms", "english-grammar", "grammatical-error", "incorrect-sentence-part", "most-appropriate-word", "passage-reading", "phrase-meaning", "sentence-ordering", "synonyms", "tenses", "word-meaning", "word-pairs"],
+      "canonical_course": "GA",
+      "canonical_topic": "verbal-aptitude",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name vocabulary, grammar, sentence, or reading-comprehension skills."
+    },
+    {
+      "decision": "map",
+      "source_course": "GA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["assembling-pieces", "contour-plots", "cubes", "image-rotation", "maps", "paper-folding", "patterns-in-three-dimensions"],
+      "canonical_course": "GA",
+      "canonical_topic": "spatial-aptitude",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name two/three-dimensional visualization or transformation."
+    },
+    {
+      "decision": "map",
+      "source_course": "GA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["absolute-value", "age-relation", "alligation-mixture", "area", "arithmetic-series", "average", "bar-graph", "bayes-theorem", "cartesian-coordinates", "circle", "clock-time", "combinatory", "cost-market-price", "data-interpretation", "factors", "fractions", "functions", "geometry", "logarithms", "maxima-minima", "number-series", "number-system", "number-theory", "numerical-computation", "percentage", "permutation-and-combination", "polynomials", "prime-numbers", "probability", "profit-loss", "quadratic-equations", "ratio-proportion", "sequence-series", "speed-time-distance", "statistics", "tables", "tabular-data", "triangles", "volume", "work-time"],
+      "canonical_course": "GA",
+      "canonical_topic": "quantitative-aptitude",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name arithmetic, algebra, geometry, probability, or data interpretation."
+    },
+    {
+      "decision": "map",
+      "source_course": "GA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["code-words", "coding-decoding", "direction-sense", "family-relationship", "logical-inference", "logical-reasoning", "number-relations", "round-table-arrangement", "seating-arrangement", "statement-sufficiency", "statements-follow", "venn-diagram", "verbal-reasoning"],
+      "canonical_course": "GA",
+      "canonical_topic": "analytical-aptitude",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name deductive, relational, arrangement, or coding reasoning."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "GA",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["odd-one"],
+      "reason_code": "presentation_dependent_aptitude_label",
+      "reason": "Odd-one-out may assess verbal, analytical, or spatial aptitude depending on the options."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "GA",
+      "source_course_mapping_agrees": false,
+      "source_topics": ["number-system"],
+      "reason_code": "source_course_mapping_disagrees",
+      "reason": "GateOverflow chapter and tag course mappings disagree; the course/topic must be decided from the question."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["bankers-algorithm", "deadlock-prevention-avoidance-detection", "resource-allocation", "resource-allocation-graph"],
+      "canonical_course": "OS",
+      "canonical_topic": "deadlocks",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name deadlock modeling, avoidance, prevention, or detection."
+    },
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["context-switch", "inter-process-communication", "process", "threads"],
+      "canonical_course": "OS",
+      "canonical_topic": "processes-and-threads",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name processes, threads, IPC, or context switching."
+    },
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["demand-paging", "least-recently-used", "memory-management", "multilevel-paging", "page-replacement", "translation-lookaside-buffer", "virtual-memory"],
+      "canonical_course": "OS",
+      "canonical_topic": "memory-and-virtual-memory",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name paging, replacement, address translation, or virtual memory."
+    },
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["file-system", "linked-allocation"],
+      "canonical_course": "OS",
+      "canonical_topic": "file-systems",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name file systems or file allocation."
+    },
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["fork-system-call", "system-calls"],
+      "canonical_course": "OS",
+      "canonical_topic": "system-calls",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name system calls."
+    },
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["process-synchronization", "semaphore"],
+      "canonical_course": "OS",
+      "canonical_topic": "concurrency-and-synchronization",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name synchronization primitives or concurrent-process coordination."
+    },
+    {
+      "decision": "map",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["disk-scheduling", "process-scheduling", "round-robin-scheduling", "srtf"],
+      "canonical_course": "OS",
+      "canonical_topic": "cpu-and-i-o-scheduling",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels explicitly name CPU or disk scheduling."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "OS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["disk", "dma", "input-output", "interrupts", "io-handling", "os-protection"],
+      "reason_code": "broad_or_cross_course_os_label",
+      "reason": "The label may denote file systems, scheduling, hardware I/O, protection, or COA and needs item-level evidence."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["aliasing", "functions", "identify-function", "output", "parameter-passing", "pointers", "programming-constructs", "programming-in-c", "strings", "structure", "switch-case", "union"],
+      "canonical_course": "PDS",
+      "canonical_topic": "programming-in-c",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name C programming constructs, data, calls, or output."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["array"],
+      "canonical_course": "PDS",
+      "canonical_topic": "arrays",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The agreeing source label names arrays."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["avl-tree", "binary-search-tree", "binary-tree", "tree"],
+      "canonical_course": "PDS",
+      "canonical_topic": "trees-and-binary-search-trees",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name trees or binary-search-tree variants."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["binary-heap", "priority-queue"],
+      "canonical_course": "PDS",
+      "canonical_topic": "heaps",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name heaps or heap-backed priority queues."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["infix-prefix", "queue", "stack"],
+      "canonical_course": "PDS",
+      "canonical_topic": "stacks-and-queues",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name stacks, queues, or stack expression processing."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["recursion"],
+      "canonical_course": "PDS",
+      "canonical_topic": "recursion",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The agreeing source label names recursion."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["linked-list"],
+      "canonical_course": "PDS",
+      "canonical_topic": "linked-lists",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source label names linked lists."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["hashing"],
+      "canonical_course": "ALG",
+      "canonical_topic": "searching-sorting-and-hashing",
+      "reason_code": "explicit_cross_course_syllabus_alias",
+      "reason": "GatePath's canonical syllabus inventory places hashing under Algorithms."
+    },
+    {
+      "decision": "map",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["loop-invariants", "time-complexity"],
+      "canonical_course": "ALG",
+      "canonical_topic": "complexity-analysis",
+      "reason_code": "explicit_cross_course_syllabus_alias",
+      "reason": "GatePath's canonical syllabus inventory places loop and time-complexity analysis under Algorithms."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["abstract-data-type", "data-structures", "programming-paradigms", "type-checking"],
+      "reason_code": "broad_or_current_syllabus_boundary",
+      "reason": "The label is broad or outside the current C/data-structure topic inventory and requires question-level review."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "PDS",
+      "source_course_mapping_agrees": false,
+      "source_topics": ["array", "parameter-passing", "queue", "recursion"],
+      "reason_code": "source_course_mapping_disagrees",
+      "reason": "GateOverflow chapter and tag course mappings disagree; the course/topic must be decided from the question."
+    },
+
+    {
+      "decision": "map",
+      "source_course": "TOC",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["finite-automata", "finite-state-machines", "minimal-state-automata", "non-determinism", "number-of-states", "regular-expression", "regular-grammar", "regular-language"],
+      "canonical_course": "TOC",
+      "canonical_topic": "regular-expressions-and-finite-automata",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name regular languages, expressions, grammars, or finite automata."
+    },
+    {
+      "decision": "map",
+      "source_course": "TOC",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["context-free-grammar", "context-free-language"],
+      "canonical_course": "TOC",
+      "canonical_topic": "context-free-grammars",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name context-free grammars or languages."
+    },
+    {
+      "decision": "map",
+      "source_course": "TOC",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["dpda", "pushdown-automata"],
+      "canonical_course": "TOC",
+      "canonical_topic": "pushdown-automata",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name pushdown automata."
+    },
+    {
+      "decision": "map",
+      "source_course": "TOC",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["closure-property", "countable-uncountable-set", "identify-class-language", "pumping-lemma"],
+      "canonical_course": "TOC",
+      "canonical_topic": "pumping-lemmas-and-language-properties",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name pumping, closure, countability, or language-class properties."
+    },
+    {
+      "decision": "map",
+      "source_course": "TOC",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["decidability", "recursive-and-recursively-enumerable-languages", "reduction"],
+      "canonical_course": "TOC",
+      "canonical_topic": "turing-machines-and-undecidability",
+      "reason_code": "unambiguous_source_topic_alias",
+      "reason": "The source labels name decidability, reductions, or recursive/RE languages."
+    },
+    {
+      "decision": "manual_review",
+      "source_course": "TOC",
+      "source_course_mapping_agrees": true,
+      "source_topics": ["medium"],
+      "reason_code": "non_semantic_source_label",
+      "reason": "The label describes difficulty rather than a topic and must be resolved from the question."
+    },
+
+    {
+      "decision": "manual_review",
+      "source_course": null,
+      "source_course_mapping_agrees": true,
+      "source_topics": ["binary-tree", "breadth-first-search", "data-structures", "database-normalization", "determinant", "exponential-distribution", "graph-search", "independent-events", "line-graph", "lu-decomposition", "maxima-minima", "mirror-image", "most-appropriate-word", "normal-distribution", "number-theory", "onto", "patterns-in-two-dimensions", "permutation-and-combination", "pie-chart", "probability", "propositional-logic", "rank-of-matrix", "sequence-series", "shortest-path", "square-invariant", "statements-follow"],
+      "reason_code": "source_course_missing",
+      "reason": "The source record has no agreeing course mapping; the topic label is not trusted without question-level evidence."
+    }
+  ],
+  "question_overrides": {
+    "gate-cs-1997#26": {
+      "expected_source": {"course": null, "topic": "maxima-minima", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "calculus",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for the maximum of a function over an interval.",
+      "evidence": {"kind": "question_text", "summary": "Function maximum on a stated interval is a single-variable calculus optimization question."}
+    },
+    "gate-cs-1997#42": {
+      "expected_source": {"course": null, "topic": "data-structures", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item defines adjacency mathematically and asks for connected components.",
+      "evidence": {"kind": "question_text", "summary": "The question is a graph-theory counting problem, not a data-structure implementation problem."}
+    },
+    "gate-cs-2000#63": {
+      "expected_source": {"course": "PDS", "topic": "recursion", "course_mapping_agrees": false},
+      "canonical_course": "PDS",
+      "canonical_topic": "recursion",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item presents a recursive Fibonacci program and asks about its behavior.",
+      "evidence": {"kind": "question_text", "summary": "The displayed program recursively computes Fibonacci values."}
+    },
+    "gate-cs-2008#29": {
+      "expected_source": {"course": null, "topic": "normal-distribution", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "probability-and-statistics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item compares normally distributed random variables.",
+      "evidence": {"kind": "question_text", "summary": "The question explicitly states normal distributions, means, variances, and standard deviation."}
+    },
+    "gate-cs-2017-session-2#32": {
+      "expected_source": {"course": null, "topic": "rank-of-matrix", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "linear-algebra",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for the rank of a matrix expression.",
+      "evidence": {"kind": "question_text", "summary": "Matrix rank is explicitly the requested quantity."}
+    },
+    "gate-cs-2017-session-2#34": {
+      "expected_source": {"course": "EM", "topic": "polynomials", "course_mapping_agrees": true},
+      "canonical_course": "DL",
+      "canonical_topic": "number-representation-and-arithmetic",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The polynomial equation and its roots are expressed in a non-decimal base.",
+      "evidence": {"kind": "question_text", "summary": "The task is to interpret coefficients and solutions in a stated number base."}
+    },
+    "gate-cs-2018#13": {
+      "expected_source": {"course": "PDS", "topic": "queue", "course_mapping_agrees": false},
+      "canonical_course": "PDS",
+      "canonical_topic": "stacks-and-queues",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item analyzes enqueue and dequeue on a linked-list queue.",
+      "evidence": {"kind": "question_text", "summary": "The queue operations and their implementation are explicit in the stem."}
+    },
+    "gate-cs-2018#19": {
+      "expected_source": {"course": "OS", "topic": "io-handling", "course_mapping_agrees": true},
+      "canonical_course": "COA",
+      "canonical_topic": "interrupts-and-dma",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item orders processor events after a device-controller interrupt.",
+      "evidence": {"kind": "question_text", "summary": "The stem explicitly concerns interrupt entry, ISR execution, PC loading, and status restoration."}
+    },
+    "gate-cs-2019#35": {
+      "expected_source": {"course": "ALG", "topic": "algorithm-design", "course_mapping_agrees": true},
+      "canonical_course": "ALG",
+      "canonical_topic": "divide-and-conquer",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The maximum-subarray item explicitly directs use of a divide-and-conquer approach.",
+      "evidence": {"kind": "question_text", "summary": "The stem states that a divide-and-conquer approach may be used."}
+    },
+    "gate-cs-2019#39": {
+      "expected_source": {"course": "CN", "topic": "network-protocols", "course_mapping_agrees": true},
+      "canonical_course": "CN",
+      "canonical_topic": "ipv4-addressing-and-forwarding",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks how ARP resolves a MAC address for a host in the same subnet.",
+      "evidence": {"kind": "question_text", "summary": "ARP, IP-over-Ethernet, MAC address resolution, and subnet scope are explicit."}
+    },
+    "gate-cs-2020#5": {
+      "expected_source": {"course": null, "topic": "shortest-path", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "analytical-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item is an aptitude route-cost puzzle with toll constraints.",
+      "evidence": {"kind": "question_text", "summary": "The stem asks for the cheapest travel route after combining edge costs and toll prices."}
+    },
+    "gate-cs-2020#37": {
+      "expected_source": {"course": null, "topic": "rank-of-matrix", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "linear-algebra",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item evaluates statements about matrix rank and determinant.",
+      "evidence": {"kind": "question_text", "summary": "Rank and determinant of real matrices are explicit in the stem."}
+    },
+    "gate-cs-2021-session-1#2": {
+      "expected_source": {"course": null, "topic": "patterns-in-two-dimensions", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "spatial-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks the learner to identify a convex polygon from figures.",
+      "evidence": {"kind": "question_text", "summary": "The definition is followed by visual polygon choices, making this a two-dimensional spatial item."}
+    },
+    "gate-cs-2021-session-1#9": {
+      "expected_source": {"course": null, "topic": "statements-follow", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "analytical-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item tests conclusions from quantified statements.",
+      "evidence": {"kind": "question_text", "summary": "The bacteria/pathogen statements and conclusions form a deductive reasoning question."}
+    },
+    "gate-cs-2021-session-1#17": {
+      "expected_source": {"course": null, "topic": "propositional-logic", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item tests whether propositional formulae are tautologies.",
+      "evidence": {"kind": "question_text", "summary": "Propositions, formulae, and tautology status are explicit."}
+    },
+    "gate-cs-2021-session-1#18": {
+      "expected_source": {"course": "CN", "topic": "network-protocols", "course_mapping_agrees": true},
+      "canonical_course": "CN",
+      "canonical_topic": "ipv4-addressing-and-forwarding",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item tests broadcast addressing in ARP requests and replies.",
+      "evidence": {"kind": "question_text", "summary": "ARP request/reply destination addresses are explicit in the stem."}
+    },
+    "gate-cs-2021-session-1#28": {
+      "expected_source": {"course": null, "topic": "exponential-distribution", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "probability-and-statistics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for a probability under an exponential lifetime distribution.",
+      "evidence": {"kind": "question_text", "summary": "A random variable, exponential density, expected lifetime, and tail probability are explicit."}
+    },
+    "gate-cs-2021-session-1#50": {
+      "expected_source": {"course": "ALG", "topic": "algorithm-design", "course_mapping_agrees": true},
+      "canonical_course": "ALG",
+      "canonical_topic": "dynamic-programming",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item is the rod-cutting optimization problem over prefix lengths and prices.",
+      "evidence": {"kind": "question_text", "summary": "The definition maximizes revenue by decomposing a rod into integer-length pieces, the standard rod-cutting DP structure."}
+    },
+    "gate-cs-2021-session-1#59": {
+      "expected_source": {"course": "CN", "topic": "network-protocols", "course_mapping_agrees": true},
+      "canonical_course": "CN",
+      "canonical_topic": "data-link-layer",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item specifies a sliding-window link flow-control protocol and data/acknowledgement frames.",
+      "evidence": {"kind": "question_text", "summary": "Frame sizes, acknowledgements, link rates, and sliding-window flow control identify link-layer framing."}
+    },
+    "gate-cs-2021-session-2#13": {
+      "expected_source": {"course": "CD", "topic": "compilation-phases", "course_mapping_agrees": true},
+      "canonical_course": "CD",
+      "canonical_topic": "syntax-directed-translation",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks which compiler phase detects an invalid declared type.",
+      "evidence": {"kind": "question_text", "summary": "The invalid type name in a declaration is a semantic/type-checking issue."}
+    },
+    "gate-cs-2021-session-2#25": {
+      "expected_source": {"course": null, "topic": "propositional-logic", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item classifies a propositional assertion as a tautology or contradiction.",
+      "evidence": {"kind": "question_text", "summary": "Propositional equivalence, antecedent/consequent, tautology, and contradiction are explicit."}
+    },
+    "gate-cs-2021-session-2#34": {
+      "expected_source": {"course": null, "topic": "rank-of-matrix", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "linear-algebra",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item derives matrix rank from the solution space of a homogeneous system.",
+      "evidence": {"kind": "question_text", "summary": "A matrix equation, its null space, and rank are explicit."}
+    },
+    "gate-cs-2022#4": {
+      "expected_source": {"course": null, "topic": "statements-follow", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "analytical-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks which quantified statements can simultaneously hold.",
+      "evidence": {"kind": "question_text", "summary": "The four student/inquisitive statements form a logical consistency puzzle."}
+    },
+    "gate-cs-2022#10": {
+      "expected_source": {"course": null, "topic": "patterns-in-two-dimensions", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "spatial-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks how to partition a plotted shape into similar regions using straight ropes.",
+      "evidence": {"kind": "question_text", "summary": "The pole diagram and geometric partitioning task require two-dimensional visualization."}
+    },
+    "gate-cs-2022#59": {
+      "expected_source": {"course": "CN", "topic": "communication", "course_mapping_agrees": true},
+      "canonical_course": "CN",
+      "canonical_topic": "network-performance",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item computes complete packet reception time over an earth-to-satellite link.",
+      "evidence": {"kind": "question_text", "summary": "Packet size, propagation speed, link distance, and completion time identify delay/performance analysis."}
+    },
+    "gate-cs-2023#3": {
+      "expected_source": {"course": null, "topic": "sequence-series", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "quantitative-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item evaluates a recurrence-defined series of natural numbers.",
+      "evidence": {"kind": "question_text", "summary": "The numerical series and given terms make this quantitative aptitude."}
+    },
+    "gate-cs-2023#53": {
+      "expected_source": {"course": null, "topic": "independent-events", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "probability-and-statistics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item defines coin-toss events and asks about their probabilistic relationships.",
+      "evidence": {"kind": "question_text", "summary": "A random experiment and named events on two fair-coin tosses are explicit."}
+    },
+    "gate-cs-2024-set-1#8": {
+      "expected_source": {"course": null, "topic": "pie-chart", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "quantitative-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item combines pie-chart percentages with tabulated energy density.",
+      "evidence": {"kind": "question_text", "summary": "The task is numerical data interpretation from a chart and table."}
+    },
+    "gate-cs-2024-set-1#10": {
+      "expected_source": {"course": null, "topic": "mirror-image", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "spatial-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks how to make a figure symmetric by adding squares.",
+      "evidence": {"kind": "question_text", "summary": "Line symmetry in a square figure is a two-dimensional spatial task."}
+    },
+    "gate-cs-2024-set-1#16": {
+      "expected_source": {"course": "CN", "topic": "network-protocols", "course_mapping_agrees": true},
+      "canonical_course": "CN",
+      "canonical_topic": "application-layer",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item orders DNS and HTTP requests involved in browsing a webpage.",
+      "evidence": {"kind": "question_text", "summary": "DNS resolution and HTTP object retrieval are the named application-layer operations."}
+    },
+    "gate-cs-2024-set-1#54": {
+      "expected_source": {"course": "OS", "topic": "disk", "course_mapping_agrees": true},
+      "canonical_course": "OS",
+      "canonical_topic": "cpu-and-i-o-scheduling",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item computes hard-disk geometry from surfaces, sectors, and capacity.",
+      "evidence": {"kind": "question_text", "summary": "The stem is an operating-system disk/I-O quantitative item and does not concern file-system structures."}
+    },
+    "gate-cs-2024-set-2#1": {
+      "expected_source": {"course": null, "topic": "most-appropriate-word", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "verbal-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for a word completing an analogy of intensity.",
+      "evidence": {"kind": "question_text", "summary": "Word meaning and intensity ordering are explicit."}
+    },
+    "gate-cs-2024-set-2#8": {
+      "expected_source": {"course": null, "topic": "pie-chart", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "quantitative-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item calculates percentage change from two electricity-generation pie charts.",
+      "evidence": {"kind": "question_text", "summary": "The task is numerical chart interpretation."}
+    },
+    "gate-cs-2024-set-2#12": {
+      "expected_source": {"course": null, "topic": "propositional-logic", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item translates a natural-language conditional into propositional logic.",
+      "evidence": {"kind": "question_text", "summary": "Named propositions and a requested logical representation are explicit."}
+    },
+    "gate-cs-2024-set-2#42": {
+      "expected_source": {"course": "ALG", "topic": "algorithm-design", "course_mapping_agrees": true},
+      "canonical_course": "PDS",
+      "canonical_topic": "programming-in-c",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for missing expressions in a concrete C code snippet over an array.",
+      "evidence": {"kind": "question_text", "summary": "The central task is completing C variable-update expressions in the supplied loop."}
+    },
+    "gate-cs-2024-set-2#47": {
+      "expected_source": {"course": null, "topic": "determinant", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "linear-algebra",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item evaluates determinant, invertibility, symmetry, and trace after a row swap.",
+      "evidence": {"kind": "question_text", "summary": "All named operations are matrix linear-algebra properties."}
+    },
+    "gate-cs-2024-set-2#53": {
+      "expected_source": {"course": "OS", "topic": "disk", "course_mapping_agrees": true},
+      "canonical_course": "OS",
+      "canonical_topic": "cpu-and-i-o-scheduling",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item computes disk-read time from seek, rotation, transfer, and random sector placement.",
+      "evidence": {"kind": "question_text", "summary": "Seek time, rotational latency, and transfer time identify disk I/O performance."}
+    },
+    "gate-cs-2025-set-1#2": {
+      "expected_source": {"course": null, "topic": "most-appropriate-word", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "verbal-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for a meaning-preserving replacement for a word in context.",
+      "evidence": {"kind": "question_text", "summary": "Contextual synonym selection is explicit."}
+    },
+    "gate-cs-2025-set-1#10": {
+      "expected_source": {"course": null, "topic": "permutation-and-combination", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "quantitative-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item counts unordered choices of ice-cream scoops by flavor.",
+      "evidence": {"kind": "question_text", "summary": "The requested number of combinations is a quantitative counting problem."}
+    },
+    "gate-cs-2025-set-1#17": {
+      "expected_source": {"course": null, "topic": "onto", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item reasons about surjectivity under function composition.",
+      "evidence": {"kind": "question_text", "summary": "Functions, composition, injectivity, surjectivity, and bijectivity are explicit."}
+    },
+    "gate-cs-2025-set-1#29": {
+      "expected_source": {"course": "OS", "topic": "input-output", "course_mapping_agrees": true},
+      "canonical_course": "OS",
+      "canonical_topic": "processes-and-threads",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item counts process transitions into the ready queue around I/O and context switches.",
+      "evidence": {"kind": "question_text", "summary": "Process lifetime, ready/I-O queues, and context switches are explicit."}
+    },
+    "gate-cs-2025-set-1#32": {
+      "expected_source": {"course": null, "topic": "probability", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "probability-and-statistics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for a posterior probability after observing two heads.",
+      "evidence": {"kind": "question_text", "summary": "Random coin selection and conditional evidence define a probability/Bayes calculation."}
+    },
+    "gate-cs-2025-set-1#43": {
+      "expected_source": {"course": null, "topic": "breadth-first-search", "course_mapping_agrees": true},
+      "canonical_course": "ALG",
+      "canonical_topic": "graph-algorithms",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item reasons about distances in a breadth-first-search tree.",
+      "evidence": {"kind": "question_text", "summary": "An undirected graph, shortest-path distances, and BFS trees are explicit."}
+    },
+    "gate-cs-2025-set-1#49": {
+      "expected_source": {"course": "EM", "topic": "identify-function", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "discrete-mathematics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item classifies an algebraic structure of functions as a group or monoid.",
+      "evidence": {"kind": "question_text", "summary": "Closure operation on a function set and Abelian/non-Abelian group/monoid choices are explicit."}
+    },
+    "gate-cs-2025-set-1#56": {
+      "expected_source": {"course": "CN", "topic": "probability", "course_mapping_agrees": true},
+      "canonical_course": "CN",
+      "canonical_topic": "network-performance",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item computes error-free message delivery probability over a noisy channel.",
+      "evidence": {"kind": "question_text", "summary": "Independent bit flips during message transmission and delivery reliability are explicit."}
+    },
+    "gate-cs-2025-set-2#1": {
+      "expected_source": {"course": null, "topic": "most-appropriate-word", "course_mapping_agrees": true},
+      "canonical_course": "GA",
+      "canonical_topic": "verbal-aptitude",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for the most appropriate word completing a sentence.",
+      "evidence": {"kind": "question_text", "summary": "Contextual vocabulary completion is explicit."}
+    },
+    "gate-cs-2025-set-2#13": {
+      "expected_source": {"course": null, "topic": "binary-tree", "course_mapping_agrees": true},
+      "canonical_course": "PDS",
+      "canonical_topic": "trees-and-binary-search-trees",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item counts internal nodes in a full binary tree.",
+      "evidence": {"kind": "question_text", "summary": "A binary tree whose nodes have zero or two children is explicit."}
+    },
+    "gate-cs-2025-set-2#14": {
+      "expected_source": {"course": null, "topic": "determinant", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "linear-algebra",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item asks for the determinant of matrices satisfying matrix equations.",
+      "evidence": {"kind": "question_text", "summary": "Non-singular matrices and determinant are explicit."}
+    },
+    "gate-cs-2025-set-2#46": {
+      "expected_source": {"course": null, "topic": "database-normalization", "course_mapping_agrees": true},
+      "canonical_course": "DBMS",
+      "canonical_topic": "normal-forms",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item supplies relational schemas and functional dependencies for normalization analysis.",
+      "evidence": {"kind": "question_text", "summary": "Relational schemas and all holding functional dependencies are explicit."}
+    },
+    "gate-cs-2025-set-2#59": {
+      "expected_source": {"course": null, "topic": "graph-search", "course_mapping_agrees": true},
+      "canonical_course": "ALG",
+      "canonical_topic": "graph-algorithms",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item executes two breadth-first searches on a tree and asks for the output distance.",
+      "evidence": {"kind": "question_text", "summary": "The supplied algorithm explicitly runs BFS twice on an undirected graph."}
+    },
+    "gate-cs-2025-set-2#64": {
+      "expected_source": {"course": null, "topic": "square-invariant", "course_mapping_agrees": true},
+      "canonical_course": "EM",
+      "canonical_topic": "probability-and-statistics",
+      "reason_code": "question_text_disambiguation",
+      "reason": "The item chooses a polynomial at random and asks for the probability of equal roots.",
+      "evidence": {"kind": "question_text", "summary": "Random selection and the requested probability make probability the assessed syllabus area."}
+    }
+  }
+}

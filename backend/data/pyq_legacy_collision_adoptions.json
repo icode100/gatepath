@@ -1,0 +1,276 @@
+{
+  "schema_version": "1.0",
+  "evidence_version": "gate-cs-legacy-collision-adoptions-2026-08-16-v1",
+  "source_bindings": [
+    {
+      "path": "app/seed.py",
+      "sha256": "6edfbc07fa314e41a4696711936e6fc4e2b5c7f3c938f2fde7a409da3cccf097"
+    },
+    {
+      "path": "data/question_bank.json",
+      "sha256": "64c7d573ceecf4361500984ba27d87e6b2b1c2db9eb397f8ee74c89b6ed0c9c7"
+    }
+  ],
+  "adoptions": [
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-2",
+      "ordinal": 12,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "0d2d14db7182efc1869f0b03d9dcdf528f288f1f7262745a510e77e91e346b3e",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "b3243296dc7db0f874ea5a9e635b2c6871d9c07c1f58112a5e7ba4c71e372b3d"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 12,
+        "question_type": "mcq",
+        "correct_answer": "B",
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-3",
+      "ordinal": 13,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "b0c4545ecce071a07287f08954289d77cbae22061ebb888c86fcedc6357ab051",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "908d6938c2ad28571947af7c95917ce388787bde05019c38ec12d288b6d99fc4"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 13,
+        "question_type": "mcq",
+        "correct_answer": "B",
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-7",
+      "ordinal": 17,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "aa9de572287cfc85f951f3632611097a033c37d11d8808fa6db558f4b2450aa7",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "0f025d2ec48f13a87434e8b209131b5d9317eb925bbb06316cca78815b581491"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 17,
+        "question_type": "mcq",
+        "correct_answer": "A",
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-11",
+      "ordinal": 21,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "a38a10f304d890f1e206e435d8e6efed1049ed81c84a1a45f3d511902a76b402",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "16056831792b26f871297a3a1fa3605e622450bd22f861d4258648de66097af8"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 21,
+        "question_type": "mcq",
+        "correct_answer": "A",
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-12",
+      "ordinal": 22,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "84be671b360a6dec61f2678cdc03ef9f88fae860c424ac73085e8ae491c41bde",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "29212f83f5c778612b90ad625c57048e3ab61468cec1ed59acb2fd51e0872e09"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 22,
+        "question_type": "msq",
+        "correct_answer": ["A", "C"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-13",
+      "ordinal": 23,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "61530a66b8a4bd4b5b9b748407faac785cce4d15bf556930ab46b8a368921c85",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "ad83b84c37d7bd977242497438dfc7e205fae4cc3fc08d59d05844c15823d115"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 23,
+        "question_type": "msq",
+        "correct_answer": ["C", "D"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-14",
+      "ordinal": 24,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "97c3f2c2c2395d1da4f7b52eba4796f6e9a6e39303d120e13b23c85b3185b57a",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "b3ae79d7b47dcc1da1d0f4d40679237bde2c8679e3aa5b5387585725310ec52d"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 24,
+        "question_type": "msq",
+        "correct_answer": ["D"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-15",
+      "ordinal": 25,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "450a75d6748b6dfdd81ade4482ba67ee19fa254da32bc98aebcc845bb2054420",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "719947e8dedc51ced404f1022c3e681f5d7763ac6da73931e7edb3d0436cb4c8"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 25,
+        "question_type": "msq",
+        "correct_answer": ["B", "C"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-16",
+      "ordinal": 26,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "515d1fe5965033acccfd2f49f401c9b11b81b242b5ac3c74a2a51a54fce1035b",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "66c369686500af9977cf8b8b277cc2a30e79f060bd971da04a11d5878437da50"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 26,
+        "question_type": "msq",
+        "correct_answer": ["A", "D"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-17",
+      "ordinal": 27,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "28cb6febf6179337936def39910537cdb9991c122999f058b24e2b68fe36c7d2",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "e9dda6256488361c0d2f6d42284f2895e452232a21a2794fce1b862d883ee411"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 27,
+        "question_type": "msq",
+        "correct_answer": ["B", "C"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-19",
+      "ordinal": 29,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "509cb284c8e553fc2aded67218072a90a582f7b88d642a771d03d9b41291a284",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "6e6fac882b8f29adb9bb87dfcb0632c3317b19b3b28988c7eacbd5f1ce06ad25"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 29,
+        "question_type": "msq",
+        "correct_answer": ["A", "D"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-20",
+      "ordinal": 30,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "3de87e0a274607180fafb598701acf02d8fdea1d3ea920d5a062045eef29cccd",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "591b8047d1a8148cb9f835e4103c4ab6e20b00c5860855a81f3bbd4706fc97b3"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 30,
+        "question_type": "msq",
+        "correct_answer": ["A", "B", "C"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-21",
+      "ordinal": 31,
+      "source_pdf_sha256": "18cf9ac15c01bdbf9d767c7a402d63234a28ae91c8ec227090ba5a5fdef121dd",
+      "answer_key_sha256": "f713276ef5a4cc59d6c5925ba7e4c72f6f669ab6866956cc45cb8f3e0f5817cf",
+      "selected_pre_adoption_fingerprint_sha256": "c31dc9118228dd92a98f7ccb229ab477176c0eb23712f96fa3db6ac481267215",
+      "preserved_duplicate_fingerprint_sha256s": [
+        "c71c36e4782b3e70529590302c04398a4feea414a9f9231f48e3fdeebc5524f1"
+      ],
+      "reviewed_equivalence": {
+        "source_year": 2024,
+        "source_question_number": 31,
+        "question_type": "msq",
+        "correct_answer": ["A", "C"],
+        "marks": 1,
+        "source_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS124S5.pdf",
+        "answer_key_url": "https://gate2027.iitm.ac.in/static/doc/download/2024/CS1FinalAnswerKey.pdf"
+      }
+    }
+  ]
+}

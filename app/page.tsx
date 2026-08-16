@@ -6,9 +6,20 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { GatePathLogo } from "@/components/brand/GatePathLogo";
 import { MathFormula, MathText } from "@/components/math/MathText";
 import { usePwa } from "@/components/pwa/PwaProvider";
+import { QuestionAssets } from "@/components/questions/QuestionAssets";
 import { RoadmapMap } from "@/components/roadmap/RoadmapMap";
 import { ThemeSelector } from "@/components/theme/ThemeSelector";
 import { trackEvent } from "@/lib/firebase/analytics";
+import {
+  applyQuestionReviews,
+  formatAcceptedAnswer,
+  normalizeReviewStatus,
+  questionReviewsFromAttemptRows,
+  resolveReviewCorrectness,
+  type AcceptedAnswer,
+  type QuestionReview,
+  type QuestionReviewStatus,
+} from "@/lib/answer-review";
 import {
   istDayNumber,
   millisecondsUntilNextIstMidnight,
@@ -20,6 +31,7 @@ import {
   paginationPageCount,
   QUESTION_BANK_PAGE_SIZE,
 } from "@/lib/pagination";
+import { normalizeQuestionAssets } from "@/lib/question-assets";
 import {
   activeSessionDraftOwnerKey,
   activateSessionDraftOwner,
@@ -444,6 +456,7 @@ type ServerResult = {
   negativeMarks?: number;
   timedOut?: boolean;
   subjectBreakdown?: SubjectAttemptBreakdown[];
+  questionReviews?: Record<string, QuestionReview>;
 };
 
 type SubjectAttemptBreakdown = {
@@ -467,9 +480,9 @@ type AttemptResultPayload = {
   timed_out?: boolean;
   results?: Array<{
     question_id: string | number;
-    correct_answer?: string | number | string[];
+    correct_answer?: AcceptedAnswer;
     explanation?: string;
-    status?: string;
+    status?: QuestionReviewStatus | string;
     negative_marks?: number;
   }>;
 };
@@ -1050,6 +1063,7 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
       source?: string;
       year?: number;
       difficulty?: string;
+      assets?: unknown;
     }>;
     items?: Array<{
       id: string | number;
@@ -1062,6 +1076,7 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
       source?: string;
       year?: number;
       difficulty?: string;
+      assets?: unknown;
     }>;
   };
   const questions = source.questions ?? source.items;
@@ -1094,6 +1109,7 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
       source: question.source ?? "Question bank",
       year: question.year,
       difficulty: difficulty as "Easy" | "Medium" | "Hard",
+      assets: normalizeQuestionAssets(question.assets),
     };
   });
 }
@@ -1109,6 +1125,7 @@ const questionsForSessionDraft = (
     marks: question.marks,
     prompt: question.prompt,
     options: question.options?.map((option) => ({ ...option })),
+    assets: question.assets?.map((asset) => ({ ...asset })),
     source: question.source,
     year: question.year,
     difficulty: question.difficulty,
@@ -1120,6 +1137,7 @@ const questionsFromSessionDraft = (
   questions.map((question) => ({
     ...question,
     options: question.options?.map((option) => ({ ...option })),
+    assets: question.assets?.map((asset) => ({ ...asset })),
     correct: [],
     explanation:
       "The detailed solution will be revealed when this session is submitted.",
@@ -1144,7 +1162,7 @@ function mapAttemptResult(
   questions: PracticeQuestion[] = [],
 ): ServerResult {
   const resultRows = Array.isArray(payload.results) ? payload.results : [];
-  const supportedStatuses = new Set(["correct", "incorrect", "unanswered"]);
+  const questionReviews = questionReviewsFromAttemptRows(resultRows);
   const resultById = new Map(
     resultRows.map((item) => [String(item.question_id), item]),
   );
@@ -1153,7 +1171,7 @@ function mapAttemptResult(
     resultRows.length === questions.length &&
     questions.every((question) => {
       const row = resultById.get(question.id);
-      return row && supportedStatuses.has(String(row.status));
+      return row && normalizeReviewStatus(row.status) !== undefined;
     });
 
   let subjectBreakdown: SubjectAttemptBreakdown[] | undefined;
@@ -1162,7 +1180,8 @@ function mapAttemptResult(
     questions.forEach((question) => {
       const row = resultById.get(question.id);
       if (!row) return;
-      const status = String(row.status);
+      const status = normalizeReviewStatus(row.status);
+      if (!status) return;
       const localSubject = localSubjectFromSlug(question.subjectId);
       const isGeneralAptitude = question.subjectId === "general-aptitude";
       const current =
@@ -1218,6 +1237,7 @@ function mapAttemptResult(
       : undefined,
     timedOut: Boolean(payload.timed_out),
     subjectBreakdown,
+    questionReviews,
   };
 }
 
@@ -2413,24 +2433,10 @@ export default function Home() {
         });
         if (!response.ok) throw new Error("Unable to score session");
         const payload = (await response.json()) as AttemptResultPayload;
-        const resultMap = new Map(
-          (payload.results ?? []).map((item) => [String(item.question_id), item]),
-        );
+        summary = mapAttemptResult(payload, runnerQuestions);
         setRunnerQuestions((current) =>
-          current.map((question) => {
-            const item = resultMap.get(question.id);
-            if (!item || item.correct_answer == null) return question;
-            const correct = Array.isArray(item.correct_answer)
-              ? item.correct_answer.map(String)
-              : [String(item.correct_answer)];
-            return {
-              ...question,
-              correct,
-              explanation: item.explanation ?? question.explanation,
-            };
-          }),
+          applyQuestionReviews(current, summary?.questionReviews ?? {}),
         );
-        summary = mapAttemptResult(payload);
         recordedAttempt = true;
       } catch {
         setApiState("offline");
@@ -2716,6 +2722,9 @@ export default function Home() {
         }
         const payload = (await response.json()) as AttemptResultPayload;
         const result = mapAttemptResult(payload, examQuestions);
+        setExamQuestions((current) =>
+          applyQuestionReviews(current, result.questionReviews ?? {}),
+        );
         setServerResult(result);
         void trackEvent("attempt_submitted", {
           attempt_kind: "full",
@@ -3613,6 +3622,7 @@ export default function Home() {
                         </span>
                       </div>
                       <h3><MathText>{question.prompt}</MathText></h3>
+                      <QuestionAssets assets={question.assets} compact />
                     </div>
                     <button
                       className="button quiet small"
@@ -4164,8 +4174,24 @@ export default function Home() {
     }
     const checked = checkedQuestions.has(question.id);
     const answer = practiceAnswers[question.id] ?? [];
-    const correct = question.correct.length ? isExactAnswer(answer, question.correct) : false;
-    const serverLocked = question.correct.length === 0;
+    const clientExactMatch = question.correct.length
+      ? isExactAnswer(answer, question.correct)
+      : false;
+    const correct = resolveReviewCorrectness(
+      question.reviewStatus,
+      clientExactMatch,
+    );
+    const serverLocked =
+      question.correct.length === 0 && question.reviewStatus === undefined;
+    const acceptedAnswer = question.acceptedAnswer ?? question.correct;
+    const hasAcceptedAnswer =
+      question.acceptedAnswer !== undefined || question.correct.length > 0;
+    const reviewTitle =
+      question.reviewStatus === "unanswered"
+        ? "Unanswered — review the reasoning."
+        : correct
+          ? "Correct — well reasoned."
+          : "Not quite. Review the reasoning.";
     const answeredCount = Object.values(practiceAnswers).filter((value) => value.length).length;
     const questionTopicLabel =
       selectedSubject.topics.find((topic) => topic.id === question.topicId)?.title ??
@@ -4212,13 +4238,22 @@ export default function Home() {
             </header>
             <div className="question-number">Question {String(questionIndex + 1).padStart(2, "0")}</div>
             <h1><MathText>{question.prompt}</MathText></h1>
+            <QuestionAssets assets={question.assets} placement="stem" eager />
             {question.type === "MSQ" && <p className="question-instruction">Select one or more options. No partial marks.</p>}
-            {renderQuestionInput(question, practiceAnswers, "practice", checked && immediateFeedback)}
+            <QuestionAssets assets={question.assets} placement="options" eager />
+            {renderQuestionInput(
+              question,
+              practiceAnswers,
+              "practice",
+              checked && (immediateFeedback || runnerSubmitted),
+            )}
             {checked && (immediateFeedback || runnerSubmitted) && !serverLocked && (
               <div className={`explanation ${correct ? "correct" : "incorrect"}`} aria-live="polite">
-                <div className="explanation-title"><span>{correct ? "✓" : "×"}</span><strong>{correct ? "Correct — well reasoned." : "Not quite. Review the reasoning."}</strong></div>
+                <div className="explanation-title"><span>{correct ? "✓" : "×"}</span><strong>{reviewTitle}</strong></div>
                 <p><MathText>{question.explanation}</MathText></p>
-                {question.correct.length > 0 && <small>Correct answer: {question.correct.join(", ")}</small>}
+                {hasAcceptedAnswer && (
+                  <small>Accepted answer: {formatAcceptedAnswer(acceptedAnswer)}</small>
+                )}
               </div>
             )}
             <footer>
@@ -4444,7 +4479,9 @@ export default function Home() {
             <div className="exam-section-bar"><div><span>{examIndex < 10 ? "General Aptitude" : "Computer Science"}</span><strong>Question {examIndex + 1} of {examQuestions.length}</strong></div><div><TypeBadge type={question.type} /><span>{question.marks} mark{question.marks > 1 ? "s" : ""}</span></div></div>
             <article>
               <h1><MathText>{question.prompt}</MathText></h1>
+              <QuestionAssets assets={question.assets} placement="stem" eager />
               {question.type === "MSQ" && <p className="question-instruction">Select one or more options. No partial marks and no negative marks.</p>}
+              <QuestionAssets assets={question.assets} placement="options" eager />
               {renderQuestionInput(question, examAnswers, "exam")}
             </article>
             <footer><button className={`button review-button ${reviewed.has(question.id) ? "active" : ""}`} onClick={() => setReviewed((current) => { const next = new Set(current); if (next.has(question.id)) next.delete(question.id); else next.add(question.id); return next; })}>{reviewed.has(question.id) ? "✓ Marked for review" : "◇ Mark for review"}</button><div><button className="button quiet" disabled={examIndex === 0} onClick={() => setExamIndex((index) => index - 1)}>← Previous</button><button className="button primary" disabled={examIndex === examQuestions.length - 1} onClick={() => setExamIndex((index) => Math.min(examQuestions.length - 1, index + 1))}>Save & next →</button></div></footer>

@@ -1,3 +1,8 @@
+import {
+  normalizeQuestionAssets,
+  type QuestionAsset,
+} from "../question-assets";
+
 const DRAFT_VERSION = 1;
 const DRAFT_PREFIX = "gatepath:session-draft:";
 const ACTIVE_OWNER_KEY = "gatepath:session-draft-owner";
@@ -14,6 +19,7 @@ export type DraftQuestion = {
   source?: string;
   year?: number;
   difficulty: "Easy" | "Medium" | "Hard";
+  assets?: QuestionAsset[];
 };
 
 export type DraftTest = {
@@ -175,6 +181,7 @@ function safeQuestions(value: unknown): DraftQuestion[] {
           .slice(0, 20)
           .map((option) => ({ id: option.id, label: option.label }))
       : undefined;
+    const assets = normalizeQuestionAssets(question.assets);
     result.push({
       id: question.id,
       subjectId: question.subjectId,
@@ -189,6 +196,7 @@ function safeQuestions(value: unknown): DraftQuestion[] {
           ? question.year
           : undefined,
       difficulty: question.difficulty as DraftQuestion["difficulty"],
+      assets: assets.length ? assets : undefined,
     });
   }
   return result;

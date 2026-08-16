@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0-deployable-promoted-pyq-assets",
+  "release_binding": {
+    "path": "backend/data/gate_cs_pyq_practice_1996_2025.json",
+    "sha256": "1c34407a6b71459d5c89f837fa0f3ef00190a27740b876008d79b22cd29c9dec"
+  },
+  "promotion_allowlist_binding": {
+    "path": "backend/data/gate_cs_pyq_practice_1996_2025.allowlist.json",
+    "sha256": "22bfcf7c2d7c045a96330af50449a912af93bb8157daae316c1d9625c37e696e"
+  },
+  "counts": {
+    "question_asset_references": 9,
+    "unique_png_files": 9,
+    "source_questions": 9
+  },
+  "assets": [
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-10",
+      "role": "answer_option_diagrams",
+      "source_path": "public/question-assets/pyq/gate-cs-2024-set-1/0dc6c5f61a39fb52718b5d9a338863170958ceb73d5cdb447cd6f22613c315b4.png",
+      "public_url": "/question-assets/pyq/gate-cs-2024-set-1/0dc6c5f61a39fb52718b5d9a338863170958ceb73d5cdb447cd6f22613c315b4.png",
+      "alt_text": "Four candidate ER diagrams labelled (i) through (iv), connecting Instructor, Course, Classroom, Student, and relationship diamonds for Teaches, Allocation, Registration, and Guides; option (ii) labels the lower entity Projects.",
+      "sha256": "0dc6c5f61a39fb52718b5d9a338863170958ceb73d5cdb447cd6f22613c315b4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "item_label": "CS-23",
+      "role": "stem_table",
+      "source_path": "public/question-assets/pyq/gate-cs-2024-set-1/b820573c205599853769976192f377b90d1bdd82be5d2d4496301692fd08c6bc.png",
+      "public_url": "/question-assets/pyq/gate-cs-2024-set-1/b820573c205599853769976192f377b90d1bdd82be5d2d4496301692fd08c6bc.png",
+      "alt_text": "Table assigning plus the highest precedence with left associativity, minus high precedence with right associativity, multiplication medium precedence with right associativity, and division low precedence with right associativity.",
+      "sha256": "b820573c205599853769976192f377b90d1bdd82be5d2d4496301692fd08c6bc"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "item_label": "CS-4",
+      "role": "stem_and_answer_option_tables",
+      "source_path": "public/question-assets/pyq/gate-cs-2024-set-2/1304642d3bd784a2c674c912cd59341bec46379c65b7951fb811495c86a73788.png",
+      "public_url": "/question-assets/pyq/gate-cs-2024-set-2/1304642d3bd784a2c674c912cd59341bec46379c65b7951fb811495c86a73788.png",
+      "alt_text": "IEEE 754 single-precision layout with 1 sign bit, 8 exponent bits, and 23 mantissa bits, followed by four labelled answer options A through D showing complete sign, exponent, and mantissa bit patterns.",
+      "sha256": "1304642d3bd784a2c674c912cd59341bec46379c65b7951fb811495c86a73788"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "item_label": "GA-8",
+      "role": "stem_chart",
+      "source_path": "public/question-assets/pyq/gate-cs-2024-set-2/bf218e84811bcd38a961418d4204581788853c7d5125c6ca3c3332154870c98f.png",
+      "public_url": "/question-assets/pyq/gate-cs-2024-set-2/bf218e84811bcd38a961418d4204581788853c7d5125c6ca3c3332154870c98f.png",
+      "alt_text": "Power-generation pie charts for 2007 and 2023: 2007 has coal 35%, gas 25%, hydro 30%, wind 5%, and solar 5%; 2023 has coal 20%, gas 15%, hydro 35%, wind 10%, and solar 20%.",
+      "sha256": "bf218e84811bcd38a961418d4204581788853c7d5125c6ca3c3332154870c98f"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "item_label": "CS-30",
+      "role": "stem_table",
+      "source_path": "public/question-assets/pyq/gate-cs-2025-set-1/585602e4b598f8757f539e142c36ad739225826a00636558563feb3775a55810.png",
+      "public_url": "/question-assets/pyq/gate-cs-2025-set-1/585602e4b598f8757f539e142c36ad739225826a00636558563feb3775a55810.png",
+      "alt_text": "Routing table with prefixes 145.36.0.0/16 to E1, 145.36.128.0/17 to E2, 145.36.64.0/18 to E3, 145.36.255.0/24 to E4, and the default route to E5.",
+      "sha256": "585602e4b598f8757f539e142c36ad739225826a00636558563feb3775a55810"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "item_label": "CS-45",
+      "role": "stem_table",
+      "source_path": "public/question-assets/pyq/gate-cs-2025-set-1/fd5ea7730d1dd13ab637e5e7fbc857a2e05c96d8fb3963a9f4aca8988f07dea6.png",
+      "public_url": "/question-assets/pyq/gate-cs-2025-set-1/fd5ea7730d1dd13ab637e5e7fbc857a2e05c96d8fb3963a9f4aca8988f07dea6.png",
+      "alt_text": "Four database instance tables labelled player, coach, team, and members, showing their identifiers, names, ages, cities, coach identifiers, and team memberships.",
+      "sha256": "fd5ea7730d1dd13ab637e5e7fbc857a2e05c96d8fb3963a9f4aca8988f07dea6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "item_label": "CS-49",
+      "role": "stem_table",
+      "source_path": "public/question-assets/pyq/gate-cs-2025-set-1/181f7eaa790a1dfa8e4f4f1c67ba0c2227efcd748ab781b95d4eac9a090db143.png",
+      "public_url": "/question-assets/pyq/gate-cs-2025-set-1/181f7eaa790a1dfa8e4f4f1c67ba0c2227efcd748ab781b95d4eac9a090db143.png",
+      "alt_text": "State transition table for present states A through H, with next-state and output columns for inputs X equals 0 and X equals 1.",
+      "sha256": "181f7eaa790a1dfa8e4f4f1c67ba0c2227efcd748ab781b95d4eac9a090db143"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "item_label": "CS-50",
+      "role": "stem_diagram",
+      "source_path": "public/question-assets/pyq/gate-cs-2025-set-1/c3d629de9303f6cc6fb9b7c1ea88a3ecb50737c7537d3a8166d0c46c0175ad0f.png",
+      "public_url": "/question-assets/pyq/gate-cs-2025-set-1/c3d629de9303f6cc6fb9b7c1ea88a3ecb50737c7537d3a8166d0c46c0175ad0f.png",
+      "alt_text": "Four clocked D flip-flops D0 through D3 form a chain with outputs Q0 through Q3, a shared clock, and feedback from complemented Q3 to the first flip-flop.",
+      "sha256": "c3d629de9303f6cc6fb9b7c1ea88a3ecb50737c7537d3a8166d0c46c0175ad0f"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "item_label": "GA-8",
+      "role": "stem_table",
+      "source_path": "public/question-assets/pyq/gate-cs-2025-set-2/5f6fc50c6711df94a2198aca6853c5f33d95e1a0eb2a5a3afe84e0d7c0c85cc4.png",
+      "public_url": "/question-assets/pyq/gate-cs-2025-set-2/5f6fc50c6711df94a2198aca6853c5f33d95e1a0eb2a5a3afe84e0d7c0c85cc4.png",
+      "alt_text": "For iterations 0 through 3, inputs are 20, minus 4, 10, 15; output X is 20, 16, 26, 41; output Y is 20, minus 80, minus 800, minus 12000.",
+      "sha256": "5f6fc50c6711df94a2198aca6853c5f33d95e1a0eb2a5a3afe84e0d7c0c85cc4"
+    }
+  ],
+  "guards": {
+    "practice_eligible_only": true,
+    "archive_or_review_assets_included": false,
+    "same_origin_png_only": true,
+    "checksum_verified_before_and_after_copy": true
+  },
+  "artifact_sha256": "ca96d326bccf79a9248aa3c847e947451f7f1bd8634b1cea6cdfa28e91e4b4cd"
+}

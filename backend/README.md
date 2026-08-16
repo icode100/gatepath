@@ -255,24 +255,183 @@ Every declared paper must contain exactly its expected number of contiguous
 source items. Missing transcriptions remain explicit archive rows; they are
 never silently omitted.
 
-The archive importer is read-only by default. It rejects a reused artifact
-version with a different checksum, scopes every update to the papers declared
-by the artifact, and verifies that the active original-question count is
-unchanged. Only `mcq`, `msq`, and `nat` rows with verified transcription,
+Build the review-only canonical skeleton before using the importer. The
+builder reads the 39-paper source manifest, adopts only explicitly mapped
+records from the existing consolidation, and optionally attaches secondary
+locators without treating them as authoritative. Its default artifact and
+audit report live under ignored `tmp/pyq/build`; it does not connect to a
+database and every emitted row has `practice_eligible=false`.
+
+```powershell
+python scripts/build_canonical_pyq_archive.py
+
+# Optional only after the incremental sanitized index is complete and stable.
+python scripts/build_canonical_pyq_archive.py `
+  --examside-index ..\tmp\pyq\reference\examside\examside_reference_index.jsonl
+```
+
+Modern paper sections retain collision-free labels (`GA-1` through `GA-10`
+and `CS-1` through `CS-55`) while their global ordinals remain 1 through 65.
+Explicit `source_aliases` in each paper record let the importer adopt older
+labels such as `CS1-2024` without fuzzy cross-session matching. Per-item
+`legacy_source_ordinals` encode audited numbering changes such as the
+technical-first 2017 corpus; duplicate legacy targets are rejected.
+The one code-held production compatibility alias is deliberately exact:
+`GATE 2024 CS1 (Session 5)` maps only to `gate-cs-2024-set-1`.
+
+The archive importer is read-only by default. A preview never runs Alembic and
+fails safely if the database revision is stale. Apply the migration separately
+before previewing, or use the importer's explicit `--apply --upgrade-schema`
+path. It rejects a reused artifact version with a different checksum, scopes
+every update to the papers declared by the artifact, and requires every live
+apply to pin the reviewed active-original count. The clearly named
+`--unsafe-allow-unpinned-originals` escape hatch is for disposable databases,
+not production. Only `mcq`, `msq`, and `nat` rows with verified transcription,
 answer, syllabus classification, solution, and no review flags can be
 materialized for quizzes.
 
+Before any database preview, run the stricter release gate against the final
+immutable artifact. Unlike the importer schema, this validator does not accept
+placeholder archive rows as a finished release: all 39 papers and 2,873
+expanded records derived from the 2,712 canonical parent slots must be present,
+every stem must have original-PDF page/hash evidence,
+every syllabus classification must be final, and every objective answer must
+be verified. Historical descriptive items may remain archive-only rather than
+being misrepresented as MCQ/MSQ/NAT. The command is read-only and exits nonzero
+while any release blocker remains.
+
 ```powershell
+python scripts/validate_pyq_release_readiness.py data/pyq_archive.json `
+  --report ..\tmp\pyq\build\release-readiness.json
+```
+
+The deployable package is published deterministically from the frozen staging
+checkpoint. Its proof keeps all 20 unpublished extraction inputs as explicit
+checksum-only lineage IDs; it never pretends that ignored `tmp` files exist in
+a clean checkout and does not add the roughly 52 MB extraction worktree to the
+deployment. The clean-checkout validator reads only the six tracked package
+JSON files and the promoted same-origin PNGs:
+
+```powershell
+# Regenerate tracked files only from the exact frozen staging checkpoint.
+python scripts/publish_pyq_release.py
+python scripts/publish_pyq_release.py --check
+
+# Works without tmp/pyq or any upstream extraction/policy JSON files.
+python scripts/validate_published_pyq_package.py
+```
+
+Directly rebuilding promotion from the published archive report is
+intentionally unsupported because its upstream lineage is checksum-only. The
+promotion builder fails with an explicit message instead of following a fake
+or missing file path; use the package validator above for tracked releases.
+
+```powershell
+# Explicit schema step. The preview command below will never do this itself.
+python -m alembic -c alembic.ini upgrade head
+
 # Validate source-slot completeness and preview eligible quiz rows.
 python scripts/import_pyq_archive.py data/pyq_archive.json --materialize
 
 # Production apply over DATABASE_URL_UNPOOLED after reviewing the dry run.
 python scripts/import_pyq_archive.py data/pyq_archive.json `
   --apply --materialize --expected-active-originals 2290
+
+# Equivalent explicit one-command schema upgrade + apply. This is rejected
+# unless --apply is present.
+python scripts/import_pyq_archive.py data/pyq_archive.json `
+  --apply --upgrade-schema --materialize --expected-active-originals 2290
 ```
+
+Materialization is non-retiring by default. The reviewed production-visibility
+transition is a separate opt-in path bound to the exact published practice
+artifact, source archive, promotion allowlist/report, collision evidence, and a
+portable fingerprint ledger. Preview and apply both require the literal
+`2290 / 405 / 228 / 177` guards; any mismatch aborts before importer ORM state
+is changed:
+
+```powershell
+# Read-only preview.
+python scripts/import_pyq_archive.py `
+  data/gate_cs_pyq_practice_1996_2025.json --materialize --allow-retire `
+  --expected-active-originals 2290 --expected-retirements 228 `
+  --expected-active-pyqs-before 405 --expected-active-pyqs-after 177
+
+# Apply only after reviewing the exact preview.
+python scripts/import_pyq_archive.py `
+  data/gate_cs_pyq_practice_1996_2025.json --apply --materialize --allow-retire `
+  --expected-active-originals 2290 --expected-retirements 228 `
+  --expected-active-pyqs-before 405 --expected-active-pyqs-after 177
+```
+
+The preview separates materialized insertions, legacy-row adoptions, updates,
+and retirements. `pyq_archive_imports` continues to identify immutable artifact
+bytes, while `pyq_archive_executions` records every live archive-only or
+materialization execution, including repeated runs of the same artifact. A
+guarded cleanup records the visibility-plan SHA and exact counts. It deactivates
+rows only (`is_active=false`), never deletes questions or archive records, and
+rebuilds and validates all 125 deterministic test forms inside the same
+transaction so no form can reference an inactive question.
+
+The current baseline contains 13 2024 Set 1 source collisions between the
+early curated seed and the versioned question bank. Default materialization
+does not delete or deactivate either row. It may adopt the exact bank
+transcription only when both portable row fingerprints, the official paper and
+answer-key checksums, the explicit paper aliases, and the reviewed
+year/ordinal/type/answer/marks/URL proof all match
+`data/pyq_legacy_collision_adoptions.json`. Any missing, additional, or changed
+candidate fails before mutation. The non-selected seed row remains active and
+recoverable unless the separately authorized visibility transition is applied.
+
+`data/pyq_legacy_collision_cleanup_plan.json` is the checksum-pinned visibility
+ledger. Its 177 keep records carry both the staging/source content hash and the
+different promoted content hash; its 228 retirement fingerprints cover the 215
+archive-only legacy rows plus the 13 reviewed paraphrase duplicates. The file
+authorizes nothing by itself: execution still requires `--allow-retire` and all
+literal guards above. Reusing that guarded command at 177 fails closed, while a
+normal non-retiring materialization rerun is zero-change.
+
+Recovery is also explicit, fingerprint-bound, audited, non-deleting, and
+rebuilds the test catalog in the same transaction:
+
+```powershell
+# Read-only recovery preview; add --apply only after review.
+python scripts/import_pyq_archive.py `
+  data/gate_cs_pyq_practice_1996_2025.json --restore-retired `
+  --expected-active-originals 2290 --expected-reactivations 228 `
+  --expected-active-pyqs-before 177 --expected-active-pyqs-after 405
+```
+
+`scripts/build_pyq_visibility_plan.py` can reproduce the portable ledger only
+from a disposable SQLite database at the exact `2695 questions / 2290 active
+originals / 405 active PYQs / 2873 archive records` baseline. It refuses every
+non-SQLite database URL.
 
 The relational archive stores text and provenance only. Diagram crops are
 versioned static assets referenced by checksum; database blobs are not used.
+The no-argument command is deliberately bound to the tracked practice archive,
+allowlist, promotion report, publication proof, asset manifest, and public
+PNGs. It is safe in a clean checkout and cannot silently fall back to ignored
+`tmp` inputs:
+
+```powershell
+python scripts/materialize_pyq_question_assets.py
+python scripts/materialize_pyq_question_assets.py --check
+```
+
+The command refuses review/archive-only crops, remote paths, unexpected public
+PNGs, stale promotion allowlists, and any source or copied checksum mismatch.
+Regenerating from the ignored extraction checkpoint is a separate, explicit
+developer action; it may rewrite the manifest's provenance and must be followed
+by the tracked publisher/materializer checks before commit:
+
+```powershell
+python scripts/materialize_pyq_question_assets.py --staging
+```
+
+Equivalent custom staging inputs require all three explicit paths (`--release`,
+`--allowlist`, and `--promotion-report`) under `tmp`; published custom paths
+also require their checksum-bound `--publication-proof`.
 
 ## Test catalog rules
 
@@ -298,5 +457,11 @@ returns pre-sorted strong and needs-practice lists.
 audit records, persistent test forms, and the session-to-catalog reference.
 `0003_release_hardening` adds active-bank membership, extraction metadata,
 immutable session question snapshots, immutable answer/explanation snapshots,
-and retirement counts. The migration chain is verified through a fresh
-upgrade, full downgrade to base, and re-upgrade to head.
+and retirement counts. `0004_pyq_archive` adds canonical paper/item provenance;
+`0005_pyq_archive_execution_audit` adds the immutable per-execution apply audit.
+`0006_question_assets` adds same-origin, checksum-bound asset projections to
+materialized questions while the archival table retains full provenance.
+`0007_pyq_visibility_audit` records visibility-plan hashes and exact
+reactivation counts for guarded cleanup and recovery executions.
+The migration chain is verified through a fresh upgrade, full downgrade to
+base, and re-upgrade to head.

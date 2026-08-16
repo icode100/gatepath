@@ -1,0 +1,1092 @@
+{
+  "schema_version": "1.0-pyq-practice-promotion-allowlist",
+  "source_role": "exact_production_practice_materialization_authorization",
+  "database_writes_performed": false,
+  "production_import_authorized": true,
+  "practice_materialization_authorized": true,
+  "unlisted_promotion_authorized": false,
+  "selection_policy_fail_closed": true,
+  "input_bindings": {
+    "staging_release": {
+      "path": "backend/data/gate_cs_pyq_archive_1996_2025.json",
+      "sha256": "ebc7bf91ac239d33c42bf03a96144684aedc8e67142e7e64bfb75ba4b358e3e4",
+      "bytes": 9173168
+    },
+    "staging_release_report": {
+      "path": "backend/data/gate_cs_pyq_archive_1996_2025.report.json",
+      "sha256": "98ff84e86d68adcd1d008f55f3d50d6758012f2fad627e5f3db209aec56bfb7d",
+      "bytes": 108266
+    }
+  },
+  "source_release_artifact_sha256": "0aa05b22e3bf2066b05fcf111b0591b07bcfba13a745373ecad9de4307964d1e",
+  "source_release_report_sha256": "0a849843c355ab58b6bdd66f29a90c70420aae880f3a4b885860e1e6e6f70dd3",
+  "promoted_archive_artifact_sha256": "adf73f73b17a18c9821850c988fa3f3517bb65c17e5c5ca256a02c310c4c6c8f",
+  "selection_sha256": "88c192e62efb9df247e58b53b2fd1dc2b41314d6ac8fd2e99f686984828b26e6",
+  "archive_record_count": 2873,
+  "practice_eligible_count": 177,
+  "records": [
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "b712f998ae27db56ccfad6821610a50b62d9f27ff0525fde55815e7b7ef2d332"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "e89c7c7634cf7f63fcf7fa034ba4d9670c1bc85900adf7b2f0385742a4ac4671"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "8367e568aec713d3f85d13287d367381abbf028d7a117a33b598cd37d35df269"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "source_content_sha256": "70bbb5d21e8a1937bf59967db0fdf0e726f4059804079ad1b2368437faa1c910"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "source_content_sha256": "2d86dde7490f20a15f3514170dd62c44c4afb98617f49de3904576e1f2502296"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "5a36461849bd640b8e088c7025f42820af62922ff958c5ca02d602659cf2cb22"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 7,
+      "item_label": "GA-7",
+      "source_content_sha256": "8340ebfa2d54153c15ff7a3551127af37973a25f1c5cb00a39823ab5feef9b81"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 9,
+      "item_label": "GA-9",
+      "source_content_sha256": "d408cc9a296be9dc5f3cbf80a29671cc3e617deacfb7e2cddcdcb4f9ee42682f"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 11,
+      "item_label": "CS-1",
+      "source_content_sha256": "55403290b6e01cc51bf33d4cb374ff650bf3b444202cd6d5abcc376fda37a4d0"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 12,
+      "item_label": "CS-2",
+      "source_content_sha256": "ef588df09d8391a2e4fc7df650334ce0197d028266848f55b7fd9ef2f81fef90"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "81df3baa10f879a56419d8a9485ac7558f29b6b5bd32c742cdd7458613729f43"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 17,
+      "item_label": "CS-7",
+      "source_content_sha256": "2461284b4c66ac13f6fe9853736ea5084bd7c32530a8696a42f05051013e09c8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "02a4656da317f3e375f703cab68d85abbc873d594bba6810e17655269475cb75"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "source_content_sha256": "504bd216cb0dc35d53687a780703e045e7b0940c9d24b2a3894a39cd379ed497"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "source_content_sha256": "959a7547e05b11eea05725d42e91cf2d791432bf0dd7b5ff80632ab20826b45d"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "bb27384d8a4deb6dfb47be7a0d0ec7592b1c63049c4f8b7b31b0ebbf5e292780"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "b279df715e0025dd4a3cf1ab4fac38f7d087738df783c9898996c54dec75ce0c"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 25,
+      "item_label": "CS-15",
+      "source_content_sha256": "2a4e64b00dcdb826d833dbe396f378a4276d364b215b456d43aef6a9f6d2e7fc"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "a1f5c8d4b868273d12c52f0d58b3090118ec9feea402abf2391d694089ae9993"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 27,
+      "item_label": "CS-17",
+      "source_content_sha256": "3e495aea6065d006081bcc5d8c97c864d6cf681af604d07e8897a112a49c418f"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 29,
+      "item_label": "CS-19",
+      "source_content_sha256": "501307be5d0b6ffbbf5be0a60e3cdae26aca104ffb5c84cb3926c845d91f0ce4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 30,
+      "item_label": "CS-20",
+      "source_content_sha256": "3e183bc39e93d006f9d521c02ee1a0cd87563e14e2f7e60635782bfc868568de"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "source_content_sha256": "794f77a4fdbf561a49a5b64fcf5af4afe91bfc685a99c24886fbb37bf95fe21d"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 32,
+      "item_label": "CS-22",
+      "source_content_sha256": "557d31d90d69780b63745a4e63fe0e82b3fe7a330aab3b1bf4619daff5f4b7f4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 33,
+      "item_label": "CS-23",
+      "source_content_sha256": "9fce60bd6754272031bac866c4d4f9f30d6735fa5df726d31c984fe54bacbaa8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 34,
+      "item_label": "CS-24",
+      "source_content_sha256": "29b9eeaaf3d3a1b3a68cbe7201dedf6053d4e268c771e900cc19fd01e82a8530"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 38,
+      "item_label": "CS-28",
+      "source_content_sha256": "3d9442d0f71580e3a1af87b57aa9bd817e5ec212b683cbd5daef602f81b84c44"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "3a11382989fccc2229add785e2370607636e92e5c76ceea00899499784a1a3c8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "d1b60520cfea472efe36799bc8994b1c2c449d600b93805f990befbb7743aef0"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 44,
+      "item_label": "CS-34",
+      "source_content_sha256": "29944ad6149bad3f680fbccde1cb02d8dc3645ae78a2ab256577ea75a21281d1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "96f9840e90324102ec4de596dd263324ee504a8b3e66799405a9a3800069e5ce"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 46,
+      "item_label": "CS-36",
+      "source_content_sha256": "9defbfe60aedd6f132f9b4de7f15271361884f3d39b47dbc07f5099d3ace7227"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "0f67f4b4c25a77d87f555040a174a22300fa1967e06efc64cb163c8a6e29a275"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "source_content_sha256": "ebf4bdfcc29e13c76ba4aee26fe18a4bada0629bcb0c3cc71210a5145ad44d27"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 49,
+      "item_label": "CS-39",
+      "source_content_sha256": "d34c1a4ea185e2013079a137031a4fdf42ab9a0ca78d1c81a2d5cd9779fa57d4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 52,
+      "item_label": "CS-42",
+      "source_content_sha256": "05676b530c2239fe5628a7a58ec673a168dc4629ac59835c6dac1bd7770e45ab"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 53,
+      "item_label": "CS-43",
+      "source_content_sha256": "178abeb4578ab9115960fc291575691cc4ace81eaa4b1ec0092c572644869685"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 56,
+      "item_label": "CS-46",
+      "source_content_sha256": "a61c7731e801b78b3cf0a4a55ce6dfebfa72a41c8689443f461da53587e7f4d3"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 57,
+      "item_label": "CS-47",
+      "source_content_sha256": "f91286031e5b1fdcdb36ed7201201e7102fae926fb33c6c9d8211f1faacb0e7a"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "source_content_sha256": "58cf1cf82bb33a3f8214d1ebbf6d3cb4a8235d906451837d42b195f8c72e8a71"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "source_content_sha256": "aa6aa208235966aa54750abbd9e57beb15c51837cdc523ef1e8325135a5465d2"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 61,
+      "item_label": "CS-51",
+      "source_content_sha256": "377adf00b5d1fa9d2af9c7e88b1d544ae8c68da8007d46521a1a73e9997ef67d"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "ffb17bd730a75eee8fb066a14f3680146462a69aa1262e3169bfc12077f6034a"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "a611dfc5ad7a356ca4d13418a5416fc8f1b32214560abb2500cdc3043007cd9e"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "ce3b92535cdd5423eb6a0367a8d24350f99497e01ec25b304e911da4eec1bd81"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "7eeae8a56c7b68f96d735f495e0bcf6826325f1f2d39464e1bb16de5d2f32cd7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "source_content_sha256": "c797d1b29fa127c64811a877553d0a44e6849ed58162e6dd1f730e26887bd098"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "source_content_sha256": "83204f0e7d0409275d25cefff757bfae03060d1f2d02b854fb1c83d31629da51"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "263aeac05184d5873dbef74c0aaa7d7181e4e5cac1db78b976ba7736088ce671"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 7,
+      "item_label": "GA-7",
+      "source_content_sha256": "577c72e2d07b644f77530b3adf06a0cb2254bc7f50f0daed68ce4ea962c7c4f7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "source_content_sha256": "153337fba8800c145b726f4715027f37fabe4bbaf833706a14e75284ae0f8ddc"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 9,
+      "item_label": "GA-9",
+      "source_content_sha256": "3a9d37bb7085759209d24fcc81428569e7d402c6575be4d044ca5f2b7ae9ab40"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 11,
+      "item_label": "CS-1",
+      "source_content_sha256": "ad2139dce21e364290eb3e225d9d0dbfdf91adced30c829aa333586c07f5d3bf"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "7e64158498ec82d3c078b78a47aada7850612e0cc4a490e385b9c9a1c9cec7b1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "source_content_sha256": "15c54709a97d27b91086be12702fa6282479f2ef820e7e12435e390354427127"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 15,
+      "item_label": "CS-5",
+      "source_content_sha256": "3c1df02762f08ca1b5be64d9d222f523f18acc8eeda98ccfcd5558b1c243a0ea"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 17,
+      "item_label": "CS-7",
+      "source_content_sha256": "894db2de66b17373b17d04b7de3eca3925b11095dea35ff775abc1f22dabf6d8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 18,
+      "item_label": "CS-8",
+      "source_content_sha256": "fe1198c2e6918057cc0a01960a7978f2a3996f368bcac6509b4f84c723877f53"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 19,
+      "item_label": "CS-9",
+      "source_content_sha256": "6825104b68a8bb960f39cd5d1b6fde324abf7709adf5c70840ee1202d093b259"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "3a34a86fcecf1a704b36cc7514351600084e1a305af9d01a33dbcb3c52747be7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "f877361465e465822fb3af6b00e16164397bf5e5b702d76b5aca3fd7e8948d95"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "ce064bb06725bcbf7944fd875ffc0a6169eaaeb1f584e46928af3dce2c9633e4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 25,
+      "item_label": "CS-15",
+      "source_content_sha256": "0264bda25877a73a9488d86f29d04bd43b132a65a82429e35324f6fd7315aa73"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "e418c73ec8138f3f030ef7d6712f0fc173b2efd47ef96fa0a976624220a75acb"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "source_content_sha256": "94e41e8785296b54a26afc798d6246b18b275f9d76a25b62156a9df23a3d0f2c"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 30,
+      "item_label": "CS-20",
+      "source_content_sha256": "1690a59e9dd5798ee38c5168781ae8b0e6540831277fda49e8c966ecf5df7fd6"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "source_content_sha256": "a5aae452fbf30f3767b2a0745d1205dc0cfbe6020e5f6f4dc8b16235ec578908"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 34,
+      "item_label": "CS-24",
+      "source_content_sha256": "e76c72ab617955181cddbb46e50334d4ef2db448480e2573cf10b77012d71a75"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 36,
+      "item_label": "CS-26",
+      "source_content_sha256": "44da7271aba52520149a849dcfc957c7ad38cfbb65e34c33c3b33bcf3d098299"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 37,
+      "item_label": "CS-27",
+      "source_content_sha256": "38879d0955a5427cf20df1fd224813d76288c5bc1491368d54bad09cd3a93e37"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 38,
+      "item_label": "CS-28",
+      "source_content_sha256": "d15a638f62a0731f0491b9377ee749803dcb7e0833b55427235de3425fa5f4c9"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 39,
+      "item_label": "CS-29",
+      "source_content_sha256": "ae9e493dc47eedb65c604b3fc2c928f2dc39cfc2142bdb20f3abaa669b2304d5"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "48efcd5a00e86d700b1b8e847fedddbb36b25e0a12e464bc12209aa1ee96e844"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "5ec12f19d9b6b0b6c3887d7cda77a2cce88babb5119e8bfa71fe6aa490a08c4e"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 44,
+      "item_label": "CS-34",
+      "source_content_sha256": "9b53d5c17b8941006e99c113c94295bbe4523320eae3e19244795388ea90fe2f"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "cf241160fbf9d38e3c56e44a207a84d5aa2039d788a97c890eab70e5f74807cb"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "d677ed1bd1ae18411453759f5fb444b2f4f6f7ccd3418e9a1409b745ba593cd7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 51,
+      "item_label": "CS-41",
+      "source_content_sha256": "a093aefd18417a24bd48e08476c6de92884adb41624b63327ab02c9b48cfbec1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 52,
+      "item_label": "CS-42",
+      "source_content_sha256": "88a59553c00eb24f407dcabf95c0117708eeadf5ad6818f608db00d97e4bb53c"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 54,
+      "item_label": "CS-44",
+      "source_content_sha256": "341186c82b392f8299abbe5b5f6a0d11ddceb1a4cb540a042f1d6a2c512e13e8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "source_content_sha256": "dc78af24bcf79c9abde139d04c4f3674ec394c3880004f05898cff302338d1ca"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 56,
+      "item_label": "CS-46",
+      "source_content_sha256": "9b420c14a10f49a1c41e66068afd6bd00df06567066dbb53c77e05be892f48da"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 57,
+      "item_label": "CS-47",
+      "source_content_sha256": "e9a8c3c055885e3e2e35d198b6884e236b7e43e0ae7a089a5d38d76fc3c7a614"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "source_content_sha256": "2e2fcea56e8eaf1acdbd5c1648b5c7841ee9de52ab3aa1163b624f1c7f01aba0"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 62,
+      "item_label": "CS-52",
+      "source_content_sha256": "904d3eb52ddc32069cd6d46b1aef15792156ad630b70c942ddbbf768aa24d0cf"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "d9721d99b99636f3ad2b7123de343e94a4ad24847f5206398c05349159679ce3"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 64,
+      "item_label": "CS-54",
+      "source_content_sha256": "5eaa0df60f42ca1887505465b7a7fa251ea06ff27ac2df767cf236420560e69f"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 65,
+      "item_label": "CS-55",
+      "source_content_sha256": "f457679cb2c65700abf9be504f92cc7b6e2deeac46b2d6ae86b9c9089f9b4afd"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "cf5ddeb6c7e45a4824a0fa88f9aebde15694cfee4e90e7c9de196a91daa6a463"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "6ee7dbea0683ad1010827d394211d43efbc655ef40c8bc4ac94aa83aa3e65c0c"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "8a616c079562b6ecd4bcf763a77b156f837058985c380804cbc0f3883022ad84"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "source_content_sha256": "1777979e3cbb0b8b0e97fafbad39b5cd7fcd5e305b18b10a25fdeb3917c456df"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "691107aab5a4e71c22ad255921c8b30a13a09145559ad0ee03fa698e73de6869"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "source_content_sha256": "04e10236801390ed69dcba395d1e1d759e49a458ee792eaab4027a107057da2d"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 10,
+      "item_label": "GA-10",
+      "source_content_sha256": "e9ef04b232e39a4269c5155dbb041b6b8ba081fca866b57410087bd29ec67742"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "349dfe356e19abc6e593144224d21fc229fcf89d3c82693f96b015001e1766c2"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "source_content_sha256": "76795a69d1095381b50ab3f05ff15c2afc1d1899863caaa368ce7a3c6151acb3"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 15,
+      "item_label": "CS-5",
+      "source_content_sha256": "4ca1fbbb986291075263f46596b8498d4259585dbad6c3a3ad862c6e969d036b"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 17,
+      "item_label": "CS-7",
+      "source_content_sha256": "de9ce111fc203507aee4ba51497a9ac11bd714cd2468d54019e35a95646900f7"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 18,
+      "item_label": "CS-8",
+      "source_content_sha256": "612f01f97b9ad5bb62c8305a79bbaa8c6146e4f2f1a408b6161186b0b3868d14"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 19,
+      "item_label": "CS-9",
+      "source_content_sha256": "f0385113ec0e7c9a4946c0a07d007e50b75d87bc41bdf82a5e948a7f9e14f873"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "43077c15d193b60a2add5110b1252052956630798a2f694b0d8afc45b26b3324"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "source_content_sha256": "9d2834f2dea94a48fb2b043109ca6f01d78f64588e1679435ae10faa993ededb"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "source_content_sha256": "fd70dcdf63e0af71fd96fad62b13c933af474da723a468167b2d48eeb9d3c83f"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "ed2f40c9f4457df515061daae4617ba49693d09e13dfa55630f6261e6ae88f35"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "6aee69055e3d388153751886715621d655190a9a035041d39e25173dcae81d5a"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "14a89e505420650f60cb322720868ef31b3b9d73aa30a173f503434422db9cb6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "source_content_sha256": "f4fc5a9e0b669f0542ab050540a26b2d97245ec1d0bde7b45828b659e9e508a7"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 29,
+      "item_label": "CS-19",
+      "source_content_sha256": "82d934c9b5f369334d3f7e1e4ff95ea848f7b5567c8e5440a61daa8ddacb4d24"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "source_content_sha256": "b38f64c82dd731fe962594fe8950a23d8bf3431547fb4463051eadf61d316f9b"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 32,
+      "item_label": "CS-22",
+      "source_content_sha256": "e86d6f2ca6eeb892269e1106c217f6a03a5dff133d1c0d12bca4ab7a67030031"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 38,
+      "item_label": "CS-28",
+      "source_content_sha256": "a4eb633a230f246921b367a4f1d8db3274c405f74e166e9c3da2adac643a8658"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 39,
+      "item_label": "CS-29",
+      "source_content_sha256": "1de9204935b82b3bc93caad1c99d2d818abb7bfc4b9513a0a478172b9fda3a81"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "99597389ef08c71f330853a0737bb1c9bb55d5b40ae5136e445544e7d6c3646f"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 41,
+      "item_label": "CS-31",
+      "source_content_sha256": "1620193d420b93af81943df63cd3b06b71a74b23c937fa20989755873211aece"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "2fe3ab6ddcbde9e4d7bc2949c600a3d6cf55c97716f96d1a5d40c109a5163add"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 43,
+      "item_label": "CS-33",
+      "source_content_sha256": "8ff85f10f63a43abc0c1c91aab2a65cb248aa701767ca84b62bf09049afeccfa"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "cde772a72b77da30c5108056817146da1235227786964262e06b42b69dedc545"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 46,
+      "item_label": "CS-36",
+      "source_content_sha256": "e452d31d647eab2922f52436b92d11e465eb1473289df0bca843148940b4d0b6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "f6263900aeb1b82f085a5beadb9f4da0c13b3366fb61d60d45b20f366f49e125"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "source_content_sha256": "62ba59c2b74bf7d6dcc00ed4717def7f00a6fe4d4719c4ee115aa100e4ce8113"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 50,
+      "item_label": "CS-40",
+      "source_content_sha256": "bfa3b45e110a0ea73d8b2575d6815d4a2c3c5420153ffbe6b43d65e60a701b31"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 51,
+      "item_label": "CS-41",
+      "source_content_sha256": "a8ac725b1b3f56cc0f133012c74f3399190d7f23a156f62902f9ea9e54717c12"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 54,
+      "item_label": "CS-44",
+      "source_content_sha256": "4be49566186d90505bbd51d91ef8688f813a004d03ac1ee49ac0af7a1fa9a34d"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "source_content_sha256": "490fbe1fd61d20b91efb3229b354537474b200c3f0934fccef593755d31b9f11"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "source_content_sha256": "71a0bcd82d71a0ac99bb3b4c971aef05b3a79bb5367f19c55318ca648b4cc166"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "source_content_sha256": "b9366c52c06897cc0b540755d6b0d7b72306b5070b84ff672d968c77c51688b9"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "source_content_sha256": "d61b2570405da6db2518413c5ecd4b21586a87920aec2197eff2a21b8ac16180"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 61,
+      "item_label": "CS-51",
+      "source_content_sha256": "f42433a835a409073c7c3c98bee6f92778d2791b47c97cf686fc2ebc7d157f69"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "8018eda70f959043ec88c08b93f8e94d0e7bf075e40aa1f4b9327a2eee27ad69"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 65,
+      "item_label": "CS-55",
+      "source_content_sha256": "ef0d0468c7da9c3b3b472514f99481e5fa1a20afd1b3b61787a2438ec80a90a7"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "b22ab59ba4631e00356b08c8bda43d0a1e2d1e306636d69c50f8dbeb2976940f"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "16d62dad37b9c6fa731bd7ee2e1c6b3652267c89bf8397b3d37bd00b33d5de2b"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "01ff5c042dade5c4444a591523e52643d056a3f9989efca3408afe126d30e2b3"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "source_content_sha256": "1e7fe22c2f8799a714228a397bc804784c106ba52a683cb5dfd4fe3e008a8cc5"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "032470240311e6cedbf0a88e4f2ed94467a17feaccaf4d9eaddc792522c34e26"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "source_content_sha256": "b72125c34f0865402e6ea220d803e7ebfdbef4f604eb26eda61b3a8b5fd20235"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 12,
+      "item_label": "CS-2",
+      "source_content_sha256": "7bfe38f21bd58c0e76d5e88a74bcfe472dcb927b659c3c9b8daa74bd3d0d8223"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "e07a38a7038a49cfac1b13ce873bd1034068e97b442e168206fa847cba27cd4f"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "source_content_sha256": "2dd21ae5493b00079c6c6d4cd0d9091f1c541ef35c7e37a7107a9fa7d571e639"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 15,
+      "item_label": "CS-5",
+      "source_content_sha256": "aedf3c07f2cceffbaf65d72775680789b82cdd29510b5bfd29752d93de4afb25"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 18,
+      "item_label": "CS-8",
+      "source_content_sha256": "6999c714d9e17e690a1dbdb06a2cf4cd6cfadc7bcd91db42a74aa672c839e4ff"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "64a392a2d345aa6cb71daecf246b2cd408d224c841a124080b4aff14536964fd"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "source_content_sha256": "7596709109bcacb67de0f2d72ae1669fb005b4310e317e6c9955b0a088580bba"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "source_content_sha256": "42b16b08e1420f5cbfb414000fab5d12f18e82c08b9e563bc4786c625157ad2d"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "5b32ca5db2425b445649eb9ad613735cf702947e1c13d2c1076f9b675fe5451b"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "159333374bfd61c84faab19e865bdf5c086c27c1cf3468bf6e29451ccbb85438"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 25,
+      "item_label": "CS-15",
+      "source_content_sha256": "7f196cee9530f6d7ed9e02fc2b0b64517f6360864174adfde1fabb929219a8cc"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "8cb0f5bdcf63fc3096fdda10805a2ee8a4a9fea8190229215e73a58eebd133d6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 27,
+      "item_label": "CS-17",
+      "source_content_sha256": "555f15cfc2ca6ea66afb048b326b4899ec8c2eb87970f0a33375b1ffa372b504"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "source_content_sha256": "c23d56c738fe871efa0060ebcc382fbaf766954de34a8446fb0f60ed3aa77a79"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 29,
+      "item_label": "CS-19",
+      "source_content_sha256": "d94780126a220a4a5c8aec45d661bc171bea732825c5828235fff61977c66e93"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 33,
+      "item_label": "CS-23",
+      "source_content_sha256": "cb71fa01e0bcd32bbad08fbc45c30bdee5194af3ddb1ff7b218d49ee83a07dd4"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 34,
+      "item_label": "CS-24",
+      "source_content_sha256": "15291994dadaec865aa863415460c4447f1742bf9eb853c26c9c723a229ab263"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 35,
+      "item_label": "CS-25",
+      "source_content_sha256": "112c69ffd97b7c5ddda85108bf35050d49a7560b7ca54da3091c25176ddeed4b"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 36,
+      "item_label": "CS-26",
+      "source_content_sha256": "758df8511db77336debf91c2a791c4c3611514f9c3eac92e007df453a03acf6c"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 37,
+      "item_label": "CS-27",
+      "source_content_sha256": "687e7677ca27bbbfdaacd315e2b79314c767cf0275ed1d5b0b9c24881335ee68"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "f92e74897fe9a164736acb0f699fa695d41dd918dd39916d835a0d58b253b163"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "11b8baf4956a22217af8d6e6b0dc218293810459463485280a96b665271e7290"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 43,
+      "item_label": "CS-33",
+      "source_content_sha256": "6d2b2ca8ca36c76d032b2a2e38d4fa20beba228b2a964aeb40406c0ae928dde5"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 44,
+      "item_label": "CS-34",
+      "source_content_sha256": "de947471ae9e05ba1ff37f33dfca17efc1fe62a13ed73d084b800004925c839c"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "618b0812a6b3954debe37b3b6c7c6b5cfe0c1662954223203efd06773a553219"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 46,
+      "item_label": "CS-36",
+      "source_content_sha256": "b85cc117d771092829542ecd01a173c63c12fc5613ffda2f7bfff27e195f2594"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "f17a1e4551b9f67d30caf665df27b5be7d3f9afd65e277cfc89882862c97d4d7"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "source_content_sha256": "bde1156b1cb880ed820d5fb1567d133ca6315c45f57ac8a89c132887ef85a7b4"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 49,
+      "item_label": "CS-39",
+      "source_content_sha256": "829b22eedc81919f55474e4e6a7032cbd517eb0fb746961a4cfef9094af27d36"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 50,
+      "item_label": "CS-40",
+      "source_content_sha256": "be25f8710c6a57600832270071db19344822f0b63d613b16a2960b1fc0363169"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 52,
+      "item_label": "CS-42",
+      "source_content_sha256": "62ef51daeecdbe82fef423a9387b7244b726d62e7797cade14f87823232d299c"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 53,
+      "item_label": "CS-43",
+      "source_content_sha256": "021c151bd50f4224847d5e60d266ac08375f2d7504887e52a4cb23d226be2730"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 54,
+      "item_label": "CS-44",
+      "source_content_sha256": "06a31b2ec59873c6287948d6985e005abc0c6b61881917a39484960e8c2e68ce"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "source_content_sha256": "a0570398709bbd0764beb25a0a8c3db2c0f6fa3c8ccd0602b2a4a9281e696f24"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 56,
+      "item_label": "CS-46",
+      "source_content_sha256": "6326913be1c3a56fefff420f37a2a119ea081324c1747104c874ae047e63d67b"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "source_content_sha256": "f700945120d98d1413b579c4e3d21460b08d5c5be183cf062c2afd60b9660520"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 62,
+      "item_label": "CS-52",
+      "source_content_sha256": "872281ece4d6de19a42c1624deb99bfeb0185c0ada2a98151a47e917cee56a35"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "cf3105982b5cdfa5e0e534d9beefb8a030591a3e232ecf1978cc0ef7763348dd"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 64,
+      "item_label": "CS-54",
+      "source_content_sha256": "2f82e060e5e12dcd1b7c1e63c90aead64c9a91cbe3f98ed01d5adfd94fddd809"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 65,
+      "item_label": "CS-55",
+      "source_content_sha256": "742f5a23280939b158a909b15388c50ea4f7fa58bf29edaa29e71ae5f0a47361"
+    }
+  ],
+  "artifact_sha256": "1903bc9b9f9e9d738501f3b5050528a8599380d66bfce51209adc08876327220"
+}

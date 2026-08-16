@@ -64,6 +64,7 @@ from app.schemas import (
 )
 from app.config import settings
 from app.question_bank import resolve_question_bank_path
+from app.question_assets import validate_public_asset_payload
 from app.scoring import score_question
 from app.user_state import (
     ProgressProjection,
@@ -121,6 +122,7 @@ def _question_public(question: Question) -> QuestionPublic:
         ),
         marks=question.marks,
         tags=question.tags,
+        assets=validate_public_asset_payload(question.assets),
     )
 
 

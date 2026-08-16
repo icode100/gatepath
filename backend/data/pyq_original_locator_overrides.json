@@ -1,0 +1,5793 @@
+{
+  "schema_version": "1.0",
+  "scope": "Explicit original-PDF page locators for canonical GATE CS slots that conservative automatic marker extraction could not locate",
+  "production_import_authorized": false,
+  "practice_eligible_count": 0,
+  "review_required": true,
+  "render_specification": {
+    "format": "pgm",
+    "dpi": 144,
+    "color_mode": "gray",
+    "renderer": "pdftoppm"
+  },
+  "locator_count": 625,
+  "papers": [
+    {
+      "paper_id": "gate-cs-1996",
+      "source_pdf_sha256": "d822fe657bc148f9422096b3f1bba3f6b813242759ef937b47f173f8494565c4",
+      "source_page_count": 19,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 4,
+          "sha256": "3b2671c0f3d19d777244916874d16d90a77b74d782c8915d78159aa681eb986a",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1.19",
+            "1.20",
+            "1.21",
+            "1.22",
+            "1.23"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "cb05c21b3557cd8e3d99436bd7f1b2d84804af6d6b163c3cb2b0c6f72660b0c0",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "1.24",
+            "2.2"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "9123b3e42b1b4a41cebf7e32a21effb84391a01b1c27f3691bc219fe1b254921",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.3",
+            "2.4",
+            "2.5",
+            "2.6",
+            "2.7",
+            "2.8"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "8de6da4732c49b569eee9fedfe32da738aa86ba1083fdf11e394e88cbc4f5477",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.9",
+            "2.10",
+            "2.11",
+            "2.12"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "77444a1e685a88e96b8c3d91dfbcbe1435b79ada11ae6fcadbefcf672bb7b1d1",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.13",
+            "2.14",
+            "2.15",
+            "2.16"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "000f065f55f7c447e79ad8dd8949a0ea9668db331677616996f313f61721e966",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.17",
+            "2.18",
+            "2.19",
+            "2.20",
+            "2.21"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "b3bd6b0891a3e60ada05fb08589966113a47d2bf03620312bd63f47cb650c101",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.22",
+            "2.23",
+            "2.24",
+            "2.25"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 19,
+          "item_label": "1.19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "1.20",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "1.21",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "1.22",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "1.23",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "1.24",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "2.2",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "2.3",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "2.4",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "2.5",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "2.6",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "2.7",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "2.8",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "2.9",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "2.10",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "2.11",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "2.12",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "2.13",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "2.14",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "2.15",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "2.16",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "2.17",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "2.18",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "2.19",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "2.20",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "2.21",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "2.22",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "2.23",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "2.24",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "2.25",
+          "source_page": 10
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-1997",
+      "source_pdf_sha256": "79bdc48e08ed52027863babcb0b7a5246de6877d56c213e436b1236b749f6cb0",
+      "source_page_count": 16,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 10,
+          "sha256": "31b93e2d6ae5fe88f697983d7af1f415e22d0e974e034bb46f128cc629a55201",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "8"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "afbc46cee85bdffd78ebc57824cc5fd3225d7ffbdbf0db4a113f59948f08b358",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "13"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "d0afd8e1cbf53de60e0471b52ac0d973c6ee02282e355963fa4489992c999f9e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "17"
+          ]
+        },
+        {
+          "page": 15,
+          "sha256": "cdabf0545d14d7931868cce04a3434503cb33ae2d06e66b94fe31c703f5d5747",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "20"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 52,
+          "item_label": "8",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "13",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "17",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "20",
+          "source_page": 15
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-1998",
+      "source_pdf_sha256": "cb26e3cfac16abffdc554998c872572e6c3eeb94e9f8886aeb124cda1ccf9266",
+      "source_page_count": 15,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 6,
+          "sha256": "51faec4c492488789cb4503fed669a7219893f8edc4436de13b73b7316cb03a4",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1.35",
+            "2.2"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "b24574cdf2a3f773b5f262a1fe8b3bf3f20e25416471e12fa55511381e9fc111",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.3",
+            "2.4",
+            "2.5",
+            "2.6",
+            "2.7",
+            "2.8",
+            "2.9"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "409e5e6d2a023b1918b356bdf4b32d356790b0571d32baefdf206c8ccb41d64c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.10",
+            "2.11",
+            "2.12",
+            "2.13",
+            "2.14"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "f15381de30cc80d6c6c93d97947efb93e5dc3ab11e4fbc7de53d3a409c395cf1",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.15",
+            "2.16",
+            "2.17",
+            "2.18",
+            "2.19"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "4edf8cdbb6090358d91b3e15a8b92bd8ddcdbffca83c2463e9ea88a08a1b6635",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.20"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 35,
+          "item_label": "1.35",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "2.2",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "2.3",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "2.4",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "2.5",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "2.6",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "2.7",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "2.8",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "2.9",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "2.10",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "2.11",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "2.12",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "2.13",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "2.14",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "2.15",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "2.16",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "2.17",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "2.18",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "2.19",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "2.20",
+          "source_page": 10
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-1999",
+      "source_pdf_sha256": "4bab39aadb12277a49acc9ad6ea561370da6a0ebf3f23b97cb5c2079c30d856b",
+      "source_page_count": 15,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 4,
+          "sha256": "59141cda11deda518eb8dc0cb8200c554679a0ae7bb13dac45adfebca30c5a8c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1.19",
+            "1.20",
+            "1.21",
+            "1.22",
+            "1.23",
+            "1.24"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "894b63301d4fbf7022b0b3b901b9c71d37982ea017ffd84c02a9369e04b7bf8f",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.2",
+            "2.3",
+            "2.4",
+            "2.5"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "91ca33fcbbd8e906615cb95ce5e86853ea415ed4e6816b6571a449da8b5ef6ba",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.6",
+            "2.7",
+            "2.8",
+            "2.9"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "dc355f906be66d8ea54d118f6caf63a56ccd3cf77685589d5358ec0e08655f3d",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.10",
+            "2.11",
+            "2.12",
+            "2.13",
+            "2.14"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "c6b0640849e09d3ba0cee39c121698bf2d2a9d29683fd14a2e7128ef125ed0e2",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.15",
+            "2.16",
+            "2.17",
+            "2.18",
+            "2.19",
+            "2.20",
+            "2.21"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "a61c925f023e6b2f5a1fa8e7ae0d9bf3338cdf6943bdf534e86a56ca54ae87df",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.22",
+            "2.23",
+            "2.24",
+            "2.25"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 19,
+          "item_label": "1.19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "1.20",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "1.21",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "1.22",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "1.23",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "1.24",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "2.2",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "2.3",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "2.4",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "2.5",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "2.6",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "2.7",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "2.8",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "2.9",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "2.10",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "2.11",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "2.12",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "2.13",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "2.14",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "2.15",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "2.16",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "2.17",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "2.18",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "2.19",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "2.20",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "2.21",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "2.22",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "2.23",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "2.24",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "2.25",
+          "source_page": 9
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2000",
+      "source_pdf_sha256": "a2b1415201e747945ef255327b916750c0883197fca03016732067133c4bff98",
+      "source_page_count": 18,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 4,
+          "sha256": "ae984e24c7abd8f623601a7469eec02cda4bef272ff935848f23458ee9bc61bf",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1.19",
+            "1.20",
+            "1.21",
+            "1.22",
+            "1.23"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "13bfff46de5ab38294772ca8807766fda52009ffaac31c1b04badd466dfcbeba",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.2",
+            "2.3",
+            "2.4"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "ffa298815928aa0026263e0fe0e96b320e21f8fc9e61a91aff6ecb71bd98021b",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.5",
+            "2.6",
+            "2.7",
+            "2.8",
+            "2.9",
+            "2.10"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "d2d8335bc89e49cd0ab8ce9a8b1664f7ecd12dcee59e31c0dc669276d780a28e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.11",
+            "2.12",
+            "2.13",
+            "2.14"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "c3dd1a6e87f650aebd2bd3287fe5324200dea07208237c7c68619868a985bab9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.15",
+            "2.16",
+            "2.17",
+            "2.18",
+            "2.19"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "d88dc0ebb7ddeb15c0f4a149c19a3772c93de0d9f7fd8bdae3a359506f33bb64",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "2.20",
+            "2.21",
+            "2.22",
+            "2.23"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "12dce5f25c8f3568dd68b2453d8c2d65160dd9c4b4b44a1884a60090157761fe",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2.24",
+            "2.25"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 19,
+          "item_label": "1.19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "1.20",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "1.21",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "1.22",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "1.23",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "2.2",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "2.3",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "2.4",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "2.5",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "2.6",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "2.7",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "2.8",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "2.9",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "2.10",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "2.11",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "2.12",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "2.13",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "2.14",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "2.15",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "2.16",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "2.17",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "2.18",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "2.19",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "2.20",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "2.21",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "2.22",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "2.23",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "2.24",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "2.25",
+          "source_page": 10
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2004",
+      "source_pdf_sha256": "de1144319a7f9037d67aab0d4960b7b632c875852f5ff69057b6c817754e2e0e",
+      "source_page_count": 20,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "826a3151a2647f8c7702bffaf46566c12ab67190b76806f33e65ba4442ede318",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "2",
+            "3",
+            "4"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 2,
+          "item_label": "2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "3",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 2
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2005",
+      "source_pdf_sha256": "4444090943ce9093ca672ddc0aa981bf3fb09559ba0bd1bc7c1588a82d199724",
+      "source_page_count": 12,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 1,
+          "sha256": "ff00c42e9618d1def940eb081b8e63eed0e8e6de66142c3150afeccaa38392e4",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ]
+        },
+        {
+          "page": 2,
+          "sha256": "ccb455d500c6d7ed79e86b2aa990619c445961718277b2e13997add6a2600800",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "0f54fab15e2d4c4e35d28e5f0bf91bde1c689357535707d58755a06a87596a6a",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "535a769f423d0b71b812bbc5ca76696a67616a34319c711c122be59dcbf02107",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "abe312a6e9dd7d70b3ed51a2e2898805b72650d753d0b6848ba82a994c445b33",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "0b2add12a8cad03ecc21013f28001fece71e9a63f63ac071ccd81afc69d624f4",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "c0e8be5ff9a4472f000e40f05eba7ec1cc563ff9f3ec93ddf0b431d63409d019",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "e74a36b89099c576ab53c59ec35507d9b271fdc49bcc1da2a9ca8051320ade06",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "62",
+            "63",
+            "64",
+            "65",
+            "66"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "0232716d51eb9c7010994e036310701ed5e7bc03baac7189d02b898add08dae3",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "67",
+            "70",
+            "71",
+            "72"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "daa418e786859e821fb74cf722971cb43a244557cbd780198ef7be811bad0648",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "73",
+            "77",
+            "78"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "ede6cfedb57ae4bbc709e91ee3a3dda3c553206edd07477c705f2100660307f9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "80",
+            "81a",
+            "81b",
+            "82a",
+            "82b"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "95bbb14eae1caa8bbbc4e129253ab59461e84b8fb079071ea4dc8a927b31dc9c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "83a",
+            "83b",
+            "84a",
+            "84b",
+            "85a",
+            "85b"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "5",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "6",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "7",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "8",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "9",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "10",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "11",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "12",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "13",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "14",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "15",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "16",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "17",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "18",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "19",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "20",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "21",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "22",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "23",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "24",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "25",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "26",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "27",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "28",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "29",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "30",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "31",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "32",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "33",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "34",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "35",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "36",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "37",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "38",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "39",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "40",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "41",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "42",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "43",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "44",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "45",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "46",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "47",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "48",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "49",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "50",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "51",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "52",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "53",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "54",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "55",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "56",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "57",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "58",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "59",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "60",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "61",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 62,
+          "item_label": "62",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 63,
+          "item_label": "63",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "64",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 65,
+          "item_label": "65",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 66,
+          "item_label": "66",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 67,
+          "item_label": "67",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 70,
+          "item_label": "70",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 71,
+          "item_label": "71",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 72,
+          "item_label": "72",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 73,
+          "item_label": "73",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 77,
+          "item_label": "77",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 78,
+          "item_label": "78",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 80,
+          "item_label": "80",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 81,
+          "item_label": "81a",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 82,
+          "item_label": "81b",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 83,
+          "item_label": "82a",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 84,
+          "item_label": "82b",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 85,
+          "item_label": "83a",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 86,
+          "item_label": "83b",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 87,
+          "item_label": "84a",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 88,
+          "item_label": "84b",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 89,
+          "item_label": "85a",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 90,
+          "item_label": "85b",
+          "source_page": 12
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2007",
+      "source_pdf_sha256": "f3df0aaaf8a898ecd17380984636780d16d897a8d630463fdaab7f1d7187e463",
+      "source_page_count": 21,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "77035d3945527f28c41ebcd20377afbacbd3e761feff83e96f255b1ee0746840",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "ca7141f89b276dcbe6d5490bd386433d94a60d84e673ffdf5bddea23d39adc72",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "380741b95638d15e360f3c1d958db8e615810973586ae7a8add2357147471254",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "3d36b24a7d86b88b616c8f9af79088f7cb0d6b320917c275ed5adae9c8fdc6b6",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "21",
+            "22",
+            "23",
+            "24",
+            "25"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "3d823d70e55848e2e8ae7586f7d4e509d3cae2856de86b8aaeb0cca1ce7e4d8e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "26",
+            "27",
+            "28",
+            "29"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "01f05d350ef14402dfd4f704d7c58aba44a69998c288f08bbb8e8d0cde9cc537",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "30",
+            "31",
+            "32",
+            "33",
+            "34"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "acd86fbf7dd3f9bfd37647e2be3449fda2daebd1b0b0f4b5792d4eec6aaf1dfa",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "35",
+            "36"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "05e64fa4903610519dcc83168d9889f7fa6e724fcc26fd7ceedf3bfca58f78db",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "37",
+            "38",
+            "39",
+            "40"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "f9bf1698435600eb4da21426e63b115e6f1212a5ef21ed0322ba7ebf1a2748e2",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "41",
+            "42",
+            "43",
+            "44",
+            "45"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "284f448da3b29440793c34396779770b00735ab6ccf93afdbdb4e7fbb173bf08",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "46",
+            "47",
+            "48"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "f29baae18252af05ae4d313110a13a3da1f3b7a74faf9b07714134c90eabf2ff",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "49",
+            "50",
+            "51",
+            "52"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "632f76f95f8a00f198ff29de5fcfecfa5d8548e658a096fa7c07b010765fc6ef",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "53",
+            "54",
+            "55"
+          ]
+        },
+        {
+          "page": 14,
+          "sha256": "586d49e6c64f183245f79c48f5bae03f5cffdbfb2a2d45d757c82483930b601a",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "56",
+            "57",
+            "58"
+          ]
+        },
+        {
+          "page": 15,
+          "sha256": "371a6098c25bfcd14e5e3b65af02c646d5b9f42018269de100fccedc81bc35d9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "59",
+            "60",
+            "61",
+            "62"
+          ]
+        },
+        {
+          "page": 16,
+          "sha256": "f7387b10f34b8fb2bc3d212a180c1c5cb61a78f9e0cd93528e44bd1af08df2cf",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68"
+          ]
+        },
+        {
+          "page": 17,
+          "sha256": "6ca7dbf75f61163c80c6ced685910acfc8f25d367520ab4277f903210726e728",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "69",
+            "70"
+          ]
+        },
+        {
+          "page": 18,
+          "sha256": "1d7ef9ef83870557f7e8861ac3f4fa7461e6a9cc0b6ffa20377f8acbd42cc79e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "71",
+            "72",
+            "73"
+          ]
+        },
+        {
+          "page": 19,
+          "sha256": "285355dc3a54bec2258bd91860818518c8b694f43249184bf3844355d8cc12dc",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "74",
+            "75",
+            "76",
+            "77"
+          ]
+        },
+        {
+          "page": 20,
+          "sha256": "0da42f0a289b6b86f67d5276d0507e020a7baeadd7394de583286fd1b8cfb905",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83"
+          ]
+        },
+        {
+          "page": 21,
+          "sha256": "e5100d5287497af5cfe9419912eba288c106f48a2e679aa2fec7f019f424588d",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "84",
+            "85"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 1,
+          "item_label": "1",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 2,
+          "item_label": "2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "3",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "5",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "6",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "7",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "8",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "9",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "10",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "11",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "12",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "13",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "14",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "15",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "16",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "17",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "18",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "20",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "21",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "22",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "23",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "24",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "25",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "26",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "27",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "28",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "29",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "30",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "31",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "32",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "33",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "34",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "35",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "36",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "37",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "38",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "39",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "40",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "41",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "42",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "43",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "44",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "45",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "46",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "47",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "48",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "49",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "50",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "51",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "52",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "53",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "54",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "55",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "56",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "57",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "58",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "59",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "60",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "61",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 62,
+          "item_label": "62",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 63,
+          "item_label": "63",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "64",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 65,
+          "item_label": "65",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 66,
+          "item_label": "66",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 67,
+          "item_label": "67",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 68,
+          "item_label": "68",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 69,
+          "item_label": "69",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 70,
+          "item_label": "70",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 71,
+          "item_label": "71",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 72,
+          "item_label": "72",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 73,
+          "item_label": "73",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 74,
+          "item_label": "74",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 75,
+          "item_label": "75",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 76,
+          "item_label": "76",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 77,
+          "item_label": "77",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 78,
+          "item_label": "78",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 79,
+          "item_label": "79",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 80,
+          "item_label": "80",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 81,
+          "item_label": "81",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 82,
+          "item_label": "82",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 83,
+          "item_label": "83",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 84,
+          "item_label": "84",
+          "source_page": 21
+        },
+        {
+          "canonical_ordinal": 85,
+          "item_label": "85",
+          "source_page": 21
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2008",
+      "source_pdf_sha256": "f01fcd02a9a5544d1f89959eca288fe967bb537ed00513b46e5fe8f9f97f7202",
+      "source_page_count": 18,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "ecfca133f60eb179cf1be846b8b16ede547e2f857bc37c0a90a15cb78bbc2031",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "21b137016c8c5e1ddcbcd8a599f58e26b4f6b8210d0888cbe8661d18d6e05971",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "dc366e281ac0d8296d3806c7b128c8f9dafdb65bcb91d36de5e58bfa060b2db3",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "754d825b794d3e4e01f62b5f70d348a5ebcd5cac2e4fc1fe5fbb1b51f8c02952",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "b173434e90225129f4b747f1feebd258f624c46056f157320a3cde26cc9bec68",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "bed67689198b8bfe20479646be44bb0c3234e67e2e2e7941ed9b92cb930fb272",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "5a2481b3c385d755a77db1e9ccddbfa81638240b059286671115978f3bf4204b",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "44",
+            "45",
+            "46",
+            "47",
+            "48"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "bd54c98645bd7150415abe25ff96f93af44bcb38ecc4351845969d8698351ee6",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "49",
+            "50",
+            "51"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "56999e457f456656341b8d7c4a89a413d6ed61c07e251f0d457febb7ee7b5be5",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "52",
+            "53"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "e185bf38d460a3670237b7f5b8262e4e5132b3cdb592b3217663f0deabad1f6c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "67929912793368d9622dcf25b3769b855715f50bb94b4a992552b62bce81094b",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "60",
+            "61",
+            "62"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "a35ffb68f70aab9a36949fcc11eb92726e6e5c609b879d62a3b4e4d84af2f953",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "63",
+            "64",
+            "65",
+            "66"
+          ]
+        },
+        {
+          "page": 14,
+          "sha256": "fd8c333ab59ebbd3667e12908983f65a6b775bc0dc993a29ee45ffc2360453f4",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "67",
+            "68",
+            "69",
+            "70"
+          ]
+        },
+        {
+          "page": 15,
+          "sha256": "2b13250b039a4aecaec4ea94936af9396c664f7f601641d604667d9b8aacfa64",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "71",
+            "72",
+            "73"
+          ]
+        },
+        {
+          "page": 16,
+          "sha256": "f9f3cd7991b95cf58ab9b79fadbf077ba0d7680bcb3390092515fa08ab244b8c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "74",
+            "75",
+            "76"
+          ]
+        },
+        {
+          "page": 17,
+          "sha256": "6be5f5b645defe2221d90eafc9209aba65601eda12aefa40ff46553a6bc55121",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "77",
+            "78",
+            "79",
+            "80",
+            "81"
+          ]
+        },
+        {
+          "page": 18,
+          "sha256": "b2c06ad1a50717e3acbdade266548cf488fd794b00e5b21a7fb52cfa85f3c8ec",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "82",
+            "83",
+            "84",
+            "85"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 1,
+          "item_label": "1",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 2,
+          "item_label": "2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "3",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "5",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "6",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "7",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "8",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "9",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "10",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "11",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "12",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "13",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "14",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "15",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "16",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "17",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "18",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "20",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "21",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "22",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "23",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "24",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "25",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "26",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "27",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "28",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "29",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "30",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "31",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "32",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "33",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "34",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "35",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "36",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "37",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "38",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "39",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "40",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "41",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "42",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "43",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "44",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "45",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "46",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "47",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "48",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "49",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "50",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "51",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "52",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "53",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "54",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "55",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "56",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "57",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "58",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "59",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "60",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "61",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 62,
+          "item_label": "62",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 63,
+          "item_label": "63",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "64",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 65,
+          "item_label": "65",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 66,
+          "item_label": "66",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 67,
+          "item_label": "67",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 68,
+          "item_label": "68",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 69,
+          "item_label": "69",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 70,
+          "item_label": "70",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 71,
+          "item_label": "71",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 72,
+          "item_label": "72",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 73,
+          "item_label": "73",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 74,
+          "item_label": "74",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 75,
+          "item_label": "75",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 76,
+          "item_label": "76",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 77,
+          "item_label": "77",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 78,
+          "item_label": "78",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 79,
+          "item_label": "79",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 80,
+          "item_label": "80",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 81,
+          "item_label": "81",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 82,
+          "item_label": "82",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 83,
+          "item_label": "83",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 84,
+          "item_label": "84",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 85,
+          "item_label": "85",
+          "source_page": 18
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2009",
+      "source_pdf_sha256": "d260584d7a0fdd14f3c7bd262e3e48c25eb6b2f75fe4df8889993b1b1c41b83a",
+      "source_page_count": 14,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "86ce2f3323adc0bfab2d00fdaa04970a5cb8bde42927e4dec7bcbc684358f9bd",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "daae368bec58df994c51c91f61298204ab3733fa7334fdac0fc2c81f4316062f",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "4d27e8381433cbef0c71dca2ddf747ed6169e1f613d6b1296de8d696de4fc2a9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "18",
+            "19",
+            "20"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "6cfe0d8b79c47820aab88c3e5b2b9909671b74088636a91ea14607341bb0b124",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "21",
+            "22",
+            "23",
+            "24",
+            "25"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "bcfe4cd2d76b784e5ee20ef20962ed0f921704eca82d5d8929d4ea89a605bda9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "26",
+            "27",
+            "28",
+            "29"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "98dd03fc70ced77ba5e7c4dadf1f0bf1ef7ea4b0317cca7dc2c329058a6599e5",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "30",
+            "31",
+            "32"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "ae3be2552b2c4e3bd9b4e17e49180dde28494698a1d39a196ac720836a6c1a5a",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "33",
+            "34",
+            "35",
+            "36"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "947d6b89414759983ae81f3b84886baaf581cce3b580d5d3eee84a7ddd36db24",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "5297c8543de86f74e518723de24c9d0082f6b9726df0dcca804b381c5a15a628",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "43",
+            "44",
+            "45",
+            "46"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "e3ef550afeb607cfefa6485167cefe87f7fcf7ca19ad0a4cca432588947eb7a3",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "47",
+            "48",
+            "49",
+            "50",
+            "51"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "3499015420142cd900f94b4c909ee28d22b7c924063071850108bd2ac5f22744",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "52",
+            "53",
+            "54"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "790e53e5d9823c6eb3c52ecc7e14c6937ed7dfdf4c1c3eb8ffabf651ed59dccd",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "55",
+            "56",
+            "57",
+            "58"
+          ]
+        },
+        {
+          "page": 14,
+          "sha256": "28c5a3617a15bc4d6d38a919b71847a18c9f9369e185fab3ecd8d205ac44ef77",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "59",
+            "60"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 1,
+          "item_label": "1",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 2,
+          "item_label": "2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "3",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "5",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "6",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "7",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "8",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "9",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "10",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "11",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "12",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "13",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "14",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "15",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "16",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "17",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "18",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "20",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "21",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "22",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "23",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "24",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "25",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "26",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "27",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "28",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "29",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "30",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "31",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "32",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "33",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "34",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "35",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "36",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "37",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "38",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "39",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "40",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "41",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "42",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "43",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "44",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "45",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "46",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "47",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "48",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "49",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "50",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "51",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "52",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "53",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "54",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "55",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "56",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "57",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "58",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "59",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "60",
+          "source_page": 14
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2010",
+      "source_pdf_sha256": "93889cef9e383267038125f87c7e5e3377b762d619f2781121aac6cd7f2030d6",
+      "source_page_count": 23,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "edb7ac17253253a0e9fa666965b66f252d6352073308ee4763a38681318705f2",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "bc0c071e3d943e0d4e0200ec60506ac178f0358f46a9c492bc7104633459b4cc",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "9a277a3526f9098fa47d150dc88b53eda012021f16be600d8f08fe53798195f0",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "15",
+            "16",
+            "17",
+            "18",
+            "19"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "6cd89143bbae77d92f513ffdc476e49c66a8aa98b355303cb8b7c1406d873af9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "20",
+            "21",
+            "22",
+            "23",
+            "24"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "b010d225951f8545bec285f1b171cbc7e57f6bce4e9a39d8a129b4ccbcc08d57",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "69bc78959a45293fe6138ff1c418d33a85fd179a1081b43066d0e853f171bfba",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "31",
+            "32"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "39d009ebd00fb6cdb54b9861584b8d200aba388c4b0322f39b26885dfd6d691d",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "33",
+            "34",
+            "35"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "4be5c7fdf134f23ce8ebc6ba9c85a04cc8ef117c8f713d04c23508108c461365",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "36",
+            "37",
+            "38",
+            "39"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "5d6bc1373dd6602810db3887405df5366c5ea84000c64a0fff824f80285bbd1a",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "40",
+            "41",
+            "42",
+            "43"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "62308f7c39029f5f6c48283090f0f24042b002bf747503bfc7eea3ea0a5cf66c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "44",
+            "45",
+            "46",
+            "47"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "412a313449821c3263e7a60db013500b8a3cda7a502e91a665e4415d585efb57",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "48",
+            "49",
+            "50",
+            "51"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "003b33acb1ea25cb1aaf5a8d6441465cc7bc2a19a86607e08c1339aabe7b5275",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "52",
+            "53"
+          ]
+        },
+        {
+          "page": 14,
+          "sha256": "86bd4cc65a46f60bcb77aa946bab6d8c98213ba46eca37adcd0e74e07899c0ac",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "54",
+            "55"
+          ]
+        },
+        {
+          "page": 15,
+          "sha256": "44250c0d56963799dda58c2c5f476b57d8641ddd5f48e457b065187c06631dae",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61"
+          ]
+        },
+        {
+          "page": 16,
+          "sha256": "734f63a19f20e2f00d5b9a8aba4e7a96e66e4f7e8a60f1df781b8c5443dc7de6",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "62",
+            "63",
+            "64",
+            "65"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 1,
+          "item_label": "1",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 2,
+          "item_label": "2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "3",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "5",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "6",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "7",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "8",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "9",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "10",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "11",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "12",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "13",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "14",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "15",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "16",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "17",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "18",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "19",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "20",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "21",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "22",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "23",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "24",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "25",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "26",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "27",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "28",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "29",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "30",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "31",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "32",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "33",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "34",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "35",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "36",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "37",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "38",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "39",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "40",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "41",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "42",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "43",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "44",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "45",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "46",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "47",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "48",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "49",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "50",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "51",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "52",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "53",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "54",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "55",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "56",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "57",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "58",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "59",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "60",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "61",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 62,
+          "item_label": "62",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 63,
+          "item_label": "63",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "64",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 65,
+          "item_label": "65",
+          "source_page": 16
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2011",
+      "source_pdf_sha256": "d84d37b374ed77906a34c410f7fba96af7127808b7697466a0183aa4f82b3acc",
+      "source_page_count": 17,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "a581ffbd67c9e343fc478fbf5c855222aaea612be6e1109c74ee3893064958ca",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "f02528b186b4ffd922cee4e760e0a5bb66f915887d03eae8f29ded87fcc6811e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "d934fc0b380e1ed2cb29db862cbd4f6e8f77d87801fb0ae49079883514047bcc",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "12",
+            "13",
+            "14",
+            "15",
+            "16"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "ac25eba344667dd3709da5cd90edfa331cfd5caed8207cf8abcfe2d6b4c9c4a6",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "5204b5c28e1aef732c19295a97c0a8d4ed7801f614ae70b81d08e8a5535172d9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "23",
+            "24",
+            "25"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "8968c4814bc0fa735358653c0963441df3d831684809dcef32332f36fbb2b33e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "26",
+            "27"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "a13096a5beba7ddddf73788821447dc68cbd6480936c1743a50dd7f54cf7d8ea",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "28",
+            "29",
+            "30",
+            "31"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "5ca88ded2611aae96ad2b8a15d8a0e0fcf560b0db930335c7512a09d5a51f940",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "32",
+            "33",
+            "34",
+            "35"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "a02dbcc67fe98d51eaf178127e20dee955d57fdf6f45cf8d9ff2095433ae6dbf",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "36",
+            "37",
+            "38",
+            "39"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "1248a65a2556fb3078f55bd292e5280d0bd1b68081b6fa1bc5062672e702c007",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "40",
+            "41",
+            "42",
+            "43",
+            "44"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "f643e3f8aa966d41a5b3df1384a7aa9e9a206e5e51c84e3a415c94aefd468921",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "45",
+            "46"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "5692e3abffcc9937ff0b290604ffeeb37696ff679e4cd7427773791f9880f89e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "47"
+          ]
+        },
+        {
+          "page": 14,
+          "sha256": "1a3c966a17b4a6549229296aa5f0343b8fd143c420de761ca734475c5d86d66b",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "48",
+            "49",
+            "50",
+            "51"
+          ]
+        },
+        {
+          "page": 15,
+          "sha256": "57f98f51de01eb1370e7b728df9886d532fe46875531fec9ad7c9c6ba5376b38",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "52",
+            "53",
+            "54",
+            "55"
+          ]
+        },
+        {
+          "page": 16,
+          "sha256": "eaf279613267343d6d6fbcd554a948b01d48b3f430a1cb71273ec3d2c8e129bd",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61"
+          ]
+        },
+        {
+          "page": 17,
+          "sha256": "18deb956cac70d8aab4c80f8963738c66038fbf93db61d2caacc919ad8e6011d",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "62",
+            "63",
+            "64",
+            "65"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 1,
+          "item_label": "1",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 2,
+          "item_label": "2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "3",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "4",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "5",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "6",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "7",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "8",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "9",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "10",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "11",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "12",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "13",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "14",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "15",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "16",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "17",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "18",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "19",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "20",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "21",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "22",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "23",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "24",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "25",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "26",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "27",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "28",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "29",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "30",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "31",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "32",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "33",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "34",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "35",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "36",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "37",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "38",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "39",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "40",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "41",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "42",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "43",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "44",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "45",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "46",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "47",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "48",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "49",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "50",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "51",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "52",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "53",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "54",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "55",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "56",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "57",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "58",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "59",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "60",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "61",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 62,
+          "item_label": "62",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 63,
+          "item_label": "63",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "64",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 65,
+          "item_label": "65",
+          "source_page": 17
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2014-session-1",
+      "source_pdf_sha256": "ffff763b2bde2242dfb7bac952947e2fee791ce99c23642907e76cd6b22641c9",
+      "source_page_count": 67,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 16,
+          "sha256": "5b9214cb866e6eeee4d169a0dd01e06d0225774b1cd2d7345eae45c28badb828",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "CS-37"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 47,
+          "item_label": "CS-37",
+          "source_page": 16
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2017-session-1",
+      "source_pdf_sha256": "2bc19c0f56a0ab791c33579e056c5aa233a6ff6878da779b4d551063fbc9db29",
+      "source_page_count": 27,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 2,
+          "sha256": "d80ef009e7be5e480ed047f940e414367081d1ec2cb5f68c304a5052a2602041",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "CS-1"
+          ]
+        },
+        {
+          "page": 16,
+          "sha256": "1876a895ecfd757b39a0045d97709ef1e34f386f205e645e5cee915fa8d01be2",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "CS-35"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 11,
+          "item_label": "CS-1",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "CS-35",
+          "source_page": 16
+        }
+      ]
+    },
+    {
+      "paper_id": "gate-cs-2021-session-1",
+      "source_pdf_sha256": "7b48636e3724be45e51db5301b6db20b6ffdae08ce5c01fecad82ee9de7f2210",
+      "source_page_count": 43,
+      "review_required": true,
+      "page_evidence": [
+        {
+          "page": 1,
+          "sha256": "ef9debbc4b32713f6776c73e78e8d501c1258d8499a2337ad009e25a4e14b884",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "GA-1"
+          ]
+        },
+        {
+          "page": 2,
+          "sha256": "e314d460e01a8e36aca66fe20a205439da6f6bd96c8eff467d824b63e346ab6c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-2"
+          ]
+        },
+        {
+          "page": 3,
+          "sha256": "2163e7fe9efc89728877b0b18a273e96828b1cfb92f3e53946f8da90ee4ab687",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-3"
+          ]
+        },
+        {
+          "page": 4,
+          "sha256": "7d4734af7c682e2b1430afb8e766ddc8deb817861732b77d8c71a3e5515626d3",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-4"
+          ]
+        },
+        {
+          "page": 5,
+          "sha256": "15dd177f8dde58d6b262f80233715391964ac1e468982db4b62a6f7b5f794d2e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-5"
+          ]
+        },
+        {
+          "page": 6,
+          "sha256": "875aebb72b550ee2a7f3e307f6e2dde3b86d9cb1931040d2fb688bd464a47184",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-6"
+          ]
+        },
+        {
+          "page": 7,
+          "sha256": "9c11bdc1888b6441f69f3206b9732b61a2eab42741ef2d5c0f87d5fc3dfba272",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-7"
+          ]
+        },
+        {
+          "page": 8,
+          "sha256": "8c24b494503b2a0cf74afd1a2db579d01d21363125dc065083f7014509901659",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-8"
+          ]
+        },
+        {
+          "page": 9,
+          "sha256": "bc7fde58523a2ee0c38441b2c164e349dfc9e5bb9e156c21a396511050d9cb16",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-9"
+          ]
+        },
+        {
+          "page": 10,
+          "sha256": "a6fdba16e5fe2998388ce72499f8180554732e3c6f9d17a739e3f25cb82c142a",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "GA-10"
+          ]
+        },
+        {
+          "page": 11,
+          "sha256": "dccb7d98483aa7c643f5076f96aa7473c00ee0b73476663bd63fc60830f281c7",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-1",
+            "CS-2"
+          ]
+        },
+        {
+          "page": 12,
+          "sha256": "264eae43de7b21ef9f477511e92be17992a384618d52ba1f3e100b3a9083cb80",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-3",
+            "CS-4"
+          ]
+        },
+        {
+          "page": 13,
+          "sha256": "3932a8c7c9e6acf239e60564a9fee83ec7189618c6f137647ce5f9704a39e611",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-5",
+            "CS-6"
+          ]
+        },
+        {
+          "page": 14,
+          "sha256": "92311a914d2045f8e484305c4af5a0d6831e2d70be0f4bf194ce1d927327e97e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-7",
+            "CS-8"
+          ]
+        },
+        {
+          "page": 15,
+          "sha256": "061169fb23d2e77c94a02fb480911b85ca0ea8cf3b25840e33606b76d54550a2",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-9",
+            "CS-10"
+          ]
+        },
+        {
+          "page": 16,
+          "sha256": "4be1bf89d4d8ab1a3cbf574f09c6ffb0a3d3bae3db3b8fbe34dcde1c8e619974",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-11",
+            "CS-12"
+          ]
+        },
+        {
+          "page": 17,
+          "sha256": "0a4ac20e67edf015c663620ad229a3397ff97e09af6943fb3aec4657bf429c82",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-13",
+            "CS-14"
+          ]
+        },
+        {
+          "page": 18,
+          "sha256": "562ac457fe831c4375470ad5869d72221643d5b1852c0b51aedac842d0ec9cca",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-15"
+          ]
+        },
+        {
+          "page": 19,
+          "sha256": "16a397cbe46f6b1faf04bdc6f66053f231efe00b09cd81bbb94bb64e2bc9522e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-16",
+            "CS-17",
+            "CS-18",
+            "CS-19"
+          ]
+        },
+        {
+          "page": 20,
+          "sha256": "131ba995089f9d53c2edd3c60bc46fc603d3a53fedeafb3f2f71b6a98bacc4c4",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "CS-20",
+            "CS-21",
+            "CS-22",
+            "CS-23"
+          ]
+        },
+        {
+          "page": 21,
+          "sha256": "abaca3b10ce0264f9bb9de947ee5ee93ff0bbaa93c4f093e339d6f157125d6b3",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-24",
+            "CS-25"
+          ]
+        },
+        {
+          "page": 22,
+          "sha256": "e457d79f03e5a5532c74c6faf170e61b87b21bf49e36467710a4f7937d2c7320",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-26"
+          ]
+        },
+        {
+          "page": 23,
+          "sha256": "b1470c7cdf1f8d2a14b60425d87ea57ac9f826aa46648d09f4fb017775f65c8f",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-27"
+          ]
+        },
+        {
+          "page": 24,
+          "sha256": "9d06c7917c5de6a4c36d528755ce215adebddb29ba6a0e38241a45282a8fffd9",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-28",
+            "CS-29"
+          ]
+        },
+        {
+          "page": 25,
+          "sha256": "19a84b637dd16e01d5bec46bd21307ed2ffc5479b419b3361ee22d94b398ce17",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-30"
+          ]
+        },
+        {
+          "page": 26,
+          "sha256": "f3ad8e29b15e81d7a8f44383bbfecc5b7c0480e2114e05e6c4dd97b75349ee21",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-31"
+          ]
+        },
+        {
+          "page": 27,
+          "sha256": "7cc284ab0b7a4f37a57564d8933f0f32279912373b7c19ce3c086ed9f1d1ad18",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-32",
+            "CS-33"
+          ]
+        },
+        {
+          "page": 28,
+          "sha256": "91252e2cb27392c6b19a0845752bec919223b13ef4152c85f62afd55d62ab45f",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-34",
+            "CS-35"
+          ]
+        },
+        {
+          "page": 29,
+          "sha256": "b82c131d83c03f1bb8c33f0711e4081ede42fe6bb79f874787de2dedc3e69d1f",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-36"
+          ]
+        },
+        {
+          "page": 30,
+          "sha256": "dee7e93e08e6cfdb982bd259a3cf8a40be61a55b5931e4dda4ffc848972ebe56",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-37"
+          ]
+        },
+        {
+          "page": 31,
+          "sha256": "977436ea75290f508320342b3edb44f1e8a25467700401f056040a711b45cf5e",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-38"
+          ]
+        },
+        {
+          "page": 32,
+          "sha256": "c93248fd332c1f4f21394b552c621302ba3f5ce4cdd060a9ca9b550b32b83ca1",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-39"
+          ]
+        },
+        {
+          "page": 33,
+          "sha256": "abf9fddd6093962f0772a0938bd09ff4c1434f134c382af6e3935d047789f175",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-40",
+            "CS-41"
+          ]
+        },
+        {
+          "page": 34,
+          "sha256": "d0a4269fca689c015c5ceb49b82a8025f869f109a96697c46ac6aaf49ce703b5",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-42",
+            "CS-43"
+          ]
+        },
+        {
+          "page": 35,
+          "sha256": "9b16c89402bc4610fd60b26b08a7172a5398f08ad4966d8b884cffa3f9e24ea4",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-44",
+            "CS-45"
+          ]
+        },
+        {
+          "page": 36,
+          "sha256": "78675360b439b96c13324b7c9dafa00ac027141b2f89799d941e1473144e8157",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-46"
+          ]
+        },
+        {
+          "page": 37,
+          "sha256": "2d8471aaf7471db848b558b34576d83c3d127dca8b6fd544cadf6c0832e0f2ee",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-47"
+          ]
+        },
+        {
+          "page": 38,
+          "sha256": "3b235c25e2cee3d709dcd39a49f947cc8603d1a3411260fb608ed480a2c416d5",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-48",
+            "CS-49",
+            "CS-50"
+          ]
+        },
+        {
+          "page": 39,
+          "sha256": "c47918b2dbc914c6e12d3694f40627643d7c7d2194f238f264d02ba47c7f785d",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": false,
+          "item_labels": [
+            "CS-51",
+            "CS-52",
+            "CS-53"
+          ]
+        },
+        {
+          "page": 40,
+          "sha256": "10c998d1cb4c26c808eda3e70e4a39ebfc7a2bf3b397f36bb1b75098f534688c",
+          "format": "pgm",
+          "dpi": 144,
+          "color_mode": "gray",
+          "evidence_method": "rapidocr_onnxruntime+printed_label_sequence_review",
+          "visual_spot_check": true,
+          "item_labels": [
+            "CS-54",
+            "CS-55"
+          ]
+        }
+      ],
+      "locators": [
+        {
+          "canonical_ordinal": 1,
+          "item_label": "GA-1",
+          "source_page": 1
+        },
+        {
+          "canonical_ordinal": 2,
+          "item_label": "GA-2",
+          "source_page": 2
+        },
+        {
+          "canonical_ordinal": 3,
+          "item_label": "GA-3",
+          "source_page": 3
+        },
+        {
+          "canonical_ordinal": 4,
+          "item_label": "GA-4",
+          "source_page": 4
+        },
+        {
+          "canonical_ordinal": 5,
+          "item_label": "GA-5",
+          "source_page": 5
+        },
+        {
+          "canonical_ordinal": 6,
+          "item_label": "GA-6",
+          "source_page": 6
+        },
+        {
+          "canonical_ordinal": 7,
+          "item_label": "GA-7",
+          "source_page": 7
+        },
+        {
+          "canonical_ordinal": 8,
+          "item_label": "GA-8",
+          "source_page": 8
+        },
+        {
+          "canonical_ordinal": 9,
+          "item_label": "GA-9",
+          "source_page": 9
+        },
+        {
+          "canonical_ordinal": 10,
+          "item_label": "GA-10",
+          "source_page": 10
+        },
+        {
+          "canonical_ordinal": 11,
+          "item_label": "CS-1",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 12,
+          "item_label": "CS-2",
+          "source_page": 11
+        },
+        {
+          "canonical_ordinal": 13,
+          "item_label": "CS-3",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 14,
+          "item_label": "CS-4",
+          "source_page": 12
+        },
+        {
+          "canonical_ordinal": 15,
+          "item_label": "CS-5",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 16,
+          "item_label": "CS-6",
+          "source_page": 13
+        },
+        {
+          "canonical_ordinal": 17,
+          "item_label": "CS-7",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 18,
+          "item_label": "CS-8",
+          "source_page": 14
+        },
+        {
+          "canonical_ordinal": 19,
+          "item_label": "CS-9",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 20,
+          "item_label": "CS-10",
+          "source_page": 15
+        },
+        {
+          "canonical_ordinal": 21,
+          "item_label": "CS-11",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 22,
+          "item_label": "CS-12",
+          "source_page": 16
+        },
+        {
+          "canonical_ordinal": 23,
+          "item_label": "CS-13",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 24,
+          "item_label": "CS-14",
+          "source_page": 17
+        },
+        {
+          "canonical_ordinal": 25,
+          "item_label": "CS-15",
+          "source_page": 18
+        },
+        {
+          "canonical_ordinal": 26,
+          "item_label": "CS-16",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 27,
+          "item_label": "CS-17",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 28,
+          "item_label": "CS-18",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 29,
+          "item_label": "CS-19",
+          "source_page": 19
+        },
+        {
+          "canonical_ordinal": 30,
+          "item_label": "CS-20",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 31,
+          "item_label": "CS-21",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 32,
+          "item_label": "CS-22",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 33,
+          "item_label": "CS-23",
+          "source_page": 20
+        },
+        {
+          "canonical_ordinal": 34,
+          "item_label": "CS-24",
+          "source_page": 21
+        },
+        {
+          "canonical_ordinal": 35,
+          "item_label": "CS-25",
+          "source_page": 21
+        },
+        {
+          "canonical_ordinal": 36,
+          "item_label": "CS-26",
+          "source_page": 22
+        },
+        {
+          "canonical_ordinal": 37,
+          "item_label": "CS-27",
+          "source_page": 23
+        },
+        {
+          "canonical_ordinal": 38,
+          "item_label": "CS-28",
+          "source_page": 24
+        },
+        {
+          "canonical_ordinal": 39,
+          "item_label": "CS-29",
+          "source_page": 24
+        },
+        {
+          "canonical_ordinal": 40,
+          "item_label": "CS-30",
+          "source_page": 25
+        },
+        {
+          "canonical_ordinal": 41,
+          "item_label": "CS-31",
+          "source_page": 26
+        },
+        {
+          "canonical_ordinal": 42,
+          "item_label": "CS-32",
+          "source_page": 27
+        },
+        {
+          "canonical_ordinal": 43,
+          "item_label": "CS-33",
+          "source_page": 27
+        },
+        {
+          "canonical_ordinal": 44,
+          "item_label": "CS-34",
+          "source_page": 28
+        },
+        {
+          "canonical_ordinal": 45,
+          "item_label": "CS-35",
+          "source_page": 28
+        },
+        {
+          "canonical_ordinal": 46,
+          "item_label": "CS-36",
+          "source_page": 29
+        },
+        {
+          "canonical_ordinal": 47,
+          "item_label": "CS-37",
+          "source_page": 30
+        },
+        {
+          "canonical_ordinal": 48,
+          "item_label": "CS-38",
+          "source_page": 31
+        },
+        {
+          "canonical_ordinal": 49,
+          "item_label": "CS-39",
+          "source_page": 32
+        },
+        {
+          "canonical_ordinal": 50,
+          "item_label": "CS-40",
+          "source_page": 33
+        },
+        {
+          "canonical_ordinal": 51,
+          "item_label": "CS-41",
+          "source_page": 33
+        },
+        {
+          "canonical_ordinal": 52,
+          "item_label": "CS-42",
+          "source_page": 34
+        },
+        {
+          "canonical_ordinal": 53,
+          "item_label": "CS-43",
+          "source_page": 34
+        },
+        {
+          "canonical_ordinal": 54,
+          "item_label": "CS-44",
+          "source_page": 35
+        },
+        {
+          "canonical_ordinal": 55,
+          "item_label": "CS-45",
+          "source_page": 35
+        },
+        {
+          "canonical_ordinal": 56,
+          "item_label": "CS-46",
+          "source_page": 36
+        },
+        {
+          "canonical_ordinal": 57,
+          "item_label": "CS-47",
+          "source_page": 37
+        },
+        {
+          "canonical_ordinal": 58,
+          "item_label": "CS-48",
+          "source_page": 38
+        },
+        {
+          "canonical_ordinal": 59,
+          "item_label": "CS-49",
+          "source_page": 38
+        },
+        {
+          "canonical_ordinal": 60,
+          "item_label": "CS-50",
+          "source_page": 38
+        },
+        {
+          "canonical_ordinal": 61,
+          "item_label": "CS-51",
+          "source_page": 39
+        },
+        {
+          "canonical_ordinal": 62,
+          "item_label": "CS-52",
+          "source_page": 39
+        },
+        {
+          "canonical_ordinal": 63,
+          "item_label": "CS-53",
+          "source_page": 39
+        },
+        {
+          "canonical_ordinal": 64,
+          "item_label": "CS-54",
+          "source_page": 40
+        },
+        {
+          "canonical_ordinal": 65,
+          "item_label": "CS-55",
+          "source_page": 40
+        }
+      ]
+    }
+  ],
+  "unresolved_locators": [],
+  "auto_marker_review_findings": [
+    {
+      "paper_id": "gate-cs-1997",
+      "canonical_ordinal": 63,
+      "item_label": "19",
+      "automatic_source_pages": [
+        14
+      ],
+      "reviewed_source_page": 15,
+      "reason": "The page-14 text match is a program-line false positive (19.writeln); the printed Q19 marker starts on page 15."
+    },
+    {
+      "paper_id": "gate-cs-2005",
+      "canonical_ordinal": 1,
+      "item_label": "1",
+      "automatic_source_pages": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "reviewed_source_page": 1,
+      "reason": "The scan prints Q1 on page 1; the automatic block starts at a later false-positive marker."
+    },
+    {
+      "paper_id": "gate-cs-2005",
+      "canonical_ordinal": 2,
+      "item_label": "2",
+      "automatic_source_pages": [
+        9
+      ],
+      "reviewed_source_page": 1,
+      "reason": "The scan prints Q2 on page 1; the automatic marker on page 9 is a false positive."
+    },
+    {
+      "paper_id": "gate-cs-2005",
+      "canonical_ordinal": 3,
+      "item_label": "3",
+      "automatic_source_pages": [
+        9
+      ],
+      "reviewed_source_page": 1,
+      "reason": "The scan prints Q3 on page 1; the automatic marker on page 9 is a false positive."
+    }
+  ],
+  "independently_gradable_subpart_review": []
+}

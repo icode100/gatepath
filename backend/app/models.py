@@ -193,6 +193,11 @@ class Question(Base):
     marks: Mapped[int] = mapped_column(Integer, default=1)
     explanation: Mapped[str] = mapped_column(Text)
     tags: Mapped[list[str]] = mapped_column(JSON, default=list)
+    # Immutable, same-origin projections of promotion-approved original-PDF
+    # crops. Archive/review assets remain solely in ``pyq_source_questions``.
+    assets: Mapped[list[dict[str, str]]] = mapped_column(
+        JSON, default=list, server_default="[]"
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     subject: Mapped[Subject] = relationship(back_populates="questions")
@@ -411,6 +416,68 @@ class PyqArchiveImport(Base):
     materialized_count: Mapped[int] = mapped_column(Integer, default=0)
     retired_count: Mapped[int] = mapped_column(Integer, default=0)
     imported_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now
+    )
+
+
+class PyqArchiveExecution(Base):
+    """Immutable audit event for each live archive apply execution.
+
+    ``PyqArchiveImport`` identifies immutable artifact bytes.  This table is
+    deliberately one-to-many so applying the archive first and materializing
+    it later cannot erase the second operation from the audit trail.
+    """
+
+    __tablename__ = "pyq_archive_executions"
+    __table_args__ = (
+        Index(
+            "ix_pyq_archive_executions_artifact",
+            "artifact_version",
+            "checksum",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    archive_import_id: Mapped[int] = mapped_column(
+        ForeignKey("pyq_archive_imports.id", ondelete="RESTRICT"),
+        index=True,
+    )
+    artifact_version: Mapped[str] = mapped_column(String(96), index=True)
+    checksum: Mapped[str] = mapped_column(String(64), index=True)
+    execution_mode: Mapped[str] = mapped_column(String(32), index=True)
+    inserted_count: Mapped[int] = mapped_column(Integer)
+    updated_count: Mapped[int] = mapped_column(Integer)
+    unchanged_count: Mapped[int] = mapped_column(Integer)
+    materialized_inserted_count: Mapped[int] = mapped_column(Integer)
+    materialized_adopted_count: Mapped[int] = mapped_column(Integer)
+    materialized_updated_count: Mapped[int] = mapped_column(Integer)
+    retired_count: Mapped[int] = mapped_column(Integer)
+    reactivated_count: Mapped[int] = mapped_column(Integer, default=0)
+    visibility_plan_sha256: Mapped[str | None] = mapped_column(
+        String(64), nullable=True
+    )
+    original_active_before: Mapped[int] = mapped_column(Integer)
+    original_active_after: Mapped[int] = mapped_column(Integer)
+    pyq_active_before: Mapped[int] = mapped_column(Integer)
+    pyq_active_after: Mapped[int] = mapped_column(Integer)
+    expected_original_count: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    original_guard_bypassed: Mapped[bool] = mapped_column(Boolean)
+    retirement_allowed: Mapped[bool] = mapped_column(Boolean)
+    expected_retirement_count: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    expected_reactivation_count: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    expected_active_pyqs_before: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    expected_active_pyqs_after: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    executed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now
     )
 

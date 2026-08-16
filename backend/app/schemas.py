@@ -112,6 +112,29 @@ class QuestionOption(BaseModel):
     text: str
 
 
+class QuestionAssetPublic(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    role: Literal[
+        "answer_option_diagrams",
+        "answer_option_table",
+        "stem_and_answer_option_diagrams",
+        "stem_and_answer_option_tables",
+        "stem_chart",
+        "stem_diagram",
+        "stem_graph",
+        "stem_table",
+    ]
+    url: str = Field(
+        pattern=(
+            r"^/question-assets/pyq/[a-z0-9]+(?:-[a-z0-9]+)*/"
+            r"[0-9a-f]{64}\.png$"
+        )
+    )
+    alt_text: str = Field(min_length=1, max_length=1_000)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class QuestionPublic(ApiModel):
     id: int
     subject_id: int
@@ -141,6 +164,7 @@ class QuestionPublic(ApiModel):
     numerical_tolerance: float | None = None
     marks: int
     tags: list[str]
+    assets: list[QuestionAssetPublic] = Field(default_factory=list)
 
 
 class QuestionListResponse(BaseModel):

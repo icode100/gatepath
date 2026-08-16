@@ -1,0 +1,1764 @@
+{
+  "schema_version": "1.0",
+  "paper_id": "gate-cs-2013",
+  "canonical_booklet_code": "A",
+  "source_file": "CS2013.pdf",
+  "source_pdf_sha256": "6744b7c782d44902fd64ddd4d5c53a9b6495e961cdb717da5693a202ed5ecdda",
+  "mapping_status": "verified_from_complete_pdf_bundle",
+  "production_import_authorized": false,
+  "answer_join_policy": "booklet labels require an explicit booklet code and this validated occurrence map",
+  "booklet_page_ranges": {
+    "A": [
+      2,
+      15
+    ],
+    "B": [
+      17,
+      30
+    ],
+    "C": [
+      32,
+      45
+    ],
+    "D": [
+      47,
+      60
+    ]
+  },
+  "derivation": {
+    "method": "layout-tolerant Q1-Q65 extraction, normalized full-stem identity matching, bijection validation, and visual cross-checks",
+    "canonical_policy": "Booklet A defines canonical item labels 1..65; B/C/D are occurrences of the same 65 items, not independent papers.",
+    "answer_key_crosscheck": {
+      "source_role": "public mirror of the GATE 2013 CS A/B/C/D answer-key table",
+      "source_url": "https://gatecse.in/w/images/1/1e/Key_CS_2013.pdf",
+      "source_pdf_sha256": "8dec600fbeb2c78b0f9af489cea3a130b1976d3f0d5ed793743f4dbdd237747d",
+      "key_rows": 65,
+      "occurrences_checked": 260,
+      "mismatch_count": 0
+    },
+    "visual_checks": [
+      {
+        "source_page": 3,
+        "booklet_code": "A",
+        "observation": "Q1-Q7 rendered clearly; establishes canonical opening sequence."
+      },
+      {
+        "source_page": 18,
+        "booklet_code": "B",
+        "observation": "Q1-Q7 rendered clearly and match canonical A items 24,25,23,22,21,20,19."
+      },
+      {
+        "source_page": 33,
+        "booklet_code": "C",
+        "observation": "Q1-Q7 rendered clearly and match canonical A items 13,11,10,9,8,7,6."
+      },
+      {
+        "source_page": 48,
+        "booklet_code": "D",
+        "observation": "Q1-Q5 rendered clearly and match canonical A items 12,14,15,16,17."
+      },
+      {
+        "source_page": 12,
+        "booklet_code": "A",
+        "observation": "Common-data groups visibly pair Q48-Q49 and Q50-Q51."
+      },
+      {
+        "source_page": 27,
+        "booklet_code": "B",
+        "observation": "The same common-data groups are visibly swapped, establishing B48-B51 to A50,A51,A48,A49."
+      }
+    ]
+  },
+  "items": [
+    {
+      "canonical_ordinal": 1,
+      "canonical_item_label": "1",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "1",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "25",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "12",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "14",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 2,
+      "canonical_item_label": "2",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "2",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "24",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "11",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "15",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 3,
+      "canonical_item_label": "3",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "3",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "23",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "10",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "16",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 4,
+      "canonical_item_label": "4",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "4",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "22",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "9",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "17",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 5,
+      "canonical_item_label": "5",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "5",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "21",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "8",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "18",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 6,
+      "canonical_item_label": "6",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "6",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "20",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "7",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "19",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 7,
+      "canonical_item_label": "7",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "7",
+          "source_page": 3
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "19",
+          "source_page": 21
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "6",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "20",
+          "source_page": 50
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 8,
+      "canonical_item_label": "8",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "8",
+          "source_page": 4
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "18",
+          "source_page": 20
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "5",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "21",
+          "source_page": 51
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 9,
+      "canonical_item_label": "9",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "9",
+          "source_page": 4
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "17",
+          "source_page": 20
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "4",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "22",
+          "source_page": 51
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 10,
+      "canonical_item_label": "10",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "10",
+          "source_page": 4
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "16",
+          "source_page": 20
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "3",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "23",
+          "source_page": 51
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 11,
+      "canonical_item_label": "11",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "11",
+          "source_page": 4
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "15",
+          "source_page": 20
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "2",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "24",
+          "source_page": 51
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 12,
+      "canonical_item_label": "12",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "12",
+          "source_page": 4
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "13",
+          "source_page": 20
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "24",
+          "source_page": 36
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "1",
+          "source_page": 48
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 13,
+      "canonical_item_label": "13",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "13",
+          "source_page": 4
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "14",
+          "source_page": 20
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "1",
+          "source_page": 33
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "25",
+          "source_page": 51
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 14,
+      "canonical_item_label": "14",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "14",
+          "source_page": 5
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "12",
+          "source_page": 19
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "25",
+          "source_page": 36
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "2",
+          "source_page": 48
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 15,
+      "canonical_item_label": "15",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "15",
+          "source_page": 5
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "11",
+          "source_page": 19
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "23",
+          "source_page": 36
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "3",
+          "source_page": 48
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 16,
+      "canonical_item_label": "16",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "16",
+          "source_page": 5
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "10",
+          "source_page": 19
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "22",
+          "source_page": 36
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "4",
+          "source_page": 48
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 17,
+      "canonical_item_label": "17",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "17",
+          "source_page": 5
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "9",
+          "source_page": 19
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "21",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "5",
+          "source_page": 48
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 18,
+      "canonical_item_label": "18",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "18",
+          "source_page": 5
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "8",
+          "source_page": 19
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "20",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "6",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 19,
+      "canonical_item_label": "19",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "19",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "7",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "19",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "7",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 20,
+      "canonical_item_label": "20",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "20",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "6",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "18",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "8",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 21,
+      "canonical_item_label": "21",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "21",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "5",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "17",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "9",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 22,
+      "canonical_item_label": "22",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "22",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "4",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "16",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "10",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 23,
+      "canonical_item_label": "23",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "23",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "3",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "15",
+          "source_page": 35
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "11",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 24,
+      "canonical_item_label": "24",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "24",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "1",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "14",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "13",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 25,
+      "canonical_item_label": "25",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "25",
+          "source_page": 6
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "2",
+          "source_page": 18
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "13",
+          "source_page": 34
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "12",
+          "source_page": 49
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 26,
+      "canonical_item_label": "26",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "26",
+          "source_page": 7
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "46",
+          "source_page": 26
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "35",
+          "source_page": 39
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "38",
+          "source_page": 55
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 27,
+      "canonical_item_label": "27",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "27",
+          "source_page": 7
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "47",
+          "source_page": 26
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "36",
+          "source_page": 39
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "37",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 28,
+      "canonical_item_label": "28",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "28",
+          "source_page": 7
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "45",
+          "source_page": 26
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "34",
+          "source_page": 39
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "39",
+          "source_page": 55
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 29,
+      "canonical_item_label": "29",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "29",
+          "source_page": 7
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "44",
+          "source_page": 26
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "33",
+          "source_page": 39
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "40",
+          "source_page": 55
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 30,
+      "canonical_item_label": "30",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "30",
+          "source_page": 7
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "43",
+          "source_page": 26
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "32",
+          "source_page": 38
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "41",
+          "source_page": 55
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 31,
+      "canonical_item_label": "31",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "31",
+          "source_page": 8
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "42",
+          "source_page": 25
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "31",
+          "source_page": 38
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "42",
+          "source_page": 55
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 32,
+      "canonical_item_label": "32",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "32",
+          "source_page": 8
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "41",
+          "source_page": 25
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "30",
+          "source_page": 38
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "43",
+          "source_page": 55
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 33,
+      "canonical_item_label": "33",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "33",
+          "source_page": 8
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "40",
+          "source_page": 25
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "29",
+          "source_page": 38
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "44",
+          "source_page": 56
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 34,
+      "canonical_item_label": "34",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "34",
+          "source_page": 8
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "39",
+          "source_page": 25
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "28",
+          "source_page": 37
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "45",
+          "source_page": 56
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 35,
+      "canonical_item_label": "35",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "35",
+          "source_page": 9
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "38",
+          "source_page": 24
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "27",
+          "source_page": 37
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "46",
+          "source_page": 56
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 36,
+      "canonical_item_label": "36",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "36",
+          "source_page": 9
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "37",
+          "source_page": 24
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "26",
+          "source_page": 37
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "47",
+          "source_page": 56
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 37,
+      "canonical_item_label": "37",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "37",
+          "source_page": 9
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "36",
+          "source_page": 24
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "46",
+          "source_page": 42
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "26",
+          "source_page": 52
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 38,
+      "canonical_item_label": "38",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "38",
+          "source_page": 9
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "35",
+          "source_page": 24
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "47",
+          "source_page": 42
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "27",
+          "source_page": 52
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 39,
+      "canonical_item_label": "39",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "39",
+          "source_page": 10
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "34",
+          "source_page": 23
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "45",
+          "source_page": 41
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "28",
+          "source_page": 53
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 40,
+      "canonical_item_label": "40",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "40",
+          "source_page": 10
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "33",
+          "source_page": 23
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "44",
+          "source_page": 41
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "29",
+          "source_page": 53
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 41,
+      "canonical_item_label": "41",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "41",
+          "source_page": 10
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "32",
+          "source_page": 23
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "43",
+          "source_page": 40
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "30",
+          "source_page": 53
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 42,
+      "canonical_item_label": "42",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "42",
+          "source_page": 11
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "31",
+          "source_page": 22
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "42",
+          "source_page": 40
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "31",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 43,
+      "canonical_item_label": "43",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "43",
+          "source_page": 11
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "30",
+          "source_page": 22
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "41",
+          "source_page": 40
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "32",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 44,
+      "canonical_item_label": "44",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "44",
+          "source_page": 11
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "29",
+          "source_page": 22
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "40",
+          "source_page": 40
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "34",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 45,
+      "canonical_item_label": "45",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "45",
+          "source_page": 11
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "28",
+          "source_page": 22
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "39",
+          "source_page": 40
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "33",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 46,
+      "canonical_item_label": "46",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "46",
+          "source_page": 11
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "27",
+          "source_page": 22
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "38",
+          "source_page": 39
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "35",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 47,
+      "canonical_item_label": "47",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "47",
+          "source_page": 11
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "26",
+          "source_page": 22
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "37",
+          "source_page": 39
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "36",
+          "source_page": 54
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 48,
+      "canonical_item_label": "48",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "48",
+          "source_page": 12
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "50",
+          "source_page": 27
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "49",
+          "source_page": 42
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "51",
+          "source_page": 57
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 49,
+      "canonical_item_label": "49",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "49",
+          "source_page": 12
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "51",
+          "source_page": 27
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "48",
+          "source_page": 42
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "50",
+          "source_page": 57
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 50,
+      "canonical_item_label": "50",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "50",
+          "source_page": 12
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "48",
+          "source_page": 27
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "51",
+          "source_page": 43
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "49",
+          "source_page": 57
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 51,
+      "canonical_item_label": "51",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "51",
+          "source_page": 12
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "49",
+          "source_page": 27
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "50",
+          "source_page": 43
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "48",
+          "source_page": 57
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 52,
+      "canonical_item_label": "52",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "52",
+          "source_page": 13
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "54",
+          "source_page": 28
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "52",
+          "source_page": 43
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "54",
+          "source_page": 58
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 53,
+      "canonical_item_label": "53",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "53",
+          "source_page": 13
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "55",
+          "source_page": 28
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "53",
+          "source_page": 43
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "55",
+          "source_page": 58
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 54,
+      "canonical_item_label": "54",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "54",
+          "source_page": 13
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "52",
+          "source_page": 28
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "54",
+          "source_page": 43
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "52",
+          "source_page": 58
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 55,
+      "canonical_item_label": "55",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "55",
+          "source_page": 13
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "53",
+          "source_page": 28
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "55",
+          "source_page": 43
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "53",
+          "source_page": 58
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 56,
+      "canonical_item_label": "56",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "56",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "58",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "60",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "59",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 57,
+      "canonical_item_label": "57",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "57",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "56",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "58",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "60",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 58,
+      "canonical_item_label": "58",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "58",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "60",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "59",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "57",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 59,
+      "canonical_item_label": "59",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "59",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "57",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "56",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "58",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 60,
+      "canonical_item_label": "60",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "60",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "59",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "57",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "56",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 61,
+      "canonical_item_label": "61",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "61",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "63",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "65",
+          "source_page": 45
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "64",
+          "source_page": 60
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 62,
+      "canonical_item_label": "62",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "62",
+          "source_page": 14
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "61",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "63",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "65",
+          "source_page": 60
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 63,
+      "canonical_item_label": "63",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "63",
+          "source_page": 15
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "65",
+          "source_page": 30
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "64",
+          "source_page": 45
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "62",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 64,
+      "canonical_item_label": "64",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "64",
+          "source_page": 15
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "62",
+          "source_page": 29
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "61",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "63",
+          "source_page": 59
+        }
+      ]
+    },
+    {
+      "canonical_ordinal": 65,
+      "canonical_item_label": "65",
+      "occurrences": [
+        {
+          "booklet_code": "A",
+          "item_label": "65",
+          "source_page": 15
+        },
+        {
+          "booklet_code": "B",
+          "item_label": "64",
+          "source_page": 30
+        },
+        {
+          "booklet_code": "C",
+          "item_label": "62",
+          "source_page": 44
+        },
+        {
+          "booklet_code": "D",
+          "item_label": "61",
+          "source_page": 59
+        }
+      ]
+    }
+  ]
+}

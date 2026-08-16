@@ -1,0 +1,646 @@
+{
+  "schema_version": "1.0-pyq-publication-proof",
+  "publisher_version": "1.1.0",
+  "database_writes_performed": false,
+  "production_import_authorized": false,
+  "automatic_promotion_allowed": false,
+  "source_lineage_files_published": false,
+  "frozen_sources": {
+    "staging": {
+      "file_sha256": "86c35b4d75ff443d0adc03ab9cbc5d4045ffec96355d5c5e9a94244541764376",
+      "bytes": 9172738,
+      "content_sha256": "13d2a714efcca47e1ad70923e916751d03dd2cb7f6ba83475277406d05973124",
+      "content_hash_role": "canonical_json"
+    },
+    "staging_report": {
+      "file_sha256": "3f79ba79670fb2a6b24f3f9a29dcb73f86f81ab741381121bba0e48b3413a25e",
+      "bytes": 106363,
+      "content_sha256": "f89fdbfe4428c5c55d0ce13c5c3c38dc46f4064f1761a049ddcd02aeb91a6bba",
+      "content_hash_role": "embedded_report_sha256"
+    },
+    "promotion": {
+      "file_sha256": "63fc50e070488e5720f3fc2d81a82e83111764a03cc002f3ae5b3e96bb2fbe9a",
+      "bytes": 9172564,
+      "content_sha256": "e541deac27b50178ca70a5323f15dfc256b58b615561da56e124e88afa73904c",
+      "content_hash_role": "canonical_json"
+    },
+    "allowlist": {
+      "file_sha256": "8d8f572ca83ff4f95f247ceb9bf895abe061947b42f6c9a370d33c649d1a5a8c",
+      "bytes": 38083,
+      "content_sha256": "d4f917fa6d2d930a685f81e7986b7f52fc9ddd6d79020ae34d1a4ddb9a0d5fa5",
+      "content_hash_role": "embedded_artifact_sha256"
+    },
+    "promotion_report": {
+      "file_sha256": "a834c32bb1dfe5dab8f1de4e6e030e6034bc90c90c9f3546be35a414dfcde086",
+      "bytes": 1476,
+      "content_sha256": "20f4b48b35b5319a4c5f1b0cf1b6b76890c0300d1b9badca8bd3e8d32a2687b1",
+      "content_hash_role": "embedded_report_sha256"
+    }
+  },
+  "published_outputs": {
+    "staging": {
+      "path": "backend/data/gate_cs_pyq_archive_1996_2025.json",
+      "file_sha256": "ebc7bf91ac239d33c42bf03a96144684aedc8e67142e7e64bfb75ba4b358e3e4",
+      "bytes": 9173168,
+      "content_sha256": "0aa05b22e3bf2066b05fcf111b0591b07bcfba13a745373ecad9de4307964d1e",
+      "content_hash_role": "canonical_json"
+    },
+    "staging_report": {
+      "path": "backend/data/gate_cs_pyq_archive_1996_2025.report.json",
+      "file_sha256": "98ff84e86d68adcd1d008f55f3d50d6758012f2fad627e5f3db209aec56bfb7d",
+      "bytes": 108266,
+      "content_sha256": "0a849843c355ab58b6bdd66f29a90c70420aae880f3a4b885860e1e6e6f70dd3",
+      "content_hash_role": "embedded_report_sha256"
+    },
+    "promotion": {
+      "path": "backend/data/gate_cs_pyq_practice_1996_2025.json",
+      "file_sha256": "1c34407a6b71459d5c89f837fa0f3ef00190a27740b876008d79b22cd29c9dec",
+      "bytes": 9172994,
+      "content_sha256": "adf73f73b17a18c9821850c988fa3f3517bb65c17e5c5ca256a02c310c4c6c8f",
+      "content_hash_role": "canonical_json"
+    },
+    "allowlist": {
+      "path": "backend/data/gate_cs_pyq_practice_1996_2025.allowlist.json",
+      "file_sha256": "22bfcf7c2d7c045a96330af50449a912af93bb8157daae316c1d9625c37e696e",
+      "bytes": 38105,
+      "content_sha256": "1903bc9b9f9e9d738501f3b5050528a8599380d66bfce51209adc08876327220",
+      "content_hash_role": "embedded_artifact_sha256"
+    },
+    "promotion_report": {
+      "path": "backend/data/gate_cs_pyq_practice_1996_2025.report.json",
+      "file_sha256": "0e1af992f632f6f55b23b8c8d284434fb1ae16257980af6e0e11c56911819d42",
+      "bytes": 1498,
+      "content_sha256": "f8f688b5571699ace350b973456e5271cc213976c14d8f11f18412c9ab04ae94",
+      "content_hash_role": "embedded_report_sha256"
+    }
+  },
+  "lineage_rebindings": [
+    {
+      "name": "answer_key_index",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:7509c0ee7109df43c85f4f3f4e724c263ea89e075c14074821fc3b2945012229",
+      "published_lineage_id": "sha256:7509c0ee7109df43c85f4f3f4e724c263ea89e075c14074821fc3b2945012229",
+      "sha256": "7509c0ee7109df43c85f4f3f4e724c263ea89e075c14074821fc3b2945012229",
+      "bytes": 3784176
+    },
+    {
+      "name": "candidate_report",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:fee5757d280bada305922e401078362b7efe181ce01e442f3ff8b7819f86554e",
+      "published_lineage_id": "sha256:fee5757d280bada305922e401078362b7efe181ce01e442f3ff8b7819f86554e",
+      "sha256": "fee5757d280bada305922e401078362b7efe181ce01e442f3ff8b7819f86554e",
+      "bytes": 64608
+    },
+    {
+      "name": "canonical_archive",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:f2f5ab9f4edea7300da909ee0509f871ac4ac52b717fc8dd2e91c67efdc6aafd",
+      "published_lineage_id": "sha256:f2f5ab9f4edea7300da909ee0509f871ac4ac52b717fc8dd2e91c67efdc6aafd",
+      "sha256": "f2f5ab9f4edea7300da909ee0509f871ac4ac52b717fc8dd2e91c67efdc6aafd",
+      "bytes": 4272081
+    },
+    {
+      "name": "canonical_report",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:120e77046756f9abf49b5d81d41ecc6685f7126da469e44f0af3c37cced4159a",
+      "published_lineage_id": "sha256:120e77046756f9abf49b5d81d41ecc6685f7126da469e44f0af3c37cced4159a",
+      "sha256": "120e77046756f9abf49b5d81d41ecc6685f7126da469e44f0af3c37cced4159a",
+      "bytes": 30318
+    },
+    {
+      "name": "classification_review_base",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:e1bf4a7650570fed5889013c0b7a657eac3d29bcfe7ccf58836432b9489055ae",
+      "published_lineage_id": "sha256:e1bf4a7650570fed5889013c0b7a657eac3d29bcfe7ccf58836432b9489055ae",
+      "sha256": "e1bf4a7650570fed5889013c0b7a657eac3d29bcfe7ccf58836432b9489055ae",
+      "bytes": 1068017
+    },
+    {
+      "name": "classification_review_overrides",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:3092a8fea6df749a037ea1f6f44c296cb24a1eb9ed60266515a29717c80c3c27",
+      "published_lineage_id": "sha256:3092a8fea6df749a037ea1f6f44c296cb24a1eb9ed60266515a29717c80c3c27",
+      "sha256": "3092a8fea6df749a037ea1f6f44c296cb24a1eb9ed60266515a29717c80c3c27",
+      "bytes": 180573
+    },
+    {
+      "name": "content_verification_ledger",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:374def40cb0f3c9d8acc9f9c669535a4390e58351bdc6c9dfad980588d674bc9",
+      "published_lineage_id": "sha256:374def40cb0f3c9d8acc9f9c669535a4390e58351bdc6c9dfad980588d674bc9",
+      "sha256": "374def40cb0f3c9d8acc9f9c669535a4390e58351bdc6c9dfad980588d674bc9",
+      "bytes": 4767079
+    },
+    {
+      "name": "figure_asset_index",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:3c1009d923b70cec2f9d9bb7a93675eb95eb49111821470d64d2fb797924ef49",
+      "published_lineage_id": "sha256:3c1009d923b70cec2f9d9bb7a93675eb95eb49111821470d64d2fb797924ef49",
+      "sha256": "3c1009d923b70cec2f9d9bb7a93675eb95eb49111821470d64d2fb797924ef49",
+      "bytes": 2574656
+    },
+    {
+      "name": "legacy_child_policy",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:cb938ed7d0ed5a0fe15d437ba8026e7cfbaed300092d60fc5ae2fa9b7c8488a2",
+      "published_lineage_id": "sha256:cb938ed7d0ed5a0fe15d437ba8026e7cfbaed300092d60fc5ae2fa9b7c8488a2",
+      "sha256": "cb938ed7d0ed5a0fe15d437ba8026e7cfbaed300092d60fc5ae2fa9b7c8488a2",
+      "bytes": 292968
+    },
+    {
+      "name": "legacy_subpart_audit",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:1b5195376aec4ceed709bce13c98d0b6507cb1474ce6173f4e8c7243240205e6",
+      "published_lineage_id": "sha256:1b5195376aec4ceed709bce13c98d0b6507cb1474ce6173f4e8c7243240205e6",
+      "sha256": "1b5195376aec4ceed709bce13c98d0b6507cb1474ce6173f4e8c7243240205e6",
+      "bytes": 1315577
+    },
+    {
+      "name": "original_pdf_provenance",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:d62b00bfaa3cce0bf8e97ebdb8648c80418eb1e1e753572ed86db42da580c482",
+      "published_lineage_id": "sha256:d62b00bfaa3cce0bf8e97ebdb8648c80418eb1e1e753572ed86db42da580c482",
+      "sha256": "d62b00bfaa3cce0bf8e97ebdb8648c80418eb1e1e753572ed86db42da580c482",
+      "bytes": 3712972
+    },
+    {
+      "name": "original_transcription_overlay",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:d6b6da7fca0342f7eaa78a854587767655079662a2581a4bdf5a3b4ad1759bbb",
+      "published_lineage_id": "sha256:d6b6da7fca0342f7eaa78a854587767655079662a2581a4bdf5a3b4ad1759bbb",
+      "sha256": "d6b6da7fca0342f7eaa78a854587767655079662a2581a4bdf5a3b4ad1759bbb",
+      "bytes": 5696402
+    },
+    {
+      "name": "paper_source_verification",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:59c3ada84a7b42f98fe4a53e38ab1754e9462763137d0f11fe20a2ca84994f61",
+      "published_lineage_id": "sha256:59c3ada84a7b42f98fe4a53e38ab1754e9462763137d0f11fe20a2ca84994f61",
+      "sha256": "59c3ada84a7b42f98fe4a53e38ab1754e9462763137d0f11fe20a2ca84994f61",
+      "bytes": 80774
+    },
+    {
+      "name": "raw_candidates",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:eb0908012b52d52b14cb7009cb83a2cfc93f164648c1e0f991f674ca3a68eb6b",
+      "published_lineage_id": "sha256:eb0908012b52d52b14cb7009cb83a2cfc93f164648c1e0f991f674ca3a68eb6b",
+      "sha256": "eb0908012b52d52b14cb7009cb83a2cfc93f164648c1e0f991f674ca3a68eb6b",
+      "bytes": 14432649
+    },
+    {
+      "name": "slot_policy",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:08d17a64c2a0849bc4e836aa08cc1a21ee776b1cd5371b83b41c6b1140072bf1",
+      "published_lineage_id": "sha256:08d17a64c2a0849bc4e836aa08cc1a21ee776b1cd5371b83b41c6b1140072bf1",
+      "sha256": "08d17a64c2a0849bc4e836aa08cc1a21ee776b1cd5371b83b41c6b1140072bf1",
+      "bytes": 384234
+    },
+    {
+      "name": "source_manifest",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:131173258ed5cd2843a4922c6260a6316c1691d68f639fc1209e17162e80294e",
+      "published_lineage_id": "sha256:131173258ed5cd2843a4922c6260a6316c1691d68f639fc1209e17162e80294e",
+      "sha256": "131173258ed5cd2843a4922c6260a6316c1691d68f639fc1209e17162e80294e",
+      "bytes": 60826
+    },
+    {
+      "name": "structured_candidates",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:4555a97b8d99d78185bd9a734cff6bc5e37f450f9e6e0772224e26ce8d5e2b62",
+      "published_lineage_id": "sha256:4555a97b8d99d78185bd9a734cff6bc5e37f450f9e6e0772224e26ce8d5e2b62",
+      "sha256": "4555a97b8d99d78185bd9a734cff6bc5e37f450f9e6e0772224e26ce8d5e2b62",
+      "bytes": 15380410
+    },
+    {
+      "name": "topic_inventory",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:678c92c8ae9395f3c9d72f1088177cacfdef76773c30224975644bee184d764f",
+      "published_lineage_id": "sha256:678c92c8ae9395f3c9d72f1088177cacfdef76773c30224975644bee184d764f",
+      "sha256": "678c92c8ae9395f3c9d72f1088177cacfdef76773c30224975644bee184d764f",
+      "bytes": 7240
+    },
+    {
+      "name": "topic_policy",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:2b0075d507ce6177fd792596bc42ebb5b3d5e1a01e9d6b9c69dc0cf7436fb1a4",
+      "published_lineage_id": "sha256:2b0075d507ce6177fd792596bc42ebb5b3d5e1a01e9d6b9c69dc0cf7436fb1a4",
+      "sha256": "2b0075d507ce6177fd792596bc42ebb5b3d5e1a01e9d6b9c69dc0cf7436fb1a4",
+      "bytes": 61654
+    },
+    {
+      "name": "transcription_matcher",
+      "mode": "checksum_only",
+      "source_lineage_id": "sha256:6b5e3d71692fda6011e34929ec293f522478629cf37bd9c29f70d0421a68369d",
+      "published_lineage_id": "sha256:6b5e3d71692fda6011e34929ec293f522478629cf37bd9c29f70d0421a68369d",
+      "sha256": "6b5e3d71692fda6011e34929ec293f522478629cf37bd9c29f70d0421a68369d",
+      "bytes": 354698
+    }
+  ],
+  "asset_rebindings": [
+    {
+      "source_paper_id": "gate-cs-2012",
+      "ordinal": 46,
+      "item_label": "46",
+      "role": "answer_option_table",
+      "asset_lineage_id": "sha256:ff8a2858d0d39fa7f70055766c8cbddc62badaacf7d85763d483e6f3366a02df",
+      "target_path": "question-assets/pyq/gate-cs-2012/ff8a2858d0d39fa7f70055766c8cbddc62badaacf7d85763d483e6f3366a02df.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2012",
+      "ordinal": 46,
+      "item_label": "46",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:e29bad6ebccb706bd4ec017a6e338df66c2b06fa9e8868b9c72adc629052e536",
+      "target_path": "question-assets/pyq/gate-cs-2012/e29bad6ebccb706bd4ec017a6e338df66c2b06fa9e8868b9c72adc629052e536.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2013",
+      "ordinal": 14,
+      "item_label": "14",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:387f6ad341c6c40c3bb9542dae4358496cbb0ccfc4169896dd131e730432c8e8",
+      "target_path": "question-assets/pyq/gate-cs-2013/387f6ad341c6c40c3bb9542dae4358496cbb0ccfc4169896dd131e730432c8e8.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2014-session-1",
+      "ordinal": 41,
+      "item_label": "CS-31",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:3699d2e845ff19b7ee53f61c52b2b49da619bc05011f5bb3b7b4d5d71c0472b2",
+      "target_path": "question-assets/pyq/gate-cs-2014-session-1/3699d2e845ff19b7ee53f61c52b2b49da619bc05011f5bb3b7b4d5d71c0472b2.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2014-session-2",
+      "ordinal": 36,
+      "item_label": "CS-26",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:5dea44508175946981765fbceeb7d572c56378b8819030730115981a94a54bd0",
+      "target_path": "question-assets/pyq/gate-cs-2014-session-2/5dea44508175946981765fbceeb7d572c56378b8819030730115981a94a54bd0.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2016-session-2",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "role": "stem_graph",
+      "asset_lineage_id": "sha256:779a128ca5cbf717763e65fe9d930713233b2421474945b7a846146acb5db5c1",
+      "target_path": "question-assets/pyq/gate-cs-2016-session-2/779a128ca5cbf717763e65fe9d930713233b2421474945b7a846146acb5db5c1.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "role": "stem_chart_and_table",
+      "asset_lineage_id": "sha256:6043e238239d56b3a49fd52a45cdac6a2c511b057887ab6fb6bcaf75a8e0c165",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/6043e238239d56b3a49fd52a45cdac6a2c511b057887ab6fb6bcaf75a8e0c165.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 10,
+      "item_label": "GA-10",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:ac9720290f2dfcd9cf5363882f606bb39a780a8074ee1653224901b5516b22d1",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/ac9720290f2dfcd9cf5363882f606bb39a780a8074ee1653224901b5516b22d1.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "role": "answer_option_diagrams",
+      "asset_lineage_id": "sha256:0dc6c5f61a39fb52718b5d9a338863170958ceb73d5cdb447cd6f22613c315b4",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/0dc6c5f61a39fb52718b5d9a338863170958ceb73d5cdb447cd6f22613c315b4.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:872ef724882b2eb6da3cc0950255a201f9f61d419d7769e6082abf1e7887bed8",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/872ef724882b2eb6da3cc0950255a201f9f61d419d7769e6082abf1e7887bed8.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 33,
+      "item_label": "CS-23",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:b820573c205599853769976192f377b90d1bdd82be5d2d4496301692fd08c6bc",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/b820573c205599853769976192f377b90d1bdd82be5d2d4496301692fd08c6bc.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 35,
+      "item_label": "CS-25",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:cde95ca163afd4cdd0ba52cbc2777dfc52d182256ff6511d43ede8421055d22e",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/cde95ca163afd4cdd0ba52cbc2777dfc52d182256ff6511d43ede8421055d22e.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 50,
+      "item_label": "CS-40",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:e8da60c386ac3b8c9dcc3c1f6323561c3e5dbbe2e5d91d001f04416e3099e391",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/e8da60c386ac3b8c9dcc3c1f6323561c3e5dbbe2e5d91d001f04416e3099e391.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:b1144e69576a4f84f1908f18c3afc55042cb175f62e6be776c15779f238cd300",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/b1144e69576a4f84f1908f18c3afc55042cb175f62e6be776c15779f238cd300.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 64,
+      "item_label": "CS-54",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:899176f7dc6c8392b789a8e253456c28832a4eeeeb35814a6f2656dc2fbcea30",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-1/899176f7dc6c8392b789a8e253456c28832a4eeeeb35814a6f2656dc2fbcea30.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "role": "stem_chart",
+      "asset_lineage_id": "sha256:bf218e84811bcd38a961418d4204581788853c7d5125c6ca3c3332154870c98f",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/bf218e84811bcd38a961418d4204581788853c7d5125c6ca3c3332154870c98f.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 10,
+      "item_label": "GA-10",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:b83ab25c2abdd6425ded839a07d22fdf119f03037e029473267ea668e41e1e45",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/b83ab25c2abdd6425ded839a07d22fdf119f03037e029473267ea668e41e1e45.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "role": "stem_and_answer_option_tables",
+      "asset_lineage_id": "sha256:1304642d3bd784a2c674c912cd59341bec46379c65b7951fb811495c86a73788",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/1304642d3bd784a2c674c912cd59341bec46379c65b7951fb811495c86a73788.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "role": "stem_layout_reference",
+      "asset_lineage_id": "sha256:60a292c991e237121147974ec6a46c87d4f13d92c3a768f6b140dcd148e6799f",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/60a292c991e237121147974ec6a46c87d4f13d92c3a768f6b140dcd148e6799f.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:f2ca07adc6a0bf04217f0133ea48e5fae7df404fd90ca897acded56d593525be",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/f2ca07adc6a0bf04217f0133ea48e5fae7df404fd90ca897acded56d593525be.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 41,
+      "item_label": "CS-31",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:f02d334360c19a3047ae866db72502a51f3f03e7087a09f1982ace3fce4e1853",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/f02d334360c19a3047ae866db72502a51f3f03e7087a09f1982ace3fce4e1853.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 43,
+      "item_label": "CS-33",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:b61a17ab3f7538ff16d1c42c1bc826ec27462f4dac33c286213c7270b999757c",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/b61a17ab3f7538ff16d1c42c1bc826ec27462f4dac33c286213c7270b999757c.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:3c927f5d72fec71e10111b72cffe18ee7acbee86f77797b21d651414c944da3a",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/3c927f5d72fec71e10111b72cffe18ee7acbee86f77797b21d651414c944da3a.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 50,
+      "item_label": "CS-40",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:e0041994b56dac77bf8a636b5319fd62d2efcdf5ef23e0a08bf3c620db138daf",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/e0041994b56dac77bf8a636b5319fd62d2efcdf5ef23e0a08bf3c620db138daf.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:003c790fc3da82064f6d6c949aae7413f66dbfbe37fa21e6a4ac55b1e95b7125",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/003c790fc3da82064f6d6c949aae7413f66dbfbe37fa21e6a4ac55b1e95b7125.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:a707229db8e75dc2e40865d84651acdaac6c54ba299968dd0ef85334bcffc5ab",
+      "target_path": "question-assets/pyq/gate-cs-2024-set-2/a707229db8e75dc2e40865d84651acdaac6c54ba299968dd0ef85334bcffc5ab.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:c63eb4768e0e0bb25f1f9d862cbe7c2b79b5cd56d05a5c8189a07b0cc82e57e9",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/c63eb4768e0e0bb25f1f9d862cbe7c2b79b5cd56d05a5c8189a07b0cc82e57e9.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 7,
+      "item_label": "GA-7",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:673b0b4e019aca3c1c7422c1bbf7d834a73405fcd858a09de7edb36f9c126b1c",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/673b0b4e019aca3c1c7422c1bbf7d834a73405fcd858a09de7edb36f9c126b1c.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 9,
+      "item_label": "GA-9",
+      "role": "stem_and_answer_option_diagrams",
+      "asset_lineage_id": "sha256:6b7d400d3f87e647fa34002db2bb8c70b9ec7a4091bc484d19928ed0a3fb3cfa",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/6b7d400d3f87e647fa34002db2bb8c70b9ec7a4091bc484d19928ed0a3fb3cfa.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 27,
+      "item_label": "CS-17",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:c6fbc39d783501d5c5855e7b279962f118498908fa62eaf0d4fe1cce1b49fd71",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/c6fbc39d783501d5c5855e7b279962f118498908fa62eaf0d4fe1cce1b49fd71.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:585602e4b598f8757f539e142c36ad739225826a00636558563feb3775a55810",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/585602e4b598f8757f539e142c36ad739225826a00636558563feb3775a55810.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 53,
+      "item_label": "CS-43",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:6e4ddbe13986578a953f80ed54204316596b4fe7b6e782ce0e3501fe0cf2624a",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/6e4ddbe13986578a953f80ed54204316596b4fe7b6e782ce0e3501fe0cf2624a.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:fd5ea7730d1dd13ab637e5e7fbc857a2e05c96d8fb3963a9f4aca8988f07dea6",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/fd5ea7730d1dd13ab637e5e7fbc857a2e05c96d8fb3963a9f4aca8988f07dea6.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 57,
+      "item_label": "CS-47",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:2b99d63a97fea5b0548b2570a0890afb11486fbf5e6daa0f7d6ea734b0887b6b",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/2b99d63a97fea5b0548b2570a0890afb11486fbf5e6daa0f7d6ea734b0887b6b.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:181f7eaa790a1dfa8e4f4f1c67ba0c2227efcd748ab781b95d4eac9a090db143",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/181f7eaa790a1dfa8e4f4f1c67ba0c2227efcd748ab781b95d4eac9a090db143.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:c3d629de9303f6cc6fb9b7c1ea88a3ecb50737c7537d3a8166d0c46c0175ad0f",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/c3d629de9303f6cc6fb9b7c1ea88a3ecb50737c7537d3a8166d0c46c0175ad0f.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 62,
+      "item_label": "CS-52",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:0fd7adf14d59c1aa7489aedc7d2ea91dd10d3c0e1d258ecb64dd7be78e0092ae",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/0fd7adf14d59c1aa7489aedc7d2ea91dd10d3c0e1d258ecb64dd7be78e0092ae.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 64,
+      "item_label": "CS-54",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:97c5ac95a19776f7e2ad17f8648e0efb992f4610e6cc8ecc05a48ccca06fcc84",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-1/97c5ac95a19776f7e2ad17f8648e0efb992f4610e6cc8ecc05a48ccca06fcc84.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "role": "stem_and_answer_option_diagrams",
+      "asset_lineage_id": "sha256:11e92a89ab1fd4b6062e75209c740aed69577de24acf5cdb878c386f226d31c8",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/11e92a89ab1fd4b6062e75209c740aed69577de24acf5cdb878c386f226d31c8.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:5f6fc50c6711df94a2198aca6853c5f33d95e1a0eb2a5a3afe84e0d7c0c85cc4",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/5f6fc50c6711df94a2198aca6853c5f33d95e1a0eb2a5a3afe84e0d7c0c85cc4.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 9,
+      "item_label": "GA-9",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:8b52d9c66a28c6e7c8c21b8b2795e00969c4c7b5e137f234e3b79cfae51b97a5",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/8b52d9c66a28c6e7c8c21b8b2795e00969c4c7b5e137f234e3b79cfae51b97a5.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 10,
+      "item_label": "GA-10",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:b16219f4ba1a6bd1778d0c149efd5ab16308e1e60887642d75e4b8f91117d4a1",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/b16219f4ba1a6bd1778d0c149efd5ab16308e1e60887642d75e4b8f91117d4a1.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:b4ae62e80582bfd28905dac28b218eb1bd5fd1c345966f626efe72ac8d5d4a4f",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/b4ae62e80582bfd28905dac28b218eb1bd5fd1c345966f626efe72ac8d5d4a4f.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "role": "stem_diagram",
+      "asset_lineage_id": "sha256:046654f7d02fb3199bcb5b0e7c23c394c9e09498329455d9f339a88deb1716e7",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/046654f7d02fb3199bcb5b0e7c23c394c9e09498329455d9f339a88deb1716e7.png"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 61,
+      "item_label": "CS-51",
+      "role": "stem_table",
+      "asset_lineage_id": "sha256:661ce92495518bc7bd20b654ecc1d4b43c77b891311832ae176bdf3e3421a9c5",
+      "target_path": "question-assets/pyq/gate-cs-2025-set-2/661ce92495518bc7bd20b654ecc1d4b43c77b891311832ae176bdf3e3421a9c5.png"
+    }
+  ],
+  "corpus_equivalence": {
+    "staging_papers": {
+      "frozen_sha256": "af9954e928c035432be1e88d0fdebd64737cd0ef23bc18ecd658c24e5b53c790",
+      "published_sha256": "af9954e928c035432be1e88d0fdebd64737cd0ef23bc18ecd658c24e5b53c790",
+      "equivalent": true
+    },
+    "staging_questions": {
+      "frozen_sha256": "c1baa9c598d40c7fd32e55e5424479545b074a5dcd8dfe2be4501a501daa0e21",
+      "published_sha256": "c1baa9c598d40c7fd32e55e5424479545b074a5dcd8dfe2be4501a501daa0e21",
+      "equivalent": true
+    },
+    "promotion_papers": {
+      "frozen_sha256": "af9954e928c035432be1e88d0fdebd64737cd0ef23bc18ecd658c24e5b53c790",
+      "published_sha256": "af9954e928c035432be1e88d0fdebd64737cd0ef23bc18ecd658c24e5b53c790",
+      "equivalent": true
+    },
+    "promotion_questions": {
+      "frozen_sha256": "b53a96e262ccbf82f45bff0535811f10e6767e32d39432a90bb793655721e723",
+      "published_sha256": "b53a96e262ccbf82f45bff0535811f10e6767e32d39432a90bb793655721e723",
+      "equivalent": true
+    },
+    "staging_report_decisions": {
+      "frozen_sha256": "cefa35b2fc6742fa1598e97aacfbd860e3cc6321173719aa3669c67b8a5a5d78",
+      "published_sha256": "cefa35b2fc6742fa1598e97aacfbd860e3cc6321173719aa3669c67b8a5a5d78",
+      "equivalent": true
+    },
+    "promotion_allowlist_policy_and_identities": {
+      "frozen_sha256": "977c18a25a3e76b5135897d1c641ea767f8c33c945b3cbd1ad90be23dea918b0",
+      "published_sha256": "977c18a25a3e76b5135897d1c641ea767f8c33c945b3cbd1ad90be23dea918b0",
+      "equivalent": true
+    },
+    "promotion_report_decisions": {
+      "frozen_sha256": "55444d8df92a157dbe1531687e071b7f94e5f485ed85a091fa7a8435970ddb5b",
+      "published_sha256": "55444d8df92a157dbe1531687e071b7f94e5f485ed85a091fa7a8435970ddb5b",
+      "equivalent": true
+    }
+  },
+  "counts": {
+    "papers": 39,
+    "archive_records": 2873,
+    "practice_eligible": 177,
+    "asset_references_rebased": 45,
+    "promoted_asset_references": 9
+  },
+  "artifact_sha256": "55c519bd4ba104fe6248961886fc1c2bef0dc13e14e1d9e434ccd29571d12ad6"
+}

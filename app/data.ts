@@ -1,3 +1,9 @@
+import type { QuestionAsset } from "@/lib/question-assets";
+import type {
+  AcceptedAnswer,
+  QuestionReviewStatus,
+} from "@/lib/answer-review";
+
 export type QuestionType = "MCQ" | "MSQ" | "NAT";
 
 export type Subject = {
@@ -42,10 +48,13 @@ export type PracticeQuestion = {
   prompt: string;
   options?: Array<{ id: string; label: string }>;
   correct: string[];
+  acceptedAnswer?: AcceptedAnswer;
+  reviewStatus?: QuestionReviewStatus;
   explanation: string;
   source?: string;
   year?: number;
   difficulty: "Easy" | "Medium" | "Hard";
+  assets?: QuestionAsset[];
 };
 
 const topic = (

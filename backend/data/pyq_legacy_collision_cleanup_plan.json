@@ -1,0 +1,3073 @@
+{
+  "schema_version": "2.0",
+  "plan_version": "gate-cs-pyq-visibility-88c192e62efb-405-to-177-v1",
+  "status": "authorized_opt_in_only",
+  "database_writes_performed": false,
+  "bindings": {
+    "source_archive": {
+      "path": "data/gate_cs_pyq_archive_1996_2025.json",
+      "file_sha256": "ebc7bf91ac239d33c42bf03a96144684aedc8e67142e7e64bfb75ba4b358e3e4",
+      "canonical_sha256": "0aa05b22e3bf2066b05fcf111b0591b07bcfba13a745373ecad9de4307964d1e"
+    },
+    "source_archive_report": {
+      "path": "data/gate_cs_pyq_archive_1996_2025.report.json",
+      "file_sha256": "98ff84e86d68adcd1d008f55f3d50d6758012f2fad627e5f3db209aec56bfb7d",
+      "report_sha256": "0a849843c355ab58b6bdd66f29a90c70420aae880f3a4b885860e1e6e6f70dd3"
+    },
+    "promotion_artifact": {
+      "path": "data/gate_cs_pyq_practice_1996_2025.json",
+      "file_sha256": "1c34407a6b71459d5c89f837fa0f3ef00190a27740b876008d79b22cd29c9dec",
+      "canonical_sha256": "adf73f73b17a18c9821850c988fa3f3517bb65c17e5c5ca256a02c310c4c6c8f",
+      "artifact_version": "gate-cs-pyq-practice-0aa05b22e3bf-88c192e62efb"
+    },
+    "promotion_allowlist": {
+      "path": "data/gate_cs_pyq_practice_1996_2025.allowlist.json",
+      "file_sha256": "22bfcf7c2d7c045a96330af50449a912af93bb8157daae316c1d9625c37e696e",
+      "artifact_sha256": "1903bc9b9f9e9d738501f3b5050528a8599380d66bfce51209adc08876327220"
+    },
+    "promotion_report": {
+      "path": "data/gate_cs_pyq_practice_1996_2025.report.json",
+      "file_sha256": "0e1af992f632f6f55b23b8c8d284434fb1ae16257980af6e0e11c56911819d42",
+      "report_sha256": "f8f688b5571699ace350b973456e5271cc213976c14d8f11f18412c9ab04ae94"
+    },
+    "collision_evidence": {
+      "path": "data/pyq_legacy_collision_adoptions.json",
+      "file_sha256": "7e7f872fb5bbbd5e9136312733a8e2adce7ea628c0800dd5bd2393207053b3de"
+    },
+    "selection_sha256": "88c192e62efb9df247e58b53b2fd1dc2b41314d6ac8fd2e99f686984828b26e6"
+  },
+  "guards": {
+    "expected_question_rows": 2695,
+    "expected_pyq_rows": 405,
+    "expected_active_originals": 2290,
+    "expected_active_pyqs_before": 405,
+    "expected_retirements": 228,
+    "expected_active_pyqs_after": 177,
+    "archive_record_count": 2873,
+    "practice_eligible_count": 177,
+    "delete_rows": false
+  },
+  "keep_targets": [
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "b712f998ae27db56ccfad6821610a50b62d9f27ff0525fde55815e7b7ef2d332",
+      "promoted_content_sha256": "861117679b3586f7713ccba6dfd602c54cd72e747a62074c2a7c0a2c7dc12a26",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "e89c7c7634cf7f63fcf7fa034ba4d9670c1bc85900adf7b2f0385742a4ac4671",
+      "promoted_content_sha256": "8865f42ce943f39e941e57a4e95aa6ad7e2c287b65f274785d7177a80aaa2b9b",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-2"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "8367e568aec713d3f85d13287d367381abbf028d7a117a33b598cd37d35df269",
+      "promoted_content_sha256": "f8c9fbbd839f52da57de3ccb5240d25fa304b186b45ce8d2978ea72fe73efb8c",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "source_content_sha256": "70bbb5d21e8a1937bf59967db0fdf0e726f4059804079ad1b2368437faa1c910",
+      "promoted_content_sha256": "aaeeace6027799251e74975e39a0db56607aebd3a577acdfe1b1458e40d3b254",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "source_content_sha256": "2d86dde7490f20a15f3514170dd62c44c4afb98617f49de3904576e1f2502296",
+      "promoted_content_sha256": "f765af3aa98f2b57f0cba6a7bccc7427417e1c8b636339bbf664ae414a3aa1a7",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-5"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "5a36461849bd640b8e088c7025f42820af62922ff958c5ca02d602659cf2cb22",
+      "promoted_content_sha256": "ae1509c8c566227af7247714ca699cef8b1109f854733e7104305ad3ca03c801",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-6"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 7,
+      "item_label": "GA-7",
+      "source_content_sha256": "8340ebfa2d54153c15ff7a3551127af37973a25f1c5cb00a39823ab5feef9b81",
+      "promoted_content_sha256": "5ebfafcb4d0b1f38ae953f0ef49f3112ad3064a4de23dec237963a881405709b",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 9,
+      "item_label": "GA-9",
+      "source_content_sha256": "d408cc9a296be9dc5f3cbf80a29671cc3e617deacfb7e2cddcdcb4f9ee42682f",
+      "promoted_content_sha256": "ee523fa32f78c6a331fbe0663a3cc5e3ff944223ac8ba0d424dd11920c3e7f47",
+      "external_id": "pyq:gate-cs-2024-set-1:ga-9"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 11,
+      "item_label": "CS-1",
+      "source_content_sha256": "55403290b6e01cc51bf33d4cb374ff650bf3b444202cd6d5abcc376fda37a4d0",
+      "promoted_content_sha256": "90cc5ee6ec4569eaa328bcf0f4d699376f73644f5e3908d9f1d02a2efc16c6b8",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 12,
+      "item_label": "CS-2",
+      "source_content_sha256": "ef588df09d8391a2e4fc7df650334ce0197d028266848f55b7fd9ef2f81fef90",
+      "promoted_content_sha256": "52835ee83d50c6a04c388e27998e14b2507d3fcaa5f10f10344960d79bc2096f",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-2"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "81df3baa10f879a56419d8a9485ac7558f29b6b5bd32c742cdd7458613729f43",
+      "promoted_content_sha256": "28a8626e242ffb487ba1bdb490351e3ace7f4e7e6d2843a2cc6457d1f86027f4",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 17,
+      "item_label": "CS-7",
+      "source_content_sha256": "2461284b4c66ac13f6fe9853736ea5084bd7c32530a8696a42f05051013e09c8",
+      "promoted_content_sha256": "174857cdf653997153f35de74007fc090b682cac1920357480b5038df19081f8",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "02a4656da317f3e375f703cab68d85abbc873d594bba6810e17655269475cb75",
+      "promoted_content_sha256": "2c4f12c1ad25142ab7ca272dc99acf0e633e14f9d73edee4ee56e9116cd6988f",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-10"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "source_content_sha256": "504bd216cb0dc35d53687a780703e045e7b0940c9d24b2a3894a39cd379ed497",
+      "promoted_content_sha256": "2b085946807f2d2765561e5047cb6f0673e42f9ed1f32987cc1b30559d264e14",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-11"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "source_content_sha256": "959a7547e05b11eea05725d42e91cf2d791432bf0dd7b5ff80632ab20826b45d",
+      "promoted_content_sha256": "297ec9252a258ed4882d59f826f4643b763bd4424e79bb7867a071add317e0c6",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-12"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "bb27384d8a4deb6dfb47be7a0d0ec7592b1c63049c4f8b7b31b0ebbf5e292780",
+      "promoted_content_sha256": "0821326a44f687ad0e302041d1ac39774627a523df4e077c449733b05e2e01f4",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-13"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "b279df715e0025dd4a3cf1ab4fac38f7d087738df783c9898996c54dec75ce0c",
+      "promoted_content_sha256": "2321f38ebfe9e8aa95242a6e618cfe30b5adfee1cd5fdf4381055ae45e3949f6",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-14"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 25,
+      "item_label": "CS-15",
+      "source_content_sha256": "2a4e64b00dcdb826d833dbe396f378a4276d364b215b456d43aef6a9f6d2e7fc",
+      "promoted_content_sha256": "293588e76a2c702882a8095ff223bb8dc1353170fc77699ea4948bbf7caacb20",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-15"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "a1f5c8d4b868273d12c52f0d58b3090118ec9feea402abf2391d694089ae9993",
+      "promoted_content_sha256": "fdba34a8039f8d307fca78803e675a848661776cada3ff8b95c95430ca066a5b",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-16"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 27,
+      "item_label": "CS-17",
+      "source_content_sha256": "3e495aea6065d006081bcc5d8c97c864d6cf681af604d07e8897a112a49c418f",
+      "promoted_content_sha256": "b89a3cea0a61b194615e95e276263c1e78973975990af7b4cec490919b45f851",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-17"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 29,
+      "item_label": "CS-19",
+      "source_content_sha256": "501307be5d0b6ffbbf5be0a60e3cdae26aca104ffb5c84cb3926c845d91f0ce4",
+      "promoted_content_sha256": "60348fb7a998ed507747cc22aa551eb6a0f33bb403873a573b7ce70ee930cd88",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-19"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 30,
+      "item_label": "CS-20",
+      "source_content_sha256": "3e183bc39e93d006f9d521c02ee1a0cd87563e14e2f7e60635782bfc868568de",
+      "promoted_content_sha256": "0f769c556c97c93e007f0634394e4e2d96c46aa17f58c4859580c1caa20f7b38",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-20"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "source_content_sha256": "794f77a4fdbf561a49a5b64fcf5af4afe91bfc685a99c24886fbb37bf95fe21d",
+      "promoted_content_sha256": "641200765d08519d801f197e696beb2b8db6f21bdd32f9adf26ac5e62f02045f",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-21"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 32,
+      "item_label": "CS-22",
+      "source_content_sha256": "557d31d90d69780b63745a4e63fe0e82b3fe7a330aab3b1bf4619daff5f4b7f4",
+      "promoted_content_sha256": "82e718e03d496e2a06c1e6a2834c63330fdb079a66942609cf616ab4d10c70c0",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-22"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 33,
+      "item_label": "CS-23",
+      "source_content_sha256": "9fce60bd6754272031bac866c4d4f9f30d6735fa5df726d31c984fe54bacbaa8",
+      "promoted_content_sha256": "a3b7a43b2c7278b68c0d8f1f7c30f63990743cfd74685535ce0d10abc409afe4",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-23"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 34,
+      "item_label": "CS-24",
+      "source_content_sha256": "29b9eeaaf3d3a1b3a68cbe7201dedf6053d4e268c771e900cc19fd01e82a8530",
+      "promoted_content_sha256": "3b8df9d3268e265970e3b529c5808da9958ce5955fd9f302bc1c92d8601e9a09",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-24"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 38,
+      "item_label": "CS-28",
+      "source_content_sha256": "3d9442d0f71580e3a1af87b57aa9bd817e5ec212b683cbd5daef602f81b84c44",
+      "promoted_content_sha256": "fab093e522e9848368a8dc2da83ce63ac8d66cf00284586f37f86447d3e5df60",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-28"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "3a11382989fccc2229add785e2370607636e92e5c76ceea00899499784a1a3c8",
+      "promoted_content_sha256": "f5d811631022357c13910bc2d484845b4141d087e6bcb714b83b8b6174ee0c01",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-30"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "d1b60520cfea472efe36799bc8994b1c2c449d600b93805f990befbb7743aef0",
+      "promoted_content_sha256": "5ca573808d64dd8f6b4be597c7914f2f752843c1a2d489eb856d6e86469fe653",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-32"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 44,
+      "item_label": "CS-34",
+      "source_content_sha256": "29944ad6149bad3f680fbccde1cb02d8dc3645ae78a2ab256577ea75a21281d1",
+      "promoted_content_sha256": "1c9adc6526865f4b814b2dc41ad3d330068f16618012f52d1323549816d7e6bf",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-34"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "96f9840e90324102ec4de596dd263324ee504a8b3e66799405a9a3800069e5ce",
+      "promoted_content_sha256": "cbfd1bd0390b5836bd1932adc2dd023c572b803f63bb4596d21de3711ce18f9c",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-35"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 46,
+      "item_label": "CS-36",
+      "source_content_sha256": "9defbfe60aedd6f132f9b4de7f15271361884f3d39b47dbc07f5099d3ace7227",
+      "promoted_content_sha256": "4f555b4d11b94109c11782bb4f4ccf60417c8c158c2d5c9226c86fe1e75c4909",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-36"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "0f67f4b4c25a77d87f555040a174a22300fa1967e06efc64cb163c8a6e29a275",
+      "promoted_content_sha256": "52843c8095c158d62aa0e1ac745c0cdb5aeee27e1b2b2bd910b52b1c830495ca",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-37"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "source_content_sha256": "ebf4bdfcc29e13c76ba4aee26fe18a4bada0629bcb0c3cc71210a5145ad44d27",
+      "promoted_content_sha256": "432bc5e40af27af7f7d6a6137d9b0954fc944f547b5b24f5fd4ccf494143800c",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-38"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 49,
+      "item_label": "CS-39",
+      "source_content_sha256": "d34c1a4ea185e2013079a137031a4fdf42ab9a0ca78d1c81a2d5cd9779fa57d4",
+      "promoted_content_sha256": "a5e8db9d88ed9bc16e0b83e7ab3876b0caf4e189f7af5f4f313b89f615da9363",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-39"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 52,
+      "item_label": "CS-42",
+      "source_content_sha256": "05676b530c2239fe5628a7a58ec673a168dc4629ac59835c6dac1bd7770e45ab",
+      "promoted_content_sha256": "1f7b66a8876282ca1f9036288839c6d69e462adae0a31def4f07245edc685c80",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-42"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 53,
+      "item_label": "CS-43",
+      "source_content_sha256": "178abeb4578ab9115960fc291575691cc4ace81eaa4b1ec0092c572644869685",
+      "promoted_content_sha256": "6bbd700fc9e32d56a39ce054e0dd350c7018306c644aad71af4aeaa57af40198",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-43"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 56,
+      "item_label": "CS-46",
+      "source_content_sha256": "a61c7731e801b78b3cf0a4a55ce6dfebfa72a41c8689443f461da53587e7f4d3",
+      "promoted_content_sha256": "5402482fa1eb9791e2938385d5b5e14801b614a4291750db8c682423fd1acd51",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-46"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 57,
+      "item_label": "CS-47",
+      "source_content_sha256": "f91286031e5b1fdcdb36ed7201201e7102fae926fb33c6c9d8211f1faacb0e7a",
+      "promoted_content_sha256": "bad56376c5a31aff0541131615677a53be8cdc177f20281a5b9d17195a296d8e",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-47"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "source_content_sha256": "58cf1cf82bb33a3f8214d1ebbf6d3cb4a8235d906451837d42b195f8c72e8a71",
+      "promoted_content_sha256": "f1c6f66636f6ef47700c3704528c5e92a80bbed57b00b9a6258e0a9f59682994",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-49"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "source_content_sha256": "aa6aa208235966aa54750abbd9e57beb15c51837cdc523ef1e8325135a5465d2",
+      "promoted_content_sha256": "7859e0f38d16c9ca97378fe13d68a63923093a24a4636a7bc056e11f1fbd852d",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-50"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 61,
+      "item_label": "CS-51",
+      "source_content_sha256": "377adf00b5d1fa9d2af9c7e88b1d544ae8c68da8007d46521a1a73e9997ef67d",
+      "promoted_content_sha256": "4b5f5c63a541e32bcb1826038b84202369a138c47454988fae4f12f84d1f4e87",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-51"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-1",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "ffb17bd730a75eee8fb066a14f3680146462a69aa1262e3169bfc12077f6034a",
+      "promoted_content_sha256": "423c0f46ab31bfd4eec98b74c17d789623bdbd9405084c1286055becfe390a66",
+      "external_id": "pyq:gate-cs-2024-set-1:cs-53"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "a611dfc5ad7a356ca4d13418a5416fc8f1b32214560abb2500cdc3043007cd9e",
+      "promoted_content_sha256": "69740db71eca138d11e7d77e08d8e93d0315b71e07ce37fd9700a02bc77de91b",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "ce3b92535cdd5423eb6a0367a8d24350f99497e01ec25b304e911da4eec1bd81",
+      "promoted_content_sha256": "5fc7552741637755b40f813af2d50460b6d49378fef8b1eef1a279c36215779e",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-2"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "7eeae8a56c7b68f96d735f495e0bcf6826325f1f2d39464e1bb16de5d2f32cd7",
+      "promoted_content_sha256": "78bf7e9860c315abbbb05c2cf14d7627b2956a13158786aa3441f5dbb5cf0602",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "source_content_sha256": "c797d1b29fa127c64811a877553d0a44e6849ed58162e6dd1f730e26887bd098",
+      "promoted_content_sha256": "f967e863e111905b88d05d9f02c70ddc48d5d212e2b92a4e8a4eb61e00180cdc",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "source_content_sha256": "83204f0e7d0409275d25cefff757bfae03060d1f2d02b854fb1c83d31629da51",
+      "promoted_content_sha256": "369ed67d5047a592c238a65b74212fb812ebdacbfa697a013e42fb6bde6b3676",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-5"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "263aeac05184d5873dbef74c0aaa7d7181e4e5cac1db78b976ba7736088ce671",
+      "promoted_content_sha256": "53c2b5bc9fdf76826c45a83425dcc2b4f95bf3751ac872343794a6a96a04d024",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-6"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 7,
+      "item_label": "GA-7",
+      "source_content_sha256": "577c72e2d07b644f77530b3adf06a0cb2254bc7f50f0daed68ce4ea962c7c4f7",
+      "promoted_content_sha256": "a0f031a240589975ee4eb94d09de1547d8554cde8852bae9c28f3e609dcc28f7",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "source_content_sha256": "153337fba8800c145b726f4715027f37fabe4bbaf833706a14e75284ae0f8ddc",
+      "promoted_content_sha256": "24cd1a7454ed02d390bf890f799a36ab7ece9e81ece6c96be2e026dc6edd5c50",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 9,
+      "item_label": "GA-9",
+      "source_content_sha256": "3a9d37bb7085759209d24fcc81428569e7d402c6575be4d044ca5f2b7ae9ab40",
+      "promoted_content_sha256": "60bda263a9e134209222ca962a3458c79fa1da3df7b87481febac27e1758b7c1",
+      "external_id": "pyq:gate-cs-2024-set-2:ga-9"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 11,
+      "item_label": "CS-1",
+      "source_content_sha256": "ad2139dce21e364290eb3e225d9d0dbfdf91adced30c829aa333586c07f5d3bf",
+      "promoted_content_sha256": "c00f12dc4430f384372449292ab5b75029a0541e9a586306568043c9a871abf9",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-1"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "7e64158498ec82d3c078b78a47aada7850612e0cc4a490e385b9c9a1c9cec7b1",
+      "promoted_content_sha256": "bd2eee9ac118747f82c41434090fd1ef31bc8a1cff596964646e365c5e0a3da0",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "source_content_sha256": "15c54709a97d27b91086be12702fa6282479f2ef820e7e12435e390354427127",
+      "promoted_content_sha256": "1b73b0d99170f8cbf710456ca65bf664a7fba2a5a71432b537d1b54a381ed668",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-4"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 15,
+      "item_label": "CS-5",
+      "source_content_sha256": "3c1df02762f08ca1b5be64d9d222f523f18acc8eeda98ccfcd5558b1c243a0ea",
+      "promoted_content_sha256": "2d6e870bd4c021b3da85e760d72f28beda1fcebb2bf8a54af656e09304680305",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-5"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 17,
+      "item_label": "CS-7",
+      "source_content_sha256": "894db2de66b17373b17d04b7de3eca3925b11095dea35ff775abc1f22dabf6d8",
+      "promoted_content_sha256": "4662de7e6eb46102f7be2ab3e251f31e21a82a927c664938fa448c8a969614b8",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-7"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 18,
+      "item_label": "CS-8",
+      "source_content_sha256": "fe1198c2e6918057cc0a01960a7978f2a3996f368bcac6509b4f84c723877f53",
+      "promoted_content_sha256": "656207fe62eb236f6ba0003880edf6e43fa017209785b23d5c2b4a7dd722ef6d",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-8"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 19,
+      "item_label": "CS-9",
+      "source_content_sha256": "6825104b68a8bb960f39cd5d1b6fde324abf7709adf5c70840ee1202d093b259",
+      "promoted_content_sha256": "47551fa26cd824c11330441a41f30d0fb268d245dfb33be7d6e4badacc05715f",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-9"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "3a34a86fcecf1a704b36cc7514351600084e1a305af9d01a33dbcb3c52747be7",
+      "promoted_content_sha256": "1ff94b895fc6bdc60780072b9d3cb766841263c09117b3f23d28d841983aac16",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-10"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "f877361465e465822fb3af6b00e16164397bf5e5b702d76b5aca3fd7e8948d95",
+      "promoted_content_sha256": "d59310530f95573d8cf71d717501be1f7dd3bdd9b3b6cfbb50a88998827b826a",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-13"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "ce064bb06725bcbf7944fd875ffc0a6169eaaeb1f584e46928af3dce2c9633e4",
+      "promoted_content_sha256": "e7b03d4d35006b0540992599a4e5379c18662a1cc7ae6f5aa2bc022351e37849",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-14"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 25,
+      "item_label": "CS-15",
+      "source_content_sha256": "0264bda25877a73a9488d86f29d04bd43b132a65a82429e35324f6fd7315aa73",
+      "promoted_content_sha256": "32ac875ac176e77c83fc4c579c934ec98cd07f7dd2b71287cde8c9727bb353b6",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-15"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "e418c73ec8138f3f030ef7d6712f0fc173b2efd47ef96fa0a976624220a75acb",
+      "promoted_content_sha256": "954879e4539be8d8b20cccb3ef2c288201ad9506638a49340170e4732962680f",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-16"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "source_content_sha256": "94e41e8785296b54a26afc798d6246b18b275f9d76a25b62156a9df23a3d0f2c",
+      "promoted_content_sha256": "830ea5e41ea0b8e142fd5384ff6ca2b6826aab402a59aad4b22344d28ef94d90",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-18"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 30,
+      "item_label": "CS-20",
+      "source_content_sha256": "1690a59e9dd5798ee38c5168781ae8b0e6540831277fda49e8c966ecf5df7fd6",
+      "promoted_content_sha256": "81023951c68a59f0d5dc924ebda8f36d5bec155c0c99c9a60aeb124bfb53cbad",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-20"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "source_content_sha256": "a5aae452fbf30f3767b2a0745d1205dc0cfbe6020e5f6f4dc8b16235ec578908",
+      "promoted_content_sha256": "d8639c1b7833660d2542994667eb953e2201be70ae867c9703be3dbf94cb5051",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-21"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 34,
+      "item_label": "CS-24",
+      "source_content_sha256": "e76c72ab617955181cddbb46e50334d4ef2db448480e2573cf10b77012d71a75",
+      "promoted_content_sha256": "ad2386c5f053f997ecd649c514da86e73546f96ea89d442e18fe8118ef73b65e",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-24"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 36,
+      "item_label": "CS-26",
+      "source_content_sha256": "44da7271aba52520149a849dcfc957c7ad38cfbb65e34c33c3b33bcf3d098299",
+      "promoted_content_sha256": "936f0e21b74ac9a5bcf9a9e5419adc9ddbeb10b3aacdd45f6c27decabc66a750",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-26"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 37,
+      "item_label": "CS-27",
+      "source_content_sha256": "38879d0955a5427cf20df1fd224813d76288c5bc1491368d54bad09cd3a93e37",
+      "promoted_content_sha256": "e084b835566095bb3ae407bbaa296e74a2c6f31e33bcde40fa11e9ee51bd2a10",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-27"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 38,
+      "item_label": "CS-28",
+      "source_content_sha256": "d15a638f62a0731f0491b9377ee749803dcb7e0833b55427235de3425fa5f4c9",
+      "promoted_content_sha256": "f083d67925234d428b2ad67c9c5e6dc797b81c4cf8a7d24136b4bfbd951581a1",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-28"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 39,
+      "item_label": "CS-29",
+      "source_content_sha256": "ae9e493dc47eedb65c604b3fc2c928f2dc39cfc2142bdb20f3abaa669b2304d5",
+      "promoted_content_sha256": "8a101b5b2045edb289c99cc3bc85de019e93a51e8d95e6a43f4f5e253fdbf834",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-29"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "48efcd5a00e86d700b1b8e847fedddbb36b25e0a12e464bc12209aa1ee96e844",
+      "promoted_content_sha256": "8764121b9a859098cbe3d67e8c8aa3fc0f6a186aaca4c74a765f863e19343b92",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-30"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "5ec12f19d9b6b0b6c3887d7cda77a2cce88babb5119e8bfa71fe6aa490a08c4e",
+      "promoted_content_sha256": "67ef082c2003eca0fcde3770264f8fc7f2aefec0ba672ad18ddf1537835e56a0",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-32"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 44,
+      "item_label": "CS-34",
+      "source_content_sha256": "9b53d5c17b8941006e99c113c94295bbe4523320eae3e19244795388ea90fe2f",
+      "promoted_content_sha256": "62e506921480be176c76a64cbe80c4f698d10797b26acc5900b96711e8eabf35",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-34"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "cf241160fbf9d38e3c56e44a207a84d5aa2039d788a97c890eab70e5f74807cb",
+      "promoted_content_sha256": "25e5dce028182380e364ea158cb750dfb57890533f898600d01d9b434676c3b9",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-35"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "d677ed1bd1ae18411453759f5fb444b2f4f6f7ccd3418e9a1409b745ba593cd7",
+      "promoted_content_sha256": "3aa733ca3c86b193b9d1597e3141e45be045196474aa94f5839c758c1200072e",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-37"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 51,
+      "item_label": "CS-41",
+      "source_content_sha256": "a093aefd18417a24bd48e08476c6de92884adb41624b63327ab02c9b48cfbec1",
+      "promoted_content_sha256": "b201f2974d3c8990058145cc323453d60ad01a0b38bc5c4e3df766e0faa3c169",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-41"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 52,
+      "item_label": "CS-42",
+      "source_content_sha256": "88a59553c00eb24f407dcabf95c0117708eeadf5ad6818f608db00d97e4bb53c",
+      "promoted_content_sha256": "43183c352c499aa01042319051f0d514da83b438e4bca9e69fbcde292bfb03cf",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-42"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 54,
+      "item_label": "CS-44",
+      "source_content_sha256": "341186c82b392f8299abbe5b5f6a0d11ddceb1a4cb540a042f1d6a2c512e13e8",
+      "promoted_content_sha256": "780be6d405d85dad46607df12aa821213d24c7ff4a24ab515a0b983abbbe6788",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-44"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "source_content_sha256": "dc78af24bcf79c9abde139d04c4f3674ec394c3880004f05898cff302338d1ca",
+      "promoted_content_sha256": "f8d5d7acc65436f6136e4ff57b5b44b0f01cae254d29e9069f7c939d1e35f95f",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-45"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 56,
+      "item_label": "CS-46",
+      "source_content_sha256": "9b420c14a10f49a1c41e66068afd6bd00df06567066dbb53c77e05be892f48da",
+      "promoted_content_sha256": "e4404ee120d58d745073f5ed104f67fa7beb9010365e6641c55a55ab5c58fb17",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-46"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 57,
+      "item_label": "CS-47",
+      "source_content_sha256": "e9a8c3c055885e3e2e35d198b6884e236b7e43e0ae7a089a5d38d76fc3c7a614",
+      "promoted_content_sha256": "9e9c2eec410f3585254722dc01082fe2078f4fde295ad4d62ebc2eeee192cda6",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-47"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "source_content_sha256": "2e2fcea56e8eaf1acdbd5c1648b5c7841ee9de52ab3aa1163b624f1c7f01aba0",
+      "promoted_content_sha256": "e3acb629c79358c072474f7340e99fb1fbd3c2458392699deab2b45c7fdac7d9",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-48"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 62,
+      "item_label": "CS-52",
+      "source_content_sha256": "904d3eb52ddc32069cd6d46b1aef15792156ad630b70c942ddbbf768aa24d0cf",
+      "promoted_content_sha256": "846c62354a7fb10ff5d674b686719be350834ee9b2b0a2e946c42bf76c6d209c",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-52"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "d9721d99b99636f3ad2b7123de343e94a4ad24847f5206398c05349159679ce3",
+      "promoted_content_sha256": "dfbfc2e34d1223bb0bd07ecb022380e4b1dc4e1c8bbeb9cac093b53905a94bbf",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-53"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 64,
+      "item_label": "CS-54",
+      "source_content_sha256": "5eaa0df60f42ca1887505465b7a7fa251ea06ff27ac2df767cf236420560e69f",
+      "promoted_content_sha256": "7ab725a2ee6e84bc00a20dc313777d0314b7bbec80316df91d5c5a2c4c48efc4",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-54"
+    },
+    {
+      "source_paper_id": "gate-cs-2024-set-2",
+      "ordinal": 65,
+      "item_label": "CS-55",
+      "source_content_sha256": "f457679cb2c65700abf9be504f92cc7b6e2deeac46b2d6ae86b9c9089f9b4afd",
+      "promoted_content_sha256": "27fea343ee4b20df2adbcb660f852482389e73af009142b4facafe0338ecaa55",
+      "external_id": "pyq:gate-cs-2024-set-2:cs-55"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "cf5ddeb6c7e45a4824a0fa88f9aebde15694cfee4e90e7c9de196a91daa6a463",
+      "promoted_content_sha256": "0564f29fdf1646ac68837c1d3a0b8a5207931e0788bcc4da40809537eeb43217",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-1"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "6ee7dbea0683ad1010827d394211d43efbc655ef40c8bc4ac94aa83aa3e65c0c",
+      "promoted_content_sha256": "0e6584caf97a22c60a912db22fbb5f6a96717e81e1b538648bcc5b10c4399efd",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-2"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "8a616c079562b6ecd4bcf763a77b156f837058985c380804cbc0f3883022ad84",
+      "promoted_content_sha256": "21e6df569630df789725ba59b6ce53798ef89bd2f0a14a79f62294b340345731",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 4,
+      "item_label": "GA-4",
+      "source_content_sha256": "1777979e3cbb0b8b0e97fafbad39b5cd7fcd5e305b18b10a25fdeb3917c456df",
+      "promoted_content_sha256": "9e9b9b4d0606f221f11e9c001221d2498aebe13dcacbb82291de1a0a55199f94",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-4"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "691107aab5a4e71c22ad255921c8b30a13a09145559ad0ee03fa698e73de6869",
+      "promoted_content_sha256": "dee5d80504e1d6ec8823719aa526425d660de8a3a480e1d6bfadefde011d41dc",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "source_content_sha256": "04e10236801390ed69dcba395d1e1d759e49a458ee792eaab4027a107057da2d",
+      "promoted_content_sha256": "109cce14599bfe7477df61fe825be063e03a6378d7ae9ee4e897d356dad74887",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-8"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 10,
+      "item_label": "GA-10",
+      "source_content_sha256": "e9ef04b232e39a4269c5155dbb041b6b8ba081fca866b57410087bd29ec67742",
+      "promoted_content_sha256": "e56ee4e7fc8a192193b196135afd0fbb0b508a5aa210396b8eec1c7d59bcb60d",
+      "external_id": "pyq:gate-cs-2025-set-1:ga-10"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "349dfe356e19abc6e593144224d21fc229fcf89d3c82693f96b015001e1766c2",
+      "promoted_content_sha256": "34bcba681957367347fa732fba2db8454762505db13fccede59137ec26cf8fb7",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "source_content_sha256": "76795a69d1095381b50ab3f05ff15c2afc1d1899863caaa368ce7a3c6151acb3",
+      "promoted_content_sha256": "b6e8c2449fdbb2fa89542d054c02f3725ef26a376f6c08e11d0046cc0b3a5d08",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-4"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 15,
+      "item_label": "CS-5",
+      "source_content_sha256": "4ca1fbbb986291075263f46596b8498d4259585dbad6c3a3ad862c6e969d036b",
+      "promoted_content_sha256": "c975f9bce03852462b8ca8f4abfb0ef87d8d7cf3b41b902dfc9a94eae6d28019",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-5"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 17,
+      "item_label": "CS-7",
+      "source_content_sha256": "de9ce111fc203507aee4ba51497a9ac11bd714cd2468d54019e35a95646900f7",
+      "promoted_content_sha256": "eb025b21e95b34025e80aeb2846148b42c96be0f6ff532c7427e7a68250429e4",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-7"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 18,
+      "item_label": "CS-8",
+      "source_content_sha256": "612f01f97b9ad5bb62c8305a79bbaa8c6146e4f2f1a408b6161186b0b3868d14",
+      "promoted_content_sha256": "aa20ce9c3b27cef750d56244044043b04bf62f8ce7811033d0d2fd9080863989",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-8"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 19,
+      "item_label": "CS-9",
+      "source_content_sha256": "f0385113ec0e7c9a4946c0a07d007e50b75d87bc41bdf82a5e948a7f9e14f873",
+      "promoted_content_sha256": "6d756ee9267458835c04cce5e3f769f28a4c8a0f11bdf596f449003b051e379e",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-9"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "43077c15d193b60a2add5110b1252052956630798a2f694b0d8afc45b26b3324",
+      "promoted_content_sha256": "5597cfab2820fb57b14b71045793dec6f9fcb0553f7a1161825cb5e6eecf5409",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-10"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "source_content_sha256": "9d2834f2dea94a48fb2b043109ca6f01d78f64588e1679435ae10faa993ededb",
+      "promoted_content_sha256": "f85fb1cda52499a1deebd4c9d127bd6a9d4842ed9346bb5a6a2c4999715d9d75",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-11"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "source_content_sha256": "fd70dcdf63e0af71fd96fad62b13c933af474da723a468167b2d48eeb9d3c83f",
+      "promoted_content_sha256": "984682d9484ac51a75c31fc90bf1a969bcc0b231d96f3c4d07df6454de719f65",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-12"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "ed2f40c9f4457df515061daae4617ba49693d09e13dfa55630f6261e6ae88f35",
+      "promoted_content_sha256": "1346db263049ba87b83df994f42ac4a0f7f5a355f6e5ef6861e05ee216e10ce3",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-13"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "6aee69055e3d388153751886715621d655190a9a035041d39e25173dcae81d5a",
+      "promoted_content_sha256": "81c10d06a5de08c5130f432178ac6e17f11bfe854cae82d1fa6f4a2a3c96e135",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-14"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "14a89e505420650f60cb322720868ef31b3b9d73aa30a173f503434422db9cb6",
+      "promoted_content_sha256": "f9b291ef03bbdbdb498d89e9a943f7cea3a8b5499934fa4e93593b7465c0d3f6",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-16"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "source_content_sha256": "f4fc5a9e0b669f0542ab050540a26b2d97245ec1d0bde7b45828b659e9e508a7",
+      "promoted_content_sha256": "c546845cf453d4d5dbd05ef81a18272119f3c74b0016efd60d241c57f7d653fd",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-18"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 29,
+      "item_label": "CS-19",
+      "source_content_sha256": "82d934c9b5f369334d3f7e1e4ff95ea848f7b5567c8e5440a61daa8ddacb4d24",
+      "promoted_content_sha256": "98c8fa374f7d394eae647f3a302d47e1c4523fd6558ff9bc94f2dde89727efc8",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-19"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 31,
+      "item_label": "CS-21",
+      "source_content_sha256": "b38f64c82dd731fe962594fe8950a23d8bf3431547fb4463051eadf61d316f9b",
+      "promoted_content_sha256": "28808d20fd8226bdd3856754f2cca219e35fc14a3f0df64f9ce397d834e805c9",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-21"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 32,
+      "item_label": "CS-22",
+      "source_content_sha256": "e86d6f2ca6eeb892269e1106c217f6a03a5dff133d1c0d12bca4ab7a67030031",
+      "promoted_content_sha256": "cb7d5c6e261afbf0bc3c44b3582af02e1971100ae6b0cad0d0fd2496fee43bcb",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-22"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 38,
+      "item_label": "CS-28",
+      "source_content_sha256": "a4eb633a230f246921b367a4f1d8db3274c405f74e166e9c3da2adac643a8658",
+      "promoted_content_sha256": "030b328fa4ab052fbc6be688f5ad76f6ef01ebd0f8b0279ff73eb6fc3931a9c7",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-28"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 39,
+      "item_label": "CS-29",
+      "source_content_sha256": "1de9204935b82b3bc93caad1c99d2d818abb7bfc4b9513a0a478172b9fda3a81",
+      "promoted_content_sha256": "92027cc64ba68145217c6f1c2d20e1c81afca784ca37a521beee47aeb262d121",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-29"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "99597389ef08c71f330853a0737bb1c9bb55d5b40ae5136e445544e7d6c3646f",
+      "promoted_content_sha256": "65a8e56ff6fd7c47ed5a8c81fa42b4c25997f36b3b5cd3b2c06f70d6d07b5764",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-30"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 41,
+      "item_label": "CS-31",
+      "source_content_sha256": "1620193d420b93af81943df63cd3b06b71a74b23c937fa20989755873211aece",
+      "promoted_content_sha256": "830583a2c29ef8821820d63cf073ccf8e7efd4514dc819e27619aba4860bb6de",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-31"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "2fe3ab6ddcbde9e4d7bc2949c600a3d6cf55c97716f96d1a5d40c109a5163add",
+      "promoted_content_sha256": "94e48558a24d18485236922adefe8ddc5ecfa2aff5479632ac63f974b74ac944",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-32"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 43,
+      "item_label": "CS-33",
+      "source_content_sha256": "8ff85f10f63a43abc0c1c91aab2a65cb248aa701767ca84b62bf09049afeccfa",
+      "promoted_content_sha256": "64319607e0f192de45514a4080ccc3cb3b1c6ade5fa6cf961c27a153ab282e72",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-33"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "cde772a72b77da30c5108056817146da1235227786964262e06b42b69dedc545",
+      "promoted_content_sha256": "bf90431e7c179a0cccdc727eef5b03e998a0f27ac3d8fa52f44c84781f211157",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-35"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 46,
+      "item_label": "CS-36",
+      "source_content_sha256": "e452d31d647eab2922f52436b92d11e465eb1473289df0bca843148940b4d0b6",
+      "promoted_content_sha256": "f8faed94adae3c49dca8ca2737f46ef45f412f9c1512716fbccf38412693a5fd",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-36"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "f6263900aeb1b82f085a5beadb9f4da0c13b3366fb61d60d45b20f366f49e125",
+      "promoted_content_sha256": "9d0504c254aef9a79c5513147353fb7a3fef761e3f86f9492b0e59741079333f",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-37"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "source_content_sha256": "62ba59c2b74bf7d6dcc00ed4717def7f00a6fe4d4719c4ee115aa100e4ce8113",
+      "promoted_content_sha256": "870bce2ed74a707ec70b186c766b9e143c2aebcf89c6300a80ab130e06600006",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-38"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 50,
+      "item_label": "CS-40",
+      "source_content_sha256": "bfa3b45e110a0ea73d8b2575d6815d4a2c3c5420153ffbe6b43d65e60a701b31",
+      "promoted_content_sha256": "4f8bef881eb82cae83a63204f3457b7707abe9e8a38058e17e58ee07c39f4741",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-40"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 51,
+      "item_label": "CS-41",
+      "source_content_sha256": "a8ac725b1b3f56cc0f133012c74f3399190d7f23a156f62902f9ea9e54717c12",
+      "promoted_content_sha256": "a18fa391e0fd3707bc21e02075bb2949eb617dd4db611e034d1b7a637b1aef89",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-41"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 54,
+      "item_label": "CS-44",
+      "source_content_sha256": "4be49566186d90505bbd51d91ef8688f813a004d03ac1ee49ac0af7a1fa9a34d",
+      "promoted_content_sha256": "7688909457ccafbebfac95047bba482adb9c24fbfbf1847e469a5b86469d540f",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-44"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "source_content_sha256": "490fbe1fd61d20b91efb3229b354537474b200c3f0934fccef593755d31b9f11",
+      "promoted_content_sha256": "089e9527b9cae87d58b434760d3fd7d760ea32e20fec8c3fdf1f12ad281584d3",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-45"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "source_content_sha256": "71a0bcd82d71a0ac99bb3b4c971aef05b3a79bb5367f19c55318ca648b4cc166",
+      "promoted_content_sha256": "6c1db5e151c2f26490f931991e17a7f1c9ea8aaa2e234646a8e150814cad8d04",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-48"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 59,
+      "item_label": "CS-49",
+      "source_content_sha256": "b9366c52c06897cc0b540755d6b0d7b72306b5070b84ff672d968c77c51688b9",
+      "promoted_content_sha256": "5c98782268d9b43bde7394c18cb4cc15d6c4154c687f4d08354a208349adcdd2",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-49"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 60,
+      "item_label": "CS-50",
+      "source_content_sha256": "d61b2570405da6db2518413c5ecd4b21586a87920aec2197eff2a21b8ac16180",
+      "promoted_content_sha256": "6eefc909d3920ac31cf099d7f9aa0578e0bff8833f5a1cb1990929f58279752c",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-50"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 61,
+      "item_label": "CS-51",
+      "source_content_sha256": "f42433a835a409073c7c3c98bee6f92778d2791b47c97cf686fc2ebc7d157f69",
+      "promoted_content_sha256": "d060630e86df3d5438dbb98c14fb41bf764dd4abc2d45dc73d1eebd902f92dc3",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-51"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "8018eda70f959043ec88c08b93f8e94d0e7bf075e40aa1f4b9327a2eee27ad69",
+      "promoted_content_sha256": "c1bb1c08d96e642dc97afd73f69fc6bb4833a3b111cc34f09ff7b8464f7330f6",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-53"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-1",
+      "ordinal": 65,
+      "item_label": "CS-55",
+      "source_content_sha256": "ef0d0468c7da9c3b3b472514f99481e5fa1a20afd1b3b61787a2438ec80a90a7",
+      "promoted_content_sha256": "563c102677aadda244eca8035edbe6efa6956ac61cf3e993d8eaec26ec30f2ba",
+      "external_id": "pyq:gate-cs-2025-set-1:cs-55"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 1,
+      "item_label": "GA-1",
+      "source_content_sha256": "b22ab59ba4631e00356b08c8bda43d0a1e2d1e306636d69c50f8dbeb2976940f",
+      "promoted_content_sha256": "892c24d4ecaa0f861df4ddb04139c854c48fe75007dfe7c294cda3103ee4d15b",
+      "external_id": "pyq:gate-cs-2025-set-2:ga-1"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 2,
+      "item_label": "GA-2",
+      "source_content_sha256": "16d62dad37b9c6fa731bd7ee2e1c6b3652267c89bf8397b3d37bd00b33d5de2b",
+      "promoted_content_sha256": "a2e21f577b83983316b7de3912dbfb9fa8404d8aab340cd9979e1e0bab7dd74e",
+      "external_id": "pyq:gate-cs-2025-set-2:ga-2"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 3,
+      "item_label": "GA-3",
+      "source_content_sha256": "01ff5c042dade5c4444a591523e52643d056a3f9989efca3408afe126d30e2b3",
+      "promoted_content_sha256": "7d69399bba9e6232d92a475b5d6c5d5975912a42853437e1a419772927cbd2bb",
+      "external_id": "pyq:gate-cs-2025-set-2:ga-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 5,
+      "item_label": "GA-5",
+      "source_content_sha256": "1e7fe22c2f8799a714228a397bc804784c106ba52a683cb5dfd4fe3e008a8cc5",
+      "promoted_content_sha256": "9e7326bb081ac37ecebe38f77445618ea47372513b2e5c31c50561c291d19f65",
+      "external_id": "pyq:gate-cs-2025-set-2:ga-5"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 6,
+      "item_label": "GA-6",
+      "source_content_sha256": "032470240311e6cedbf0a88e4f2ed94467a17feaccaf4d9eaddc792522c34e26",
+      "promoted_content_sha256": "5d27bb6134709b7fc2226681dc5174119a7d8137aff8a66bb841090b975b412f",
+      "external_id": "pyq:gate-cs-2025-set-2:ga-6"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 8,
+      "item_label": "GA-8",
+      "source_content_sha256": "b72125c34f0865402e6ea220d803e7ebfdbef4f604eb26eda61b3a8b5fd20235",
+      "promoted_content_sha256": "6af134a890b7b814d2f87c6289ac12e14f7bc35b86e16186be4234d8869e9b08",
+      "external_id": "pyq:gate-cs-2025-set-2:ga-8"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 12,
+      "item_label": "CS-2",
+      "source_content_sha256": "7bfe38f21bd58c0e76d5e88a74bcfe472dcb927b659c3c9b8daa74bd3d0d8223",
+      "promoted_content_sha256": "463e805e480680ab8cea56e4c1b9ff6360293105d1de8ac1feb392e883c815e1",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-2"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 13,
+      "item_label": "CS-3",
+      "source_content_sha256": "e07a38a7038a49cfac1b13ce873bd1034068e97b442e168206fa847cba27cd4f",
+      "promoted_content_sha256": "3db2e1a8b23b1e09395506ed5cd8a6f72f1c56ad33583574b5d05ebcd5477abd",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-3"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 14,
+      "item_label": "CS-4",
+      "source_content_sha256": "2dd21ae5493b00079c6c6d4cd0d9091f1c541ef35c7e37a7107a9fa7d571e639",
+      "promoted_content_sha256": "f080b90e4338ccf26719df83d9743042f17584e3645bf4588fc1598258414cb8",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-4"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 15,
+      "item_label": "CS-5",
+      "source_content_sha256": "aedf3c07f2cceffbaf65d72775680789b82cdd29510b5bfd29752d93de4afb25",
+      "promoted_content_sha256": "d45f7b9e1a71e1e334373fb6561f640f1d22a6d19aa820ae9bded4e94d6fecbb",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-5"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 18,
+      "item_label": "CS-8",
+      "source_content_sha256": "6999c714d9e17e690a1dbdb06a2cf4cd6cfadc7bcd91db42a74aa672c839e4ff",
+      "promoted_content_sha256": "cd3965054402f24a5446e835640bc277cebff58bd1cd51432c955c4061948a18",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-8"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 20,
+      "item_label": "CS-10",
+      "source_content_sha256": "64a392a2d345aa6cb71daecf246b2cd408d224c841a124080b4aff14536964fd",
+      "promoted_content_sha256": "219550fa9bd31f6ac6f2bbe8abd80e893b6146878398dc92dccc13f9eb1ea406",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-10"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 21,
+      "item_label": "CS-11",
+      "source_content_sha256": "7596709109bcacb67de0f2d72ae1669fb005b4310e317e6c9955b0a088580bba",
+      "promoted_content_sha256": "1a583981dbef4241b6880b12a032dbacaed9cf6ed0cbcb2a319cf8b28529660f",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-11"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 22,
+      "item_label": "CS-12",
+      "source_content_sha256": "42b16b08e1420f5cbfb414000fab5d12f18e82c08b9e563bc4786c625157ad2d",
+      "promoted_content_sha256": "7412215e64ec21861303617eacbdb6c4ace34cc509142de22d92161b72574474",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-12"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 23,
+      "item_label": "CS-13",
+      "source_content_sha256": "5b32ca5db2425b445649eb9ad613735cf702947e1c13d2c1076f9b675fe5451b",
+      "promoted_content_sha256": "dcbb4c8bfa73d269ef5120e3f37670819a63578358207e24b467b5d4f3533c7a",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-13"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 24,
+      "item_label": "CS-14",
+      "source_content_sha256": "159333374bfd61c84faab19e865bdf5c086c27c1cf3468bf6e29451ccbb85438",
+      "promoted_content_sha256": "28751b6c91c86350f20f5cf70612b342da283446e1c8412acb4b2007d3445f8e",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-14"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 25,
+      "item_label": "CS-15",
+      "source_content_sha256": "7f196cee9530f6d7ed9e02fc2b0b64517f6360864174adfde1fabb929219a8cc",
+      "promoted_content_sha256": "96c97ddc44ac1e1fdf0252b5dcd7f4177babe4a7dab931372b8dafe1e0e1f43d",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-15"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 26,
+      "item_label": "CS-16",
+      "source_content_sha256": "8cb0f5bdcf63fc3096fdda10805a2ee8a4a9fea8190229215e73a58eebd133d6",
+      "promoted_content_sha256": "c52efde291ea4ef08b6adddb51f5411f21033dcc22e5d9ea643aff270c8fb500",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-16"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 27,
+      "item_label": "CS-17",
+      "source_content_sha256": "555f15cfc2ca6ea66afb048b326b4899ec8c2eb87970f0a33375b1ffa372b504",
+      "promoted_content_sha256": "6eecf06c89422dda477e600d90370f1e80ab6bf4253560a9c1adb36ea7cd8922",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-17"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 28,
+      "item_label": "CS-18",
+      "source_content_sha256": "c23d56c738fe871efa0060ebcc382fbaf766954de34a8446fb0f60ed3aa77a79",
+      "promoted_content_sha256": "d5b56c87801d679dedede8f219cf04a85910c5eb52d52907b42110fdad0be7ae",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-18"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 29,
+      "item_label": "CS-19",
+      "source_content_sha256": "d94780126a220a4a5c8aec45d661bc171bea732825c5828235fff61977c66e93",
+      "promoted_content_sha256": "a32b91b4c51450a894af5475415c26b30adb75389a8452af1ce01500468fca35",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-19"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 33,
+      "item_label": "CS-23",
+      "source_content_sha256": "cb71fa01e0bcd32bbad08fbc45c30bdee5194af3ddb1ff7b218d49ee83a07dd4",
+      "promoted_content_sha256": "9e4fa148e4579778b1ab32173702e41ca1a4f5ab30b2d41623e280637f167a24",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-23"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 34,
+      "item_label": "CS-24",
+      "source_content_sha256": "15291994dadaec865aa863415460c4447f1742bf9eb853c26c9c723a229ab263",
+      "promoted_content_sha256": "309058d36eea20782ef200140943f9bc19d06b5124a388174a85400df9d6197e",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-24"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 35,
+      "item_label": "CS-25",
+      "source_content_sha256": "112c69ffd97b7c5ddda85108bf35050d49a7560b7ca54da3091c25176ddeed4b",
+      "promoted_content_sha256": "3e7fdaafaa204e39e16b4111c1409d9b2dd82f50ec498f174604b694fee9c3a1",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-25"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 36,
+      "item_label": "CS-26",
+      "source_content_sha256": "758df8511db77336debf91c2a791c4c3611514f9c3eac92e007df453a03acf6c",
+      "promoted_content_sha256": "43e788846b395f4d1466ee99acfe928ae607bc1332b32db8ef8a4ceeb6e471e4",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-26"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 37,
+      "item_label": "CS-27",
+      "source_content_sha256": "687e7677ca27bbbfdaacd315e2b79314c767cf0275ed1d5b0b9c24881335ee68",
+      "promoted_content_sha256": "0b25f7a140ee08838a70b01de0deac15a861a8d436e6c6f89c5207adba89bf04",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-27"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 40,
+      "item_label": "CS-30",
+      "source_content_sha256": "f92e74897fe9a164736acb0f699fa695d41dd918dd39916d835a0d58b253b163",
+      "promoted_content_sha256": "ff95b93e339348c6125ef2947cf85c85cacb12d82a41f947bf02c55c03a1997e",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-30"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 42,
+      "item_label": "CS-32",
+      "source_content_sha256": "11b8baf4956a22217af8d6e6b0dc218293810459463485280a96b665271e7290",
+      "promoted_content_sha256": "07ab87b72810dd0e9ff024f54ae1a29c37deb22238280db2637eb82f8d426a8a",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-32"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 43,
+      "item_label": "CS-33",
+      "source_content_sha256": "6d2b2ca8ca36c76d032b2a2e38d4fa20beba228b2a964aeb40406c0ae928dde5",
+      "promoted_content_sha256": "9e73135ec9326e572dc9ad2df70be76074cb5e69bea5c656950d5786ffc0cd3c",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-33"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 44,
+      "item_label": "CS-34",
+      "source_content_sha256": "de947471ae9e05ba1ff37f33dfca17efc1fe62a13ed73d084b800004925c839c",
+      "promoted_content_sha256": "8bb7e71358f34ae0ee59d9c2704dbf95c146c2585ab2d1767916f33ce6348c8a",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-34"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 45,
+      "item_label": "CS-35",
+      "source_content_sha256": "618b0812a6b3954debe37b3b6c7c6b5cfe0c1662954223203efd06773a553219",
+      "promoted_content_sha256": "2abac44bdd3d48e493dc3e81a5cf2ac413d3243cf29655a4bc32a9d16d1af767",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-35"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 46,
+      "item_label": "CS-36",
+      "source_content_sha256": "b85cc117d771092829542ecd01a173c63c12fc5613ffda2f7bfff27e195f2594",
+      "promoted_content_sha256": "55d7ed6e8e8b0f9ce02978d66070125a75300a514e77e09e0d078b9119d44137",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-36"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 47,
+      "item_label": "CS-37",
+      "source_content_sha256": "f17a1e4551b9f67d30caf665df27b5be7d3f9afd65e277cfc89882862c97d4d7",
+      "promoted_content_sha256": "29dbabd3b74f361d1eb3e9be288365aa85a1d9b14893e2673721d49b5de702af",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-37"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 48,
+      "item_label": "CS-38",
+      "source_content_sha256": "bde1156b1cb880ed820d5fb1567d133ca6315c45f57ac8a89c132887ef85a7b4",
+      "promoted_content_sha256": "2c56d6ae7c6fe0c5aa83b7d259bd5f8dea340af5ece3d0232a8aaf300694eea2",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-38"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 49,
+      "item_label": "CS-39",
+      "source_content_sha256": "829b22eedc81919f55474e4e6a7032cbd517eb0fb746961a4cfef9094af27d36",
+      "promoted_content_sha256": "c10330bf204007ed0aebdcaaae66e2402c7fef5b56c8f3684ca0d8c15a26d2a3",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-39"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 50,
+      "item_label": "CS-40",
+      "source_content_sha256": "be25f8710c6a57600832270071db19344822f0b63d613b16a2960b1fc0363169",
+      "promoted_content_sha256": "7756d326ed110bc7c02eb080d84541d1977ecc5a899c216d820e3d9b432f283d",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-40"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 52,
+      "item_label": "CS-42",
+      "source_content_sha256": "62ef51daeecdbe82fef423a9387b7244b726d62e7797cade14f87823232d299c",
+      "promoted_content_sha256": "76f971efe0a7cfed4ddadec81ea4cf5b4e15ae0bc23732acdef8b9ca385f7285",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-42"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 53,
+      "item_label": "CS-43",
+      "source_content_sha256": "021c151bd50f4224847d5e60d266ac08375f2d7504887e52a4cb23d226be2730",
+      "promoted_content_sha256": "45d53dc3e646bf9bdbf19d736dc4da636eb36633e1aef453dbfe7c9100390d04",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-43"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 54,
+      "item_label": "CS-44",
+      "source_content_sha256": "06a31b2ec59873c6287948d6985e005abc0c6b61881917a39484960e8c2e68ce",
+      "promoted_content_sha256": "f3fe68be8e1afc12758011688f966bbf94144d9912ea36ca9c260e2f8339d5d1",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-44"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 55,
+      "item_label": "CS-45",
+      "source_content_sha256": "a0570398709bbd0764beb25a0a8c3db2c0f6fa3c8ccd0602b2a4a9281e696f24",
+      "promoted_content_sha256": "8e28e6a2b9cff7da62415a3c8031c406de254c49bf290e04f68f52cd338bfbbb",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-45"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 56,
+      "item_label": "CS-46",
+      "source_content_sha256": "6326913be1c3a56fefff420f37a2a119ea081324c1747104c874ae047e63d67b",
+      "promoted_content_sha256": "d7c7f63117eca309c3e93aeff7c66450cab52d9aa8bdd6cc79d81e1fd53e6c32",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-46"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 58,
+      "item_label": "CS-48",
+      "source_content_sha256": "f700945120d98d1413b579c4e3d21460b08d5c5be183cf062c2afd60b9660520",
+      "promoted_content_sha256": "7c292fd489072de9b9e5a509ef14e43676a16b1b07fea7c4d37d7d46446b392f",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-48"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 62,
+      "item_label": "CS-52",
+      "source_content_sha256": "872281ece4d6de19a42c1624deb99bfeb0185c0ada2a98151a47e917cee56a35",
+      "promoted_content_sha256": "3e9932a6c5fd95c978435e4a146eb730b2d82e99cb904d5138ae57b574e18829",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-52"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 63,
+      "item_label": "CS-53",
+      "source_content_sha256": "cf3105982b5cdfa5e0e534d9beefb8a030591a3e232ecf1978cc0ef7763348dd",
+      "promoted_content_sha256": "e4666cdcdae2fa1aaf09fb15809409b980e1fb6eba01c950901783fc74c0fbf6",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-53"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 64,
+      "item_label": "CS-54",
+      "source_content_sha256": "2f82e060e5e12dcd1b7c1e63c90aead64c9a91cbe3f98ed01d5adfd94fddd809",
+      "promoted_content_sha256": "db5a92f882e2796952693dea94eb17f73a3f695ab0fe3d0a88a919107bd85649",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-54"
+    },
+    {
+      "source_paper_id": "gate-cs-2025-set-2",
+      "ordinal": 65,
+      "item_label": "CS-55",
+      "source_content_sha256": "742f5a23280939b158a909b15388c50ea4f7fa58bf29edaa29e71ae5f0a47361",
+      "promoted_content_sha256": "432923f8d070d6464627737f7c4b38067ab7e9371fbd6c927ec7bfbf6d3339a9",
+      "external_id": "pyq:gate-cs-2025-set-2:cs-55"
+    }
+  ],
+  "retire_targets": [
+    {
+      "fingerprint_sha256": "0181ea0e091c395fde252e04ad0badccaf97c29830c0cb8ff5d044b7fe23f7fe",
+      "external_id": "gate-cs-2018-q01",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 1
+    },
+    {
+      "fingerprint_sha256": "26a10821f73ecd639f61ac392e0c78c0ae8ac99e1d14973984e6d4bf07a33e60",
+      "external_id": "gate-cs-2018-q02",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 2
+    },
+    {
+      "fingerprint_sha256": "255328d82dab9fca248b337f7b4c5d73541fb63b0f447fdd5ba53422d49e71d2",
+      "external_id": "gate-cs-2018-q03",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 3
+    },
+    {
+      "fingerprint_sha256": "b2d34c2272bf6902b44e171e6be6ab02a22d80a0e506d55c94e5a8fdf1cbb04e",
+      "external_id": "gate-cs-2018-q04",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 4
+    },
+    {
+      "fingerprint_sha256": "5abf502d85c616ef7b9b94144ab817880b0b337b2c1e5170510513d48e653e3d",
+      "external_id": "gate-cs-2018-q06",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 6
+    },
+    {
+      "fingerprint_sha256": "8e9170d30c40d454d7fb6c53c604a0277d1bde7c139921eb774abcde8ce049b4",
+      "external_id": "gate-cs-2018-q07",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 7
+    },
+    {
+      "fingerprint_sha256": "5e03379a9619ef18a5b1a14bf804caa3602cea90fd86b14ff106c2affdcdace7",
+      "external_id": "gate-cs-2018-q08",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 8
+    },
+    {
+      "fingerprint_sha256": "3bf9ac1f156c5a494dd27014240df06a03d3d740868b76202325a4bbc0cda507",
+      "external_id": "gate-cs-2018-q12",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 12
+    },
+    {
+      "fingerprint_sha256": "10ea436ec0fd357c7a03645c7df6feb7f0afd59bfc031fd50c031b432f4d5f6a",
+      "external_id": "gate-cs-2018-q15",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 15
+    },
+    {
+      "fingerprint_sha256": "98698ad428c246407da4f46c498468c24a7bbfff6ea907a83c9cff2ad24f3cd0",
+      "external_id": "gate-cs-2018-q16",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 16
+    },
+    {
+      "fingerprint_sha256": "a613e074e442948d4048d1de98ad927d0398afbf855f961e3207de90996cb41b",
+      "external_id": "gate-cs-2018-q17",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 17
+    },
+    {
+      "fingerprint_sha256": "4a95fb6d1fe6bc3d3138fec5e50be052889833be3ac7cab3d34d65c2c2231843",
+      "external_id": "gate-cs-2018-q19",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 19
+    },
+    {
+      "fingerprint_sha256": "9c3bdd58feceed4e3233fd05b78adf33d0438290ead56d03ceed27a8c26dea43",
+      "external_id": "gate-cs-2018-q22",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 22
+    },
+    {
+      "fingerprint_sha256": "16ec46be87df1f5be847bb4203732be21ae783164b2688b3a31f2a3e67d59732",
+      "external_id": "gate-cs-2018-q24",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 24
+    },
+    {
+      "fingerprint_sha256": "defa272377d39fad54073c728c7597e7fb6deca9f34bd5fdba355d00e1439d46",
+      "external_id": "gate-cs-2018-q25",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 25
+    },
+    {
+      "fingerprint_sha256": "a0d641a462bf549ebbdf128c51b12e652175e9b930a58d9ea46169cbfb41c60e",
+      "external_id": "gate-cs-2018-q26",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 26
+    },
+    {
+      "fingerprint_sha256": "665dd87dddb2fab6aa3154219c5ed6544784d6f628f2b49738567995a42a4dfb",
+      "external_id": "gate-cs-2018-q29",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 29
+    },
+    {
+      "fingerprint_sha256": "d296d3487558b000778c068020440d7e6e4fc6c6cfb72b57deda63e2378777ae",
+      "external_id": "gate-cs-2018-q35",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 35
+    },
+    {
+      "fingerprint_sha256": "853b8043d2913e3dbac646c84f66effc0b14b2ff8f19c72dbf26acf73b82f8fb",
+      "external_id": "gate-cs-2018-q39",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 39
+    },
+    {
+      "fingerprint_sha256": "0d72e23327effa753d1371c3cf98fbe0e005d85029d73b6c3240aaad253e8d3c",
+      "external_id": "gate-cs-2018-q41",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 41
+    },
+    {
+      "fingerprint_sha256": "31b834ed562d901c77407d121f8158768dc3c5c27bc92a00238e3e28ba0c295f",
+      "external_id": "gate-cs-2018-q42",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 42
+    },
+    {
+      "fingerprint_sha256": "0cc022679f9100f38033aaf94c8dfd76dabe30d10f288412effdd4432f820871",
+      "external_id": "gate-cs-2018-q47",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 47
+    },
+    {
+      "fingerprint_sha256": "5b337c5e6366c440b0d69ee9db9628c7fbd7e0f16d9566993d25cf54d773188d",
+      "external_id": "gate-cs-2018-q50",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 50
+    },
+    {
+      "fingerprint_sha256": "9cc98bc5da7011eb1014f5e56fe74f2a50c86503e44139203fd2a5fc507ab5c7",
+      "external_id": "gate-cs-2018-q54",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 54
+    },
+    {
+      "fingerprint_sha256": "4f5c34f9b52aafb3e5fc34497ce6f3202e18f1fac51fd5c7cb16fb8f77b06dd1",
+      "external_id": "gate-cs-2018-q55",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 55
+    },
+    {
+      "fingerprint_sha256": "c43525ed7f8f87a3752c5e128d2c23d852637174f7eab96fb828f23c4223487f",
+      "external_id": "gate-cs-2018-q60",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 60
+    },
+    {
+      "fingerprint_sha256": "1c1d9ab3d1161a0b87bc2517db9bb75eac5feba7be6d60ce901ee8d62b013fdf",
+      "external_id": "gate-cs-2018-q61",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 61
+    },
+    {
+      "fingerprint_sha256": "0baf87b38ea8a5a9dc38445b6d4c1236c852a237f092eec5928f86a4c14b5d01",
+      "external_id": "gate-cs-2018-q63",
+      "source_paper": "CS-2018",
+      "source_year": 2018,
+      "source_question_number": 63
+    },
+    {
+      "fingerprint_sha256": "0a7fd44489b53702b00950bd7ab5644210b82fa3d5920e4ace4b9f683e25d8b4",
+      "external_id": "gate-cs-2019-q01",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 1
+    },
+    {
+      "fingerprint_sha256": "969beb1a5c0aa260fbebd04598e1cac936687738e19bc51d2629c0ba80afcaed",
+      "external_id": "gate-cs-2019-q02",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 2
+    },
+    {
+      "fingerprint_sha256": "6ae6f9c46aa21290225afb42e69a780f5768b6d74874cc861dfe41dc840f1d22",
+      "external_id": "gate-cs-2019-q03",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 3
+    },
+    {
+      "fingerprint_sha256": "7a19791d745b6e70337597a950cb455079e448c67a833e0cdb2424ab2ddbe41c",
+      "external_id": "gate-cs-2019-q04",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 4
+    },
+    {
+      "fingerprint_sha256": "8b57b67938fa276df3df6d21016ed6a54b3e63b60d909196c58ed4d8bf0b08e4",
+      "external_id": "gate-cs-2019-q05",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 5
+    },
+    {
+      "fingerprint_sha256": "742fca4429d6e87937f0acd0612f05b78c05afc102e983e7dbd2091a1a723521",
+      "external_id": "gate-cs-2019-q06",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 6
+    },
+    {
+      "fingerprint_sha256": "9b4761c3c4fb173a78b0f43cb39601e7d77b1d5a6e198f3827003d6eec7b250d",
+      "external_id": "gate-cs-2019-q08",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 8
+    },
+    {
+      "fingerprint_sha256": "f67aa8866bbbdba3d36624ed20a1db678bc189481087b02aeef12df72f0864ce",
+      "external_id": "gate-cs-2019-q09",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 9
+    },
+    {
+      "fingerprint_sha256": "266a0a0936784365fd8d5db82720a375ec91befcf5654a14aa3f73c3c119fb64",
+      "external_id": "gate-cs-2019-q11",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 11
+    },
+    {
+      "fingerprint_sha256": "cd4fa00f93138067d4f405b907529ec84b15fb8aeefa878ffa09a7e8023fca7c",
+      "external_id": "gate-cs-2019-q13",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 13
+    },
+    {
+      "fingerprint_sha256": "b0bd544bf5006efc14eff9bd0ec5c305ba85b0aed5fda7e57f542faf1530b2dc",
+      "external_id": "gate-cs-2019-q14",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 14
+    },
+    {
+      "fingerprint_sha256": "5484520631581e90c20a6753ee92a26708ed7bcba65b80bf5dde2857fa36af84",
+      "external_id": "gate-cs-2019-q15",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 15
+    },
+    {
+      "fingerprint_sha256": "dec7f9e7fe1a85587188b8d52d66340d61d5c1f41824bd36edcb8546a1f4069c",
+      "external_id": "gate-cs-2019-q16",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 16
+    },
+    {
+      "fingerprint_sha256": "069a07e457de8484e30befe2a9bbf6182080de2b55e6c8731efc1bedd9f7d754",
+      "external_id": "gate-cs-2019-q17",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 17
+    },
+    {
+      "fingerprint_sha256": "5942e4595d8a2af83a065b7d7a078f0bee1acef04bcde34f187afde6819d14f6",
+      "external_id": "gate-cs-2019-q18",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 18
+    },
+    {
+      "fingerprint_sha256": "32af0b9c7aa46ef1e10c9f2d1f8bd9e8eb200c6aa4983e9066187aefde7ba17e",
+      "external_id": "gate-cs-2019-q19",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 19
+    },
+    {
+      "fingerprint_sha256": "236d8f24df2ff813277d6b599b223aeba67ac9fd3bee77c6bab0023680413ad0",
+      "external_id": "gate-cs-2019-q20",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 20
+    },
+    {
+      "fingerprint_sha256": "de6a4c1111de4f1f2b0e53dd61f3ce322059e507fca3a72c59ce87bdcf975a08",
+      "external_id": "gate-cs-2019-q21",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 21
+    },
+    {
+      "fingerprint_sha256": "664d25905a2609b6cb1e10c23d1f2fa0a1e5128c78bd20561bbd9cee4fc18a10",
+      "external_id": "gate-cs-2019-q23",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 23
+    },
+    {
+      "fingerprint_sha256": "223e2ba006f628737ff73c61b367fcd27807f4465735937c32b512a45048939c",
+      "external_id": "gate-cs-2019-q24",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 24
+    },
+    {
+      "fingerprint_sha256": "07b7384d39097e0ad57b5f882dc19c1ba017b052ebe3876cd0da10af77086255",
+      "external_id": "gate-cs-2019-q25",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 25
+    },
+    {
+      "fingerprint_sha256": "c5fdcc2768e2eb6ec170775cd1fd651d048cec2d0fbf0f49d0e59cb55fa1b3ed",
+      "external_id": "gate-cs-2019-q26",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 26
+    },
+    {
+      "fingerprint_sha256": "d317f51ed61c693d65423c974f71fe377e5ca811f7fd7adbc1ebeb69bbc70833",
+      "external_id": "gate-cs-2019-q27",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 27
+    },
+    {
+      "fingerprint_sha256": "84e22e89a041af5716aa5bc8327af71a11c24ff32bdbe4f87a1aa73838b1aea8",
+      "external_id": "gate-cs-2019-q28",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 28
+    },
+    {
+      "fingerprint_sha256": "93120f36b0e05d1ca80d39eb690aa61d2ccd33309c47f9074687233c3f36bdb2",
+      "external_id": "gate-cs-2019-q29",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 29
+    },
+    {
+      "fingerprint_sha256": "fa31c0101db4910d075135b8b59275ea4f1fb11cdbdc583f633e0836b234f615",
+      "external_id": "gate-cs-2019-q30",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 30
+    },
+    {
+      "fingerprint_sha256": "505a7655db85336dc3c108e845f3d02d4fbc14d1a16e4ad1fea16898e221cc05",
+      "external_id": "gate-cs-2019-q31",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 31
+    },
+    {
+      "fingerprint_sha256": "922ce3dc41a53af75582a151804e46da1945d1113133cc1a5f5378a4bf34c4e1",
+      "external_id": "gate-cs-2019-q32",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 32
+    },
+    {
+      "fingerprint_sha256": "2c7aad426225b8cbeb16a8832427f5850c01dae9d65cf0199f7a95d8ec9b4267",
+      "external_id": "gate-cs-2019-q33",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 33
+    },
+    {
+      "fingerprint_sha256": "fc6e86da2bff7182cfde9f03d8fbe0a72868e778a739b43f6abc389e7143b004",
+      "external_id": "gate-cs-2019-q34",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 34
+    },
+    {
+      "fingerprint_sha256": "4d8c9af8b55e1f4706b59652b52bf374f50e87858eb8771907395d5600e61efc",
+      "external_id": "gate-cs-2019-q35",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 35
+    },
+    {
+      "fingerprint_sha256": "d14292bafbe00964f66f8446459333326209938b5326cf55e1a6161c723afb15",
+      "external_id": "gate-cs-2019-q36",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 36
+    },
+    {
+      "fingerprint_sha256": "28f3d127e8c2b4eca83619a92b47470f851197029b53104b469bf3a6befd35be",
+      "external_id": "gate-cs-2019-q37",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 37
+    },
+    {
+      "fingerprint_sha256": "dc7f8edab8710e8b06376f89af0f45bb24bcfddda8d2e906b05c1133b85df5de",
+      "external_id": "gate-cs-2019-q38",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 38
+    },
+    {
+      "fingerprint_sha256": "e184f6219862b3777a1a07f8543c1970322e83882dfd6310c5cf7157caeeaa41",
+      "external_id": "gate-cs-2019-q39",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 39
+    },
+    {
+      "fingerprint_sha256": "dba744c551ff99110d42bafdb735b31d92bad1fb78759e7174c5d468bc7d8604",
+      "external_id": "gate-cs-2019-q40",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 40
+    },
+    {
+      "fingerprint_sha256": "9e0d9ca0cf13b5bd645982716303f5eed6d61001c28b3f87b67d50b55f90cf19",
+      "external_id": "gate-cs-2019-q41",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 41
+    },
+    {
+      "fingerprint_sha256": "2b29d70dd7142b21a26637c8bc1ebbb2511ee53aa97e9db44c1a7af125f73b67",
+      "external_id": "gate-cs-2019-q42",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 42
+    },
+    {
+      "fingerprint_sha256": "aa6daf526c8f11664f4eaf18d1b7400b6fa4d00e5fbf385fd4e7f963690e143d",
+      "external_id": "gate-cs-2019-q43",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 43
+    },
+    {
+      "fingerprint_sha256": "3c52d89dfde2ff630a7f07e6e719a7f523d62a85f844eb162e8c8ce0a6e7ee33",
+      "external_id": "gate-cs-2019-q44",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 44
+    },
+    {
+      "fingerprint_sha256": "722d93fba14800223d341194831d6e40459897cbfcf7e7c5ab72635686edfbc0",
+      "external_id": "gate-cs-2019-q45",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 45
+    },
+    {
+      "fingerprint_sha256": "02fc1f022c8372a0ac24c8eba88bf97f253d0eb7f428833c6537cb6adace94ce",
+      "external_id": "gate-cs-2019-q46",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 46
+    },
+    {
+      "fingerprint_sha256": "e0ebcf6e745394c370898186d7402189ec32d366f2424259ec9c2327ce2ad84c",
+      "external_id": "gate-cs-2019-q47",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 47
+    },
+    {
+      "fingerprint_sha256": "24cbef0d7c3917ee25487ae5c2bf96b0d99f98ec0ea0c60f1a5d2001f52efe7a",
+      "external_id": "gate-cs-2019-q48",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 48
+    },
+    {
+      "fingerprint_sha256": "fdf7bd0e8c0eb686e62558b581e8389b71905a4cf6b78bae8e3fa9e5683ae94e",
+      "external_id": "gate-cs-2019-q49",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 49
+    },
+    {
+      "fingerprint_sha256": "f4dc5cbc4bd0bb2f7de3df39b4cc0e748e2734cb74a0003f1c651af92ae0f2a7",
+      "external_id": "gate-cs-2019-q50",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 50
+    },
+    {
+      "fingerprint_sha256": "a3aff0a4ed6c022e1f9769521f6cfe38e488356d677eb0be1782e2ca7b739fe3",
+      "external_id": "gate-cs-2019-q51",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 51
+    },
+    {
+      "fingerprint_sha256": "60f9a96acff395a54f511268ec299d4b7074a7ae2afc8fb82e345ff0bd8fff8b",
+      "external_id": "gate-cs-2019-q53",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 53
+    },
+    {
+      "fingerprint_sha256": "350bdb41b521f6098a4604f0be818df98e1e72b7571c79846ac0a450faa3bae5",
+      "external_id": "gate-cs-2019-q54",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 54
+    },
+    {
+      "fingerprint_sha256": "450a536a38579cbf74b5fa9e45c4f1c1cc9b04adfef8d78c1e5c8e6e2f4a5331",
+      "external_id": "gate-cs-2019-q55",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 55
+    },
+    {
+      "fingerprint_sha256": "a70c33492e1be36931148264f8d20b67e7b22ac7c1c221d8a738dcd617460d8e",
+      "external_id": "gate-cs-2019-q56",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 56
+    },
+    {
+      "fingerprint_sha256": "1fe673c65809f1ff67d682dc2b0dc18dd968bcfa82ac8fd6ee4c841a128678dd",
+      "external_id": "gate-cs-2019-q57",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 57
+    },
+    {
+      "fingerprint_sha256": "b688f87692a91cd1979ceacebc3798e897f82268320f6f6b9f97d4239ae9b6e1",
+      "external_id": "gate-cs-2019-q58",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 58
+    },
+    {
+      "fingerprint_sha256": "ff2e0b7e19e4d2ce415ffa3ddd05dec1e2a014b4fa50e566e997c43d3ae9e6c6",
+      "external_id": "gate-cs-2019-q59",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 59
+    },
+    {
+      "fingerprint_sha256": "c848d81973869987ae987e82f104418fe9ab7fb81a003d81fc95234925b3cb52",
+      "external_id": "gate-cs-2019-q60",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 60
+    },
+    {
+      "fingerprint_sha256": "e39929d722d211d2a839f8cf1ceac55a96fccf8a3c33fabee39d3c773697d7a3",
+      "external_id": "gate-cs-2019-q61",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 61
+    },
+    {
+      "fingerprint_sha256": "15d64a8728c3f68a0ef53ea514e09142aaa4363242ed257b26103941b372230d",
+      "external_id": "gate-cs-2019-q62",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 62
+    },
+    {
+      "fingerprint_sha256": "1136aacba44eaab92c51036547937a0c57f1792f8e74d925025c2f19c4523864",
+      "external_id": "gate-cs-2019-q63",
+      "source_paper": "CS-2019",
+      "source_year": 2019,
+      "source_question_number": 63
+    },
+    {
+      "fingerprint_sha256": "e2c38250c2ef3344a9f39e1eeec8f88063fd1b6e19c3c27e320f2cd9ecee0518",
+      "external_id": "gate-cs1-2021-q01",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 1
+    },
+    {
+      "fingerprint_sha256": "8de3945b46bd34e9b9f01acfb630d47f1cf248e91b3dc2e125e31deff60078e0",
+      "external_id": "gate-cs1-2021-q03",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 3
+    },
+    {
+      "fingerprint_sha256": "ec6d99d2975a6967ff8dd2c92f9fd3a2571bdb752a68d4bdd7c1e608148d513e",
+      "external_id": "gate-cs1-2021-q05",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 5
+    },
+    {
+      "fingerprint_sha256": "810ce58b1790e056b8d3e155b34326985f636d1f409cf9befc1f48ce9f82dcd2",
+      "external_id": "gate-cs1-2021-q06",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 6
+    },
+    {
+      "fingerprint_sha256": "6155ffbc65185c9f0cc6ae8be3fd1572228598a3a81104392961bd34931d5aff",
+      "external_id": "gate-cs1-2021-q07",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 7
+    },
+    {
+      "fingerprint_sha256": "a42e589f6dca13fd27a9e4f89e96f86883424d0259c229c63d5c85a4300db677",
+      "external_id": "gate-cs1-2021-q08",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 8
+    },
+    {
+      "fingerprint_sha256": "7765a9815b29ffe3d8c0a04d25fe18f43ecab9d748b2539c7e2927205cd56e4a",
+      "external_id": "gate-cs1-2021-q14",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 14
+    },
+    {
+      "fingerprint_sha256": "2c2e226ae223d52b06595a5b2020cbb281ecfb757ffb29d40f0d78d398ae4db8",
+      "external_id": "gate-cs1-2021-q18",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 18
+    },
+    {
+      "fingerprint_sha256": "b5919b95c8e8e10907db64f838541a3f917d91ea36df30bb669867b37c6f026a",
+      "external_id": "gate-cs1-2021-q20",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 20
+    },
+    {
+      "fingerprint_sha256": "478db325aa1e660183448567691dc7fb208f39b61951d68161bfc53c2e2bcd5b",
+      "external_id": "gate-cs1-2021-q43",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 43
+    },
+    {
+      "fingerprint_sha256": "f73120a4e1f4687a9995bceae3eb2f34d4bd4cb72d41ae6735df1874d88718e2",
+      "external_id": "gate-cs1-2021-q45",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 45
+    },
+    {
+      "fingerprint_sha256": "83713b835db42c37a13a59d5b9eddfd15b58c98e9255c053dfd490a7e9cc60a7",
+      "external_id": "gate-cs1-2021-q51",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 51
+    },
+    {
+      "fingerprint_sha256": "5c1d4b93eb6ceb05fb1c93c8570b7a8d5548f1a8ee0dae88618c5d2faea3e0c5",
+      "external_id": "gate-cs1-2021-q53",
+      "source_paper": "CS1-2021",
+      "source_year": 2021,
+      "source_question_number": 53
+    },
+    {
+      "fingerprint_sha256": "adbb64eb8d8e23d8df665abf40980c8032220b38b99fce4f41982b55dbbbbcbf",
+      "external_id": "gate-cs2-2021-q01",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 1
+    },
+    {
+      "fingerprint_sha256": "5ed137cf28d8f624de7b8a2a94a72076d76235dbfb39d813720513c36f9eba3d",
+      "external_id": "gate-cs2-2021-q03",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 3
+    },
+    {
+      "fingerprint_sha256": "bb81b6cbafa93b0c142211e9d9a192d8469b677823bcef83ac360494d138d83c",
+      "external_id": "gate-cs2-2021-q04",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 4
+    },
+    {
+      "fingerprint_sha256": "f97d1cc7fe94c3b5c38114976dd7f69d4f5d983b68458c45dd8f028c24e47e5c",
+      "external_id": "gate-cs2-2021-q05",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 5
+    },
+    {
+      "fingerprint_sha256": "bf87139a1ec0ef65649202cde10447bf0ed6b55caba2a52f9abf8a5e5ca43b37",
+      "external_id": "gate-cs2-2021-q06",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 6
+    },
+    {
+      "fingerprint_sha256": "4a7431d9003d0a9a1ea5686be05bb8b8ee6c91a7e1f11bd04be8553f89e086f1",
+      "external_id": "gate-cs2-2021-q08",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 8
+    },
+    {
+      "fingerprint_sha256": "6f03ff31636cf3c210ff9e3c1869171df50aa6c62da9fef5df453f020cb90814",
+      "external_id": "gate-cs2-2021-q10",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 10
+    },
+    {
+      "fingerprint_sha256": "172dd632485896b580cacbde06bcc3e9198c4133d6602d6009a99e75a7ba557a",
+      "external_id": "gate-cs2-2021-q11",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 11
+    },
+    {
+      "fingerprint_sha256": "51c1d2d0cdb952d6d19d6b50c8eb43b6b34a42ee4707132eca02fca5ab27233c",
+      "external_id": "gate-cs2-2021-q12",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 12
+    },
+    {
+      "fingerprint_sha256": "dbf2ad917d1bf7a02547053397506bf8724933d2b3769959128995ed100f3ac1",
+      "external_id": "gate-cs2-2021-q13",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 13
+    },
+    {
+      "fingerprint_sha256": "96ecfeebe5661f8cf7864738f427bc923d470a6c16485b22ba635302c9c2a420",
+      "external_id": "gate-cs2-2021-q14",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 14
+    },
+    {
+      "fingerprint_sha256": "5e874ebbba246fbf9a83d3af1479a7f3b83db12148770dce850163a1f2ae9334",
+      "external_id": "gate-cs2-2021-q16",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 16
+    },
+    {
+      "fingerprint_sha256": "75e09c893de7ba3af3c4448c019c78816722b428a9b0cc41ba3325d05228c3f2",
+      "external_id": "gate-cs2-2021-q17",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 17
+    },
+    {
+      "fingerprint_sha256": "cf2fe258a8e8ee208220a84f69247efe9b4a5abe60f411f0059ec462e277f382",
+      "external_id": "gate-cs2-2021-q18",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 18
+    },
+    {
+      "fingerprint_sha256": "08befa7526681fef8c791108664bcd8ac8c00054026c4027c7fb5f70c27df62b",
+      "external_id": "gate-cs2-2021-q19",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 19
+    },
+    {
+      "fingerprint_sha256": "4bf11acfcebda336b81a96947ca2bec2c9037bddb595e2955b60fe515a3f9f88",
+      "external_id": "gate-cs2-2021-q20",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 20
+    },
+    {
+      "fingerprint_sha256": "d91d93b0445ed6c148b1e926295af205ceb238d8df36bd96af31e94ae255927c",
+      "external_id": "gate-cs2-2021-q21",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 21
+    },
+    {
+      "fingerprint_sha256": "52842cb3d48b5d565482dfbe3857e10a3f3ceb04e3e257d9e69b5b9376964f8d",
+      "external_id": "gate-cs2-2021-q22",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 22
+    },
+    {
+      "fingerprint_sha256": "43ee81daf392c1073eb0f5d1aef3f0ebc8fb980b5031fa1ccf947d0b3deac109",
+      "external_id": "gate-cs2-2021-q23",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 23
+    },
+    {
+      "fingerprint_sha256": "6adb616023624481406e6e954a63ea7d5ee836475bb578496fddff10c9982390",
+      "external_id": "gate-cs2-2021-q24",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 24
+    },
+    {
+      "fingerprint_sha256": "a8d502177e551efec7208a9a339377b51ef2e530a7da12c1f14b7a9c0656f573",
+      "external_id": "gate-cs2-2021-q25",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 25
+    },
+    {
+      "fingerprint_sha256": "6723c8835c47377884b4445fb14d64caf5d211497f227bc8c5078616fe856bd5",
+      "external_id": "gate-cs2-2021-q26",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 26
+    },
+    {
+      "fingerprint_sha256": "aadbfe9548056ef60ff4d22bd6df57441617df0496d0c2af4ec99f36741d70a9",
+      "external_id": "gate-cs2-2021-q28",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 28
+    },
+    {
+      "fingerprint_sha256": "01f11bf333760154f64d3651af3af5a93ca82a44ea3815452d75ee4df810880e",
+      "external_id": "gate-cs2-2021-q29",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 29
+    },
+    {
+      "fingerprint_sha256": "850af5edb748f3c19cec7be7435de6af006d6d3c040dde880ea1c8328508b60f",
+      "external_id": "gate-cs2-2021-q30",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 30
+    },
+    {
+      "fingerprint_sha256": "80b91fdfbb8a184b951618e18b61863671032e189581d36e08f55bb6fab22724",
+      "external_id": "gate-cs2-2021-q31",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 31
+    },
+    {
+      "fingerprint_sha256": "b50b87e403428b5b382e816f4dcfcdec1f608696c015bfc254b301dfafc87b83",
+      "external_id": "gate-cs2-2021-q32",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 32
+    },
+    {
+      "fingerprint_sha256": "967a7a5d99a0b4b9f5279df1d89f4248f866ce644b5d730aa5497579bf997e37",
+      "external_id": "gate-cs2-2021-q33",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 33
+    },
+    {
+      "fingerprint_sha256": "7a9466427050b552b201bd9574017d47efd343da204937855e1e2c0b10eb3070",
+      "external_id": "gate-cs2-2021-q34",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 34
+    },
+    {
+      "fingerprint_sha256": "7d5fe9eae78c0525392e1b33d5048dd3a01f0c39355dead97739852f6f1462d5",
+      "external_id": "gate-cs2-2021-q35",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 35
+    },
+    {
+      "fingerprint_sha256": "ec743feadd179a1529f23d7fbffd1251098f7afe4f031a7b6e7589096cce9e83",
+      "external_id": "gate-cs2-2021-q36",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 36
+    },
+    {
+      "fingerprint_sha256": "f60cb7c37c168f5764641bd2f5599cabe618d4484bdbb6af1842fe7fccdc4b9d",
+      "external_id": "gate-cs2-2021-q37",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 37
+    },
+    {
+      "fingerprint_sha256": "9f13e034485d85e9694bd152f5bd69097479f3ed4505b454c22969dce7a816e0",
+      "external_id": "gate-cs2-2021-q39",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 39
+    },
+    {
+      "fingerprint_sha256": "5ae8998f6cb873a8fe6e3f5487d25ae492c4de9925838005b150ec92ae1200ce",
+      "external_id": "gate-cs2-2021-q40",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 40
+    },
+    {
+      "fingerprint_sha256": "8ef5c59c514c82795b5967a454c9e55b7544faeb04f041aa0072a33b4d1101f7",
+      "external_id": "gate-cs2-2021-q41",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 41
+    },
+    {
+      "fingerprint_sha256": "6c140283eac8a6c3d042e6c9dde395a9429d865b9b58f5374a8dac21a9e3b86c",
+      "external_id": "gate-cs2-2021-q42",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 42
+    },
+    {
+      "fingerprint_sha256": "c4119d8c32e4d43133cf65174d1c1523e02fbf7846412c007fb1ccd4285989fa",
+      "external_id": "gate-cs2-2021-q43",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 43
+    },
+    {
+      "fingerprint_sha256": "4178e383727c7bc2ba31d45ac19bfd5e588d0f8f14cca85706a9144ee51b5f42",
+      "external_id": "gate-cs2-2021-q44",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 44
+    },
+    {
+      "fingerprint_sha256": "8f2c712a16034f8a76e6b502e688bddffd3efdcc6b8514bfecf51cb03f291897",
+      "external_id": "gate-cs2-2021-q45",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 45
+    },
+    {
+      "fingerprint_sha256": "fb9088723e89f033d65605f0fb0738303874836be8b4402b06d63a2cddd9794a",
+      "external_id": "gate-cs2-2021-q46",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 46
+    },
+    {
+      "fingerprint_sha256": "4dac3d6f89eb8ea98783f2a11ae0631a0395c629ffb37cd5ea3daaca93969e6e",
+      "external_id": "gate-cs2-2021-q47",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 47
+    },
+    {
+      "fingerprint_sha256": "9890673c7155f7d1c34c162daacffe9e6d9ddce7d7733da4eac3caf3af8d0e0b",
+      "external_id": "gate-cs2-2021-q48",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 48
+    },
+    {
+      "fingerprint_sha256": "d958e4fce1fe0bc25d09cdc47c4f3e987931d821ea343e5f8c4a1a64e56c522b",
+      "external_id": "gate-cs2-2021-q50",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 50
+    },
+    {
+      "fingerprint_sha256": "5da8e49797abde28c2f8f16a434ef2866915218e04c59b885b69e7fea0fa1c4e",
+      "external_id": "gate-cs2-2021-q51",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 51
+    },
+    {
+      "fingerprint_sha256": "ccbeb22a5f745d60761b2008f88d5697311b0d638a42a3f32abf9d899dae110b",
+      "external_id": "gate-cs2-2021-q52",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 52
+    },
+    {
+      "fingerprint_sha256": "e7f10e3bdd428a1da6fd5aaf9cb00e94527434133a98e51de1a252de07f336b5",
+      "external_id": "gate-cs2-2021-q53",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 53
+    },
+    {
+      "fingerprint_sha256": "810bdcb621a49b04aaff9571007b06463815e8e21a4fee550d3d5d7865d01465",
+      "external_id": "gate-cs2-2021-q54",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 54
+    },
+    {
+      "fingerprint_sha256": "c63196ed227e2f73280d95a51e00e6c6bde4f7d5563be00c093b030750e8285f",
+      "external_id": "gate-cs2-2021-q55",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 55
+    },
+    {
+      "fingerprint_sha256": "98c61b4c950d8ed331f2cb4caf56beb4db99feb68854731ec99b68508f502639",
+      "external_id": "gate-cs2-2021-q57",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 57
+    },
+    {
+      "fingerprint_sha256": "b0463fd094b297d359b4b228d4a339a600b43128316a2f7cd92ea3a59a5499cd",
+      "external_id": "gate-cs2-2021-q59",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 59
+    },
+    {
+      "fingerprint_sha256": "5dc43095d2e4a6f454bf483d56c8988834b8d526fbf22b6de6d53b4f64220c1e",
+      "external_id": "gate-cs2-2021-q60",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 60
+    },
+    {
+      "fingerprint_sha256": "9a5d2cb51797a750eaccdb198dcfe7d6af01d0afba804ef4ed699beacdb3471d",
+      "external_id": "gate-cs2-2021-q61",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 61
+    },
+    {
+      "fingerprint_sha256": "22625d281a9e404cbfcc270bba2bc88ef6701039c8029021b1b8a93c3f82db18",
+      "external_id": "gate-cs2-2021-q62",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 62
+    },
+    {
+      "fingerprint_sha256": "91a1c16274c62cf6f192ba92496bfc7e79a1ab95e72c9d98b0712f041b2d7776",
+      "external_id": "gate-cs2-2021-q63",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 63
+    },
+    {
+      "fingerprint_sha256": "4383b164b7d1109c75e4d989afcc0d314dc80f878d5cf6bb9d7941aef99819ce",
+      "external_id": "gate-cs2-2021-q64",
+      "source_paper": "CS2-2021",
+      "source_year": 2021,
+      "source_question_number": 64
+    },
+    {
+      "fingerprint_sha256": "d0e5f583648b29250e1605a606e1426c03be30c7067f95d533aabcebe8594492",
+      "external_id": "gate-cs-2022-q01",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 1
+    },
+    {
+      "fingerprint_sha256": "a2c2d06e08b9111bc09e76fa956f739812ecefea1e7f87c4b9ebbe21cad46982",
+      "external_id": "gate-cs-2022-q02",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 2
+    },
+    {
+      "fingerprint_sha256": "1a8fa9b8fa7de6baed91da1feff67b875351ff581cf5ca5f0c7199a5d05850bf",
+      "external_id": "gate-cs-2022-q03",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 3
+    },
+    {
+      "fingerprint_sha256": "4661d7d29694cb760e5c0302d3a7b451a00809c3616f4ea8f12d1dd52723ffb2",
+      "external_id": "gate-cs-2022-q04",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 4
+    },
+    {
+      "fingerprint_sha256": "61d190592335b89a8a79f6c5c188b1a31997c70cc8c84750b0a5b6ad94fc5954",
+      "external_id": "gate-cs-2022-q06",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 6
+    },
+    {
+      "fingerprint_sha256": "72f758810340b12cb35e65fa0f354287b0e1c6b9a6828cab54e362a473d381e8",
+      "external_id": "gate-cs-2022-q07",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 7
+    },
+    {
+      "fingerprint_sha256": "b17f856a72694ef6270deb475f5ebcdfd54559363d75fc3e9e9de8cdd5c43717",
+      "external_id": "gate-cs-2022-q08",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 8
+    },
+    {
+      "fingerprint_sha256": "9875ca89017e0db758819687f07f2c99ba9ebe7faf7ab2998877fbfbe9b4661a",
+      "external_id": "gate-cs-2022-q14",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 14
+    },
+    {
+      "fingerprint_sha256": "306502b8be2b92fa8ce57ba6a26a749c6fb0071813098f4aac1d46e2ca7b7391",
+      "external_id": "gate-cs-2022-q17",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 17
+    },
+    {
+      "fingerprint_sha256": "be729ffa772e447934c5bc7348dc8488f07230d7c2a49c5d1adddcbb894dcfca",
+      "external_id": "gate-cs-2022-q19",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 19
+    },
+    {
+      "fingerprint_sha256": "b449fbfdd91d1481654be42a0e8f3be088c07258ef2bd7c0eba07dd002a2399c",
+      "external_id": "gate-cs-2022-q21",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 21
+    },
+    {
+      "fingerprint_sha256": "196c39ceeb07a99aba59e378f09960edd961423bb029f8baab88abbd2861b024",
+      "external_id": "gate-cs-2022-q24",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 24
+    },
+    {
+      "fingerprint_sha256": "a987f0c90e6a8d93935536dbf9aed5aed4f8db43866902884f253c1bb1101a83",
+      "external_id": "gate-cs-2022-q26",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 26
+    },
+    {
+      "fingerprint_sha256": "a2da1cdb291d119ab0ea70809b1c2a6fc45e0b35fd9b693203133773ac10b051",
+      "external_id": "gate-cs-2022-q28",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 28
+    },
+    {
+      "fingerprint_sha256": "e0fb4320ed1736c82dcdce7b2dc627af0069c794627e0f0c21d5fd1e17f82517",
+      "external_id": "gate-cs-2022-q30",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 30
+    },
+    {
+      "fingerprint_sha256": "6c8c64e09463f3d8d0534fe068a28fa389424992b16af7faeb7e7a81d8dba6a2",
+      "external_id": "gate-cs-2022-q31",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 31
+    },
+    {
+      "fingerprint_sha256": "d962ea6d1322f7c134bed38227981a3287693929b7cd3ca991d8eac23a9b48b8",
+      "external_id": "gate-cs-2022-q33",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 33
+    },
+    {
+      "fingerprint_sha256": "61db1cc5db5e98860dedc10d33965a50faf6ba593b5532a84cdd5c4bdf7fa3fc",
+      "external_id": "gate-cs-2022-q37",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 37
+    },
+    {
+      "fingerprint_sha256": "13c7197553af7c12b129021f0de12c19424d3aeedde9f1af6be74b375b438e3e",
+      "external_id": "gate-cs-2022-q39",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 39
+    },
+    {
+      "fingerprint_sha256": "c294cdef81a86d789d56eab0b7a24a45dcca137181a57ef486fa553c8fad668d",
+      "external_id": "gate-cs-2022-q42",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 42
+    },
+    {
+      "fingerprint_sha256": "eddbf30db9ae0b62ffe9f1e590e40b137bc79d8279f1ff3b7728d804bb4e4ffa",
+      "external_id": "gate-cs-2022-q43",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 43
+    },
+    {
+      "fingerprint_sha256": "fcc3ec2aa636ae32265bde31da90319b970bc9cede40675bb542b7995c7f552b",
+      "external_id": "gate-cs-2022-q54",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 54
+    },
+    {
+      "fingerprint_sha256": "9e7e4c82ee6c2afd7015e54ee2adde994f90b34cd4e6660a6a1c27b89a622514",
+      "external_id": "gate-cs-2022-q56",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 56
+    },
+    {
+      "fingerprint_sha256": "ca89ba8588203fefe475dc6ffaa64b7635f347f862286470d8e2fe742d18248d",
+      "external_id": "gate-cs-2022-q60",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 60
+    },
+    {
+      "fingerprint_sha256": "c018b61a2159f54a48859f5780d2b9ce233699b3f8c7ded8912a982219ee8808",
+      "external_id": "gate-cs-2022-q61",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 61
+    },
+    {
+      "fingerprint_sha256": "1ea3795f98fc9e1ec47a030f15de37a444b4db1dd2de2eb2eae4bfb2465e14fa",
+      "external_id": "gate-cs-2022-q64",
+      "source_paper": "CS-2022",
+      "source_year": 2022,
+      "source_question_number": 64
+    },
+    {
+      "fingerprint_sha256": "a701c9a0162f1ce135337bb4cb9ab81cda8b01cb0241ce15ef6efc0b6a42303b",
+      "external_id": "gate-cs-2023-q01",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 1
+    },
+    {
+      "fingerprint_sha256": "382f6d3c0a0eac4b3744c975d6685ed96eb3867ae379777a67a3379145c1f788",
+      "external_id": "gate-cs-2023-q03",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 3
+    },
+    {
+      "fingerprint_sha256": "79fe7b33380826f4b733e6804d238b161f7c3906837bcfb7e3cfd9deb2b93733",
+      "external_id": "gate-cs-2023-q04",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 4
+    },
+    {
+      "fingerprint_sha256": "749c0a4c8b9eace8de1acf8424d0f8e797ab655d51cd2ec10ae03a63cdc69088",
+      "external_id": "gate-cs-2023-q05",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 5
+    },
+    {
+      "fingerprint_sha256": "bd1060b650e8745ce7765243266b72def3768873e01eb194eea3d2b06d4dea4c",
+      "external_id": "gate-cs-2023-q06",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 6
+    },
+    {
+      "fingerprint_sha256": "ff3310150fcd21d174a2388d53778a0a538f52532ec3821f1229df16caf99473",
+      "external_id": "gate-cs-2023-q07",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 7
+    },
+    {
+      "fingerprint_sha256": "2ebcd70a20c9bf3166af58a4cbe5e14592aee07bc467ab4d58f2396e25d7a2e4",
+      "external_id": "gate-cs-2023-q08",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 8
+    },
+    {
+      "fingerprint_sha256": "7ef8f02b884ad87ab116bb9a6768f3c428d707f31a5aa639aca30e9c30015161",
+      "external_id": "gate-cs-2023-q12",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 12
+    },
+    {
+      "fingerprint_sha256": "2b7a80a6dbbe5df1dacc225e2c558fa92491fabcc39cb680136efe973726c774",
+      "external_id": "gate-cs-2023-q13",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 13
+    },
+    {
+      "fingerprint_sha256": "444e3f6b13b36f1c783d6ff8613552267a0df990cc130dbc1f8ad2927fa75251",
+      "external_id": "gate-cs-2023-q15",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 15
+    },
+    {
+      "fingerprint_sha256": "bf089691bba210abc93ef74128b65bf06aed32110db6f24577a322d88593b396",
+      "external_id": "gate-cs-2023-q16",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 16
+    },
+    {
+      "fingerprint_sha256": "73e0d643a95380f34f83bf0483378b5d18cb1d82ce77eb24ed52aba9fedc6c10",
+      "external_id": "gate-cs-2023-q17",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 17
+    },
+    {
+      "fingerprint_sha256": "c40c4f0089a8846938bc86bb7d9c12522aabefea35d4dae30b221f1053d7cb74",
+      "external_id": "gate-cs-2023-q22",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 22
+    },
+    {
+      "fingerprint_sha256": "a3fd820020bf5f9adb79b151c81359eb78d46deba35fc8f7d026aba3e4bea8fb",
+      "external_id": "gate-cs-2023-q23",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 23
+    },
+    {
+      "fingerprint_sha256": "85ddec671dc15aaa117f3e0fc90a88e90433563da2a19fdc304eff390cbed94f",
+      "external_id": "gate-cs-2023-q25",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 25
+    },
+    {
+      "fingerprint_sha256": "181f4628d560e598f4ece12d44e2876f50de6d8a46b78e081ff389ea650fe277",
+      "external_id": "gate-cs-2023-q28",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 28
+    },
+    {
+      "fingerprint_sha256": "b876a7cfaa2151e17cf935ad765025355394dc66fc13e14ae904673a92181476",
+      "external_id": "gate-cs-2023-q29",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 29
+    },
+    {
+      "fingerprint_sha256": "57db3ccbf8d9a42518b4f9eb164e68767307ba855da96a628eb414f9bf355832",
+      "external_id": "gate-cs-2023-q33",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 33
+    },
+    {
+      "fingerprint_sha256": "0cd3873ef6764bc5637ce501e99e53a8e5c538e7633d179a378ac2fde77361ce",
+      "external_id": "gate-cs-2023-q36",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 36
+    },
+    {
+      "fingerprint_sha256": "f1c521363b3e33c22699c2371ea49d38014479a39e78bae5928a507279b4ca46",
+      "external_id": "gate-cs-2023-q41",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 41
+    },
+    {
+      "fingerprint_sha256": "0dfff652e875633c33c960731a979bf4956b4c0d2b22dfcac67e4b931200dc64",
+      "external_id": "gate-cs-2023-q45",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 45
+    },
+    {
+      "fingerprint_sha256": "e4a49259bb1879b0c084592de58f01edd7e0821d52a53be633bc1602ef7bae0e",
+      "external_id": "gate-cs-2023-q50",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 50
+    },
+    {
+      "fingerprint_sha256": "ecdd3bfd1e150662fe2e8849582994b4cee6ddf6676a7af2c5001d002ad0d2ad",
+      "external_id": "gate-cs-2023-q55",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 55
+    },
+    {
+      "fingerprint_sha256": "05e6d907e6a7f54dfae667432a12e8b7eb8442500f229a3bf365f4ccc495fa97",
+      "external_id": "gate-cs-2023-q57",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 57
+    },
+    {
+      "fingerprint_sha256": "3e053c957851fdbac3243d191a2593d6a727a4389b7d74155bfd6dcdbf6ab644",
+      "external_id": "gate-cs-2023-q58",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 58
+    },
+    {
+      "fingerprint_sha256": "d89030e75f9242066167b552d876a9510c33226fa505f0c70628e3ab387e3ca9",
+      "external_id": "gate-cs-2023-q62",
+      "source_paper": "CS-2023",
+      "source_year": 2023,
+      "source_question_number": 62
+    },
+    {
+      "fingerprint_sha256": "563744308a33585e8db55ff19f32a7ea9ac534344956d3f5853ec1b55f4195bf",
+      "external_id": "gate-cs1-2024-q16",
+      "source_paper": "CS1-2024",
+      "source_year": 2024,
+      "source_question_number": 16
+    },
+    {
+      "fingerprint_sha256": "fbba61005a2f7089cdde358ed29456154fc4ec328a2d03496a82d82b8ec84c49",
+      "external_id": "gate-cs2-2024-q21",
+      "source_paper": "CS2-2024",
+      "source_year": 2024,
+      "source_question_number": 21
+    },
+    {
+      "fingerprint_sha256": "b3243296dc7db0f874ea5a9e635b2c6871d9c07c1f58112a5e7ba4c71e372b3d",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 12
+    },
+    {
+      "fingerprint_sha256": "908d6938c2ad28571947af7c95917ce388787bde05019c38ec12d288b6d99fc4",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 13
+    },
+    {
+      "fingerprint_sha256": "b67fcdd8669b278436be73544b9db2ae4d99db25d10c38f8118be9fb8f328364",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 14
+    },
+    {
+      "fingerprint_sha256": "8de8ff04ee9d99f7a8be32c08985aa258942138edd97325e6aa0a4cc68705f2e",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 15
+    },
+    {
+      "fingerprint_sha256": "66dcabb17b5145e32312cd719e01467024d79d74fd2d912b45b8803cc646e487",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 16
+    },
+    {
+      "fingerprint_sha256": "0f025d2ec48f13a87434e8b209131b5d9317eb925bbb06316cca78815b581491",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 17
+    },
+    {
+      "fingerprint_sha256": "25baae6be2eea935ceb62032add51674e12e46aa76003d1381b5bbe3b842e150",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 18
+    },
+    {
+      "fingerprint_sha256": "51af85b3e74e523e548ba5a5f447e5a27a239f91e0c63a749e3764de785a37c4",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 19
+    },
+    {
+      "fingerprint_sha256": "16056831792b26f871297a3a1fa3605e622450bd22f861d4258648de66097af8",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 21
+    },
+    {
+      "fingerprint_sha256": "29212f83f5c778612b90ad625c57048e3ab61468cec1ed59acb2fd51e0872e09",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 22
+    },
+    {
+      "fingerprint_sha256": "ad83b84c37d7bd977242497438dfc7e205fae4cc3fc08d59d05844c15823d115",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 23
+    },
+    {
+      "fingerprint_sha256": "b3ae79d7b47dcc1da1d0f4d40679237bde2c8679e3aa5b5387585725310ec52d",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 24
+    },
+    {
+      "fingerprint_sha256": "719947e8dedc51ced404f1022c3e681f5d7763ac6da73931e7edb3d0436cb4c8",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 25
+    },
+    {
+      "fingerprint_sha256": "66c369686500af9977cf8b8b277cc2a30e79f060bd971da04a11d5878437da50",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 26
+    },
+    {
+      "fingerprint_sha256": "e9dda6256488361c0d2f6d42284f2895e452232a21a2794fce1b862d883ee411",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 27
+    },
+    {
+      "fingerprint_sha256": "6e6fac882b8f29adb9bb87dfcb0632c3317b19b3b28988c7eacbd5f1ce06ad25",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 29
+    },
+    {
+      "fingerprint_sha256": "591b8047d1a8148cb9f835e4103c4ab6e20b00c5860855a81f3bbd4706fc97b3",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 30
+    },
+    {
+      "fingerprint_sha256": "c71c36e4782b3e70529590302c04398a4feea414a9f9231f48e3fdeebc5524f1",
+      "external_id": null,
+      "source_paper": "GATE 2024 CS1 (Session 5)",
+      "source_year": 2024,
+      "source_question_number": 31
+    },
+    {
+      "fingerprint_sha256": "4a0fc6ff6c49bc21681d771017b8e8a92a43936df4a805e81b62a1bc4ebaf9ed",
+      "external_id": "gate-cs2-2025-q07",
+      "source_paper": "CS2-2025",
+      "source_year": 2025,
+      "source_question_number": 7
+    },
+    {
+      "fingerprint_sha256": "a1045fa34821f7a899b242919fe745a15ac4204b428a3e0bb89e9f06eac656d0",
+      "external_id": "gate-cs2-2025-q38",
+      "source_paper": "CS2-2025",
+      "source_year": 2025,
+      "source_question_number": 38
+    }
+  ],
+  "recovery": {
+    "expected_active_originals": 2290,
+    "expected_active_pyqs_before": 177,
+    "expected_reactivations": 228,
+    "expected_active_pyqs_after": 405,
+    "delete_rows": false
+  }
+}

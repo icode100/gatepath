@@ -296,7 +296,11 @@ def _course_form(
     }
 
 
-async def rebuild_test_catalog(session: AsyncSession) -> None:
+async def rebuild_test_catalog(
+    session: AsyncSession,
+    *,
+    commit: bool = True,
+) -> None:
     subjects = list(
         (
             await session.scalars(
@@ -377,4 +381,83 @@ async def rebuild_test_catalog(session: AsyncSession) -> None:
             session.add(form)
         for field, value in definition.items():
             setattr(form, field, value)
-    await session.commit()
+    if commit:
+        await session.commit()
+
+
+async def validate_test_catalog(session: AsyncSession) -> None:
+    """Fail closed unless every deterministic form references active rows only."""
+
+    subjects = list((await session.scalars(select(Subject))).all())
+    subject_by_id = {subject.id: subject for subject in subjects}
+    technical_subjects = [
+        subject
+        for subject in subjects
+        if subject.code.upper() in TECHNICAL_COURSE_CODES
+    ]
+    active_questions = {
+        question.id: question
+        for question in (
+            await session.scalars(
+                select(Question).where(Question.is_active.is_(True))
+            )
+        ).all()
+    }
+    forms = list((await session.scalars(select(TestForm))).all())
+    expected_form_ids = {
+        *(f"full-{number:02d}" for number in range(1, FULL_TEST_COUNT + 1)),
+        *(
+            f"{subject.code.lower()}-{number:02d}"
+            for subject in technical_subjects
+            for number in range(1, COURSE_TEST_COUNT + 1)
+        ),
+    }
+    if {form.id for form in forms} != expected_form_ids:
+        raise ValueError("test catalog form identities do not match the syllabus")
+
+    for form in forms:
+        question_ids = list(form.question_ids or [])
+        if len(question_ids) != len(set(question_ids)):
+            raise ValueError(f"{form.id}: duplicate question ids")
+        if any(question_id not in active_questions for question_id in question_ids):
+            raise ValueError(f"{form.id}: references an inactive or missing question")
+        selected = [active_questions[question_id] for question_id in question_ids]
+        if form.question_type_counts != _type_counts(selected):
+            raise ValueError(f"{form.id}: question type counts drifted")
+        if form.topic_count != len({question.topic_id for question in selected}):
+            raise ValueError(f"{form.id}: topic count drifted")
+        if form.is_available:
+            if form.unavailable_reason is not None:
+                raise ValueError(f"{form.id}: available form has an unavailable reason")
+            if len(selected) != form.question_count:
+                raise ValueError(f"{form.id}: available form count drifted")
+            if form.total_marks != sum(question.marks for question in selected):
+                raise ValueError(f"{form.id}: total marks drifted")
+        elif selected or not form.unavailable_reason:
+            raise ValueError(f"{form.id}: unavailable form is not fail closed")
+
+        if form.mode == SessionMode.FULL:
+            if (
+                form.subject_id is not None
+                or form.question_count != FULL_QUESTION_COUNT
+                or form.duration_seconds != FULL_DURATION_SECONDS
+                or form.total_marks != 100
+            ):
+                raise ValueError(f"{form.id}: full-form invariants drifted")
+        elif form.mode == SessionMode.SECTIONAL:
+            subject = subject_by_id.get(form.subject_id)
+            if (
+                subject is None
+                or subject.code.upper() not in TECHNICAL_COURSE_CODES
+                or form.question_count != COURSE_QUESTION_COUNT
+                or form.duration_seconds != COURSE_DURATION_SECONDS
+                or any(question.subject_id != form.subject_id for question in selected)
+            ):
+                raise ValueError(f"{form.id}: course-form invariants drifted")
+            if form.is_available and any(
+                form.question_type_counts[item.value] == 0
+                for item in (QuestionType.MCQ, QuestionType.MSQ, QuestionType.NAT)
+            ):
+                raise ValueError(f"{form.id}: course form is missing a question type")
+        else:
+            raise ValueError(f"{form.id}: unsupported test-form mode")

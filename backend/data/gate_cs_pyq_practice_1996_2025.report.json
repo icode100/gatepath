@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0-pyq-practice-promotion-report",
+  "database_writes_performed": false,
+  "production_import_authorized": true,
+  "practice_materialization_authorized": true,
+  "input_bindings": {
+    "staging_release": {
+      "path": "backend/data/gate_cs_pyq_archive_1996_2025.json",
+      "sha256": "ebc7bf91ac239d33c42bf03a96144684aedc8e67142e7e64bfb75ba4b358e3e4",
+      "bytes": 9173168
+    },
+    "staging_release_report": {
+      "path": "backend/data/gate_cs_pyq_archive_1996_2025.report.json",
+      "sha256": "98ff84e86d68adcd1d008f55f3d50d6758012f2fad627e5f3db209aec56bfb7d",
+      "bytes": 108266
+    }
+  },
+  "source_release_artifact_sha256": "0aa05b22e3bf2066b05fcf111b0591b07bcfba13a745373ecad9de4307964d1e",
+  "source_release_report_sha256": "0a849843c355ab58b6bdd66f29a90c70420aae880f3a4b885860e1e6e6f70dd3",
+  "promoted_archive_artifact_sha256": "adf73f73b17a18c9821850c988fa3f3517bb65c17e5c5ca256a02c310c4c6c8f",
+  "allowlist_artifact_sha256": "1903bc9b9f9e9d738501f3b5050528a8599380d66bfce51209adc08876327220",
+  "counts": {
+    "papers": 39,
+    "archive_records_preserved": 2873,
+    "practice_eligible": 177,
+    "archive_only": 2696
+  },
+  "selection_sha256": "88c192e62efb9df247e58b53b2fd1dc2b41314d6ac8fd2e99f686984828b26e6",
+  "invariants": {
+    "all_archive_records_preserved": true,
+    "only_allowlisted_rows_promoted": true,
+    "database_writes_disabled": true
+  },
+  "report_sha256": "f8f688b5571699ace350b973456e5271cc213976c14d8f11f18412c9ab04ae94"
+}
