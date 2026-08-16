@@ -5,7 +5,7 @@ import uuid
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from sqlalchemy import delete, func, or_, select
@@ -65,12 +65,21 @@ from app.schemas import (
 from app.config import settings
 from app.question_bank import resolve_question_bank_path
 from app.question_assets import validate_public_asset_payload
+from app.question_catalog import (
+    CatalogQuestion,
+    CatalogSnapshot,
+    CatalogSubject,
+    QuestionCatalogRepository,
+)
+from app.question_catalog.dependencies import get_question_catalog_repository
 from app.scoring import score_question
 from app.user_state import (
     ProgressProjection,
+    QuestionEvidence,
     StudyAttempt,
     StudyResponse,
     StudySession,
+    SubjectProgressTotals,
     UserStateAlreadySubmitted,
     UserStateNotFound,
     UserStatePayloadTooLarge,
@@ -82,13 +91,17 @@ from app.user_state.dependencies import get_user_state_repository
 
 
 router = APIRouter()
+CatalogDependency = Annotated[
+    QuestionCatalogRepository | None,
+    Depends(get_question_catalog_repository),
+]
 
 
 def _aware(value: datetime) -> datetime:
     return value if value.tzinfo else value.replace(tzinfo=UTC)
 
 
-def _question_public(question: Question) -> QuestionPublic:
+def _question_public(question: Question | CatalogQuestion) -> QuestionPublic:
     return QuestionPublic(
         id=question.id,
         subject_id=question.subject_id,
@@ -122,7 +135,7 @@ def _question_public(question: Question) -> QuestionPublic:
         ),
         marks=question.marks,
         tags=question.tags,
-        assets=validate_public_asset_payload(question.assets),
+        assets=validate_public_asset_payload(list(question.assets)),
     )
 
 
@@ -157,7 +170,16 @@ async def _resolve_subject(
     *,
     subject_id: int | None = None,
     subject_slug: str | None = None,
-) -> Subject:
+    catalog: QuestionCatalogRepository | None = None,
+) -> Subject | CatalogSubject:
+    if catalog is not None:
+        subject = await catalog.find_subject(
+            subject_id=subject_id,
+            subject_slug=subject_slug,
+        )
+        if subject is None:
+            raise HTTPException(status_code=404, detail="Subject not found")
+        return subject
     if subject_id is not None:
         statement = select(Subject).where(Subject.id == subject_id)
     elif subject_slug is not None:
@@ -170,9 +192,15 @@ async def _resolve_subject(
     return subject
 
 
-async def _load_questions(db: AsyncSession, question_ids: list[int]) -> list[Question]:
+async def _load_questions(
+    db: AsyncSession,
+    question_ids: list[int] | tuple[int, ...],
+    catalog: QuestionCatalogRepository | None = None,
+) -> list[Question | CatalogQuestion]:
     if not question_ids:
         return []
+    if catalog is not None:
+        return await catalog.questions_by_ids(question_ids)
     questions = (
         await db.scalars(
             select(Question)
@@ -190,6 +218,7 @@ async def _correctly_solved_question_ids(
     *,
     user_key: str,
     candidate_ids: set[int],
+    catalog: QuestionCatalogRepository | None = None,
 ) -> set[int]:
     """Return candidate questions the learner has answered correctly at least once.
 
@@ -210,14 +239,15 @@ async def _correctly_solved_question_ids(
             UserStateUnavailable,
         ) as exc:
             _raise_user_state_http(exc)
-        return {
+        solved = {
             question_id
-            for question_id in candidate_ids
-            if (
-                (evidence := progress.evidence.get(question_id)) is not None
-                and evidence.correct_count > 0
-            )
+            for question_id, evidence in progress.evidence.items()
+            if evidence.correct_count > 0
         }
+        if catalog is not None:
+            current = await catalog.snapshot()
+            solved = {current.resolve_question_id(question_id) for question_id in solved}
+        return candidate_ids.intersection(solved)
 
     solved_ids = (
         await db.scalars(
@@ -231,7 +261,138 @@ async def _correctly_solved_question_ids(
             .distinct()
         )
     ).all()
-    return set(solved_ids)
+    solved = set(solved_ids)
+    if catalog is not None:
+        current = await catalog.snapshot()
+        solved = {current.resolve_question_id(question_id) for question_id in solved}
+    return candidate_ids.intersection(solved)
+
+
+def _canonical_progress_evidence(
+    progress: ProgressProjection,
+    catalog: CatalogSnapshot | None,
+) -> dict[int, QuestionEvidence]:
+    """Merge legacy aliases without losing attempts or monotonic mastery."""
+
+    if catalog is None:
+        return progress.evidence
+    merged: dict[int, QuestionEvidence] = {}
+    for source in progress.evidence.values():
+        question_id = catalog.resolve_question_id(source.question_id)
+        canonical_question = catalog.questions_by_id.get(question_id)
+        subject_id = (
+            canonical_question.subject_id if canonical_question is not None else source.subject_id
+        )
+        topic_id = (
+            canonical_question.topic_id if canonical_question is not None else source.topic_id
+        )
+        target = merged.get(question_id)
+        if target is None:
+            merged[question_id] = QuestionEvidence(
+                question_id=question_id,
+                subject_id=subject_id,
+                topic_id=topic_id,
+                attempt_count=source.attempt_count,
+                correct_count=source.correct_count,
+                incorrect_count=source.incorrect_count,
+                unanswered_count=source.unanswered_count,
+                latest_answered_status=source.latest_answered_status,
+                latest_answered_at=source.latest_answered_at,
+                last_attempted_at=source.last_attempted_at,
+            )
+            continue
+
+        latest_status = target.latest_answered_status
+        latest_answered_at = target.latest_answered_at
+        if source.latest_answered_at is not None and (
+            latest_answered_at is None
+            or _aware(source.latest_answered_at) >= _aware(latest_answered_at)
+        ):
+            latest_status = source.latest_answered_status
+            latest_answered_at = source.latest_answered_at
+        last_attempted_at = target.last_attempted_at
+        if source.last_attempted_at is not None and (
+            last_attempted_at is None
+            or _aware(source.last_attempted_at) >= _aware(last_attempted_at)
+        ):
+            last_attempted_at = source.last_attempted_at
+        merged[question_id] = QuestionEvidence(
+            question_id=question_id,
+            subject_id=subject_id,
+            topic_id=topic_id,
+            attempt_count=target.attempt_count + source.attempt_count,
+            correct_count=target.correct_count + source.correct_count,
+            incorrect_count=target.incorrect_count + source.incorrect_count,
+            unanswered_count=target.unanswered_count + source.unanswered_count,
+            latest_answered_status=latest_status,
+            latest_answered_at=latest_answered_at,
+            last_attempted_at=last_attempted_at,
+        )
+    return merged
+
+
+def _canonical_subject_progress(
+    progress: ProgressProjection,
+    catalog: CatalogSnapshot,
+) -> dict[int, SubjectProgressTotals]:
+    """Reattribute historical alias evidence to the canonical taxonomy.
+
+    Evidence retains enough aggregate scoring information to reconstruct GATE
+    marks exactly: correct MCQ/MSQ/NAT responses earn full marks, only incorrect
+    MCQs lose one third, and unanswered responses earn zero. Alias snapshots
+    provide the exact historical type/marks while the canonical active target
+    provides the current subject/topic classification.
+    """
+
+    buckets: dict[int, dict[str, Any]] = {}
+    for evidence in progress.evidence.values():
+        canonical_id = catalog.resolve_question_id(evidence.question_id)
+        canonical_question = catalog.questions_by_id.get(canonical_id)
+        legacy_question = catalog.alias_questions_by_id.get(evidence.question_id)
+        scoring_question = legacy_question or canonical_question
+        taxonomy_question = canonical_question or legacy_question
+        if scoring_question is None or taxonomy_question is None:
+            continue
+        bucket = buckets.setdefault(
+            taxonomy_question.subject_id,
+            {
+                "attempted": 0,
+                "question_ids": set(),
+                "correct": 0,
+                "incorrect": 0,
+                "unanswered": 0,
+                "marks_earned": 0.0,
+                "marks_available": 0.0,
+            },
+        )
+        bucket["attempted"] += evidence.attempt_count
+        bucket["question_ids"].add(canonical_id)
+        bucket["correct"] += evidence.correct_count
+        bucket["incorrect"] += evidence.incorrect_count
+        bucket["unanswered"] += evidence.unanswered_count
+        marks = float(scoring_question.marks)
+        penalty = (
+            round(-marks / 3, 6)
+            if scoring_question.question_type == QuestionType.MCQ
+            else 0.0
+        )
+        bucket["marks_earned"] += evidence.correct_count * marks
+        bucket["marks_earned"] += evidence.incorrect_count * penalty
+        bucket["marks_available"] += evidence.attempt_count * marks
+
+    return {
+        subject_id: SubjectProgressTotals(
+            subject_id=subject_id,
+            attempted_questions=int(bucket["attempted"]),
+            unique_questions_attempted=len(bucket["question_ids"]),
+            correct_count=int(bucket["correct"]),
+            incorrect_count=int(bucket["incorrect"]),
+            unanswered_count=int(bucket["unanswered"]),
+            marks_earned=float(bucket["marks_earned"]),
+            marks_available=float(bucket["marks_available"]),
+        )
+        for subject_id, bucket in buckets.items()
+    }
 
 
 def _select_practice_batch(
@@ -262,15 +423,34 @@ def _select_practice_batch(
 async def _session_read(
     db: AsyncSession,
     session: PracticeSession | StudySession,
+    catalog: QuestionCatalogRepository | None = None,
 ) -> SessionRead:
-    if session.question_snapshots:
-        public_questions = [
-            QuestionPublic.model_validate(snapshot)
-            for snapshot in session.question_snapshots
-        ]
-    else:
-        questions = await _load_questions(db, session.question_ids)
-        public_questions = [_question_public(question) for question in questions]
+    snapshots = _snapshots_by_id(session)
+    missing_ids = [
+        question_id
+        for question_id in session.question_ids
+        if question_id not in snapshots
+    ]
+    loaded = {
+        question.id: question
+        for question in await _load_questions(db, missing_ids, catalog)
+    }
+    if any(
+        question_id not in snapshots and question_id not in loaded
+        for question_id in session.question_ids
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="One or more immutable session questions are unavailable",
+        )
+    public_questions = [
+        (
+            QuestionPublic.model_validate(snapshots[question_id])
+            if question_id in snapshots
+            else _question_public(loaded[question_id])
+        )
+        for question_id in session.question_ids
+    ]
     return SessionRead(
         id=session.id,
         user_key=session.user_key,
@@ -314,7 +494,7 @@ async def _persist_session(
     mode: SessionMode,
     subject_id: int | None,
     topic_id: int | None,
-    questions: list[Question],
+    questions: list[Question | CatalogQuestion],
     duration_seconds: int | None,
     total_marks: int,
     seed: int,
@@ -372,7 +552,25 @@ async def _persist_session(
 
 
 @router.get("/subjects", response_model=list[SubjectSummary], tags=["Curriculum"])
-async def list_subjects(db: AsyncSession = Depends(get_db)) -> list[SubjectSummary]:
+async def list_subjects(
+    db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
+) -> list[SubjectSummary]:
+    if catalog is not None:
+        current = await catalog.snapshot()
+        return [
+            SubjectSummary(
+                id=subject.id,
+                slug=subject.slug,
+                code=subject.code,
+                name=subject.name,
+                description=subject.description,
+                order_index=subject.order_index,
+                topic_count=len(current.topics_by_subject[subject.id]),
+                question_count=current.active_subject_question_counts[subject.id],
+            )
+            for subject in current.subjects
+        ]
     topic_count = (
         select(func.count(Topic.id))
         .where(Topic.subject_id == Subject.id)
@@ -407,8 +605,43 @@ async def list_subjects(db: AsyncSession = Depends(get_db)) -> list[SubjectSumma
 
 @router.get("/subjects/{subject_ref}", response_model=SubjectDetail, tags=["Curriculum"])
 async def get_subject(
-    subject_ref: str, db: AsyncSession = Depends(get_db)
+    subject_ref: str,
+    db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
 ) -> SubjectDetail:
+    if catalog is not None:
+        current = await catalog.snapshot()
+        subject = (
+            current.subjects_by_id.get(int(subject_ref))
+            if subject_ref.isdigit()
+            else current.subjects_by_slug.get(subject_ref)
+        )
+        if subject is None:
+            raise HTTPException(status_code=404, detail="Subject not found")
+        topics = [
+            TopicSummary(
+                id=topic.id,
+                subject_id=topic.subject_id,
+                slug=topic.slug,
+                name=topic.name,
+                description=topic.description,
+                order_index=topic.order_index,
+                question_count=current.active_topic_question_counts[topic.id],
+                note_available=topic.id in current.notes_by_topic,
+            )
+            for topic in current.topics_by_subject[subject.id]
+        ]
+        return SubjectDetail(
+            id=subject.id,
+            slug=subject.slug,
+            code=subject.code,
+            name=subject.name,
+            description=subject.description,
+            order_index=subject.order_index,
+            topic_count=len(topics),
+            question_count=current.active_subject_question_counts[subject.id],
+            topics=topics,
+        )
     statement = select(Subject).options(
         selectinload(Subject.topics).selectinload(Topic.questions),
         selectinload(Subject.topics).selectinload(Topic.note),
@@ -447,7 +680,26 @@ async def get_subject(
 
 
 @router.get("/topics/{topic_id}", response_model=TopicSummary, tags=["Curriculum"])
-async def get_topic(topic_id: int, db: AsyncSession = Depends(get_db)) -> TopicSummary:
+async def get_topic(
+    topic_id: int,
+    db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
+) -> TopicSummary:
+    if catalog is not None:
+        current = await catalog.snapshot()
+        topic = current.topics_by_id.get(topic_id)
+        if topic is None:
+            raise HTTPException(status_code=404, detail="Topic not found")
+        return TopicSummary(
+            id=topic.id,
+            subject_id=topic.subject_id,
+            slug=topic.slug,
+            name=topic.name,
+            description=topic.description,
+            order_index=topic.order_index,
+            question_count=current.active_topic_question_counts[topic.id],
+            note_available=topic.id in current.notes_by_topic,
+        )
     topic = await db.scalar(
         select(Topic)
         .where(Topic.id == topic_id)
@@ -471,8 +723,18 @@ async def get_topic(topic_id: int, db: AsyncSession = Depends(get_db)) -> TopicS
     "/topics/{topic_id}/notes", response_model=RevisionNoteRead, tags=["Revision Notes"]
 )
 async def get_topic_notes(
-    topic_id: int, db: AsyncSession = Depends(get_db)
+    topic_id: int,
+    db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
 ) -> RevisionNoteRead:
+    if catalog is not None:
+        current = await catalog.snapshot()
+        if topic_id not in current.topics_by_id:
+            raise HTTPException(status_code=404, detail="Topic not found")
+        note = current.notes_by_topic.get(topic_id)
+        if note is None:
+            raise HTTPException(status_code=404, detail="Revision notes not found")
+        return RevisionNoteRead.model_validate(note)
     topic = await db.scalar(
         select(Topic).where(Topic.id == topic_id).options(selectinload(Topic.note))
     )
@@ -484,7 +746,16 @@ async def get_topic_notes(
 
 
 @router.get("/notes/{note_id}", response_model=RevisionNoteRead, tags=["Revision Notes"])
-async def get_note(note_id: int, db: AsyncSession = Depends(get_db)) -> RevisionNoteRead:
+async def get_note(
+    note_id: int,
+    db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
+) -> RevisionNoteRead:
+    if catalog is not None:
+        note = (await catalog.snapshot()).notes_by_id.get(note_id)
+        if note is None:
+            raise HTTPException(status_code=404, detail="Revision note not found")
+        return RevisionNoteRead.model_validate(note)
     from app.models import RevisionNote
 
     note = await db.get(RevisionNote, note_id)
@@ -507,7 +778,39 @@ async def list_questions(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
 ) -> QuestionListResponse:
+    if catalog is not None:
+        resolved_subject_id = subject_id
+        if subject_slug is not None:
+            subject = await _resolve_subject(
+                db,
+                subject_slug=subject_slug,
+                catalog=catalog,
+            )
+            if subject_id is not None and subject.id != subject_id:
+                return QuestionListResponse(
+                    items=[], total=0, limit=limit, offset=offset
+                )
+            resolved_subject_id = subject.id
+        questions, total = await catalog.filter_questions(
+            subject_id=resolved_subject_id,
+            topic_id=topic_id,
+            source=source,
+            source_kind=source_kind,
+            year=year,
+            question_type=question_type,
+            difficulty=difficulty,
+            search=search,
+            limit=limit,
+            offset=offset,
+        )
+        return QuestionListResponse(
+            items=[_question_public(question) for question in questions],
+            total=total,
+            limit=limit,
+            offset=offset,
+        )
     conditions: list[Any] = [Question.is_active.is_(True)]
     if subject_id is not None:
         conditions.append(Question.subject_id == subject_id)
@@ -572,7 +875,15 @@ async def list_questions(
 )
 async def question_bank_status(
     db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
 ) -> QuestionBankStatus:
+    if catalog is not None:
+        current = await catalog.snapshot()
+        return QuestionBankStatus(
+            configured_path=f"firestore:{current.release_id}",
+            total_questions=len(current.active_questions),
+            latest_import=None,
+        )
     latest = await db.scalar(
         select(QuestionBankImport)
         .order_by(QuestionBankImport.imported_at.desc(), QuestionBankImport.id.desc())
@@ -595,8 +906,15 @@ async def question_bank_status(
 
 @router.get("/questions/{question_id}", response_model=QuestionPublic, tags=["Question Bank"])
 async def get_question(
-    question_id: int, db: AsyncSession = Depends(get_db)
+    question_id: int,
+    db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
 ) -> QuestionPublic:
+    if catalog is not None:
+        question = await catalog.find_question(question_id)
+        if question is None:
+            raise HTTPException(status_code=404, detail="Question not found")
+        return _question_public(question)
     question = await db.scalar(
         select(Question)
         .where(Question.id == question_id, Question.is_active.is_(True))
@@ -618,9 +936,68 @@ async def create_practice_session(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> SessionRead:
+    if catalog is not None:
+        subject: Subject | CatalogSubject | None = None
+        if payload.subject_id is not None or payload.subject_slug is not None:
+            subject = await _resolve_subject(
+                db,
+                subject_id=payload.subject_id,
+                subject_slug=payload.subject_slug,
+                catalog=catalog,
+            )
+        if payload.topic_id is not None:
+            topic = await catalog.find_topic(payload.topic_id)
+            if topic is None:
+                raise HTTPException(status_code=404, detail="Topic not found")
+            if subject is not None and topic.subject_id != subject.id:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Topic does not belong to subject",
+                )
+            if subject is None:
+                subject = await catalog.find_subject(subject_id=topic.subject_id)
+        questions, _ = await catalog.filter_questions(
+            subject_id=subject.id if subject is not None else None,
+            topic_id=payload.topic_id,
+            question_types=(tuple(payload.question_types) if payload.question_types else None),
+            difficulties=(tuple(payload.difficulties) if payload.difficulties else None),
+            source=payload.source,
+        )
+        if not questions:
+            raise HTTPException(status_code=404, detail="No questions match these filters")
+        solved_ids = await _correctly_solved_question_ids(
+            db,
+            user_state,
+            user_key=user_key,
+            candidate_ids={question.id for question in questions},
+            catalog=catalog,
+        )
+        selected = _select_practice_batch(
+            questions,
+            count=payload.count,
+            seed=payload.seed,
+            solved_ids=solved_ids,
+        )
+        session = await _persist_session(
+            db,
+            user_state,
+            user_key=user_key,
+            catalog_id=None,
+            mode=SessionMode.PRACTICE,
+            subject_id=subject.id if subject else None,
+            topic_id=payload.topic_id,
+            questions=selected,
+            duration_seconds=None,
+            total_marks=sum(question.marks for question in selected),
+            seed=payload.seed,
+            started_at=utc_now(),
+            expires_at=None,
+        )
+        return await _session_read(db, session, catalog)
     conditions: list[Any] = [Question.is_active.is_(True)]
-    subject: Subject | None = None
+    subject: Subject | CatalogSubject | None = None
     if payload.subject_id is not None or payload.subject_slug is not None:
         subject = await _resolve_subject(
             db,
@@ -659,6 +1036,7 @@ async def create_practice_session(
         user_state,
         user_key=user_key,
         candidate_ids={question.id for question in questions},
+        catalog=catalog,
     )
     selected = _select_practice_batch(
         list(questions),
@@ -682,10 +1060,10 @@ async def create_practice_session(
         started_at=utc_now(),
         expires_at=None,
     )
-    return await _session_read(db, session)
+    return await _session_read(db, session, catalog)
 
 
-def _catalog_item(form: TestForm) -> TestCatalogItem:
+def _catalog_item(form: Any) -> TestCatalogItem:
     return TestCatalogItem(
         id=form.id,
         title=form.title,
@@ -714,7 +1092,31 @@ async def list_test_catalog(
     mode: Literal["full", "sectional"] | None = None,
     subject_slug: str | None = None,
     db: AsyncSession = Depends(get_db),
+    catalog: CatalogDependency = None,
 ) -> TestCatalogResponse:
+    if catalog is not None:
+        subject_id: int | None = None
+        if subject_slug:
+            subject = await _resolve_subject(
+                db,
+                subject_slug=subject_slug,
+                catalog=catalog,
+            )
+            subject_id = subject.id
+        forms = await catalog.list_test_forms(
+            mode=SessionMode(mode) if mode else None,
+            subject_id=subject_id,
+        )
+        items = [_catalog_item(form) for form in forms]
+        return TestCatalogResponse(
+            items=items,
+            total=len(items),
+            full_test_count=sum(item.mode == SessionMode.FULL for item in items),
+            course_test_count=sum(
+                item.mode == SessionMode.SECTIONAL for item in items
+            ),
+            bank_version=(await catalog.snapshot()).bank_version,
+        )
     conditions: list[Any] = []
     if mode:
         conditions.append(TestForm.mode == SessionMode(mode))
@@ -759,7 +1161,48 @@ async def create_catalog_test_session(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> SessionRead:
+    if catalog is not None:
+        form = await catalog.find_test_form(catalog_id)
+        if form is None:
+            raise HTTPException(status_code=404, detail="Catalog test not found")
+        if not form.is_available:
+            raise HTTPException(
+                status_code=409,
+                detail=form.unavailable_reason or "Catalog test is not available",
+            )
+        questions = await catalog.questions_by_ids(form.question_ids)
+        current = await catalog.snapshot()
+        if (
+            len(questions) != form.question_count
+            or any(not question.is_active for question in questions)
+            or (
+                current.bank_version is not None
+                and form.bank_version != current.bank_version
+            )
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="Catalog test is stale; rebuild the catalog from the current bank",
+            )
+        started_at = utc_now()
+        session = await _persist_session(
+            db,
+            user_state,
+            user_key=user_key,
+            catalog_id=form.id,
+            mode=form.mode,
+            subject_id=form.subject_id,
+            topic_id=None,
+            questions=questions,
+            duration_seconds=form.duration_seconds,
+            total_marks=form.total_marks,
+            seed=form.seed,
+            started_at=started_at,
+            expires_at=started_at + timedelta(seconds=form.duration_seconds),
+        )
+        return await _session_read(db, session, catalog)
     form = await db.get(TestForm, catalog_id)
     if form is None:
         raise HTTPException(status_code=404, detail="Catalog test not found")
@@ -768,7 +1211,7 @@ async def create_catalog_test_session(
             status_code=409,
             detail=form.unavailable_reason or "Catalog test is not available",
         )
-    questions = await _load_questions(db, form.question_ids)
+    questions = await _load_questions(db, form.question_ids, catalog)
     latest_bank_version = await db.scalar(
         select(QuestionBankImport.bank_version)
         .order_by(QuestionBankImport.imported_at.desc(), QuestionBankImport.id.desc())
@@ -802,7 +1245,7 @@ async def create_catalog_test_session(
         started_at=started_at,
         expires_at=started_at + timedelta(seconds=form.duration_seconds),
     )
-    return await _session_read(db, session)
+    return await _session_read(db, session, catalog)
 
 
 @router.post(
@@ -816,20 +1259,24 @@ async def create_test(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> SessionRead:
     rng = random.Random(payload.seed)
     subject: Subject | None = None
 
     if payload.mode == "full":
-        all_questions = (
-            await db.scalars(
-                select(Question)
-                .where(Question.is_active.is_(True))
-                .options(selectinload(Question.subject))
-                .options(selectinload(Question.topic))
-                .order_by(Question.id)
-            )
-        ).all()
+        if catalog is not None:
+            all_questions = list((await catalog.snapshot()).active_questions)
+        else:
+            all_questions = (
+                await db.scalars(
+                    select(Question)
+                    .where(Question.is_active.is_(True))
+                    .options(selectinload(Question.subject))
+                    .options(selectinload(Question.topic))
+                    .order_by(Question.id)
+                )
+            ).all()
         ga_one = [
             question
             for question in all_questions
@@ -893,21 +1340,25 @@ async def create_test(
             db,
             subject_id=payload.subject_id,
             subject_slug=payload.subject_slug,
+            catalog=catalog,
         )
-        available = (
-            await db.scalars(
-                select(Question)
-                .where(
-                    Question.subject_id == subject.id,
-                    Question.is_active.is_(True),
+        if catalog is not None:
+            available, _ = await catalog.filter_questions(subject_id=subject.id)
+        else:
+            available = (
+                await db.scalars(
+                    select(Question)
+                    .where(
+                        Question.subject_id == subject.id,
+                        Question.is_active.is_(True),
+                    )
+                    .options(
+                        selectinload(Question.subject),
+                        selectinload(Question.topic),
+                    )
+                    .order_by(Question.id)
                 )
-                .options(
-                    selectinload(Question.subject),
-                    selectinload(Question.topic),
-                )
-                .order_by(Question.id)
-            )
-        ).all()
+            ).all()
         if len(available) < payload.count:
             raise HTTPException(
                 status_code=409,
@@ -934,7 +1385,7 @@ async def create_test(
         started_at=started_at,
         expires_at=started_at + timedelta(minutes=duration_minutes),
     )
-    return await _session_read(db, session)
+    return await _session_read(db, session, catalog)
 
 
 @router.get("/sessions/{session_id}", response_model=SessionRead, tags=["Practice and Tests"])
@@ -943,6 +1394,7 @@ async def get_session(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> SessionRead:
     if user_state is not None:
         try:
@@ -954,14 +1406,14 @@ async def get_session(
             UserStateUnavailable,
         ) as exc:
             _raise_user_state_http(exc)
-        return await _session_read(db, session)
+        return await _session_read(db, session, catalog)
 
     session = await db.get(PracticeSession, session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     if session.user_key != user_key:
         raise HTTPException(status_code=404, detail="Session not found")
-    return await _session_read(db, session)
+    return await _session_read(db, session, catalog)
 
 
 def _attempt_result(
@@ -1022,6 +1474,7 @@ async def submit_attempt(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> AttemptResult:
     if user_state is not None:
         try:
@@ -1072,7 +1525,7 @@ async def submit_attempt(
     ]
     questions = {
         question.id: question
-        for question in await _load_questions(db, missing_snapshot_ids)
+        for question in await _load_questions(db, missing_snapshot_ids, catalog)
     }
     if any(
         question_id not in snapshots and question_id not in questions
@@ -1327,13 +1780,26 @@ async def progress_dashboard(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> ProgressDashboard:
-    subjects = list((await db.scalars(select(Subject).order_by(Subject.order_index))).all())
+    catalog_snapshot = await catalog.snapshot() if catalog is not None else None
+    subjects = (
+        list(catalog_snapshot.subjects)
+        if catalog_snapshot is not None
+        else list(
+            (await db.scalars(select(Subject).order_by(Subject.order_index))).all()
+        )
+    )
     progress = await _progress_for_user(db, user_state, user_key)
+    subject_buckets = (
+        _canonical_subject_progress(progress, catalog_snapshot)
+        if catalog_snapshot is not None
+        else progress.subjects
+    )
 
     subject_progress: list[SubjectProgress] = []
     for subject in subjects:
-        bucket = progress.subjects.get(subject.id)
+        bucket = subject_buckets.get(subject.id)
         correct = bucket.correct_count if bucket else 0
         incorrect = bucket.incorrect_count if bucket else 0
         unanswered = bucket.unanswered_count if bucket else 0
@@ -1502,36 +1968,53 @@ async def progress_analytics(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> AnalyticsDashboard:
-    subjects = list(
-        (
-            await db.scalars(
-                select(Subject)
-                .options(selectinload(Subject.topics))
-                .order_by(Subject.order_index)
+    catalog_snapshot = await catalog.snapshot() if catalog is not None else None
+    if catalog_snapshot is not None:
+        subjects = list(catalog_snapshot.subjects)
+        active_question_ids = set(catalog_snapshot.active_question_ids)
+        topic_question_counts = dict(
+            catalog_snapshot.active_topic_question_counts
+        )
+    else:
+        subjects = list(
+            (
+                await db.scalars(
+                    select(Subject)
+                    .options(selectinload(Subject.topics))
+                    .order_by(Subject.order_index)
+                )
+            ).all()
+        )
+        active_question_rows = (
+            await db.execute(
+                select(Question.id, Question.topic_id).where(
+                    Question.is_active.is_(True)
+                )
             )
         ).all()
-    )
-    active_question_rows = (
-        await db.execute(
-            select(Question.id, Question.topic_id).where(
-                Question.is_active.is_(True)
-            )
-        )
-    ).all()
-    active_question_ids = {question_id for question_id, _ in active_question_rows}
-    topic_question_counts: dict[int, int] = defaultdict(int)
-    for _, topic_id in active_question_rows:
-        topic_question_counts[topic_id] += 1
+        active_question_ids = {
+            question_id for question_id, _ in active_question_rows
+        }
+        topic_question_counts = defaultdict(int)
+        for _, topic_id in active_question_rows:
+            topic_question_counts[topic_id] += 1
     progress = await _progress_for_user(db, user_state, user_key)
+    canonical_evidence = _canonical_progress_evidence(progress, catalog_snapshot)
     now = utc_now()
     topic_evidence: dict[int, list[Any]] = defaultdict(list)
-    for evidence in progress.evidence.values():
+    for evidence in canonical_evidence.values():
         topic_evidence[evidence.topic_id].append(evidence)
 
     topics: list[TopicAnalytics] = []
     for subject in subjects:
-        for topic in subject.topics:
+        subject_topics = (
+            catalog_snapshot.topics_by_subject[subject.id]
+            if catalog_snapshot is not None
+            else subject.topics
+        )
+        for topic in subject_topics:
             evidence_rows = [
                 evidence
                 for evidence in topic_evidence[topic.id]
@@ -1654,7 +2137,7 @@ async def progress_analytics(
 
     answered_responses = [
         evidence
-        for evidence in progress.evidence.values()
+        for evidence in canonical_evidence.values()
         if evidence.question_id in active_question_ids
         and evidence.latest_answered_status is not None
         and evidence.latest_answered_at is not None
@@ -1736,27 +2219,38 @@ async def roadmap(
     db: AsyncSession = Depends(get_db),
     user_key: str = Depends(current_user_key),
     user_state: UserStateRepository | None = Depends(get_user_state_repository),
+    catalog: CatalogDependency = None,
 ) -> RoadmapResponse:
-    subjects = list(
-        (
-            await db.scalars(
-                select(Subject)
-                .options(
-                    selectinload(Subject.topics).selectinload(Topic.questions),
-                    selectinload(Subject.topics).selectinload(Topic.note),
+    catalog_snapshot = await catalog.snapshot() if catalog is not None else None
+    subjects = (
+        list(catalog_snapshot.subjects)
+        if catalog_snapshot is not None
+        else list(
+            (
+                await db.scalars(
+                    select(Subject)
+                    .options(
+                        selectinload(Subject.topics).selectinload(Topic.questions),
+                        selectinload(Subject.topics).selectinload(Topic.note),
+                    )
+                    .order_by(Subject.order_index)
                 )
-                .order_by(Subject.order_index)
-            )
-        ).all()
+            ).all()
+        )
     )
     progress = await _progress_for_user(db, user_state, user_key)
-    active_question_topic_ids = {
-        question.id: topic.id
-        for subject in subjects
-        for topic in subject.topics
-        for question in topic.questions
-        if question.is_active
-    }
+    canonical_evidence = _canonical_progress_evidence(progress, catalog_snapshot)
+    active_question_topic_ids = (
+        dict(catalog_snapshot.active_question_topic_ids)
+        if catalog_snapshot is not None
+        else {
+            question.id: topic.id
+            for subject in subjects
+            for topic in subject.topics
+            for question in topic.questions
+            if question.is_active
+        }
+    )
     topic_stats: dict[int, dict[str, int]] = defaultdict(
         lambda: {
             "attempted": 0,
@@ -1765,7 +2259,7 @@ async def roadmap(
             "incorrect": 0,
         }
     )
-    for evidence in progress.evidence.values():
+    for evidence in canonical_evidence.values():
         current_topic_id = active_question_topic_ids.get(evidence.question_id)
         if current_topic_id is None:
             continue
@@ -1787,13 +2281,26 @@ async def roadmap(
 
     roadmap_subjects: list[RoadmapSubject] = []
     for subject in subjects:
+        subject_topics = (
+            catalog_snapshot.topics_by_subject[subject.id]
+            if catalog_snapshot is not None
+            else subject.topics
+        )
         topics = [
             RoadmapTopic(
                 id=topic.id,
                 slug=topic.slug,
                 name=topic.name,
-                question_count=sum(question.is_active for question in topic.questions),
-                note_available=topic.note is not None,
+                question_count=(
+                    catalog_snapshot.active_topic_question_counts[topic.id]
+                    if catalog_snapshot is not None
+                    else sum(question.is_active for question in topic.questions)
+                ),
+                note_available=(
+                    topic.id in catalog_snapshot.notes_by_topic
+                    if catalog_snapshot is not None
+                    else topic.note is not None
+                ),
                 attempted_questions=topic_stats[topic.id]["attempted"],
                 solved_questions=topic_stats[topic.id]["solved"],
                 accuracy=accuracy(
@@ -1801,19 +2308,19 @@ async def roadmap(
                     topic_stats[topic.id]["incorrect"],
                 ),
             )
-            for topic in subject.topics
+            for topic in subject_topics
         ]
         subject_attempted = sum(
-            topic_stats[topic.id]["attempted"] for topic in subject.topics
+            topic_stats[topic.id]["attempted"] for topic in subject_topics
         )
         subject_solved = sum(
-            topic_stats[topic.id]["solved"] for topic in subject.topics
+            topic_stats[topic.id]["solved"] for topic in subject_topics
         )
         subject_correct = sum(
-            topic_stats[topic.id]["correct"] for topic in subject.topics
+            topic_stats[topic.id]["correct"] for topic in subject_topics
         )
         subject_incorrect = sum(
-            topic_stats[topic.id]["incorrect"] for topic in subject.topics
+            topic_stats[topic.id]["incorrect"] for topic in subject_topics
         )
         roadmap_subjects.append(
             RoadmapSubject(
@@ -1822,7 +2329,7 @@ async def roadmap(
                 code=subject.code,
                 name=subject.name,
                 order_index=subject.order_index,
-                topic_count=len(subject.topics),
+                topic_count=len(subject_topics),
                 question_count=sum(item.question_count for item in topics),
                 attempted_questions=subject_attempted,
                 solved_questions=subject_solved,

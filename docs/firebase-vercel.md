@@ -1,10 +1,10 @@
-# Firebase authentication, Firestore learner state, and Analytics on Vercel
+# Firebase authentication, Firestore data, and Analytics on Vercel
 
 Gatepath uses Firebase for account sign-in, production learner-state storage,
-and optional product telemetry. It does **not** replace PostgreSQL:
+an optional immutable question catalog, and optional product telemetry:
 
-- Neon PostgreSQL remains the source of truth for the syllabus, questions,
-  revision notes, import history, and deterministic test catalog.
+- Neon PostgreSQL is the default catalog and rollback source. A separately
+  verified publication can move static runtime reads to Firestore.
 - Firestore stores mutable sessions, attempts, progress evidence, and
   topic-mastery analytics when `USER_STATE_BACKEND=firestore`.
 - Firebase Authentication supplies a stable user identity across devices.
@@ -67,8 +67,9 @@ to account for browsers that block third-party storage.
 This is intentional: all learner-state access goes through FastAPI, and the
 Firebase Admin SDK bypasses Firestore Security Rules. Do not add Firestore
 browser initialization or permissive client rules. [`firestore.indexes.json`](../firestore.indexes.json)
-has no composite indexes and exempts large snapshot, response, and analytics
-map/array fields from automatic single-field indexing.
+has no composite indexes and exempts large learner-state, immutable shard,
+question, alias, note, and archive payloads from automatic single-field
+indexing.
 
 The checked-in exemptions name collections using the fixed `gatepath` prefix,
 and the deployment config targets `(default)`. The backend deliberately rejects
@@ -127,6 +128,9 @@ must be marked **Sensitive** in Vercel:
 | `FIREBASE_CHECK_REVOKED` | `false` | Avoids a remote revocation lookup on every authenticated API call |
 | `USER_STATE_BACKEND` | `firestore` | Uses Firestore for mutable learner state; `postgres` is the default and rollback value |
 | `USER_STATE_MAINTENANCE` | `false` | Blocks learner-state access during the brief migration window |
+| `QUESTION_CATALOG_BACKEND` | `firestore` after catalog verification and learner-state cutover | Selects immutable Firestore catalog shards; requires `USER_STATE_BACKEND=firestore`; `postgres` is the rollback value |
+| `QUESTION_CATALOG_MAINTENANCE` | `false` | Blocks catalog access while deliberately changing releases |
+| `FIRESTORE_CATALOG_CACHE_SECONDS` | `300` | Bounds server-side immutable-shard cache refreshes |
 | `FIRESTORE_DATABASE_ID` | `(default)` | Firestore database selected by the backend |
 | `FIRESTORE_COLLECTION_PREFIX` | `gatepath` | Prefix for server-owned learner-state collections |
 
@@ -180,10 +184,10 @@ Analytics, and event names are case-sensitive. Prefer a small fixed vocabulary
 such as sign-in, practice-started, test-started, and test-completed rather than
 embedding course, topic, or user data in event names.
 
-## 6. Bootstrap Neon, migrate learner state, and deploy
+## 6. Bootstrap Neon, migrate data, and deploy
 
-Firestore setup does not initialize the static application catalog. Neon
-remains a separate required dependency in every user-state mode.
+Firestore setup does not initialize any application data by itself. Keep Neon
+as the runtime source while preparing and independently verifying both copies.
 
 1. Confirm Vercel has the correct Neon `DATABASE_URL` and
    `DATABASE_URL_UNPOOLED` for the target environment. Never give a Preview
@@ -236,6 +240,72 @@ Post-cutover attempts written only to Firestore must be reconciled before Neon
 can again be treated as current, so keep that validation window short and do
 not accept extended traffic on both backends independently.
 
+### Static catalog publication
+
+Publish the static catalog only after the Firestore-capable application release
+is deployed. The dry run builds an immutable release containing all 5,163
+canonical records, 405 lossless legacy-ID aliases, and a 2,467-question active
+runtime projection. The runtime projection is packed into checksum-bound
+shards (each at most 600 KiB), preventing thousands of document reads on a
+serverless cold start.
+
+The optional first command rewrites only the dedicated
+`firestore_legacy_catalog_snapshot.json`. Never replace that output with a PYQ
+archive, allowlist, or visibility-plan path.
+
+```powershell
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --snapshot-from-sqlite backend/gate_prep.db `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json
+
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json `
+  --manifest-out backend/data/firestore_catalog_release_manifest.json
+
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json `
+  --apply `
+  --confirm-release <exact-dry-run-release-id> `
+  --expected-current-release none `
+  --confirm-firestore-target "<project-id>|(default)|gatepath"
+
+python backend/scripts/migrate_catalog_to_firestore.py --verify-only
+```
+
+Copy the exact `firestore_target.confirmation` value printed by the dry run.
+Use `--expected-current-release none` only when no current pointer exists. For a
+later release, supply the exact current release ID. Repointing to a previously
+published release is an explicit rollback and also requires `--rollback`. The
+transactional compare-and-swap blocks concurrent or stale publishers. Never
+delete the current pointer; publish or rollback through this CLI. Remote
+modes reject a set `FIRESTORE_EMULATOR_HOST` unless the test-only
+`--allow-firestore-emulator` override is deliberately supplied.
+
+Before the `--apply` command, set `DATABASE_URL` to the live target
+Neon/PostgreSQL database that matches the frozen legacy snapshot. The apply
+preflight deliberately rejects SQLite. The apply step verifies the tracked
+`backend/data/firestore_catalog_release_manifest.json`; it does not regenerate
+or overwrite that reviewed manifest.
+
+Inspect the dry-run counts and release ID before applying. The publisher writes
+new immutable release subcollections, verifies every document and shard hash,
+and updates `gatepath_catalog_meta/current` last. Never run it from a Vercel
+build, startup, or request. After verification succeeds, confirm Production is
+already using `USER_STATE_BACKEND=firestore`, then set
+`QUESTION_CATALOG_BACKEND=firestore` and redeploy. The backend rejects a
+Firestore catalog paired with PostgreSQL learner state because the relational
+attempt schema cannot store the catalog's canonical question IDs. Never switch
+learner state back to PostgreSQL while the Firestore catalog remains selected.
+Retain Neon during the rollback window; neither flag mutates Firestore.
+
+An emergency catalog read fallback starts by restoring
+`QUESTION_CATALOG_BACKEND=postgres`. A full behavioral rollback requires a
+maintenance window and deterministic canonical-to-legacy evidence
+reconciliation for all 177 active audited questions. Immutable snapshots keep
+existing sessions and attempts readable, but PostgreSQL-backed practice
+rotation, roadmap, and topic analytics are not exact until reconciliation
+finishes.
+
 ### Free-tier capacity and retention
 
 This split makes Neon storage independent of account and attempt growth, but it
@@ -278,7 +348,7 @@ runs so state does not leak across scenarios.
 
 ## 7. Smoke-check the deployment
 
-First verify routing, FastAPI, Neon catalog access, and Firestore state access:
+First verify routing, FastAPI, the selected catalog, and Firestore state access:
 
 ```text
 GET https://<deployment-domain>/
@@ -287,8 +357,9 @@ GET https://<deployment-domain>/openapi.json
 GET https://<deployment-domain>/api/v1/tests/catalog
 ```
 
-The root, health, OpenAPI, and catalog requests should return `200`; the health
-body should report the database as `ok`.
+The root, health, OpenAPI, and catalog requests should return `200`. With both
+backends on Firestore, health reports `database=not_required`,
+`question_catalog=ok`, and `user_state=ok`.
 
 Then use a private browser window:
 
@@ -306,8 +377,9 @@ Then use a private browser window:
 6. Start a practice session, submit an answer, and confirm the progress and
    topic-mastery views update. With `USER_STATE_BACKEND=firestore`, these
    records should appear under the prefixed Firestore collections and persist
-   after a refresh and a new Vercel function instance; static question and
-   catalog reads must continue to come from Neon.
+   after a refresh and a new Vercel function instance. With
+   `QUESTION_CATALOG_BACKEND=firestore`, catalog reads must continue to work in
+   a test deployment that intentionally omits its Neon URL.
 7. Log out through `POST /api/v1/auth/logout` with the current CSRF token.
    Confirm the session cookie is cleared and `/auth/me` returns guest state.
 8. If Analytics is enabled and consented, use Firebase Analytics DebugView to
@@ -318,11 +390,13 @@ Then use a private browser window:
 If all FastAPI paths return `FUNCTION_INVOCATION_FAILED`, inspect the backend
 function logs first. Typical configuration causes are malformed
 `FIREBASE_SERVICE_ACCOUNT_JSON`, a `FIREBASE_PROJECT_ID` mismatch, a missing
-Neon URL, a missing `(default)` Firestore database, or an invalid
-`USER_STATE_BACKEND`. Temporarily setting `USER_STATE_BACKEND=postgres` and
-redeploying isolates Firestore readiness from catalog/routing problems without
-deleting either store. Disabling Firebase Authentication is a separate guest
-mode diagnostic and is not a substitute for configuring production Firestore.
+Neon URL while either backend still selects `postgres`, a missing `(default)`
+Firestore database, or an invalid backend flag. Restore
+`QUESTION_CATALOG_BACKEND=postgres` to isolate catalog readiness. Once the
+catalog is on PostgreSQL, `USER_STATE_BACKEND=postgres` can separately isolate
+learner-state readiness without deleting either store.
+Disabling Firebase Authentication is a separate guest-mode diagnostic and is
+not a substitute for configuring production Firestore.
 
 ## Authoritative Firebase references
 

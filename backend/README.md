@@ -21,8 +21,9 @@ Open `http://localhost:8000/docs` for the interactive OpenAPI documentation. On 
 4. deterministically materializes 25 full mocks and 10 course tests for each of the 10 technical courses.
 
 The default bank location can be changed with `QUESTION_BANK_PATH`. Relative
-paths are resolved from the backend directory. PostgreSQL always stores the
-syllabus, notes, question bank, import audit, and deterministic test catalog.
+paths are resolved from the backend directory. PostgreSQL is the default
+catalog backend; a verified immutable Firestore publication can be selected
+with `QUESTION_CATALOG_BACKEND=firestore` after learner state uses Firestore.
 `USER_STATE_BACKEND=postgres` keeps mutable sessions, attempts, and progress in
 the same database; production uses `USER_STATE_BACKEND=firestore` after the
 documented migration. Firestore uses `FIRESTORE_DATABASE_ID=(default)` and the
@@ -56,19 +57,25 @@ SQLite is the zero-configuration default. For PostgreSQL set, for example:
 DATABASE_URL=postgresql+asyncpg://gate:gate@postgres:5432/gate_prep
 ```
 
-User-state selection is independent of catalog storage:
+The PostgreSQL catalog works with either user-state backend. Firestore catalog
+mode requires Firestore user state because its canonical question IDs are not
+representable by the legacy relational attempt schema:
 
 ```text
 USER_STATE_BACKEND=postgres
+QUESTION_CATALOG_BACKEND=postgres
 FIRESTORE_DATABASE_ID=(default)
 FIRESTORE_COLLECTION_PREFIX=gatepath
+FIRESTORE_CATALOG_CACHE_SECONDS=300
 ```
 
 With `USER_STATE_BACKEND=firestore`, the backend reuses
 `FIREBASE_SERVICE_ACCOUNT_JSON` (or Application Default Credentials) for
 Firestore Admin access. The browser never connects to Firestore directly.
 Deploy the repository's deny-all Firestore rules and index exemptions before
-switching the backend. PostgreSQL remains required for every mode.
+switching either backend. PostgreSQL remains the fallback while either flag is
+`postgres`; it is no longer a runtime dependency after both flags are
+`firestore` and the two migrations have been verified.
 
 For managed deployments, set `AUTO_CREATE_DB=false` and run
 `alembic upgrade head` before starting the service. The included Compose stack
@@ -97,6 +104,72 @@ step, or cold-start action. Use a maintenance window, switch Production to
 Legacy PostgreSQL user-state rows remain available. Roll back by restoring
 `USER_STATE_BACKEND=postgres` and redeploying; reconcile any attempts written
 to Firestore after cutover before treating PostgreSQL as current again.
+
+## Firestore question-catalog cutover
+
+The catalog migration is explicit and non-destructive. It publishes all 5,163
+canonical records (2,290 generated originals plus 2,873 audited PYQs), retains
+lossless aliases for the 405 historical SQL PYQ IDs, and builds a separate
+2,467-question active runtime projection. Runtime data is packed into
+checksum-bound immutable shards so a Vercel cold start does not read thousands
+of individual Firestore documents.
+
+Use a trusted workstation with a disposable, fully verified SQLite snapshot
+and Firebase Admin credentials. The command is a dry run unless `--apply` is
+present:
+
+The optional export step rewrites only the dedicated
+`firestore_legacy_catalog_snapshot.json`. The CLI refuses reviewed PYQ archive,
+allowlist, and visibility-plan paths as snapshot outputs.
+
+```powershell
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --snapshot-from-sqlite backend/gate_prep.db `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json
+
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json `
+  --manifest-out backend/data/firestore_catalog_release_manifest.json
+
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json `
+  --apply `
+  --confirm-release <exact-dry-run-release-id> `
+  --expected-current-release none `
+  --confirm-firestore-target "<project-id>|(default)|gatepath"
+
+python backend/scripts/migrate_catalog_to_firestore.py --verify-only
+```
+
+Copy the exact `firestore_target.confirmation` value from the dry-run output.
+Use `--expected-current-release none` only for the initial publication. Future
+publishes must supply the exact current release ID; selecting an already
+published older release also requires `--rollback`. The pointer is changed by a
+transactional compare-and-swap only after immutable create-precondition writes
+and exact verification succeed. Never delete the current pointer; publish or
+rollback through this CLI. Remote modes reject `FIRESTORE_EMULATOR_HOST`
+unless `--allow-firestore-emulator` is deliberately supplied for local testing.
+
+Before the `--apply` command, set `DATABASE_URL` to the live target
+Neon/PostgreSQL database that matches the frozen legacy snapshot. The apply
+preflight deliberately rejects SQLite. The apply step verifies the tracked
+`backend/data/firestore_catalog_release_manifest.json`; it does not regenerate
+or overwrite that reviewed manifest.
+
+Review the dry-run manifest and exact counts before applying. The publisher
+writes into a new release namespace, verifies every document and shard, then
+updates `gatepath_catalog_meta/current` last. Only after remote verification
+passes and Production already uses `USER_STATE_BACKEND=firestore` should it set
+`QUESTION_CATALOG_BACKEND=firestore` and redeploy. Never switch learner state
+back to PostgreSQL while the Firestore catalog remains selected.
+
+Retain Neon for rollback; the migration does not delete or mutate it. An
+emergency catalog read fallback starts by restoring
+`QUESTION_CATALOG_BACKEND=postgres`, but a full behavioral rollback requires a
+maintenance window and deterministic canonical-to-legacy evidence
+reconciliation for all 177 active audited questions. Immutable snapshots keep
+sessions and attempts readable; PostgreSQL-backed practice rotation, roadmap,
+and topic analytics are not exact until reconciliation finishes.
 
 ## Main API contract
 

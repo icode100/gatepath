@@ -1,0 +1,226 @@
+{
+  "schema_version": "1.0",
+  "migration_role": "immutable_firestore_catalog_release",
+  "database_writes_performed": false,
+  "production_apply_requires_release_confirmation": "gatepath-catalog-55ed107e95e424546153",
+  "release_id": "gatepath-catalog-55ed107e95e424546153",
+  "manifest_root_sha256": "2446e4c3694c9f79d24828fa3687a07650a820e1c7e163309ff991185c1c989d",
+  "source_bindings": [
+    {
+      "role": "legacy_relational_catalog_snapshot",
+      "path": "data/firestore_legacy_catalog_snapshot.json",
+      "file_sha256": "19bd29e753fee014bf689c4d76e7766ea75a977a20de5bb364aeab28795f48c1",
+      "canonical_sha256": "891a88464ad3259b62332197561124bdec581ce3abd71538ff4993c5f4825ef7"
+    },
+    {
+      "role": "audited_pyq_archive_and_practice_projection",
+      "path": "data/gate_cs_pyq_practice_1996_2025.json",
+      "file_sha256": "1c34407a6b71459d5c89f837fa0f3ef00190a27740b876008d79b22cd29c9dec",
+      "artifact_version": "gate-cs-pyq-practice-0aa05b22e3bf-88c192e62efb"
+    },
+    {
+      "role": "practice_allowlist",
+      "path": "data/gate_cs_pyq_practice_1996_2025.allowlist.json",
+      "file_sha256": "22bfcf7c2d7c045a96330af50449a912af93bb8157daae316c1d9625c37e696e",
+      "selection_sha256": "88c192e62efb9df247e58b53b2fd1dc2b41314d6ac8fd2e99f686984828b26e6"
+    },
+    {
+      "role": "legacy_visibility_and_retirement_plan",
+      "path": "data/pyq_legacy_collision_cleanup_plan.json",
+      "file_sha256": "1f68544cf95a66560ba6482245cc053340e837f01cab6590d0f4c4d7c25655ed",
+      "plan_version": "gate-cs-pyq-visibility-88c192e62efb-405-to-177-v1"
+    },
+    {
+      "role": "normalized_catalog_projection",
+      "canonical_sha256": "4dbc2ffb6e2637ee7c6f2ff61227a0bc488138578f27b2dadcee2ec3e30cd182"
+    }
+  ],
+  "counts": {
+    "canonical_question_count": 5163,
+    "question_count": 5163,
+    "active_question_count": 2467,
+    "generated_original_count": 2290,
+    "audited_pyq_count": 2873,
+    "practice_pyq_count": 177,
+    "archive_only_pyq_count": 2696,
+    "legacy_question_count": 2695,
+    "legacy_pyq_alias_count": 405,
+    "legacy_pyq_canonical_overlap_count": 391,
+    "legacy_duplicate_alias_count": 14,
+    "active_target_alias_count": 190,
+    "inactive_target_alias_count": 215,
+    "subject_count": 11,
+    "topic_count": 64,
+    "revision_note_count": 64,
+    "test_form_count": 125,
+    "source_paper_count": 39,
+    "source_question_count": 2873,
+    "question_index_count": 5163,
+    "shard_count": 15,
+    "direct_entity_document_count": 8744
+  },
+  "collections": [
+    {
+      "kind": "subjects",
+      "subcollection": "subjects",
+      "count": 11,
+      "sha256": "a9f9f4aff88b171ddb8c5f0ea348a91ac58f8abe554eb07e1391a763e577fc4e"
+    },
+    {
+      "kind": "topics",
+      "subcollection": "topics",
+      "count": 64,
+      "sha256": "7ecef0ac0344fde6fa4745782d75a29651f2c5b19f0935d76580a981eb579392"
+    },
+    {
+      "kind": "revision_notes",
+      "subcollection": "revision_notes",
+      "count": 64,
+      "sha256": "78ad41e0b6fcadd650754842a3fe75134ecb4b290501e26f1cae00ab24299560"
+    },
+    {
+      "kind": "questions",
+      "subcollection": "questions",
+      "count": 5163,
+      "sha256": "88402f282832b8cef85384a3e84dca824bfbbae8692000a4f9ed81aa09a0f249"
+    },
+    {
+      "kind": "question_aliases",
+      "subcollection": "question_aliases",
+      "count": 405,
+      "sha256": "9f7240847b6da2ec9c67b889302652e2790c108730938313059a1a82c0f627b1"
+    },
+    {
+      "kind": "test_forms",
+      "subcollection": "test_forms",
+      "count": 125,
+      "sha256": "639360143ea9796229d8dba4ba7cfa5ba6d58dccb2e61bde083977c560468b77"
+    },
+    {
+      "kind": "source_papers",
+      "subcollection": "source_papers",
+      "count": 39,
+      "sha256": "fb87560d62be316016060aac26dd95fd08886d170bfbf7d42d9c50bf439028a3"
+    },
+    {
+      "kind": "source_questions",
+      "subcollection": "source_questions",
+      "count": 2873,
+      "sha256": "17653a5fd880752133179a413c651da0647e2fb66ecf0e4b173d565ff4f7aa98"
+    }
+  ],
+  "shards": [
+    {
+      "kind": "subjects",
+      "index": 0,
+      "count": 11,
+      "payload_sha256": "df72e3801a0f5921ea01afca595696eaac9e66d82fb3e4eeebc46859c9d6169b",
+      "encoded_bytes": 2756
+    },
+    {
+      "kind": "topics",
+      "index": 0,
+      "count": 64,
+      "payload_sha256": "9747ecce9c99803a2406814b2a8ce2260665de1f7aed43cdde696ed0a2376b8f",
+      "encoded_bytes": 19769
+    },
+    {
+      "kind": "revision_notes",
+      "index": 0,
+      "count": 64,
+      "payload_sha256": "de8ba5e24653bd48e33bba30ea432b4ccd02acee82c449a9eeadc88c508c50ba",
+      "encoded_bytes": 132704
+    },
+    {
+      "kind": "questions",
+      "index": 0,
+      "count": 342,
+      "payload_sha256": "499348f9d76dfda444de84d73a15a0271b30487e3873b0f81924c2e68b8de111",
+      "encoded_bytes": 612346
+    },
+    {
+      "kind": "questions",
+      "index": 1,
+      "count": 330,
+      "payload_sha256": "80e864901de886780984349b38401ccd6718460b3cec1319799db17aceddfce0",
+      "encoded_bytes": 612372
+    },
+    {
+      "kind": "questions",
+      "index": 2,
+      "count": 341,
+      "payload_sha256": "bb721a17759d5a69b5bbdb0a80d0928b0a5b21b5452c59c2b4cf7d5f43bc232e",
+      "encoded_bytes": 609147
+    },
+    {
+      "kind": "questions",
+      "index": 3,
+      "count": 354,
+      "payload_sha256": "0b7d282735e8b8e957bc63373da3cc34f91fa1aebead84cd8cd96d467dee8f7a",
+      "encoded_bytes": 612864
+    },
+    {
+      "kind": "questions",
+      "index": 4,
+      "count": 348,
+      "payload_sha256": "9dfb99cafaf4e71ac7771abac51b0a1f79ee06462076ddc31a6d604d8135dfa0",
+      "encoded_bytes": 612809
+    },
+    {
+      "kind": "questions",
+      "index": 5,
+      "count": 318,
+      "payload_sha256": "6c8fcacc09f3c4fdc0790487ec265a717463b24fbb486f47faf785ad8d81fd35",
+      "encoded_bytes": 613088
+    },
+    {
+      "kind": "questions",
+      "index": 6,
+      "count": 337,
+      "payload_sha256": "3f20f633983277c31b2b7aa4ccc9467f5b517113f9ff2d9bb6d051bd146650a2",
+      "encoded_bytes": 612968
+    },
+    {
+      "kind": "questions",
+      "index": 7,
+      "count": 97,
+      "payload_sha256": "13625e4997400dc7655c39213ae7a8c5afdfa7f6908bdd5600657251a3ab97fc",
+      "encoded_bytes": 153949
+    },
+    {
+      "kind": "question_aliases",
+      "index": 0,
+      "count": 312,
+      "payload_sha256": "91cb42e96f30373329ba7791e219e9d390a81ed64e5049f8f9785ea6959d9823",
+      "encoded_bytes": 611687
+    },
+    {
+      "kind": "question_aliases",
+      "index": 1,
+      "count": 93,
+      "payload_sha256": "3038e593e6912fc881204f972b25be42c6b78623c3e1b79a74355008d97e2524",
+      "encoded_bytes": 181460
+    },
+    {
+      "kind": "test_forms",
+      "index": 0,
+      "count": 125,
+      "payload_sha256": "8e1ea273c52e86027185271609e3d24c0f55b31a45a951d2c802c7af15492135",
+      "encoded_bytes": 189866
+    },
+    {
+      "kind": "question_index",
+      "index": 0,
+      "count": 5163,
+      "payload_sha256": "5e2405d70a42dd26d95f89faf781022cc18a096b23904a82956d10c26db95224",
+      "encoded_bytes": 305064
+    }
+  ],
+  "publication_order": [
+    "release-scoped entities",
+    "release-scoped active catalog shards",
+    "immutable release manifest",
+    "exact remote verification",
+    "gatepath_catalog_meta/current pointer"
+  ]
+}

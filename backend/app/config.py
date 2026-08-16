@@ -46,8 +46,11 @@ class Settings(BaseSettings):
     firebase_check_revoked: bool = False
     user_state_backend: Literal["postgres", "firestore"] = "postgres"
     user_state_maintenance: bool = False
+    question_catalog_backend: Literal["postgres", "firestore"] = "postgres"
+    question_catalog_maintenance: bool = False
     firestore_database_id: str = "(default)"
     firestore_collection_prefix: str = "gatepath"
+    firestore_catalog_cache_seconds: int = 300
 
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
@@ -177,9 +180,20 @@ class Settings(BaseSettings):
             or len(self.anonymous_identity_secret) < 32
         ):
             issues.append("ANONYMOUS_IDENTITY_SECRET_MISSING_OR_WEAK")
-        database_issue = self.database_configuration_issue
-        if database_issue is not None:
-            issues.append(database_issue)
+        if (
+            self.question_catalog_backend == "firestore"
+            and self.user_state_backend != "firestore"
+        ):
+            issues.append("FIRESTORE_CATALOG_REQUIRES_FIRESTORE_USER_STATE")
+        # PostgreSQL is optional only after mutable learner state and then the
+        # immutable question catalog have both cut over to Firestore.
+        if (
+            self.user_state_backend == "postgres"
+            or self.question_catalog_backend == "postgres"
+        ):
+            database_issue = self.database_configuration_issue
+            if database_issue is not None:
+                issues.append(database_issue)
         return issues
 
     @property
@@ -282,6 +296,19 @@ class Settings(BaseSettings):
         return self.firestore_configuration_issues
 
     @property
+    def question_catalog_configuration_issues(self) -> list[str]:
+        """Return safe diagnostics for the selected static catalog backend."""
+
+        if self.question_catalog_backend != "firestore":
+            return []
+        issues = list(self.firestore_configuration_issues)
+        if self.user_state_backend != "firestore":
+            issues.append("FIRESTORE_CATALOG_REQUIRES_FIRESTORE_USER_STATE")
+        if not 15 <= self.firestore_catalog_cache_seconds <= 60 * 60:
+            issues.append("FIRESTORE_CATALOG_CACHE_SECONDS_INVALID")
+        return issues
+
+    @property
     def use_null_database_pool(self) -> bool:
         if self.database_pool_mode == "null":
             return True
@@ -295,6 +322,7 @@ class Settings(BaseSettings):
 
         return (
             self.auto_bootstrap_on_startup
+            and self.question_catalog_backend == "postgres"
             and not self.is_production
             and not self.is_serverless_runtime
         )

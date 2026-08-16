@@ -454,3 +454,6 @@ class HealthResponse(BaseModel):
     user_state_backend: str = "postgres"
     user_state: str = "postgres"
     user_state_issues: list[str] = Field(default_factory=list)
+    question_catalog_backend: str = "postgres"
+    question_catalog: str = "postgres"
+    question_catalog_issues: list[str] = Field(default_factory=list)

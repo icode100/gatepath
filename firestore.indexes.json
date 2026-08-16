@@ -30,6 +30,151 @@
       "collectionGroup": "gatepath_progress",
       "fieldPath": "recent_attempts",
       "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_catalog_releases",
+      "fieldPath": "source_bindings",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_catalog_releases",
+      "fieldPath": "collections",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "gatepath_catalog_releases",
+      "fieldPath": "shards",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "shards",
+      "fieldPath": "items",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "text",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "options",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "correct_answer",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "explanation",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "tags",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "assets",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "archive_record",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "legacy_aliases",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "questions",
+      "fieldPath": "legacy_question_ids",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "question_aliases",
+      "fieldPath": "legacy_snapshot",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "revision_notes",
+      "fieldPath": "content_md",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "revision_notes",
+      "fieldPath": "key_points",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "revision_notes",
+      "fieldPath": "worked_examples",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "test_forms",
+      "fieldPath": "question_ids",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "test_forms",
+      "fieldPath": "question_type_counts",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "test_forms",
+      "fieldPath": "legacy_form_snapshot",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "question_md",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "options",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "accepted_answers",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "solution_md",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "review_flags",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "assets",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_questions",
+      "fieldPath": "source_references",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_papers",
+      "fieldPath": "notes",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "source_papers",
+      "fieldPath": "source_aliases",
+      "indexes": []
     }
   ]
 }

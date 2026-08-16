@@ -115,7 +115,9 @@ Vercel does not run `docker-compose.yml` or the PostgreSQL container. The
 Docker files remain the local and portable self-hosted deployment path; Vercel
 uses native framework services and an external managed database.
 
-Neon remains required for static catalog data and explicit release bootstrap.
+Neon remains the default static catalog and the source used to build an
+auditable Firestore release. After the independent catalog migration verifies,
+Production can select Firestore with `QUESTION_CATALOG_BACKEND=firestore`.
 Firebase provides account sign-in and optional browser telemetry; Firestore is
 the production source of truth for sessions, attempts, progress, and
 topic-mastery analytics when `USER_STATE_BACKEND=firestore`. See the complete
@@ -151,9 +153,9 @@ fallback or request Services access.
    integration uses differently named variables, add these two aliases.
 
 The API accepts ordinary `postgresql://` and `postgres://` URLs and selects the
-async PostgreSQL driver itself. PostgreSQL remains required after Firestore is
-enabled because it owns all static curriculum and question-bank data. Never
-prefix a browser-visible variable with a database secret.
+async PostgreSQL driver itself. PostgreSQL remains the safe catalog fallback
+until the immutable Firestore release is published and verified. Never prefix
+a browser-visible variable with a database secret.
 
 ### 3. Configure Firebase Authentication, Firestore, and optional Analytics
 
@@ -198,6 +200,9 @@ only to environments where account sign-in should work; set
 | `DATABASE_URL_UNPOOLED` | Neon direct URL used by the bootstrap command |
 | `USER_STATE_BACKEND` | `firestore` in Production; `postgres` is the safe default and rollback value |
 | `USER_STATE_MAINTENANCE` | `false`; set `true` only for the brief learner-state migration window |
+| `QUESTION_CATALOG_BACKEND` | `firestore` only after the immutable catalog release verifies and `USER_STATE_BACKEND=firestore`; otherwise `postgres` |
+| `QUESTION_CATALOG_MAINTENANCE` | `false`; set `true` only while changing the active catalog release |
+| `FIRESTORE_CATALOG_CACHE_SECONDS` | `300`; bounded server-side immutable-shard cache |
 | `FIRESTORE_DATABASE_ID` | `(default)` |
 | `FIRESTORE_COLLECTION_PREFIX` | `gatepath` |
 | `ENVIRONMENT` | `production` |
@@ -301,8 +306,72 @@ created after the Firestore cutover require reconciliation before PostgreSQL
 can again be considered current, so keep the initial validation window short.
 The detailed guide includes the rules/index deployment, free-tier capacity and
 retention notes, and smoke checks. Neon storage no longer grows with users in
-Firestore mode, although Neon remains required for catalog reads and Firestore
-retains its own usage quotas.
+Firestore mode; after the separately verified catalog cutover, it is also no
+longer required on the request path. Keep it intact during rollback validation.
+
+### 6a. Publish and switch the Firestore question catalog
+
+The catalog publisher is also explicit and non-destructive. It retains 2,290
+generated originals and all 2,873 audited PYQ records as 5,163 canonical
+questions, maps every one of the 405 historical SQL PYQ IDs through a lossless
+alias, and exposes only the 2,467 active/practice-safe questions to normal API
+queries. Runtime projection data is packed into immutable checksum-bound
+shards; the current pointer changes only after the complete release verifies.
+
+From a trusted workstation, first create and inspect the dry-run manifest from
+the exact reviewed SQLite/source snapshot. Then apply only with the release ID
+printed by that dry run:
+
+The export command rewrites `firestore_legacy_catalog_snapshot.json`; that
+dedicated file is its only valid data-directory target. Never substitute a PYQ
+archive, allowlist, or visibility-plan path.
+
+```powershell
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --snapshot-from-sqlite backend/gate_prep.db `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json
+
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json `
+  --manifest-out backend/data/firestore_catalog_release_manifest.json
+
+python backend/scripts/migrate_catalog_to_firestore.py `
+  --source-snapshot backend/data/firestore_legacy_catalog_snapshot.json `
+  --apply `
+  --confirm-release <exact-dry-run-release-id> `
+  --expected-current-release none `
+  --confirm-firestore-target "<project-id>|(default)|gatepath"
+
+python backend/scripts/migrate_catalog_to_firestore.py --verify-only
+```
+
+Use the exact `firestore_target.confirmation` printed by the dry run. `none` is
+valid only for the first publication; later releases must name the exact
+current release in `--expected-current-release`. Repointing to an existing older
+release additionally requires `--rollback`. The pointer swap is a transactional
+compare-and-swap, so a concurrent publication or a changed pointer stops the
+run instead of overwriting it. Never delete the current pointer; publish or
+rollback through this command. Remote modes refuse `FIRESTORE_EMULATOR_HOST` by
+default; `--allow-firestore-emulator` is only for deliberate local tests.
+
+Before the `--apply` command, set `DATABASE_URL` to the live target
+Neon/PostgreSQL database that matches the frozen legacy snapshot. The apply
+preflight deliberately rejects SQLite. The apply step verifies the tracked
+`backend/data/firestore_catalog_release_manifest.json`; it does not regenerate
+or overwrite that reviewed manifest.
+
+Do not place this command in a build, startup, or serverless cold-start path.
+After verification succeeds, first confirm `USER_STATE_BACKEND=firestore`, then
+set `QUESTION_CATALOG_BACKEND=firestore` and redeploy. The API rejects the
+opposite mixed mode because PostgreSQL learner-state rows cannot represent the
+Firestore catalog's canonical question IDs. Never switch learner state back to
+PostgreSQL while the Firestore catalog remains selected. Keep Neon unchanged
+through the validation window. An emergency catalog read fallback starts by
+restoring the catalog flag to `postgres`, but a full behavioral rollback needs
+a maintenance window and deterministic canonical-to-legacy evidence
+reconciliation for the 177 active audited questions. Immutable snapshots keep
+sessions and attempts readable; rotation, roadmap, and topic analytics are not
+exact until that reconciliation finishes.
 
 ### 7. Deploy and verify
 

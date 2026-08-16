@@ -21,6 +21,11 @@ from app.identity import (
     verify_identity,
 )
 from app.schemas import HealthResponse
+from app.question_catalog import (
+    QuestionCatalogError,
+    QuestionCatalogNotFound,
+)
+from app.question_catalog.dependencies import get_question_catalog_repository
 from app.user_state import (
     UserStateAlreadySubmitted,
     UserStateError,
@@ -98,6 +103,28 @@ async def handle_user_state_error(
     else:
         status_code = status.HTTP_503_SERVICE_UNAVAILABLE
         detail = "User progress storage is temporarily unavailable"
+    return JSONResponse(
+        status_code=status_code,
+        headers={"Cache-Control": "no-store"},
+        content={"detail": detail},
+    )
+
+
+@app.exception_handler(QuestionCatalogError)
+async def handle_question_catalog_error(
+    _: Request,
+    exc: QuestionCatalogError,
+) -> JSONResponse:
+    status_code = (
+        status.HTTP_404_NOT_FOUND
+        if isinstance(exc, QuestionCatalogNotFound)
+        else status.HTTP_503_SERVICE_UNAVAILABLE
+    )
+    detail = (
+        "Catalog item not found"
+        if status_code == status.HTTP_404_NOT_FOUND
+        else "Question catalog is temporarily unavailable"
+    )
     return JSONResponse(
         status_code=status_code,
         headers={"Cache-Control": "no-store"},
@@ -207,6 +234,7 @@ async def health(response: Response) -> HealthResponse:
     configuration_issues = settings.hosted_configuration_issues
     firebase_issues = settings.firebase_configuration_issues
     user_state_issues = settings.user_state_configuration_issues
+    catalog_issues = settings.question_catalog_configuration_issues
     authentication_status = (
         "guest_only"
         if not settings.firebase_auth_enabled
@@ -228,14 +256,22 @@ async def health(response: Response) -> HealthResponse:
             user_state_backend=settings.user_state_backend,
             user_state="not_checked",
             user_state_issues=user_state_issues,
+            question_catalog_backend=settings.question_catalog_backend,
+            question_catalog="not_checked",
+            question_catalog_issues=catalog_issues,
         )
-    database_status = "ok"
-    try:
-        async with AsyncSessionFactory() as session:
-            await session.execute(select(1))
-    except Exception:
-        database_status = "unavailable"
-        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    database_required = (
+        settings.user_state_backend == "postgres"
+        or settings.question_catalog_backend == "postgres"
+    )
+    database_status = "ok" if database_required else "not_required"
+    if database_required:
+        try:
+            async with AsyncSessionFactory() as session:
+                await session.execute(select(1))
+        except Exception:
+            database_status = "unavailable"
+            response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 
     user_state_status = "postgres"
     if settings.user_state_maintenance:
@@ -255,16 +291,43 @@ async def health(response: Response) -> HealthResponse:
             else:
                 user_state_status = "ok"
 
-    if firebase_issues or user_state_issues or user_state_status == "unavailable":
+    catalog_status = "postgres"
+    if settings.question_catalog_maintenance:
+        catalog_status = "maintenance"
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    elif settings.question_catalog_backend == "firestore":
+        if catalog_issues:
+            catalog_status = "invalid"
+        else:
+            try:
+                repository = get_question_catalog_repository()
+                if repository is None:
+                    raise QuestionCatalogError(
+                        "Firestore question catalog is unavailable"
+                    )
+                await repository.healthcheck()
+            except QuestionCatalogError:
+                catalog_status = "unavailable"
+            else:
+                catalog_status = "ok"
+
+    if (
+        firebase_issues
+        or user_state_issues
+        or catalog_issues
+        or user_state_status == "unavailable"
+        or catalog_status == "unavailable"
+    ):
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return HealthResponse(
         status=(
             "ok"
             if (
-                database_status == "ok"
+                database_status in {"ok", "not_required"}
                 and not firebase_issues
                 and not user_state_issues
                 and user_state_status in {"postgres", "ok"}
+                and catalog_status in {"postgres", "ok"}
             )
             else "degraded"
         ),
@@ -276,4 +339,7 @@ async def health(response: Response) -> HealthResponse:
         user_state_backend=settings.user_state_backend,
         user_state=user_state_status,
         user_state_issues=user_state_issues,
+        question_catalog_backend=settings.question_catalog_backend,
+        question_catalog=catalog_status,
+        question_catalog_issues=catalog_issues,
     )
