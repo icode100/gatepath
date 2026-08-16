@@ -637,7 +637,13 @@ def _load_pyq_visibility_plan() -> _PyqVisibilityPlan:
         raise PyqArchiveValidationError(
             "PYQ visibility plan is unavailable"
         ) from exc
-    plan_sha256 = hashlib.sha256(raw).hexdigest()
+    # The reviewed plan was produced on Windows and is pinned to its CRLF
+    # representation. Git checks text files out with LF on Linux, including
+    # the production migration runner. Canonicalize line endings to CRLF so
+    # the same reviewed JSON bytes retain one security identity on both
+    # platforms; escaped JSON newlines are unaffected.
+    canonical_raw = raw.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    plan_sha256 = hashlib.sha256(canonical_raw).hexdigest()
     if plan_sha256 != PYQ_VISIBILITY_PLAN_SHA256:
         raise PyqArchiveValidationError("PYQ visibility plan checksum mismatch")
     try:

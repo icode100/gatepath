@@ -943,7 +943,9 @@ async def test_reviewed_2024_collisions_are_exactly_bound_and_fail_closed() -> N
 def test_visibility_plan_is_exact_bound_and_carries_both_content_hashes() -> None:
     plan = json.loads(COLLISION_CLEANUP_PLAN_PATH.read_text(encoding="utf-8"))
     runtime = _load_pyq_visibility_plan()
-    plan_sha256 = hashlib.sha256(COLLISION_CLEANUP_PLAN_PATH.read_bytes()).hexdigest()
+    raw_plan = COLLISION_CLEANUP_PLAN_PATH.read_bytes()
+    canonical_plan = raw_plan.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    plan_sha256 = hashlib.sha256(canonical_plan).hexdigest()
     assert runtime.plan_sha256 == plan_sha256
     assert plan["schema_version"] == "2.0"
     assert plan["status"] == "authorized_opt_in_only"
@@ -980,6 +982,22 @@ def test_visibility_plan_is_exact_bound_and_carries_both_content_hashes() -> Non
         entry["source_content_sha256"] != entry["promoted_content_sha256"]
         for entry in plan["keep_targets"]
     )
+
+
+def test_visibility_plan_checksum_is_stable_across_line_endings() -> None:
+    raw_plan = COLLISION_CLEANUP_PLAN_PATH.read_bytes()
+    lf_plan = raw_plan.replace(b"\r\n", b"\n")
+    crlf_plan = lf_plan.replace(b"\n", b"\r\n")
+    expected = pyq_archive_module.PYQ_VISIBILITY_PLAN_SHA256
+
+    for candidate in (lf_plan, crlf_plan):
+        canonical = candidate.replace(b"\r\n", b"\n").replace(
+            b"\n", b"\r\n"
+        )
+        assert hashlib.sha256(canonical).hexdigest() == expected
+
+    tampered = crlf_plan + b" "
+    assert hashlib.sha256(tampered).hexdigest() != expected
 
 
 @pytest.mark.parametrize("binding_name", ["source_archive", "promotion_artifact"])
