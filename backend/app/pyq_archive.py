@@ -368,10 +368,14 @@ def _canonical_json_sha256(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _portable_correct_answer(value: Any) -> Any:
-    """Normalize JSON number representation without changing answer meaning."""
+def _portable_correct_answer(value: Any, question_type: QuestionType) -> Any:
+    """Normalize a top-level integral NAT JSON number representation."""
 
-    if isinstance(value, float) and value.is_integer():
+    if (
+        question_type == QuestionType.NAT
+        and isinstance(value, float)
+        and value.is_integer()
+    ):
         return int(value)
     return value
 
@@ -428,7 +432,9 @@ def _legacy_candidate_payload(
         # can return the same stored NAT answer as ``42.0``.  Their accepted
         # answer semantics are identical; normalize only that integral numeric
         # representation so the reviewed fingerprint remains portable.
-        "correct_answer": _portable_correct_answer(question.correct_answer),
+        "correct_answer": _portable_correct_answer(
+            question.correct_answer, question.question_type
+        ),
         "numerical_tolerance": question.numerical_tolerance,
         "marks": question.marks,
         "explanation": question.explanation,

@@ -1013,7 +1013,10 @@ def test_portable_text_checksum_accepts_only_line_ending_changes() -> None:
 
 
 def test_legacy_fingerprint_normalizes_integral_nat_json_numbers() -> None:
-    def question(answer: int | float) -> Question:
+    def question(
+        answer: int | float,
+        question_type: QuestionType = QuestionType.NAT,
+    ) -> Question:
         return Question(
             external_id="portable-nat-answer",
             bank_version="portable-v1",
@@ -1032,7 +1035,7 @@ def test_legacy_fingerprint_normalizes_integral_nat_json_numbers() -> None:
             answer_key_url="https://example.test/cs-2020-key.pdf",
             extraction_method="verified",
             extraction_confidence=1.0,
-            question_type=QuestionType.NAT,
+            question_type=question_type,
             difficulty=Difficulty.MEDIUM,
             text="Enter the numerical answer.",
             options=[],
@@ -1054,6 +1057,13 @@ def test_legacy_fingerprint_normalizes_integral_nat_json_numbers() -> None:
     assert _legacy_candidate_fingerprint(
         question(42), **fingerprint_args
     ) != _legacy_candidate_fingerprint(question(42.5), **fingerprint_args)
+
+    for question_type in (QuestionType.MCQ, QuestionType.MSQ):
+        assert _legacy_candidate_fingerprint(
+            question(42, question_type), **fingerprint_args
+        ) != _legacy_candidate_fingerprint(
+            question(42.0, question_type), **fingerprint_args
+        )
 
 
 @pytest.mark.parametrize("binding_name", ["source_archive", "promotion_artifact"])
