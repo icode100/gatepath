@@ -1207,7 +1207,7 @@ function mapArchiveProgress(payload: unknown): ArchiveProgressSnapshot {
     payload && typeof payload === "object"
       ? (payload as Record<string, unknown>)
       : {};
-  const total = Math.max(0, Math.round(toFiniteNumber(source.total, 2873)));
+  const total = Math.max(0, Math.round(toFiniteNumber(source.total, 177)));
   const practicedCount = Math.min(
     total,
     Math.max(
@@ -1530,7 +1530,7 @@ export default function Home() {
   const [archiveProgress, setArchiveProgress] =
     useState<ArchiveProgressSnapshot>({
       practicedCount: 0,
-      total: 2873,
+      total: 177,
       coverage: 0,
     });
   const [archivePage, setArchivePage] = useState(1);
@@ -4049,11 +4049,11 @@ export default function Home() {
           >
             <div className="library-panel-heading">
               <div>
-                <span className="eyebrow">Canonical PYQ archive</span>
-                <h2>Every collected GATE CS question</h2>
+                <span className="eyebrow">Verified PYQ archive</span>
+                <h2>Every verified GATE CS question</h2>
                 <p>
-                  Browse the complete 1996–2025 archive. Archive practice is
-                  ungraded and never enters full or course tests.
+                  Browse the verified PYQ collection. These same questions are
+                  included in the scored Question bank and test pool.
                 </p>
               </div>
               <span className="series-note">
@@ -4129,8 +4129,6 @@ export default function Home() {
                   <option value="MCQ">MCQ</option>
                   <option value="MSQ">MSQ</option>
                   <option value="NAT">NAT</option>
-                  <option value="DESCRIPTIVE">Descriptive</option>
-                  <option value="UNKNOWN">Under review</option>
                 </select>
               </label>
               <label className="bank-search">
@@ -4150,8 +4148,8 @@ export default function Home() {
             <div className="archive-eligibility-note">
               <strong>Archive practice is ungraded.</strong>
               <span>
-                Verified questions also appear in the scored Question bank;
-                archive-only records never enter tests or scored progress.
+                Every visible question is verified and also appears in the
+                scored Question bank, practice rotation, and test pool.
               </span>
             </div>
             <div className="archive-progress-card">

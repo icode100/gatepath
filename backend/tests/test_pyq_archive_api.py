@@ -71,7 +71,8 @@ async def test_archive_listing_filters_paginates_and_never_exposes_answers() -> 
                     transcription_status="verified",
                     answer_status="official",
                     classification_status="verified",
-                    practice_eligible=False,
+                    practice_eligible=True,
+                    materialized_question_id=123,
                 ),
                 PyqSourceQuestion(
                     source_paper_id="gate-cs-2023",
@@ -113,8 +114,8 @@ async def test_archive_listing_filters_paginates_and_never_exposes_answers() -> 
         public_payload = item.model_dump()
         assert "accepted_answers" not in public_payload
         assert "solution_md" not in public_payload
-        assert item.practice_eligible is False
-        assert item.runtime_question_id is None
+        assert item.practice_eligible is True
+        assert item.runtime_question_id == 123
 
         first_page = await list_pyq_archive(
             subject_code=None,
@@ -136,9 +137,9 @@ async def test_archive_listing_filters_paginates_and_never_exposes_answers() -> 
             offset=1,
             db=session,
         )
-        assert first_page.total == second_page.total == 2
+        assert first_page.total == second_page.total == 1
         assert first_page.items[0].year == 2024
-        assert second_page.items[0].year == 2023
+        assert second_page.items == []
 
         user_state = MemoryUserStateRepository()
         initial_progress = await pyq_archive_progress(
@@ -147,7 +148,7 @@ async def test_archive_listing_filters_paginates_and_never_exposes_answers() -> 
             user_state=user_state,
         )
         assert initial_progress.practiced_count == 0
-        assert initial_progress.total == 2
+        assert initial_progress.total == 1
         assert initial_progress.coverage_percent == 0
 
         recorded = await record_pyq_archive_practice(
@@ -163,7 +164,7 @@ async def test_archive_listing_filters_paginates_and_never_exposes_answers() -> 
             user_state=user_state,
         )
         assert recorded.practiced_count == duplicate.practiced_count == 1
-        assert recorded.total == 2
-        assert recorded.coverage_percent == 50
+        assert recorded.total == 1
+        assert recorded.coverage_percent == 100
 
     await engine.dispose()

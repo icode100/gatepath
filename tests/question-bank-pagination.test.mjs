@@ -97,7 +97,7 @@ test("PYQ archive has independent 50-item filtering and pagination", () => {
   );
   assert.match(PAGE, /aria-label=["']PYQ archive pages["']/);
   assert.match(PAGE, /Archive practice is ungraded/);
-  assert.match(PAGE, /never enter(?:s)? (?:full or course )?tests/i);
+  assert.match(PAGE, /included in the scored Question bank and test pool/);
 });
 
 test("PYQ archive records ungraded synced coverage", () => {
@@ -108,5 +108,6 @@ test("PYQ archive records ungraded synced coverage", () => {
   );
   assert.match(PAGE, /Archive coverage/);
   assert.match(PAGE, /Archive practised/);
-  assert.match(PAGE, /archive-only records never enter tests or scored progress/);
+  assert.match(PAGE, /Every visible question is verified/);
+  assert.match(PAGE, /practice rotation, and test pool/);
 });

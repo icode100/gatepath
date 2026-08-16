@@ -944,13 +944,16 @@ async def list_pyq_archive(
     offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
 ) -> PyqArchiveListResponse:
-    """Browse canonical PYQs without exposing answers or test eligibility.
+    """Browse verified canonical PYQs without exposing answers.
 
-    Archive rows never participate in test or scored-practice selection.  A
-    separately materialized active question remains the only gradable form.
+    Only rows promoted into the active question bank are public here. Their
+    separately materialized Question rows remain the sole scored/test form.
     """
 
-    conditions: list[Any] = []
+    conditions: list[Any] = [
+        PyqSourceQuestion.practice_eligible.is_(True),
+        PyqSourceQuestion.materialized_question_id.is_not(None),
+    ]
     if subject_code is not None and (normalized_subject := subject_code.strip()):
         conditions.append(
             func.upper(PyqSourceQuestion.subject_code)
@@ -1046,7 +1049,15 @@ async def pyq_archive_progress(
 ) -> PyqArchiveProgressResponse:
     """Return ungraded Archive practice coverage for the current learner."""
 
-    total = int(await db.scalar(select(func.count(PyqSourceQuestion.id))) or 0)
+    total = int(
+        await db.scalar(
+            select(func.count(PyqSourceQuestion.id)).where(
+                PyqSourceQuestion.practice_eligible.is_(True),
+                PyqSourceQuestion.materialized_question_id.is_not(None),
+            )
+        )
+        or 0
+    )
     progress = await _progress_for_user(db, user_state, user_key)
     return _archive_progress_response(progress.archive_practiced_ids, total)
 
@@ -1068,7 +1079,9 @@ async def record_pyq_archive_practice(
         raise HTTPException(status_code=404, detail="Archived question not found")
     exists = await db.scalar(
         select(PyqSourceQuestion.id).where(
-            PyqSourceQuestion.id == archive_question_id
+            PyqSourceQuestion.id == archive_question_id,
+            PyqSourceQuestion.practice_eligible.is_(True),
+            PyqSourceQuestion.materialized_question_id.is_not(None),
         )
     )
     if exists is None:
@@ -1090,7 +1103,15 @@ async def record_pyq_archive_practice(
         UserStateUnavailable,
     ) as exc:
         _raise_user_state_http(exc)
-    total = int(await db.scalar(select(func.count(PyqSourceQuestion.id))) or 0)
+    total = int(
+        await db.scalar(
+            select(func.count(PyqSourceQuestion.id)).where(
+                PyqSourceQuestion.practice_eligible.is_(True),
+                PyqSourceQuestion.materialized_question_id.is_not(None),
+            )
+        )
+        or 0
+    )
     return _archive_progress_response(progress.archive_practiced_ids, total)
 
 
