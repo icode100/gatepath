@@ -20,6 +20,8 @@ export type DraftQuestion = {
   year?: number;
   difficulty: "Easy" | "Medium" | "Hard";
   assets?: QuestionAsset[];
+  archiveItemType?: string;
+  archiveStatus?: string;
 };
 
 export type DraftTest = {
@@ -53,7 +55,7 @@ export type SessionDraft = {
   deadlineMs: number | null;
   selectedSubjectId: string;
   selectedTopicId: string;
-  practiceMode?: "practice" | "sectional" | "syllabus";
+  practiceMode?: "practice" | "sectional" | "syllabus" | "archive";
   practiceTopicId?: string | null;
   test?: DraftTest;
 };

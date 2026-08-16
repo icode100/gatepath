@@ -174,6 +174,38 @@ class QuestionListResponse(BaseModel):
     offset: int
 
 
+class PyqArchiveQuestionPublic(BaseModel):
+    """A safe, answer-free view of one canonical archived PYQ."""
+
+    id: int
+    paper_id: str
+    paper_name: str
+    year: int
+    session_label: str
+    item_label: str
+    ordinal: int
+    source_page: int | None
+    marks: float | None
+    item_type: str
+    question_text: str | None
+    options: list[QuestionOption] = Field(default_factory=list)
+    subject_code: str | None
+    topic_slug: str | None
+    syllabus_status: str
+    transcription_status: str
+    answer_status: str
+    classification_status: str
+    practice_eligible: bool
+    runtime_question_id: int | None
+
+
+class PyqArchiveListResponse(BaseModel):
+    items: list[PyqArchiveQuestionPublic]
+    total: int
+    limit: int
+    offset: int
+
+
 class PracticeSessionCreate(BaseModel):
     subject_id: int | None = None
     subject_slug: str | None = None

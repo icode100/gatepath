@@ -55,6 +55,8 @@ export type PracticeQuestion = {
   year?: number;
   difficulty: "Easy" | "Medium" | "Hard";
   assets?: QuestionAsset[];
+  archiveItemType?: string;
+  archiveStatus?: string;
 };
 
 const topic = (

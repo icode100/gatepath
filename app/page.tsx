@@ -367,12 +367,16 @@ const directScreenFromSearch = (search: string): Screen => {
     : "dashboard";
 };
 type ApiState = "checking" | "online" | "offline";
-type PracticeMode = "practice" | "sectional" | "syllabus";
+type PracticeMode = "practice" | "sectional" | "syllabus" | "archive";
 type Answers = Record<string, string[]>;
-type LibraryTab = "full" | "course" | "bank";
+type LibraryTab = "full" | "course" | "bank" | "archive";
 type TopicStatus = "strong" | "developing" | "needs_practice" | "unattempted";
 
-const LIBRARY_TABS: LibraryTab[] = ["full", "course", "bank"];
+const LIBRARY_TABS: LibraryTab[] = ["full", "course", "bank", "archive"];
+const PYQ_ARCHIVE_YEARS = Array.from(
+  { length: 2025 - 1996 + 1 },
+  (_, index) => 2025 - index,
+);
 const CONNECT_BANK_REASON =
   "Connect the FastAPI question bank to launch this validated test form.";
 
@@ -392,6 +396,28 @@ type CatalogTest = {
   questionTypeCounts: Record<Lowercase<QuestionType>, number>;
   isAvailable: boolean;
   unavailableReason?: string;
+};
+
+type ArchiveQuestion = {
+  id: number;
+  paperId: string;
+  paperName: string;
+  year: number;
+  sessionLabel: string;
+  itemLabel: string;
+  ordinal: number;
+  sourcePage?: number;
+  marks?: number;
+  itemType: string;
+  questionText?: string;
+  options: Array<{ id: string; label: string }>;
+  subjectCode?: string;
+  topicSlug?: string;
+  transcriptionStatus: string;
+  answerStatus: string;
+  classificationStatus: string;
+  practiceEligible: boolean;
+  runtimeQuestionId?: number;
 };
 
 type TopicAnalytics = {
@@ -1114,6 +1140,62 @@ function mapServerQuestions(payload: unknown): PracticeQuestion[] {
   });
 }
 
+function mapArchiveQuestions(payload: unknown): ArchiveQuestion[] {
+  if (!payload || typeof payload !== "object") return [];
+  const items = (payload as { items?: unknown }).items;
+  if (!Array.isArray(items)) return [];
+  return items.flatMap((rawItem) => {
+    if (!rawItem || typeof rawItem !== "object") return [];
+    const item = rawItem as Record<string, unknown>;
+    const id = Number(item.id);
+    const year = Number(item.year);
+    if (!Number.isSafeInteger(id) || !Number.isInteger(year)) return [];
+    const rawOptions = Array.isArray(item.options) ? item.options : [];
+    const options = rawOptions.flatMap((rawOption) => {
+      if (!rawOption || typeof rawOption !== "object") return [];
+      const option = rawOption as Record<string, unknown>;
+      const optionId = String(option.id ?? "").trim();
+      const label = String(option.text ?? "").trim();
+      return optionId && label ? [{ id: optionId, label }] : [];
+    });
+    const optionalString = (value: unknown) => {
+      const normalized = value == null ? "" : String(value).trim();
+      return normalized || undefined;
+    };
+    const optionalNumber = (value: unknown) => {
+      const normalized = Number(value);
+      return Number.isFinite(normalized) ? normalized : undefined;
+    };
+    return [
+      {
+        id,
+        paperId: String(item.paper_id ?? "archive-paper"),
+        paperName: String(item.paper_name ?? `GATE CS ${year}`),
+        year,
+        sessionLabel: String(item.session_label ?? "single"),
+        itemLabel: String(item.item_label ?? id),
+        ordinal: Number(item.ordinal ?? 0),
+        sourcePage: optionalNumber(item.source_page),
+        marks: optionalNumber(item.marks),
+        itemType: String(item.item_type ?? "UNKNOWN").toUpperCase(),
+        questionText: optionalString(item.question_text),
+        options,
+        subjectCode: optionalString(item.subject_code),
+        topicSlug: optionalString(item.topic_slug),
+        transcriptionStatus: String(
+          item.transcription_status ?? "review_required",
+        ),
+        answerStatus: String(item.answer_status ?? "unresolved"),
+        classificationStatus: String(
+          item.classification_status ?? "review_required",
+        ),
+        practiceEligible: item.practice_eligible === true,
+        runtimeQuestionId: optionalNumber(item.runtime_question_id),
+      },
+    ];
+  });
+}
+
 const questionsForSessionDraft = (
   questions: PracticeQuestion[],
 ): DraftQuestion[] =>
@@ -1129,6 +1211,8 @@ const questionsForSessionDraft = (
     source: question.source,
     year: question.year,
     difficulty: question.difficulty,
+    archiveItemType: question.archiveItemType,
+    archiveStatus: question.archiveStatus,
   }));
 
 const questionsFromSessionDraft = (
@@ -1141,6 +1225,8 @@ const questionsFromSessionDraft = (
     correct: [],
     explanation:
       "The detailed solution will be revealed when this session is submitted.",
+    archiveItemType: question.archiveItemType,
+    archiveStatus: question.archiveStatus,
   }));
 
 const answersForQuestions = (
@@ -1403,6 +1489,16 @@ export default function Home() {
   const [bankPage, setBankPage] = useState(1);
   const [bankLoading, setBankLoading] = useState(false);
   const [bankError, setBankError] = useState<string | null>(null);
+  const [archiveSubjectId, setArchiveSubjectId] = useState("all");
+  const [archiveTopicId, setArchiveTopicId] = useState("all");
+  const [archiveYear, setArchiveYear] = useState("all");
+  const [archiveType, setArchiveType] = useState("all");
+  const [archiveQuery, setArchiveQuery] = useState("");
+  const [archiveQuestions, setArchiveQuestions] = useState<ArchiveQuestion[]>([]);
+  const [archiveTotal, setArchiveTotal] = useState(0);
+  const [archivePage, setArchivePage] = useState(1);
+  const [archiveLoading, setArchiveLoading] = useState(false);
+  const [archiveError, setArchiveError] = useState<string | null>(null);
   const [revisionNote, setRevisionNote] =
     useState<RemoteRevisionNote | null>(null);
   const [noteLoading, setNoteLoading] = useState(false);
@@ -1442,6 +1538,7 @@ export default function Home() {
     useState<CatalogTest | null>(null);
   const practiceRequestId = useRef(0);
   const bankRequestId = useRef(0);
+  const archiveRequestId = useRef(0);
   const draftRecoveryRequestId = useRef(0);
   const runnerAutoSubmitAttempted = useRef(false);
   const examAutoSubmitAttempted = useRef(false);
@@ -1590,6 +1687,12 @@ export default function Home() {
   const bankTopics = useMemo(
     () => bankSubject?.topics ?? [],
     [bankSubject],
+  );
+  const archiveSubject =
+    roadmapSubjects.find((subject) => subject.id === archiveSubjectId) ?? null;
+  const archiveTopics = useMemo(
+    () => archiveSubject?.topics ?? [],
+    [archiveSubject],
   );
 
   useEffect(() => {
@@ -2094,6 +2197,85 @@ export default function Home() {
   ]);
 
   useEffect(() => {
+    if (screen !== "library" || libraryTab !== "archive") return;
+    const requestId = ++archiveRequestId.current;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 10000);
+    const params = new URLSearchParams({
+      limit: String(QUESTION_BANK_PAGE_SIZE),
+      offset: String((archivePage - 1) * QUESTION_BANK_PAGE_SIZE),
+    });
+    if (archiveSubject) params.set("subject_code", archiveSubject.code);
+    if (archiveTopicId !== "all") params.set("topic_slug", archiveTopicId);
+    if (archiveYear !== "all") params.set("year", archiveYear);
+    if (archiveType !== "all") params.set("item_type", archiveType);
+    const search = archiveQuery.trim();
+    if (search) params.set("search", search);
+
+    setArchiveLoading(true);
+    setArchiveError(null);
+    fetch(`${API_BASE}/pyq-archive?${params.toString()}`, {
+      credentials: "include",
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("PYQ archive unavailable");
+        return response.json();
+      })
+      .then((payload) => {
+        if (requestId !== archiveRequestId.current) return;
+        const questions = mapArchiveQuestions(payload);
+        const total = Math.max(
+          0,
+          Math.round(
+            toFiniteNumber(
+              (payload as { total?: unknown }).total,
+              questions.length,
+            ),
+          ),
+        );
+        const pageCount = paginationPageCount(
+          total,
+          QUESTION_BANK_PAGE_SIZE,
+        );
+        const safePage = clampPaginationPage(archivePage, pageCount);
+        setArchiveTotal(total);
+        if (safePage !== archivePage) {
+          setArchivePage(safePage);
+          return;
+        }
+        setArchiveQuestions(questions);
+        setApiState("online");
+      })
+      .catch(() => {
+        if (requestId !== archiveRequestId.current) return;
+        setArchiveQuestions([]);
+        setArchiveError(
+          "The canonical PYQ archive could not be loaded. Please reconnect and try again.",
+        );
+      })
+      .finally(() => {
+        window.clearTimeout(timeout);
+        if (requestId === archiveRequestId.current) setArchiveLoading(false);
+      });
+    return () => {
+      if (requestId === archiveRequestId.current) archiveRequestId.current += 1;
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [
+    archivePage,
+    archiveQuery,
+    archiveSubject,
+    archiveTopicId,
+    archiveType,
+    archiveYear,
+    libraryTab,
+    screen,
+  ]);
+
+  useEffect(() => {
     if (screen !== "notes" || selectedTopic.apiId == null) {
       setRevisionNote(null);
       setNoteLoading(false);
@@ -2387,6 +2569,64 @@ export default function Home() {
         setIsLoadingQuestions(false);
       }
     }
+  };
+
+  const startArchivePractice = (archiveQuestion: ArchiveQuestion) => {
+    draftRecoveryRequestId.current += 1;
+    clearSessionDraft(draftOwnerKey ?? activeSessionDraftOwnerKey());
+    setDraftRestoreReady(true);
+    const subject =
+      roadmapSubjects.find(
+        (candidate) => candidate.code === archiveQuestion.subjectCode,
+      ) ?? selectedSubject;
+    const topic =
+      subject.topics.find(
+        (candidate) => candidate.id === archiveQuestion.topicSlug,
+      ) ?? null;
+    const normalizedType = archiveQuestion.itemType.toUpperCase();
+    const runnerType = (["MCQ", "MSQ", "NAT"] as const).find(
+      (candidate) => candidate === normalizedType,
+    );
+    setSelectedSubjectId(subject.id);
+    if (topic) setSelectedTopicId(topic.id);
+    setPracticeMode("archive");
+    setRunnerCatalogTest(null);
+    setPracticeTopicId(topic?.id ?? null);
+    setQuestionIndex(0);
+    setPracticeAnswers({});
+    setCheckedQuestions(new Set());
+    setRunnerSummary(null);
+    setRunnerSubmitted(false);
+    setRunnerDeadlineMs(null);
+    setRunnerSeconds(0);
+    setRunnerTimerRunning(false);
+    setSessionId(null);
+    setLaunchError(null);
+    setIsLoadingQuestions(false);
+    setRunnerQuestions([
+      {
+        id: `archive-${archiveQuestion.id}`,
+        subjectId: subject.id,
+        topicId: topic?.id ?? archiveQuestion.topicSlug ?? "archive-review",
+        type: runnerType ?? "NAT",
+        marks: archiveQuestion.marks === 2 ? 2 : 1,
+        prompt:
+          archiveQuestion.questionText ??
+          "This question's transcription is still under review in the archive.",
+        options: archiveQuestion.options,
+        correct: [],
+        explanation:
+          "This archive record is available for ungraded study. Its answer is not used for scoring until the full question passes verification.",
+        source: `${archiveQuestion.paperName} · ${archiveQuestion.itemLabel}`,
+        year: archiveQuestion.year,
+        difficulty: "Medium",
+        archiveItemType: archiveQuestion.itemType,
+        archiveStatus: archiveQuestion.practiceEligible
+          ? "Verified archive record"
+          : "Ungraded archive review",
+      },
+    ]);
+    navigate("practice");
   };
 
   const startCoaQuiz = () => {
@@ -2866,6 +3106,45 @@ export default function Home() {
       });
     },
     [bankPage, bankPageCount],
+  );
+  const archivePageCount = paginationPageCount(
+    archiveTotal,
+    QUESTION_BANK_PAGE_SIZE,
+  );
+  const archiveOffset = (archivePage - 1) * QUESTION_BANK_PAGE_SIZE;
+  const archiveRangeStart = archiveTotal === 0 ? 0 : archiveOffset + 1;
+  const archiveRangeEnd = Math.min(
+    archiveOffset + archiveQuestions.length,
+    archiveTotal,
+  );
+  const archivePaginationItems = useMemo(
+    () => paginationItems(archivePage, archivePageCount),
+    [archivePage, archivePageCount],
+  );
+
+  useEffect(() => {
+    const safePage = clampPaginationPage(archivePage, archivePageCount);
+    if (safePage !== archivePage) setArchivePage(safePage);
+  }, [archivePage, archivePageCount]);
+
+  const changeArchivePage = useCallback(
+    (requestedPage: number) => {
+      const nextPage = clampPaginationPage(requestedPage, archivePageCount);
+      if (nextPage === archivePage) return;
+      setArchivePage(nextPage);
+      window.requestAnimationFrame(() => {
+        const heading = document.querySelector(
+          "#library-panel-archive .library-panel-heading",
+        );
+        heading?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+          block: "start",
+        });
+      });
+    },
+    [archivePage, archivePageCount],
   );
   const strongTopics = useMemo(
     () =>
@@ -3418,6 +3697,18 @@ export default function Home() {
           >
             Question bank
           </button>
+          <button
+            id="library-tab-archive"
+            role="tab"
+            aria-selected={libraryTab === "archive"}
+            aria-controls="library-panel-archive"
+            tabIndex={libraryTab === "archive" ? 0 : -1}
+            className={libraryTab === "archive" ? "active" : ""}
+            onClick={() => setLibraryTab("archive")}
+            onKeyDown={handleLibraryTabKeyDown}
+          >
+            Archive <span>{archiveTotal ? archiveTotal.toLocaleString() : "…"}</span>
+          </button>
         </div>
 
         {libraryTab === "full" && (
@@ -3686,6 +3977,245 @@ export default function Home() {
                   disabled={bankPage === bankPageCount}
                   onClick={() => changeBankPage(bankPage + 1)}
                   aria-label="Go to next question page"
+                >
+                  Next <span aria-hidden="true">→</span>
+                </button>
+              </nav>
+            )}
+          </section>
+        )}
+
+        {libraryTab === "archive" && (
+          <section
+            id="library-panel-archive"
+            className="library-panel bank-panel archive-panel"
+            role="tabpanel"
+            aria-labelledby="library-tab-archive"
+          >
+            <div className="library-panel-heading">
+              <div>
+                <span className="eyebrow">Canonical PYQ archive</span>
+                <h2>Every collected GATE CS question</h2>
+                <p>
+                  Browse the complete 1996–2025 archive. Archive practice is
+                  ungraded and never enters full or course tests.
+                </p>
+              </div>
+              <span className="series-note">
+                {archiveLoading
+                  ? "Loading…"
+                  : `${archiveTotal.toLocaleString()} matching PYQs`}
+              </span>
+            </div>
+            <div className="bank-filters archive-filters">
+              <label>
+                <span>Course</span>
+                <select
+                  value={archiveSubjectId}
+                  onChange={(event) => {
+                    setArchiveSubjectId(event.target.value);
+                    setArchiveTopicId("all");
+                    setArchivePage(1);
+                  }}
+                >
+                  <option value="all">All courses</option>
+                  {roadmapSubjects.map((subject) => (
+                    <option value={subject.id} key={subject.id}>
+                      {subject.code} · {subject.shortTitle}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Topic</span>
+                <select
+                  value={archiveTopicId}
+                  disabled={archiveSubjectId === "all"}
+                  onChange={(event) => {
+                    setArchiveTopicId(event.target.value);
+                    setArchivePage(1);
+                  }}
+                >
+                  <option value="all">All topics</option>
+                  {archiveTopics.map((topic) => (
+                    <option value={topic.id} key={topic.id}>
+                      {topic.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Year</span>
+                <select
+                  value={archiveYear}
+                  onChange={(event) => {
+                    setArchiveYear(event.target.value);
+                    setArchivePage(1);
+                  }}
+                >
+                  <option value="all">1996–2025</option>
+                  {PYQ_ARCHIVE_YEARS.map((year) => (
+                    <option value={year} key={year}>
+                      GATE {year}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Question type</span>
+                <select
+                  value={archiveType}
+                  onChange={(event) => {
+                    setArchiveType(event.target.value);
+                    setArchivePage(1);
+                  }}
+                >
+                  <option value="all">All types</option>
+                  <option value="MCQ">MCQ</option>
+                  <option value="MSQ">MSQ</option>
+                  <option value="NAT">NAT</option>
+                  <option value="DESCRIPTIVE">Descriptive</option>
+                  <option value="UNKNOWN">Under review</option>
+                </select>
+              </label>
+              <label className="bank-search">
+                <span>Search archive</span>
+                <input
+                  type="search"
+                  value={archiveQuery}
+                  maxLength={200}
+                  onChange={(event) => {
+                    setArchiveQuery(event.target.value);
+                    setArchivePage(1);
+                  }}
+                  placeholder="e.g. TCP, cache, compiler"
+                />
+              </label>
+            </div>
+            <div className="archive-eligibility-note">
+              <strong>Archive practice is ungraded.</strong>
+              <span>
+                Verified questions also appear in the scored Question bank;
+                archive-only records never enter tests or progress.
+              </span>
+            </div>
+            <div className="bank-results-summary" aria-live="polite">
+              <span>
+                {archiveLoading
+                  ? "Loading archived questions…"
+                  : `Showing ${archiveRangeStart.toLocaleString()}–${archiveRangeEnd.toLocaleString()} of ${archiveTotal.toLocaleString()}`}
+              </span>
+              <span>{QUESTION_BANK_PAGE_SIZE} questions per page</span>
+            </div>
+            {archiveError && (
+              <div className="bank-notice" role="alert">
+                {archiveError}
+              </div>
+            )}
+            <div
+              className="bank-list archive-list"
+              aria-busy={archiveLoading}
+              aria-live="polite"
+            >
+              {archiveQuestions.map((question, index) => {
+                const subject = roadmapSubjects.find(
+                  (candidate) => candidate.code === question.subjectCode,
+                );
+                const topic = subject?.topics.find(
+                  (candidate) => candidate.id === question.topicSlug,
+                );
+                const standardType = (["MCQ", "MSQ", "NAT"] as const).find(
+                  (candidate) => candidate === question.itemType,
+                );
+                return (
+                  <article key={question.id}>
+                    <span className="bank-index">
+                      {String(archiveOffset + index + 1).padStart(2, "0")}
+                    </span>
+                    <div className="bank-question-copy">
+                      <div>
+                        {standardType ? (
+                          <TypeBadge type={standardType} />
+                        ) : (
+                          <span className="type-badge type-archive">
+                            {question.itemType}
+                          </span>
+                        )}
+                        <span>{subject?.code ?? question.subjectCode ?? "Unclassified"}</span>
+                        <span>{topic?.title ?? question.topicSlug ?? "Topic review"}</span>
+                        <span>{question.paperName}</span>
+                        <span>{question.itemLabel}</span>
+                        <span
+                          className={
+                            question.practiceEligible
+                              ? "archive-status ready"
+                              : "archive-status review"
+                          }
+                        >
+                          {question.practiceEligible
+                            ? "Verified"
+                            : "Archive only"}
+                        </span>
+                      </div>
+                      <h3>
+                        <MathText>
+                          {question.questionText ??
+                            "Question transcription is still under review."}
+                        </MathText>
+                      </h3>
+                    </div>
+                    <button
+                      className="button quiet small"
+                      onClick={() => startArchivePractice(question)}
+                    >
+                      Practise <span aria-hidden="true">→</span>
+                    </button>
+                  </article>
+                );
+              })}
+              {!archiveLoading && archiveQuestions.length === 0 && (
+                <div className="bank-empty">
+                  <strong>No archived questions match these filters.</strong>
+                  <span>Try another year, course, topic or question type.</span>
+                </div>
+              )}
+            </div>
+            {!archiveLoading && archiveTotal > QUESTION_BANK_PAGE_SIZE && (
+              <nav className="bank-pagination" aria-label="PYQ archive pages">
+                <button
+                  type="button"
+                  className="bank-page-direction"
+                  disabled={archivePage === 1}
+                  onClick={() => changeArchivePage(archivePage - 1)}
+                  aria-label="Go to previous archive page"
+                >
+                  <span aria-hidden="true">←</span> Previous
+                </button>
+                <div className="bank-page-numbers">
+                  {archivePaginationItems.map((item) =>
+                    typeof item === "number" ? (
+                      <button
+                        type="button"
+                        key={item}
+                        aria-label={`Go to archive page ${item}`}
+                        aria-current={item === archivePage ? "page" : undefined}
+                        onClick={() => changeArchivePage(item)}
+                      >
+                        {item}
+                      </button>
+                    ) : (
+                      <span key={item} aria-hidden="true">
+                        …
+                      </span>
+                    ),
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className="bank-page-direction"
+                  disabled={archivePage === archivePageCount}
+                  onClick={() => changeArchivePage(archivePage + 1)}
+                  aria-label="Go to next archive page"
                 >
                   Next <span aria-hidden="true">→</span>
                 </button>
@@ -4110,26 +4640,35 @@ export default function Home() {
       : null;
     const scopeLabel =
       runnerCatalogTest?.title ??
-      (practiceMode === "syllabus"
+      (practiceMode === "archive"
+        ? runnerQuestions[0]?.source ?? "Canonical PYQ archive"
+        : practiceMode === "syllabus"
         ? "Full official COA syllabus"
         : practiceTopic?.title ?? `${selectedSubject.shortTitle} mixed set`);
     const modeLabel =
       runnerCatalogTest
         ? `Course test · ${Math.round(runnerCatalogTest.durationSeconds / 60)} min plan`
+        : practiceMode === "archive"
+        ? "Archive practice · ungraded"
         : practiceMode === "syllabus"
         ? "Syllabus quiz"
         : practiceMode === "sectional"
           ? "Sectional test"
           : "Guided practice";
-    const immediateFeedback = practiceMode !== "sectional";
+    const immediateFeedback =
+      practiceMode !== "sectional" && practiceMode !== "archive";
     const returnScreen: Screen =
-      practiceMode === "syllabus"
+      practiceMode === "archive"
+        ? "library"
+        : practiceMode === "syllabus"
         ? "dashboard"
         : runnerCatalogTest
           ? "library"
           : "subject";
     const returnLabel =
-      practiceMode === "syllabus"
+      practiceMode === "archive"
+        ? "Return to archive"
+        : practiceMode === "syllabus"
         ? "Return to roadmap"
         : runnerCatalogTest
           ? "Return to tests"
@@ -4200,7 +4739,7 @@ export default function Home() {
     return (
       <div className="page runner-page">
         <div className="runner-topline">
-          <button className="back-link" onClick={() => discardPracticeSession(returnScreen)}>← Exit {practiceMode === "syllabus" ? "quiz" : practiceMode === "sectional" ? "test" : "practice"}</button>
+          <button className="back-link" onClick={() => discardPracticeSession(returnScreen)}>← Exit {practiceMode === "syllabus" ? "quiz" : practiceMode === "sectional" ? "test" : practiceMode === "archive" ? "archive practice" : "practice"}</button>
           <div
             className="runner-progress"
             role="progressbar"
@@ -4230,10 +4769,15 @@ export default function Home() {
         {!isLoadingQuestions && launchError && (
           <div className="loading-banner warning" role="status">{launchError}</div>
         )}
+        {practiceMode === "archive" && (
+          <div className="loading-banner archive-study-notice" role="status">
+            Archive practice is ungraded and is never included in tests or progress. Answers become scoreable only after verification.
+          </div>
+        )}
         <div className="runner-layout">
           <section className="question-card">
             <header>
-              <div><TypeBadge type={question.type} /><span className="question-meta">{question.marks} mark{question.marks > 1 ? "s" : ""}</span><span className="question-meta">{question.difficulty}</span><span className="question-topic">{questionTopicLabel}</span></div>
+              <div>{practiceMode === "archive" && question.archiveItemType && !["MCQ", "MSQ", "NAT"].includes(question.archiveItemType) ? <span className="type-badge type-archive">{question.archiveItemType}</span> : <TypeBadge type={question.type} />}<span className="question-meta">{question.marks} mark{question.marks > 1 ? "s" : ""}</span><span className="question-meta">{practiceMode === "archive" ? question.archiveStatus : question.difficulty}</span><span className="question-topic">{questionTopicLabel}</span></div>
               <span className="source-tag">{question.year ? `GATE ${question.year}` : question.source}</span>
             </header>
             <div className="question-number">Question {String(questionIndex + 1).padStart(2, "0")}</div>
@@ -4241,11 +4785,26 @@ export default function Home() {
             <QuestionAssets assets={question.assets} placement="stem" eager />
             {question.type === "MSQ" && <p className="question-instruction">Select one or more options. No partial marks.</p>}
             <QuestionAssets assets={question.assets} placement="options" eager />
-            {renderQuestionInput(
-              question,
-              practiceAnswers,
-              "practice",
-              checked && (immediateFeedback || runnerSubmitted),
+            {practiceMode === "archive" &&
+            question.archiveItemType &&
+            !["MCQ", "MSQ", "NAT"].includes(question.archiveItemType) ? (
+              <label className="archive-response-input">
+                <span>Your working (not saved or graded)</span>
+                <textarea
+                  value={answer[0] ?? ""}
+                  onChange={(event) =>
+                    updateAnswer(question, event.target.value, "practice")
+                  }
+                  placeholder="Write your reasoning here…"
+                />
+              </label>
+            ) : (
+              renderQuestionInput(
+                question,
+                practiceAnswers,
+                "practice",
+                checked && (immediateFeedback || runnerSubmitted),
+              )
             )}
             {checked && (immediateFeedback || runnerSubmitted) && !serverLocked && (
               <div className={`explanation ${correct ? "correct" : "incorrect"}`} aria-live="polite">
@@ -4258,7 +4817,9 @@ export default function Home() {
             )}
             <footer>
               <button className="button quiet" disabled={questionIndex === 0} onClick={() => setQuestionIndex((index) => Math.max(0, index - 1))}>← Previous</button>
-              {immediateFeedback && !checked && !serverLocked ? (
+              {practiceMode === "archive" ? (
+                <button className="button primary" onClick={() => navigate("library")}>Done — return to archive →</button>
+              ) : immediateFeedback && !checked && !serverLocked ? (
                 <button className="button primary" disabled={!answer.length} onClick={() => setCheckedQuestions((current) => new Set(current).add(question.id))}>Check answer</button>
               ) : questionIndex < runnerQuestions.length - 1 ? (
                 <button className="button primary" onClick={() => setQuestionIndex((index) => index + 1)}>Next question →</button>

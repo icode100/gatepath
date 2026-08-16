@@ -21,6 +21,8 @@ from app.models import (
     AttemptResponse,
     Difficulty,
     PracticeSession,
+    PyqSourcePaper,
+    PyqSourceQuestion,
     Question,
     QuestionBankImport,
     QuestionSource,
@@ -42,6 +44,8 @@ from app.schemas import (
     ProgressDashboard,
     ProgressResetRequest,
     ProgressResetResult,
+    PyqArchiveListResponse,
+    PyqArchiveQuestionPublic,
     QuestionListResponse,
     QuestionBankImportSummary,
     QuestionBankStatus,
@@ -136,6 +140,61 @@ def _question_public(question: Question | CatalogQuestion) -> QuestionPublic:
         marks=question.marks,
         tags=question.tags,
         assets=validate_public_asset_payload(list(question.assets)),
+    )
+
+
+def _archive_options(raw_options: Any) -> list[dict[str, str]]:
+    """Return only the public id/text portion of well-formed archive options."""
+
+    if not isinstance(raw_options, list):
+        return []
+    public_options: list[dict[str, str]] = []
+    for raw_option in raw_options:
+        if not isinstance(raw_option, dict):
+            continue
+        option_id = raw_option.get("id")
+        option_text = raw_option.get("text")
+        if option_id is None or option_text is None:
+            continue
+        normalized_id = str(option_id).strip()
+        normalized_text = str(option_text).strip()
+        if normalized_id and normalized_text:
+            public_options.append(
+                {"id": normalized_id, "text": normalized_text}
+            )
+    return public_options
+
+
+def _archive_question_public(
+    question: PyqSourceQuestion,
+) -> PyqArchiveQuestionPublic:
+    paper = question.source_paper
+    is_ready = bool(
+        question.practice_eligible and question.materialized_question_id is not None
+    )
+    return PyqArchiveQuestionPublic(
+        id=question.id,
+        paper_id=paper.id,
+        paper_name=paper.display_name,
+        year=paper.year,
+        session_label=paper.session_label,
+        item_label=question.item_label,
+        ordinal=question.ordinal,
+        source_page=question.source_page,
+        marks=question.marks,
+        item_type=question.item_type,
+        question_text=question.question_md,
+        options=_archive_options(question.options),
+        subject_code=question.subject_code,
+        topic_slug=question.topic_slug,
+        syllabus_status=question.syllabus_status,
+        transcription_status=question.transcription_status,
+        answer_status=question.answer_status,
+        classification_status=question.classification_status,
+        practice_eligible=is_ready,
+        runtime_question_id=(
+            question.materialized_question_id if is_ready else None
+        ),
     )
 
 
@@ -862,6 +921,99 @@ async def list_questions(
     ).all()
     return QuestionListResponse(
         items=[_question_public(question) for question in questions],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get(
+    "/pyq-archive",
+    response_model=PyqArchiveListResponse,
+    tags=["Question Bank"],
+)
+async def list_pyq_archive(
+    subject_code: str | None = Query(default=None, max_length=16),
+    topic_slug: str | None = Query(default=None, max_length=100),
+    year: int | None = Query(default=None, ge=1987, le=2100),
+    item_type: Literal["MCQ", "MSQ", "NAT", "DESCRIPTIVE", "UNKNOWN"]
+    | None = None,
+    search: str | None = Query(default=None, max_length=200),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: AsyncSession = Depends(get_db),
+) -> PyqArchiveListResponse:
+    """Browse canonical PYQs without exposing answers or test eligibility.
+
+    Archive rows never participate in test or scored-practice selection.  A
+    separately materialized active question remains the only gradable form.
+    """
+
+    conditions: list[Any] = []
+    if subject_code is not None and (normalized_subject := subject_code.strip()):
+        conditions.append(
+            func.upper(PyqSourceQuestion.subject_code)
+            == normalized_subject.upper()
+        )
+    if topic_slug is not None and (normalized_topic := topic_slug.strip()):
+        conditions.append(
+            func.lower(PyqSourceQuestion.topic_slug)
+            == normalized_topic.lower()
+        )
+    if year is not None:
+        conditions.append(PyqSourcePaper.year == year)
+    if item_type is not None:
+        conditions.append(func.upper(PyqSourceQuestion.item_type) == item_type)
+    if search is not None and (search_term := search.strip()):
+        escaped_search = (
+            search_term.replace("\\", "\\\\")
+            .replace("%", "\\%")
+            .replace("_", "\\_")
+        )
+        search_pattern = f"%{escaped_search}%"
+        conditions.append(
+            or_(
+                PyqSourceQuestion.question_md.ilike(
+                    search_pattern, escape="\\"
+                ),
+                PyqSourceQuestion.item_label.ilike(
+                    search_pattern, escape="\\"
+                ),
+                PyqSourcePaper.display_name.ilike(
+                    search_pattern, escape="\\"
+                ),
+                PyqSourcePaper.session_label.ilike(
+                    search_pattern, escape="\\"
+                ),
+            )
+        )
+
+    total = (
+        await db.scalar(
+            select(func.count(PyqSourceQuestion.id))
+            .select_from(PyqSourceQuestion)
+            .join(PyqSourcePaper)
+            .where(*conditions)
+        )
+        or 0
+    )
+    questions = (
+        await db.scalars(
+            select(PyqSourceQuestion)
+            .join(PyqSourcePaper)
+            .where(*conditions)
+            .options(selectinload(PyqSourceQuestion.source_paper))
+            .order_by(
+                PyqSourcePaper.year.desc(),
+                PyqSourcePaper.session_label,
+                PyqSourceQuestion.ordinal,
+            )
+            .offset(offset)
+            .limit(limit)
+        )
+    ).all()
+    return PyqArchiveListResponse(
+        items=[_archive_question_public(question) for question in questions],
         total=total,
         limit=limit,
         offset=offset,

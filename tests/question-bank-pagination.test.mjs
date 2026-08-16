@@ -79,3 +79,23 @@ test("pagination exposes an accessible current page and responsive layout", () =
   );
   assert.match(CSS, /\.bank-pagination\s*\{\s*flex-wrap:\s*wrap/s);
 });
+
+test("PYQ archive has independent 50-item filtering and pagination", () => {
+  assert.match(PAGE, /library-tab-archive/);
+  assert.match(PAGE, /fetch\(`\$\{API_BASE\}\/pyq-archive\?/);
+  assert.match(
+    PAGE,
+    /offset:\s*String\(\(archivePage\s*-\s*1\)\s*\*\s*QUESTION_BANK_PAGE_SIZE\)/,
+  );
+  assert.match(PAGE, /params\.set\(["']subject_code["'],\s*archiveSubject\.code\)/);
+  assert.match(PAGE, /params\.set\(["']topic_slug["'],\s*archiveTopicId\)/);
+  assert.match(PAGE, /params\.set\(["']year["'],\s*archiveYear\)/);
+  assert.match(PAGE, /params\.set\(["']item_type["'],\s*archiveType\)/);
+  assert.ok(
+    (PAGE.match(/setArchivePage\(1\)/g) ?? []).length >= 5,
+    "course, topic, year, type and search must reset archive pagination",
+  );
+  assert.match(PAGE, /aria-label=["']PYQ archive pages["']/);
+  assert.match(PAGE, /Archive practice is ungraded/);
+  assert.match(PAGE, /never enter(?:s)? (?:full or course )?tests/i);
+});
